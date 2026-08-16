@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undangan Digital Pernikahan — Kartu Undangan | kartuundangan.link</title>
+<meta name="description" content="Buat undangan digital pernikahan dengan tema kurasi. Link personal untuk setiap tamu, RSVP, tanpa masa aktif. Coba gratis, aktivasi mulai Rp49.000.">
+<link rel="canonical" href="https://kartuundangan.link/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kartuundangan.link/">
+<meta property="og:title" content="Undangan Digital Pernikahan — Kartu Undangan">
+<meta property="og:description" content="Tema kurasi, link personal untuk setiap tamu, tanpa masa aktif. Coba gratis, aktivasi mulai Rp49.000.">
+<meta property="og:image" content="https://kartuundangan.link/og-image.jpg">
+<meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"Apa itu undangan digital?","acceptedAnswer":{"@type":"Answer","text":"Undangan digital adalah undangan pernikahan berbentuk halaman web pribadi yang dibagikan lewat link, menggantikan undangan kertas. Tamu cukup membuka link dari WhatsApp di HP mereka."}},
+    {"@type":"Question","name":"Berapa harga undangan digital?","acceptedAnswer":{"@type":"Answer","text":"Aktivasi mulai dari Rp49.000 untuk paket Standar. Tidak ada biaya bulanan dan tidak ada masa berlaku."}},
+    {"@type":"Question","name":"Apakah undangan bisa diedit setelah dibagikan?","acceptedAnswer":{"@type":"Answer","text":"Bisa kapan saja. Link yang sudah tersebar otomatis menampilkan versi terbaru, jadi tidak perlu kirim ulang link ke tamu."}},
+    {"@type":"Question","name":"Bisa dibuatkan oleh admin?","acceptedAnswer":{"@type":"Answer","text":"Bisa, dengan harga yang sama seperti buat sendiri. Kirim detail acara lewat formulir atau WhatsApp, kami buatkan, dan kamu bayar setelah hasilnya cocok."}}
+  ]
+}
+</script>
+
+<style>
+  :root{
+    --s1:8px; --s2:16px; --s3:24px; --s4:32px; --s5:48px; --s6:64px; --s7:88px;
+    --r-sm:10px; --r-md:16px; --r-lg:24px; --r-full:999px;
+  }
+  html[data-theme="light"]{
+    --paper:#FAF8F4; --paper-2:#F1ECE3; --card:#FFFFFF;
+    --ink:#2B2822; --ink-mid:#5C574C; --ink-soft:#8A8375;
+    --accent:#A9754C; --accent-dark:#845B39; --accent-tint:#F1E4D6;
+    --line:#E6DFD1; --line-soft:#F0EAE0;
+    --shadow:0 20px 44px -18px rgba(43,40,34,0.20);
+  }
+  html[data-theme="dark"]{
+    --paper:#1A1916; --paper-2:#221F1A; --card:#262421;
+    --ink:#F2EFE8; --ink-mid:#C5BFB2; --ink-soft:#928B7B;
+    --accent:#C89968; --accent-dark:#DDB183; --accent-tint:#312920;
+    --line:#38342B; --line-soft:#2C2922;
+    --shadow:0 20px 44px -18px rgba(0,0,0,0.55);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;font-size:16px;overflow-x:hidden;}
+  h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:500;line-height:1.25;color:var(--ink);}
+  h1{font-size:clamp(29px,5.4vw,46px);letter-spacing:-0.01em;}
+  h2{font-size:clamp(23px,3.6vw,31px);}
+  h3{font-size:17px;}
+  .script{font-style:italic;color:var(--accent);}
+  p{color:var(--ink-mid);}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;}
+  ul{list-style:none;}
+
+  .wrap{max-width:1120px;margin:0 auto;padding-left:var(--s3);padding-right:var(--s3);}
+  section{padding-top:var(--s6);padding-bottom:var(--s6);}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+
+  .eyebrow{font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent-dark);font-weight:600;margin-bottom:var(--s2);}
+  .section-head{max-width:600px;margin-bottom:var(--s5);}
+  .section-head h2{margin-bottom:var(--s2);}
+  .section-head p{font-size:16px;}
+  .section-head.center{text-align:center;margin-left:auto;margin-right:auto;}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;font-size:14.5px;font-weight:500;border-radius:var(--r-full);border:1.5px solid transparent;transition:transform .18s,background .18s;white-space:nowrap;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-dark);}
+  .btn-outline{border-color:var(--accent);color:var(--accent-dark);}
+  .btn-outline:hover{background:var(--accent-tint);}
+  .btn-ghost{background:var(--card);border-color:var(--line);color:var(--ink);}
+  .btn-sm{padding:9px 18px;font-size:13.5px;}
+  .btn-block{width:100%;}
+
+  header{position:sticky;top:0;z-index:70;background:var(--paper);border-bottom:1px solid var(--line-soft);}
+  nav{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);padding:13px 0;}
+  .logo{font-family:'Fraunces',serif;font-size:18px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+  .nav-primary{display:flex;gap:var(--s3);font-size:14px;}
+  .nav-primary a{color:var(--ink-mid);}
+  .nav-primary a:hover{color:var(--accent-dark);}
+  .nav-right{display:flex;align-items:center;gap:10px;}
+  .nav-login{font-size:14px;color:var(--ink-mid);}
+  .nav-login:hover{color:var(--accent-dark);}
+  .icon-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink-mid);border:1px solid var(--line);flex-shrink:0;}
+  .icon-btn:hover{background:var(--paper-2);}
+  .desktop-only{display:inline-flex;}
+  .burger{display:none;width:36px;height:36px;align-items:center;justify-content:center;color:var(--ink);}
+
+  .drawer{position:fixed;inset:0;background:var(--paper);z-index:95;display:none;flex-direction:column;padding:var(--s3);}
+  .drawer.open{display:flex;}
+  .drawer-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--s5);}
+  .drawer-links{display:flex;flex-direction:column;gap:4px;}
+  .drawer-links a{font-family:'Fraunces',serif;font-size:22px;padding:10px 0;border-bottom:1px solid var(--line-soft);}
+  .drawer-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;}
+
+  .hero{display:grid;grid-template-columns:1.05fr 0.95fr;gap:var(--s6);align-items:center;padding-top:var(--s6);padding-bottom:var(--s7);}
+  .hero h1{margin-bottom:var(--s3);}
+  .hero-lead{font-size:17px;max-width:440px;margin-bottom:var(--s4);}
+  .hero-actions{display:flex;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s3);}
+  .hero-note{font-size:13px;color:var(--ink-soft);}
+  .hero-trust{display:flex;gap:var(--s4);margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--line);flex-wrap:wrap;}
+  .trust-item .n{font-family:'Fraunces',serif;font-size:21px;font-weight:600;}
+  .trust-item .l{font-size:12px;color:var(--ink-soft);line-height:1.4;}
+
+  .card-stack{position:relative;height:390px;}
+  .invite-card{position:absolute;width:256px;background:var(--card);border-radius:var(--r-lg);padding:var(--s5) var(--s3);text-align:center;box-shadow:var(--shadow);border:1px solid var(--line-soft);}
+  .invite-card.back{top:24px;left:36px;transform:rotate(-6deg);background:var(--accent-tint);box-shadow:none;}
+  .invite-card .ec{font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-soft);}
+  .invite-card .names{font-family:'Fraunces',serif;font-size:25px;line-height:1.3;margin:var(--s2) 0 var(--s1);color:var(--ink);}
+  .invite-card .divider{width:26px;height:1px;background:var(--accent);opacity:0.5;margin:var(--s2) auto;}
+  .invite-card .date{font-size:11.5px;color:var(--ink-soft);letter-spacing:0.08em;}
+
+  .band{background:var(--paper-2);}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s3);}
+
+  .tpl-card{background:var(--card);border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line-soft);}
+  .tpl-preview{height:200px;background:var(--accent-tint);display:flex;align-items:center;justify-content:center;}
+  .tpl-preview span{font-family:'Fraunces',serif;font-style:italic;font-size:19px;color:var(--accent-dark);text-align:center;padding:0 var(--s3);}
+  .tpl-body{padding:var(--s3);}
+  .tpl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:8px;}
+  .tpl-row .name{font-size:15px;font-weight:500;}
+  .tpl-row .price{font-size:13.5px;color:var(--ink-soft);white-space:nowrap;}
+  .tpl-desc{font-size:13.5px;color:var(--ink-soft);margin-bottom:var(--s3);}
+  .tpl-actions{display:flex;gap:8px;}
+  .tpl-actions .btn{flex:1;padding:9px 10px;font-size:13px;}
+
+  .step-card{background:var(--card);border-radius:var(--r-md);padding:var(--s4);border:1px solid var(--line-soft);}
+  .step-num{font-family:'Fraunces',serif;font-style:italic;font-size:14px;color:var(--accent);display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--accent-tint);margin-bottom:var(--s3);}
+  .step-card h3{margin-bottom:6px;}
+  .step-card p{font-size:14px;margin-bottom:var(--s2);}
+  .step-detail{font-size:12.5px;color:var(--ink-soft);padding-top:var(--s2);border-top:1px solid var(--line-soft);margin-bottom:0;}
+
+  .why-card{display:flex;gap:var(--s3);padding:var(--s3) 0;border-top:1px solid var(--line);}
+  .why-card:first-child{border-top:none;padding-top:0;}
+  .why-icon{flex-shrink:0;width:42px;height:42px;border-radius:12px;background:var(--accent-tint);display:flex;align-items:center;justify-content:center;color:var(--accent-dark);}
+  .why-card h3{margin-bottom:5px;font-size:16px;}
+  .why-card p{font-size:14px;}
+
+  .path-card{background:var(--card);border-radius:var(--r-md);padding:var(--s4);border:1px solid var(--line-soft);display:flex;flex-direction:column;}
+  .path-card.accent{background:var(--accent-tint);}
+  .tag{display:inline-block;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;background:var(--card);color:var(--accent-dark);padding:5px 14px;border-radius:var(--r-full);font-weight:600;margin-bottom:var(--s2);align-self:flex-start;}
+  .path-card h3{margin-bottom:6px;}
+  .path-card > p{font-size:14px;margin-bottom:var(--s3);}
+  .path-list{margin-bottom:var(--s3);}
+  .path-list li{font-size:13.5px;color:var(--ink-mid);padding:5px 0;display:flex;gap:8px;}
+  .ico-yes{color:var(--accent);flex-shrink:0;margin-top:3px;}
+  .ico-no{color:var(--ink-soft);opacity:0.45;flex-shrink:0;margin-top:3px;}
+  .path-card .btn{margin-top:auto;}
+
+  .toggle-wrap{display:flex;justify-content:center;align-items:center;gap:var(--s2);margin-bottom:var(--s5);}
+  .toggle-label{font-size:14px;color:var(--ink-soft);font-weight:500;}
+  .toggle-label.active{color:var(--ink);}
+  .switch{position:relative;width:48px;height:26px;background:var(--accent);border-radius:var(--r-full);flex-shrink:0;}
+  .switch .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .2s;}
+  .switch.on .knob{transform:translateX(22px);}
+
+  .price-rail{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);align-items:start;}
+  .price-card{background:var(--card);border-radius:var(--r-md);border:1px solid var(--line-soft);padding:var(--s4) var(--s3);display:flex;flex-direction:column;height:100%;}
+  .price-card.popular{border:2px solid var(--accent);position:relative;}
+  .pop-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:11px;font-weight:600;padding:3px 14px;border-radius:var(--r-full);white-space:nowrap;}
+  .tier-name{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-bottom:4px;}
+  .tier-desc{font-size:13px;color:var(--ink-soft);margin-bottom:var(--s3);min-height:38px;}
+  .price-amount{display:flex;align-items:baseline;gap:4px;padding-bottom:var(--s3);margin-bottom:var(--s3);border-bottom:1px solid var(--line-soft);flex-wrap:wrap;}
+  .price-amount .cur{font-size:14px;color:var(--ink-soft);}
+  .price-amount .num{font-family:'Fraunces',serif;font-size:31px;font-weight:600;line-height:1;}
+  .price-amount .per{font-size:12.5px;color:var(--ink-soft);}
+  .feat-list{margin-bottom:var(--s3);}
+  .feat-list li{font-size:13.5px;padding:6px 0;display:flex;gap:8px;align-items:flex-start;line-height:1.5;}
+  .feat-list li.no{color:var(--ink-soft);}
+  .price-card .btn{margin-top:auto;}
+
+  .reseller{background:var(--card);border-radius:var(--r-lg);padding:var(--s5);border:1px solid var(--line-soft);display:grid;grid-template-columns:1.1fr 0.9fr;gap:var(--s5);align-items:center;}
+  .reseller h2{margin-bottom:var(--s2);}
+  .reseller p{font-size:15px;margin-bottom:var(--s3);}
+  .reseller-points li{font-size:14px;padding:6px 0;display:flex;gap:8px;color:var(--ink-mid);}
+
+  .faq-wrap{max-width:760px;}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-item summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:var(--s3);padding:var(--s3) 0;font-size:16px;font-weight:500;}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item .mark{color:var(--accent);font-size:20px;flex-shrink:0;transition:transform .2s;}
+  .faq-item[open] .mark{transform:rotate(45deg);}
+  .faq-item .answer{padding-bottom:var(--s3);font-size:14.5px;color:var(--ink-mid);max-width:660px;}
+  .faq-item .answer p + p{margin-top:var(--s2);}
+
+  .final-cta{background:var(--accent);border-radius:var(--r-lg);padding:var(--s6) var(--s4);text-align:center;}
+  .final-cta h2{color:#fff;margin-bottom:var(--s2);}
+  .final-cta p{color:rgba(255,255,255,0.88);max-width:460px;margin:0 auto var(--s4);}
+  .final-cta .btn-primary{background:#fff;color:var(--accent-dark);}
+  .final-cta .btn-outline{border-color:rgba(255,255,255,0.7);color:#fff;}
+  .final-cta .btn-outline:hover{background:rgba(255,255,255,0.14);}
+  .cta-actions{display:flex;gap:var(--s2);justify-content:center;flex-wrap:wrap;}
+
+  footer{background:var(--paper-2);padding-top:var(--s6);padding-bottom:var(--s4);margin-top:var(--s6);}
+  .foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:var(--s4);margin-bottom:var(--s5);}
+  .foot-col h4{font-size:12.5px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-soft);font-weight:600;font-family:'Inter',sans-serif;margin-bottom:var(--s2);}
+  .foot-col li{padding:5px 0;font-size:13.5px;color:var(--ink-mid);}
+  .foot-col li a:hover{color:var(--accent-dark);}
+  .foot-about p{font-size:13.5px;margin-top:var(--s2);max-width:290px;}
+  .foot-bottom{padding-top:var(--s3);border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+  .wa-float{position:fixed;bottom:20px;right:20px;background:#25D366;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,0.25);z-index:75;}
+  .sticky-cta{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:10px var(--s2);display:none;align-items:center;gap:10px;z-index:74;}
+  .sticky-cta.show{display:flex;}
+  .sticky-cta .info{flex:1;min-width:0;}
+  .sticky-cta .p1{font-size:12.5px;font-weight:600;}
+  .sticky-cta .p2{font-size:11px;color:var(--ink-soft);}
+
+  @media(max-width:960px){
+    .wrap{padding-left:var(--s2);padding-right:var(--s2);}
+    section{padding-top:var(--s5);padding-bottom:var(--s5);}
+    .nav-primary,.desktop-only,.nav-login{display:none;}
+    .burger{display:flex;}
+    .hero{grid-template-columns:1fr;gap:var(--s5);padding-top:var(--s4);padding-bottom:var(--s5);}
+    .card-stack{height:290px;max-width:270px;margin:0 auto;order:-1;}
+    .invite-card{width:230px;padding:var(--s4) var(--s3);}
+    .invite-card.back{left:30px;top:20px;}
+    .grid-3,.grid-2,.price-rail{grid-template-columns:1fr;}
+    .reseller{grid-template-columns:1fr;padding:var(--s4) var(--s3);gap:var(--s3);}
+    .section-head{margin-bottom:var(--s4);}
+    .why-card{flex-direction:column;gap:var(--s2);}
+    .hero-trust{gap:var(--s3);}
+    .hero-actions{flex-direction:column;}
+    .hero-actions .btn,.cta-actions .btn{width:100%;}
+    .cta-actions{flex-direction:column;}
+    .tpl-actions{flex-direction:column;}
+    .final-cta{padding:var(--s5) var(--s3);}
+    .tier-desc{min-height:auto;}
+    body{padding-bottom:0;}
+    .sticky-cta.show ~ footer{padding-bottom:var(--s6);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a class="logo" href="#">Kartu <span class="script">Undangan</span></a>
+    <div class="nav-primary">
+      <a href="#tema">Tema</a>
+      <a href="#cara-kerja">Cara kerja</a>
+      <a href="#harga">Harga</a>
+      <a href="#reseller">Reseller</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn" id="themeBtn" aria-label="Ganti tema terang atau gelap">
+        <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
+      <a class="nav-login" href="#masuk">Masuk</a>
+      <a class="btn btn-primary btn-sm desktop-only" href="#daftar">Daftar gratis</a>
+      <button class="burger" id="burgerBtn" aria-label="Buka menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<div class="drawer" id="drawer">
+  <div class="drawer-top">
+    <span class="logo">Kartu <span class="script">Undangan</span></span>
+    <button class="icon-btn" id="closeDrawer" aria-label="Tutup menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="drawer-links">
+    <a href="#tema">Tema</a>
+    <a href="#cara-kerja">Cara kerja</a>
+    <a href="#harga">Harga</a>
+    <a href="#reseller">Reseller</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <div class="drawer-foot">
+    <a class="btn btn-primary btn-block" href="#daftar">Daftar gratis</a>
+    <a class="btn btn-ghost btn-block" href="#masuk">Masuk</a>
+  </div>
+</div>
+
+<section class="hero wrap">
+  <div>
+    <p class="eyebrow">Undangan digital pernikahan</p>
+    <h1>Undangan yang terasa <span class="script">personal</span>, bukan template sejuta orang.</h1>
+    <p class="hero-lead">Pilih tema kurasi, isi data acara, lalu bagikan link personal ke setiap tamu lengkap dengan pesan otomatis. Buat sendiri atau biar admin kami yang kerjakan — harganya sama.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#daftar">Daftar &amp; coba gratis</a>
+      <a class="btn btn-outline" href="#dibuatin-admin">Minta dibuatin admin</a>
+    </div>
+    <p class="hero-note">Gratis untuk mencoba dan melihat hasil. Bayar hanya saat kamu aktifkan undangan.</p>
+    <div class="hero-trust">
+      <div class="trust-item"><div class="n">3 menit</div><div class="l">Rata-rata sampai jadi</div></div>
+      <div class="trust-item"><div class="n">Tanpa</div><div class="l">Masa aktif &amp; kedaluwarsa</div></div>
+      <div class="trust-item"><div class="n">Unlimited</div><div class="l">Nama tamu &amp; penerima</div></div>
+    </div>
+  </div>
+  <div class="card-stack">
+    <div class="invite-card back">
+      <p class="ec">The wedding of</p>
+      <div class="names">Budi &amp; Wulan</div>
+    </div>
+    <div class="invite-card">
+      <p class="ec">The wedding of</p>
+      <div class="names">Andi &amp; Sarah</div>
+      <div class="divider"></div>
+      <p class="date">14 . 11 . 2026</p>
+    </div>
+  </div>
+</section>
+
+<section id="tema" class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Tema</p>
+      <h2>Setiap tema dirancang, bukan digandakan.</h2>
+      <p>Kami tidak mengejar jumlah tema terbanyak. Setiap tema dikerjakan detail per detail — dari pilihan tipografi sampai bagaimana foto kalian tampil di layar HP tamu.</p>
+    </div>
+    <div class="grid-3">
+      <article class="tpl-card">
+        <div class="tpl-preview"><span>Elegan Minimalis</span></div>
+        <div class="tpl-body">
+          <div class="tpl-row"><span class="name">Elegan Minimalis</span><span class="price">Rp49.000</span></div>
+          <p class="tpl-desc">Serif klasik, ruang kosong lega, tanpa ornamen berlebihan. Cocok untuk resepsi formal.</p>
+          <div class="tpl-actions">
+            <a class="btn btn-ghost" href="#">Preview</a>
+            <a class="btn btn-primary" href="#daftar">Gunakan</a>
+          </div>
+        </div>
+      </article>
+      <article class="tpl-card">
+        <div class="tpl-preview"><span>Klasik Romantis</span></div>
+        <div class="tpl-body">
+          <div class="tpl-row"><span class="name">Klasik Romantis</span><span class="price">Rp49.000</span></div>
+          <p class="tpl-desc">Aksen bunga lembut dan nuansa hangat. Pas untuk akad dan resepsi keluarga.</p>
+          <div class="tpl-actions">
+            <a class="btn btn-ghost" href="#">Preview</a>
+            <a class="btn btn-primary" href="#daftar">Gunakan</a>
+          </div>
+        </div>
+      </article>
+      <article class="tpl-card">
+        <div class="tpl-preview"><span>Modern Botanical</span></div>
+        <div class="tpl-body">
+          <div class="tpl-row"><span class="name">Modern Botanical</span><span class="price">Rp49.000</span></div>
+          <p class="tpl-desc">Daun-daunan tipis, palet natural, tata letak asimetris yang segar dan modern.</p>
+          <div class="tpl-actions">
+            <a class="btn btn-ghost" href="#">Preview</a>
+            <a class="btn btn-primary" href="#daftar">Gunakan</a>
+          </div>
+        </div>
+      </article>
+    </div>
+    <div style="text-align:center;margin-top:var(--s5);">
+      <a class="btn btn-outline" href="#">Tampilkan lebih banyak tema</a>
+    </div>
+  </div>
+</section>
+
+<section id="cara-kerja">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Proses</p>
+      <h2>Tiga langkah, tidak ada yang rumit.</h2>
+      <p>Kamu bisa melihat hasilnya jadi seperti apa sebelum memutuskan untuk bayar.</p>
+    </div>
+    <div class="grid-3">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h3>Pilih tema</h3>
+        <p>Jelajahi koleksi tema, buka preview-nya, lalu klik gunakan.</p>
+        <p class="step-detail">Tema bisa diganti kapan saja, bahkan setelah undangan aktif.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h3>Isi data acara</h3>
+        <p>Nama pasangan, tanggal, lokasi, foto, dan cerita kalian — hasilnya langsung terlihat.</p>
+        <p class="step-detail">Editor memakai preview langsung: apa yang kamu lihat, itu yang tamu lihat.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h3>Bagikan ke tamu</h3>
+        <p>Tulis daftar nama tamu, generate link, lalu kirim lewat WhatsApp atau Telegram.</p>
+        <p class="step-detail">Setiap tamu dapat link dengan namanya sendiri dan pesan yang terisi otomatis.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="keunggulan" class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Keunggulan</p>
+      <h2>Kenapa memilih Kartu Undangan.</h2>
+      <p>Bukan daftar fitur terpanjang, tapi hal-hal yang benar-benar terasa saat kamu memakainya.</p>
+    </div>
+    <div class="grid-2" style="gap:var(--s5);">
+      <div>
+        <div class="why-card">
+          <div class="why-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l1.9 5.8H20l-4.7 3.4 1.8 5.8L12 14.6 6.9 18l1.8-5.8L4 8.8h6.1L12 3z"/></svg></div>
+          <div>
+            <h3>Link personal untuk setiap tamu</h3>
+            <p>Tamu tidak menerima link generik. Nama mereka sudah tercantum di undangan, dan pesan WhatsApp-nya terisi otomatis — kamu cukup tekan kirim.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div>
+            <h3>Tanpa masa aktif</h3>
+            <p>Undangan tidak pernah kedaluwarsa. Sebar kapan saja, edit kapan saja, bahkan bertahun-tahun setelah acara sebagai kenang-kenangan.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="why-card">
+          <div class="why-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 20h16"/><path d="M6 16l4-8 4 5 4-9"/></svg></div>
+          <div>
+            <h3>Statistik sebar &amp; RSVP</h3>
+            <p>Lihat berapa tamu yang sudah membuka undangan dan siapa yang konfirmasi hadir — berguna untuk memperkirakan katering dan kursi.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div>
+            <h3>Bayar setelah kamu suka</h3>
+            <p>Untuk layanan dibuatin admin, kamu lihat hasilnya dulu. Kalau belum cocok, revisi. Kalau sudah pas, baru bayar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dibuatin-admin">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Dua cara membuat</p>
+      <h2>Kerjakan sendiri, atau serahkan ke kami.</h2>
+      <p>Keduanya memakai tema dan fitur yang sama, dengan harga yang sama. Tidak ada biaya tambahan untuk layanan admin.</p>
+    </div>
+    <div class="grid-2">
+      <div class="path-card">
+        <span class="tag">Buat sendiri</span>
+        <h3>Edit langsung, hasil seketika</h3>
+        <p>Untuk kamu yang suka mengatur sendiri setiap detail dan ingin bebas bereksperimen.</p>
+        <ul class="path-list">
+          <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Preview langsung saat mengetik</li>
+          <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Ganti warna, font, dan susunan</li>
+          <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Revisi sendiri tanpa menunggu</li>
+        </ul>
+        <a class="btn btn-outline btn-block" href="#daftar">Mulai buat sendiri</a>
+      </div>
+      <div class="path-card accent">
+        <span class="tag">Harga sama</span>
+        <h3>Dibuatin admin, terima beres</h3>
+        <p>Untuk kamu yang sibuk atau kurang nyaman mengedit sendiri. Kirim detail, kami kerjakan.</p>
+        <ul class="path-list">
+          <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Kirim data lewat formulir atau WhatsApp</li>
+          <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Lihat hasil sebelum bayar</li>
+          <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Revisi sampai kamu cocok</li>
+        </ul>
+        <a class="btn btn-primary btn-block" href="https://wa.me/62xxxxxxxxxx" target="_blank" rel="noopener">Minta dibuatin admin</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="harga" class="band">
+  <div class="wrap">
+    <div class="section-head center">
+      <p class="eyebrow">Harga</p>
+      <h2>Tiga paket, tanpa bikin bingung.</h2>
+      <p>Kami sengaja tidak membuat banyak pilihan. Cukup tiga paket dengan perbedaan yang jelas, supaya kamu tidak perlu membandingkan puluhan baris fitur.</p>
+    </div>
+
+    <div class="toggle-wrap">
+      <span class="toggle-label active" id="lblSatuan">Satuan</span>
+      <button class="switch" id="planSwitch" aria-label="Ganti antara paket satuan dan berlangganan"><span class="knob"></span></button>
+      <span class="toggle-label" id="lblSubs">Berlangganan</span>
+    </div>
+
+    <div id="planSatuan">
+      <div class="price-rail">
+        <div class="price-card">
+          <div class="tier-name">Standar</div>
+          <p class="tier-desc">Semua yang dibutuhkan untuk satu acara</p>
+          <div class="price-amount"><span class="cur">Rp</span><span class="num">49.000</span></div>
+          <ul class="feat-list">
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Akses semua tema</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>RSVP, ucapan &amp; lokasi maps</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Nama tamu &amp; link tak terbatas</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Countdown &amp; simpan ke kalender</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Tanpa masa aktif</li>
+            <li class="no"><span class="ico-no"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span>Galeri foto &amp; musik latar</li>
+          </ul>
+          <a class="btn btn-ghost btn-block" href="#daftar">Pilih Standar</a>
+        </div>
+
+        <div class="price-card popular">
+          <span class="pop-badge">Paling dipilih</span>
+          <div class="tier-name">Pro</div>
+          <p class="tier-desc">Untuk yang ingin galeri foto dan edit sendiri</p>
+          <div class="price-amount"><span class="cur">Rp</span><span class="num">89.000</span></div>
+          <ul class="feat-list">
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Standar</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Galeri foto (10 foto)</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Musik latar pilihan</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Panel edit sendiri &amp; revisi tak terbatas</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Rekening titip hadiah</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>QR code check-in tamu</li>
+          </ul>
+          <a class="btn btn-primary btn-block" href="#daftar">Pilih Pro</a>
+        </div>
+
+        <div class="price-card">
+          <div class="tier-name">Premium</div>
+          <p class="tier-desc">Semua fitur terbuka, tanpa batas</p>
+          <div class="price-amount"><span class="cur">Rp</span><span class="num">139.000</span></div>
+          <ul class="feat-list">
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Pro</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Galeri HD (20 foto)</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Love story &amp; balas ucapan tamu</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Custom font &amp; warna tema</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Upload musik sendiri</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Link streaming &amp; video</li>
+          </ul>
+          <a class="btn btn-ghost btn-block" href="#daftar">Pilih Premium</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="planSubs" style="display:none;">
+      <div class="price-rail">
+        <div class="price-card">
+          <div class="tier-name">1 Bulan</div>
+          <p class="tier-desc">Bebas buat banyak undangan</p>
+          <div class="price-amount"><span class="cur">Rp</span><span class="num">150.000</span><span class="per">/bulan</span></div>
+          <ul class="feat-list">
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Premium</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Undangan tanpa batas jumlah</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Custom domain</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Export undangan cetak</li>
+          </ul>
+          <a class="btn btn-ghost btn-block" href="#daftar">Pilih 1 bulan</a>
+        </div>
+
+        <div class="price-card popular">
+          <span class="pop-badge">Terbaik untuk WO</span>
+          <div class="tier-name">6 Bulan</div>
+          <p class="tier-desc">Bebas buat banyak undangan</p>
+          <div class="price-amount"><span class="cur">Rp</span><span class="num">750.000</span><span class="per">/6 bulan</span></div>
+          <ul class="feat-list">
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Premium</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Undangan tanpa batas jumlah</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Custom domain</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Export undangan cetak</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Hemat dibanding bayar bulanan</li>
+          </ul>
+          <a class="btn btn-primary btn-block" href="#daftar">Pilih 6 bulan</a>
+        </div>
+
+        <div class="price-card">
+          <div class="tier-name">1 Tahun</div>
+          <p class="tier-desc">Bebas buat banyak undangan</p>
+          <div class="price-amount"><span class="cur">Rp</span><span class="num">1.450.000</span><span class="per">/tahun</span></div>
+          <ul class="feat-list">
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Premium</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Undangan tanpa batas jumlah</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Custom domain</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Export undangan cetak</li>
+            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Harga paling hemat per bulan</li>
+          </ul>
+          <a class="btn btn-ghost btn-block" href="#daftar">Pilih 1 tahun</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reseller">
+  <div class="wrap">
+    <div class="reseller">
+      <div>
+        <p class="eyebrow">Untuk mitra</p>
+        <h2>Wedding organizer &amp; reseller.</h2>
+        <p>Kalau kamu rutin menangani undangan untuk klien, paket berlangganan memberi kamu ruang membuat undangan tanpa batas jumlah dengan satu akun — plus custom domain agar tampil sebagai brand-mu sendiri.</p>
+        <a class="btn btn-primary" href="https://wa.me/62xxxxxxxxxx" target="_blank" rel="noopener">Diskusi kerja sama</a>
+      </div>
+      <ul class="reseller-points">
+        <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Satu akun untuk banyak klien</li>
+        <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Custom domain atas nama brand-mu</li>
+        <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Premium terbuka</li>
+        <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Export versi cetak untuk klien</li>
+        <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Dukungan admin via WhatsApp</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="band">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">FAQ</p>
+      <h2>Pertanyaan yang sering ditanyakan.</h2>
+      <p>Kalau masih ada yang ingin ditanyakan, hubungi admin lewat WhatsApp — kami balas setiap hari.</p>
+    </div>
+    <div class="faq-wrap">
+      <details class="faq-item" open>
+        <summary><span>Apa itu undangan digital?</span><span class="mark">+</span></summary>
+        <div class="answer">
+          <p>Undangan digital adalah undangan pernikahan berbentuk halaman web pribadi yang dibagikan lewat link — tidak perlu cetak kertas. Tamu cukup membuka link dari WhatsApp di HP mereka.</p>
+          <p>Di dalamnya bisa ada foto, cerita perjalanan kalian, lokasi acara lengkap dengan peta, hitung mundur hari-H, sampai formulir konfirmasi kehadiran.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary><span>Ini beneran gratis?</span><span class="mark">+</span></summary>
+        <div class="answer">
+          <p>Kamu bisa mendaftar, membuat, dan melihat undanganmu secara gratis tanpa batas waktu. Yang membedakan adalah undangan belum bisa disebar ke tamu sebelum diaktifkan.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary><span>Berapa harga undangan digital?</span><span class="mark">+</span></summary>
+        <div class="answer">
+          <p>Aktivasi mulai dari Rp49.000 untuk paket Standar, sampai Rp139.000 untuk Premium dengan semua fitur terbuka. Tidak ada biaya bulanan dan tidak ada masa berlaku.</p>
+          <p>Untuk yang perlu membuat banyak undangan — misalnya wedding organizer — tersedia paket berlangganan mulai Rp150.000 per bulan.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary><span>Setelah diaktifkan, apakah undangan masih bisa diedit?</span><span class="mark">+</span></summary>
+        <div class="answer">
+          <p>Bisa kapan saja. Kalau ada perubahan jam acara atau tambahan foto, kamu tinggal edit dan link yang sudah tersebar otomatis menampilkan versi terbaru — tidak perlu kirim ulang link ke tamu.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary><span>Bagaimana cara membagikan ke tamu?</span><span class="mark">+</span></summary>
+        <div class="answer">
+          <p>Tulis daftar nama tamu satu per satu di dashboard, lalu klik generate link. Setiap tamu mendapat link unik dengan namanya sendiri, dan pesan WhatsApp-nya sudah terisi otomatis — kamu tinggal tekan kirim.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary><span>Metode pembayaran apa saja yang tersedia?</span><span class="mark">+</span></summary>
+        <div class="answer">
+          <p>Transfer bank, e-wallet, dan QRIS. Detail lengkap muncul di halaman pembayaran saat kamu mengaktifkan undangan.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary><span>Bagaimana kalau saya tidak mau edit sendiri?</span><span class="mark">+</span></summary>
+        <div class="answer">
+          <p>Pilih layanan dibuatin admin. Kirim detail acara lewat formulir atau WhatsApp, kami buatkan undangannya, lalu kamu tinggal review. Kalau ada yang mau diubah, kami revisi. Harganya sama dengan buat sendiri.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="daftar">
+  <div class="wrap">
+    <div class="final-cta">
+      <h2>Siap buat undangan pernikahanmu?</h2>
+      <p>Daftar gratis, lihat hasilnya dulu, dan bayar hanya kalau kamu suka.</p>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="#">Daftar gratis sekarang</a>
+        <a class="btn btn-outline" href="https://wa.me/62xxxxxxxxxx" target="_blank" rel="noopener">Tanya admin dulu</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-about">
+        <span class="logo">Kartu <span class="script">Undangan</span></span>
+        <p>Undangan digital pernikahan dengan tema kurasi. Dibuat di Pekanbaru untuk pasangan di seluruh Indonesia.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Produk</h4>
+        <ul>
+          <li><a href="#tema">Galeri tema</a></li>
+          <li><a href="#harga">Harga</a></li>
+          <li><a href="#dibuatin-admin">Dibuatin admin</a></li>
+          <li><a href="#reseller">Reseller &amp; WO</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Belajar</h4>
+        <ul>
+          <li><a href="#">Artikel</a></li>
+          <li><a href="#">Tutorial</a></li>
+          <li><a href="#cara-kerja">Cara kerja</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Akun &amp; bantuan</h4>
+        <ul>
+          <li><a href="#daftar">Daftar</a></li>
+          <li><a href="#masuk">Masuk</a></li>
+          <li><a href="https://wa.me/62xxxxxxxxxx">Kontak WhatsApp</a></li>
+          <li><a href="#">Syarat &amp; ketentuan</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Kartu Undangan — kartuundangan.link</span>
+      <span>Pekanbaru, Indonesia</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/62xxxxxxxxxx" aria-label="Hubungi kami di WhatsApp" target="_blank" rel="noopener">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.6 6.3A8.9 8.9 0 0 0 3.3 16.8L2 22l5.3-1.4a8.9 8.9 0 0 0 4.3 1.1h0a8.9 8.9 0 0 0 6.1-15.3zM12 20.1h0a7.5 7.5 0 0 1-3.8-1l-.3-.2-2.8.7.8-2.7-.2-.3a7.5 7.5 0 1 1 13.9-4A7.5 7.5 0 0 1 12 20.1zm4.1-5.6c-.2-.1-1.3-.7-1.5-.7s-.4-.1-.5.1-.5.7-.7.8-.3.1-.5 0a6.1 6.1 0 0 1-1.8-1.1 6.8 6.8 0 0 1-1.2-1.5c-.1-.2 0-.4.1-.5l.4-.4a1.6 1.6 0 0 0 .2-.4.4.4 0 0 0 0-.4c0-.1-.5-1.2-.7-1.6s-.4-.4-.5-.4h-.5a.9.9 0 0 0-.6.3 2.7 2.7 0 0 0-.9 2 4.7 4.7 0 0 0 1 2.5 10.7 10.7 0 0 0 4.1 3.6c.6.2 1 .4 1.4.5a3.3 3.3 0 0 0 1.5.1 2.5 2.5 0 0 0 1.6-1.1 2 2 0 0 0 .1-1.1c-.1-.1-.2-.2-.4-.3z"/></svg>
+</a>
+
+<div class="sticky-cta" id="stickyCta">
+  <div class="info">
+    <div class="p1">Coba gratis, bayar saat aktivasi</div>
+    <div class="p2">Mulai Rp49.000 · tanpa masa aktif</div>
+  </div>
+  <a class="btn btn-primary btn-sm" href="#daftar">Daftar</a>
+</div>
+
+<script>
+(function(){
+  var themeBtn = document.getElementById('themeBtn');
+  var sun = document.getElementById('iconSun');
+  var moon = document.getElementById('iconMoon');
+  try {
+    var saved = localStorage.getItem('ku-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme','dark');
+    }
+  } catch(e){}
+  function syncIcon(){
+    var t = document.documentElement.getAttribute('data-theme');
+    sun.style.display = t === 'dark' ? 'none' : 'block';
+    moon.style.display = t === 'dark' ? 'block' : 'none';
+  }
+  syncIcon();
+  themeBtn.addEventListener('click', function(){
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('ku-theme', next); } catch(e){}
+    syncIcon();
+  });
+
+  var drawer = document.getElementById('drawer');
+  document.getElementById('burgerBtn').addEventListener('click', function(){
+    drawer.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+  function closeIt(){
+    drawer.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('closeDrawer').addEventListener('click', closeIt);
+  Array.prototype.forEach.call(drawer.querySelectorAll('a'), function(a){
+    a.addEventListener('click', closeIt);
+  });
+
+  var sw = document.getElementById('planSwitch');
+  var satuan = document.getElementById('planSatuan');
+  var subs = document.getElementById('planSubs');
+  var lblS = document.getElementById('lblSatuan');
+  var lblB = document.getElementById('lblSubs');
+  sw.addEventListener('click', function(){
+    var on = sw.classList.toggle('on');
+    satuan.style.display = on ? 'none' : 'block';
+    subs.style.display = on ? 'block' : 'none';
+    lblS.classList.toggle('active', !on);
+    lblB.classList.toggle('active', on);
+  });
+
+  var hero = document.querySelector('.hero');
+  var sticky = document.getElementById('stickyCta');
+  window.addEventListener('scroll', function(){
+    var b = hero.getBoundingClientRect().bottom;
+    if (b < 0 && window.innerWidth <= 960) sticky.classList.add('show');
+    else sticky.classList.remove('show');
+  }, {passive:true});
+})();
+</script>
+
+</body>
+</html>
