@@ -212,6 +212,36 @@
   .foot-about p{font-size:13.5px;margin-top:var(--s2);max-width:290px;}
   .foot-bottom{padding-top:var(--s3);border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 
+  .modal-overlay{position:fixed;inset:0;background:rgba(43,40,34,0.55);backdrop-filter:blur(2px);z-index:120;display:none;align-items:center;justify-content:center;padding:var(--s3);}
+  html[data-theme="dark"] .modal-overlay{background:rgba(0,0,0,0.65);}
+  .modal-overlay.open{display:flex;}
+  .modal-card{position:relative;width:100%;max-width:400px;max-height:calc(100vh - var(--s5));overflow-y:auto;background:var(--card);border-radius:var(--r-lg);border:1px solid var(--line-soft);box-shadow:var(--shadow);padding:var(--s5) var(--s4) var(--s4);}
+  .modal-close{position:absolute;top:var(--s3);right:var(--s3);}
+  .modal-head{text-align:center;margin-bottom:var(--s4);}
+  .modal-head .logo{display:block;margin-bottom:var(--s3);}
+  .modal-head h3{margin-bottom:6px;}
+  .modal-sub{font-size:13.5px;}
+  .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:var(--s3);}
+  .modal-divider{display:flex;align-items:center;gap:10px;margin:var(--s3) 0;font-size:12px;letter-spacing:0.04em;color:var(--ink-soft);}
+  .modal-divider::before,.modal-divider::after{content:"";flex:1;height:1px;background:var(--line);}
+  .auth-form label{display:block;font-size:13px;color:var(--ink-mid);margin-bottom:6px;font-weight:500;}
+  .auth-form input{width:100%;padding:11px 14px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:inherit;margin-bottom:var(--s3);}
+  .auth-form input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
+  .auth-form input.code-input{letter-spacing:0.5em;text-align:center;font-family:'Fraunces',serif;font-size:20px;padding:11px 8px;}
+  .otp-info{font-size:13px;color:var(--ink-mid);margin-bottom:var(--s3);}
+  .auth-msg{font-size:13px;text-align:center;margin-top:var(--s3);min-height:18px;color:var(--ink-mid);}
+  .auth-msg.err{color:#C0503D;}
+  html[data-theme="dark"] .auth-msg.err{color:#E08A78;}
+  .auth-msg.ok{color:var(--accent-dark);}
+  .auth-legal{font-size:11.5px;color:var(--ink-soft);text-align:center;margin-top:var(--s3);}
+  .auth-tabs{display:flex;background:var(--paper-2);border-radius:var(--r-full);padding:4px;margin-bottom:var(--s4);gap:4px;}
+  .auth-tab{flex:1;border:none;background:transparent;padding:9px 0;border-radius:var(--r-full);font-size:14px;font-weight:600;color:var(--ink-soft);cursor:pointer;font-family:inherit;}
+  .auth-tab.active{background:var(--card);color:var(--ink);box-shadow:var(--shadow);}
+  .auth-forgot{display:block;text-align:right;font-size:13px;margin:-10px 0 var(--s3);}
+  .auth-forgot a{color:var(--accent-dark);font-weight:500;}
+  .auth-switch{font-size:13.5px;text-align:center;color:var(--ink-mid);margin-top:var(--s3);}
+  .auth-switch a{color:var(--accent-dark);font-weight:600;}
+
   .wa-float{position:fixed;bottom:20px;right:20px;background:#25D366;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,0.25);z-index:75;}
   .sticky-cta{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:10px var(--s2);display:none;align-items:center;gap:10px;z-index:74;}
   .sticky-cta.show{display:flex;}
@@ -291,6 +321,81 @@
   <div class="drawer-foot">
     <a class="btn btn-primary btn-block" href="#daftar">Daftar gratis</a>
     <a class="btn btn-ghost btn-block" href="#masuk">Masuk</a>
+  </div>
+</div>
+
+<div class="modal-overlay" id="authOverlay">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="icon-btn modal-close" id="authClose" aria-label="Tutup">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-head">
+      <span class="logo">Kartu <span class="script">Undangan</span></span>
+      <h3 id="authTitle">Masuk ke akunmu</h3>
+      <p class="modal-sub" id="authSub"></p>
+    </div>
+
+    <div class="auth-tabs" id="authTabs">
+      <button type="button" class="auth-tab active" id="tabLoginBtn">Masuk</button>
+      <button type="button" class="auth-tab" id="tabSignupBtn">Daftar</button>
+    </div>
+
+    <button type="button" class="btn btn-ghost btn-block google-btn" id="googleBtn">
+      <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/>
+        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 15.1 18.9 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+        <path fill="#4CAF50" d="M24 44c5.5 0 10.5-2.1 14.3-5.6l-6.6-5.6C29.6 34.7 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.3 44 24 44z"/>
+        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.8l6.6 5.6C39.9 37.5 44 31.4 44 24c0-1.3-.1-2.7-.4-3.5z"/>
+      </svg>
+      Lanjutkan dengan Google
+    </button>
+
+    <div class="modal-divider" id="modalDivider"><span>atau pakai email</span></div>
+
+    <form id="loginForm" class="auth-form">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="nama@email.com" required autocomplete="email">
+      <label for="loginPassword">Kata sandi</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+      <a href="#" class="auth-forgot" id="forgotLink">Lupa kata sandi?</a>
+      <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Masuk</button>
+    </form>
+    <p class="auth-switch" id="toSignup">Belum punya akun? <a href="#" id="toSignupLink">Daftar</a></p>
+
+    <form id="signupForm" class="auth-form" style="display:none">
+      <label for="signupEmail">Email</label>
+      <input type="email" id="signupEmail" placeholder="nama@email.com" required autocomplete="email">
+      <label for="signupPassword">Kata sandi</label>
+      <input type="password" id="signupPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+      <button type="submit" class="btn btn-primary btn-block" id="signupBtn">Daftar</button>
+    </form>
+    <p class="auth-switch" id="toLogin" style="display:none">Sudah punya akun? <a href="#" id="toLoginLink">Masuk</a></p>
+
+    <form id="signupVerifyForm" class="auth-form" style="display:none">
+      <p class="otp-info">Kode dikirim ke <strong id="signupEmailLabel"></strong>. Cek folder spam kalau belum masuk.</p>
+      <label for="signupCode">Kode 6 digit</label>
+      <input type="text" id="signupCode" class="code-input" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" required autocomplete="one-time-code">
+      <button type="submit" class="btn btn-primary btn-block" id="signupVerifyBtn">Verifikasi &amp; masuk</button>
+      <button type="button" class="btn btn-ghost btn-block btn-sm" id="signupVerifyBackBtn">Kembali</button>
+    </form>
+
+    <form id="forgotForm" class="auth-form" style="display:none">
+      <label for="forgotEmail">Email</label>
+      <input type="email" id="forgotEmail" placeholder="nama@email.com" required autocomplete="email">
+      <button type="submit" class="btn btn-primary btn-block" id="forgotBtn">Kirim link reset</button>
+      <button type="button" class="btn btn-ghost btn-block btn-sm" id="forgotBackBtn">Kembali ke masuk</button>
+    </form>
+
+    <form id="recoveryForm" class="auth-form" style="display:none">
+      <label for="recoveryPassword">Password baru</label>
+      <input type="password" id="recoveryPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+      <label for="recoveryPassword2">Konfirmasi password baru</label>
+      <input type="password" id="recoveryPassword2" placeholder="Ulangi password baru" required minlength="6" autocomplete="new-password">
+      <button type="submit" class="btn btn-primary btn-block" id="recoveryBtn">Simpan password baru</button>
+    </form>
+
+    <p class="auth-msg" id="authMsg" aria-live="polite"></p>
+    <p class="auth-legal" id="authLegal">Dengan melanjutkan, kamu menyetujui Syarat &amp; Ketentuan kami.</p>
   </div>
 </div>
 
@@ -794,6 +899,265 @@
     if (b < 0 && window.innerWidth <= 960) sticky.classList.add('show');
     else sticky.classList.remove('show');
   }, {passive:true});
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var SUPABASE_URL = 'https://ebjwjnxunedjftgzzbch.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_qUFa64f8yhx_3dYYwaP3Aw_kHD6JvuA';
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  var overlay = document.getElementById('authOverlay');
+  var closeBtn = document.getElementById('authClose');
+  var authTitle = document.getElementById('authTitle');
+  var authSub = document.getElementById('authSub');
+  var authLegal = document.getElementById('authLegal');
+  var authTabs = document.getElementById('authTabs');
+  var tabLoginBtn = document.getElementById('tabLoginBtn');
+  var tabSignupBtn = document.getElementById('tabSignupBtn');
+  var googleBtn = document.getElementById('googleBtn');
+  var modalDivider = document.getElementById('modalDivider');
+  var msg = document.getElementById('authMsg');
+
+  var loginForm = document.getElementById('loginForm');
+  var loginEmail = document.getElementById('loginEmail');
+  var loginPassword = document.getElementById('loginPassword');
+  var loginBtn = document.getElementById('loginBtn');
+  var forgotLink = document.getElementById('forgotLink');
+  var toSignup = document.getElementById('toSignup');
+  var toSignupLink = document.getElementById('toSignupLink');
+
+  var signupForm = document.getElementById('signupForm');
+  var signupEmail = document.getElementById('signupEmail');
+  var signupPassword = document.getElementById('signupPassword');
+  var signupBtn = document.getElementById('signupBtn');
+  var toLogin = document.getElementById('toLogin');
+  var toLoginLink = document.getElementById('toLoginLink');
+
+  var signupVerifyForm = document.getElementById('signupVerifyForm');
+  var signupEmailLabel = document.getElementById('signupEmailLabel');
+  var signupCode = document.getElementById('signupCode');
+  var signupVerifyBtn = document.getElementById('signupVerifyBtn');
+  var signupVerifyBackBtn = document.getElementById('signupVerifyBackBtn');
+
+  var forgotForm = document.getElementById('forgotForm');
+  var forgotEmail = document.getElementById('forgotEmail');
+  var forgotBtn = document.getElementById('forgotBtn');
+  var forgotBackBtn = document.getElementById('forgotBackBtn');
+
+  var recoveryForm = document.getElementById('recoveryForm');
+  var recoveryPassword = document.getElementById('recoveryPassword');
+  var recoveryPassword2 = document.getElementById('recoveryPassword2');
+  var recoveryBtn = document.getElementById('recoveryBtn');
+
+  var allForms = [loginForm, signupForm, signupVerifyForm, forgotForm, recoveryForm];
+
+  var views = {
+    login:        { title:'Masuk ke akunmu', sub:'', showTabs:true,  showGoogle:true,  form:loginForm,        switchEl:toSignup, focus:loginEmail },
+    signup:       { title:'Buat akun baru',  sub:'', showTabs:true,  showGoogle:true,  form:signupForm,       switchEl:toLogin,  focus:signupEmail },
+    signupVerify: { title:'Verifikasi email', sub:'Masukkan kode 6 digit yang kami kirim ke emailmu.', showTabs:false, showGoogle:false, form:signupVerifyForm, switchEl:null, focus:signupCode },
+    forgot:       { title:'Lupa kata sandi?', sub:'Masukkan email akunmu, kami kirim link untuk reset password.', showTabs:false, showGoogle:false, form:forgotForm, switchEl:null, focus:forgotEmail },
+    recovery:     { title:'Buat password baru', sub:'Masukkan password baru untuk akunmu.', showTabs:false, showGoogle:false, form:recoveryForm, switchEl:null, focus:recoveryPassword }
+  };
+
+  function showMsg(text, type){
+    msg.textContent = text || '';
+    msg.className = 'auth-msg' + (type ? ' ' + type : '');
+  }
+
+  function showView(name){
+    var v = views[name];
+    authTitle.textContent = v.title;
+    authSub.textContent = v.sub;
+    allForms.forEach(function(f){ f.style.display = (f === v.form) ? 'block' : 'none'; });
+    toSignup.style.display = (v.switchEl === toSignup) ? 'block' : 'none';
+    toLogin.style.display = (v.switchEl === toLogin) ? 'block' : 'none';
+    authTabs.style.display = v.showTabs ? 'flex' : 'none';
+    googleBtn.style.display = v.showGoogle ? 'flex' : 'none';
+    modalDivider.style.display = v.showGoogle ? 'flex' : 'none';
+    authLegal.style.display = (name === 'login' || name === 'signup') ? 'block' : 'none';
+    tabLoginBtn.classList.toggle('active', name === 'login');
+    tabSignupBtn.classList.toggle('active', name === 'signup');
+    showMsg('');
+  }
+
+  function resetForms(){
+    allForms.forEach(function(f){ f.reset(); });
+  }
+
+  function openModal(view){
+    resetForms();
+    var name = view || 'login';
+    showView(name);
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function(){ views[name].focus.focus(); }, 50);
+  }
+  function closeModal(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+  });
+
+  tabLoginBtn.addEventListener('click', function(){ showView('login'); loginEmail.focus(); });
+  tabSignupBtn.addEventListener('click', function(){ showView('signup'); signupEmail.focus(); });
+  toSignupLink.addEventListener('click', function(e){ e.preventDefault(); showView('signup'); signupEmail.focus(); });
+  toLoginLink.addEventListener('click', function(e){ e.preventDefault(); showView('login'); loginEmail.focus(); });
+
+  googleBtn.addEventListener('click', async function(){
+    showMsg('Mengalihkan ke Google...');
+    var res = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + window.location.pathname }
+    });
+    if (res.error) showMsg(res.error.message, 'err');
+  });
+
+  loginForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email = loginEmail.value.trim();
+    var password = loginPassword.value;
+    loginBtn.disabled = true;
+    showMsg('Memproses...');
+    var res = await sb.auth.signInWithPassword({ email: email, password: password });
+    loginBtn.disabled = false;
+    if (res.error) { showMsg('Email atau kata sandi salah.', 'err'); return; }
+    showMsg('Berhasil masuk!', 'ok');
+    setTimeout(closeModal, 700);
+  });
+
+  forgotLink.addEventListener('click', function(e){
+    e.preventDefault();
+    forgotEmail.value = loginEmail.value.trim();
+    showView('forgot');
+    forgotEmail.focus();
+  });
+
+  forgotBackBtn.addEventListener('click', function(){
+    showView('login');
+    loginEmail.focus();
+  });
+
+  forgotForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email = forgotEmail.value.trim();
+    forgotBtn.disabled = true;
+    showMsg('Mengirim...');
+    var res = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname
+    });
+    forgotBtn.disabled = false;
+    if (res.error) { showMsg(res.error.message, 'err'); return; }
+    showMsg('Cek email kamu untuk link reset password.', 'ok');
+  });
+
+  signupForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email = signupEmail.value.trim();
+    var password = signupPassword.value;
+    signupBtn.disabled = true;
+    showMsg('Memproses...');
+    var res = await sb.auth.signUp({ email: email, password: password });
+    var alreadyRegistered = (res.error && /registered|exists/i.test(res.error.message)) ||
+      (!res.error && res.data && res.data.user && Array.isArray(res.data.user.identities) && res.data.user.identities.length === 0);
+    if (res.error && !alreadyRegistered) {
+      signupBtn.disabled = false;
+      showMsg(res.error.message, 'err');
+      return;
+    }
+    try { await sb.auth.signInWithOtp({ email: email, options: { shouldCreateUser: false } }); } catch (err) {}
+    signupBtn.disabled = false;
+    signupEmailLabel.textContent = email;
+    showView('signupVerify');
+    showMsg(alreadyRegistered
+      ? 'Kalau email ini sudah terdaftar, cek inbox untuk instruksi masuk.'
+      : 'Kode terkirim, cek emailmu.', 'ok');
+    setTimeout(function(){ signupCode.focus(); }, 50);
+  });
+
+  signupVerifyBackBtn.addEventListener('click', function(){
+    showView('signup');
+    signupEmail.focus();
+  });
+
+  signupVerifyForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var email = signupEmailLabel.textContent;
+    var code = signupCode.value.trim();
+    if (code.length !== 6) { showMsg('Masukkan 6 digit kode dari email.', 'err'); return; }
+    signupVerifyBtn.disabled = true;
+    showMsg('Memverifikasi...');
+    var res = await sb.auth.verifyOtp({ email: email, token: code, type: 'email' });
+    signupVerifyBtn.disabled = false;
+    if (res.error) { showMsg(res.error.message, 'err'); return; }
+    showMsg('Berhasil! Kamu sudah masuk.', 'ok');
+    setTimeout(closeModal, 700);
+  });
+
+  recoveryForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var p1 = recoveryPassword.value;
+    var p2 = recoveryPassword2.value;
+    if (p1.length < 6) { showMsg('Password minimal 6 karakter.', 'err'); return; }
+    if (p1 !== p2) { showMsg('Konfirmasi password tidak sama.', 'err'); return; }
+    recoveryBtn.disabled = true;
+    showMsg('Menyimpan...');
+    var res = await sb.auth.updateUser({ password: p1 });
+    recoveryBtn.disabled = false;
+    if (res.error) { showMsg(res.error.message, 'err'); return; }
+    showMsg('Password berhasil diperbarui!', 'ok');
+    setTimeout(function(){ showView('login'); }, 1200);
+  });
+
+  function applySession(session){
+    var loggedIn = !!session;
+    var label = loggedIn ? (session.user.email || session.user.user_metadata.full_name || 'Akun') : null;
+    Array.prototype.forEach.call(document.querySelectorAll('a[href="#masuk"]'), function(a){
+      a.textContent = loggedIn ? label : 'Masuk';
+      a.dataset.mode = loggedIn ? 'signout' : 'login';
+      a.title = loggedIn ? 'Klik untuk keluar' : '';
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('a[href="#daftar"]'), function(a){
+      a.dataset.mode = loggedIn ? 'signout' : 'signup';
+    });
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('a[href="#masuk"]'), function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      if (a.dataset.mode === 'signout') { sb.auth.signOut(); return; }
+      openModal('login');
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('a[href="#daftar"]'), function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      if (a.dataset.mode === 'signout') { sb.auth.signOut(); return; }
+      openModal('signup');
+    });
+  });
+
+  function hasRecoveryParams(){
+    var hash = window.location.hash || '';
+    var search = window.location.search || '';
+    return /type=recovery/.test(hash) || /type=recovery/.test(search);
+  }
+  if (hasRecoveryParams()) {
+    openModal('recovery');
+    window.history.replaceState(null, '', window.location.pathname);
+  }
+  sb.auth.onAuthStateChange(function(event, session){
+    if (event === 'PASSWORD_RECOVERY') { openModal('recovery'); }
+    applySession(session);
+  });
+  sb.auth.getSession().then(function(res){ applySession(res.data.session); });
 })();
 </script>
 
