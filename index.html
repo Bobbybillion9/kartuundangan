@@ -105,7 +105,15 @@
   .drawer-links a{font-family:'Fraunces',serif;font-size:22px;padding:10px 0;border-bottom:1px solid var(--line-soft);}
   .drawer-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;}
 
-  .hero{display:grid;grid-template-columns:1.05fr 0.95fr;gap:var(--s6);align-items:center;padding-top:var(--s6);padding-bottom:var(--s7);}
+  .hero{display:grid;grid-template-columns:1.05fr 0.95fr;column-gap:var(--s6);align-items:center;padding-top:var(--s6);padding-bottom:var(--s7);
+    grid-template-areas:
+      "intro  slider"
+      "cta    slider"
+      "trust  slider";}
+  .hero-intro{grid-area:intro;}
+  .hero-cta{grid-area:cta;}
+  .hero-trust{grid-area:trust;}
+  .hero-slider{grid-area:slider;}
   .hero h1{margin-bottom:var(--s3);}
   .hero-lead{font-size:17px;max-width:440px;margin-bottom:var(--s4);}
   .hero-actions{display:flex;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s3);}
@@ -114,13 +122,25 @@
   .trust-item .n{font-family:'Fraunces',serif;font-size:21px;font-weight:600;}
   .trust-item .l{font-size:12px;color:var(--ink-soft);line-height:1.4;}
 
-  .card-stack{position:relative;height:390px;}
-  .invite-card{position:absolute;width:256px;background:var(--card);border-radius:var(--r-lg);padding:var(--s5) var(--s3);text-align:center;box-shadow:var(--shadow);border:1px solid var(--line-soft);}
-  .invite-card.back{top:24px;left:36px;transform:rotate(-6deg);background:var(--accent-tint);box-shadow:none;}
-  .invite-card .ec{font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-soft);}
-  .invite-card .names{font-family:'Fraunces',serif;font-size:25px;line-height:1.3;margin:var(--s2) 0 var(--s1);color:var(--ink);}
-  .invite-card .divider{width:26px;height:1px;background:var(--accent);opacity:0.5;margin:var(--s2) auto;}
-  .invite-card .date{font-size:11.5px;color:var(--ink-soft);letter-spacing:0.08em;}
+  .slider-frame{position:relative;height:400px;}
+  .slider-viewport{position:relative;width:100%;height:100%;overflow:hidden;touch-action:pan-y;}
+  .slide-card{position:absolute;top:50%;left:50%;width:230px;aspect-ratio:3/4;background:var(--card);border-radius:var(--r-lg);padding:var(--s5) var(--s3);display:flex;flex-direction:column;justify-content:center;text-align:center;box-shadow:var(--shadow);border:1px solid var(--line-soft);transition:transform .45s cubic-bezier(.22,.61,.36,1),opacity .45s ease;cursor:grab;user-select:none;-webkit-user-select:none;}
+  .slide-card:active{cursor:grabbing;}
+  .slide-card .ec{font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-soft);}
+  .slide-card .names{font-family:'Fraunces',serif;font-size:25px;line-height:1.3;margin:var(--s2) 0 var(--s1);color:var(--ink);}
+  .slide-card .divider{width:26px;height:1px;background:var(--accent);opacity:0.5;margin:var(--s2) auto;}
+  .slide-card .date{font-size:11.5px;color:var(--ink-soft);letter-spacing:0.08em;}
+  .slide-card[data-pos="active"]{transform:translate(-50%,-50%) scale(1);opacity:1;z-index:3;}
+  .slide-card[data-pos="prev"]{transform:translate(calc(-50% - 122px),-50%) scale(.82);opacity:.45;z-index:2;}
+  .slide-card[data-pos="next"]{transform:translate(calc(-50% + 122px),-50%) scale(.82);opacity:.45;z-index:2;}
+  .slide-card[data-pos="hidden"]{transform:translate(-50%,-50%) scale(.7);opacity:0;z-index:1;pointer-events:none;}
+  .slider-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--line);color:var(--ink);display:flex;align-items:center;justify-content:center;z-index:5;box-shadow:var(--shadow);}
+  .slider-arrow:hover{background:var(--paper-2);}
+  .slider-arrow.prev{left:4px;}
+  .slider-arrow.next{right:4px;}
+  .slider-dots{display:flex;justify-content:center;gap:8px;margin-top:var(--s3);}
+  .slider-dot{width:8px;height:8px;border-radius:50%;background:var(--line);border:none;padding:0;cursor:pointer;transition:background .2s,transform .2s;}
+  .slider-dot.active{background:var(--accent);transform:scale(1.3);}
 
   .band{background:var(--paper-2);}
   .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);}
@@ -254,10 +274,14 @@
     section{padding-top:var(--s5);padding-bottom:var(--s5);}
     .nav-primary,.desktop-only,.nav-login{display:none;}
     .burger{display:flex;}
-    .hero{grid-template-columns:1fr;gap:var(--s5);padding-top:var(--s4);padding-bottom:var(--s5);}
-    .card-stack{height:290px;max-width:270px;margin:0 auto;order:-1;}
-    .invite-card{width:230px;padding:var(--s4) var(--s3);}
-    .invite-card.back{left:30px;top:20px;}
+    .hero{grid-template-columns:1fr;grid-template-areas:"intro" "slider" "cta" "trust";row-gap:var(--s4);column-gap:0;padding-top:var(--s4);padding-bottom:var(--s5);}
+    .hero-lead{margin-bottom:0;}
+    .hero-trust{margin-top:0;}
+    .hero-slider{width:100%;max-width:280px;margin:0 auto;}
+    .slider-frame{height:300px;}
+    .slide-card{width:190px;padding:var(--s4) var(--s3);}
+    .slide-card[data-pos="prev"]{transform:translate(calc(-50% - 92px),-50%) scale(.82);}
+    .slide-card[data-pos="next"]{transform:translate(calc(-50% + 92px),-50%) scale(.82);}
     .grid-3,.grid-2,.price-rail{grid-template-columns:1fr;}
     .reseller{grid-template-columns:1fr;padding:var(--s4) var(--s3);gap:var(--s3);}
     .section-head{margin-bottom:var(--s4);}
@@ -269,8 +293,32 @@
     .tpl-actions{flex-direction:column;}
     .final-cta{padding:var(--s5) var(--s3);}
     .tier-desc{min-height:auto;}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:var(--s4) var(--s3);}
     body{padding-bottom:0;}
     .sticky-cta.show ~ footer{padding-bottom:var(--s6);}
+  }
+  @media(max-width:480px){
+    section{padding-top:var(--s4);padding-bottom:var(--s4);}
+    .hero{padding-top:var(--s3);padding-bottom:var(--s4);gap:var(--s4);}
+    .hero-lead{max-width:none;}
+    .hero-trust{gap:var(--s3) var(--s4);margin-top:0;padding-top:var(--s3);}
+    .hero-slider{max-width:220px;}
+    .slider-frame{height:250px;}
+    .slide-card{width:150px;padding:var(--s3) var(--s2);}
+    .slide-card .names{font-size:19px;}
+    .slide-card[data-pos="prev"]{transform:translate(calc(-50% - 72px),-50%) scale(.82);}
+    .slide-card[data-pos="next"]{transform:translate(calc(-50% + 72px),-50%) scale(.82);}
+    .slider-arrow{width:32px;height:32px;}
+    .btn{padding:12px 18px;}
+    .step-card,.path-card,.price-card,.tpl-body{padding:var(--s3);}
+    .reseller{padding:var(--s3);}
+    .final-cta{padding:var(--s4) var(--s2);}
+    .modal-overlay{padding:var(--s2);}
+    .modal-card{padding:var(--s4) var(--s3) var(--s3);}
+    .foot-grid{grid-template-columns:1fr;gap:var(--s3);margin-bottom:var(--s4);}
+    .foot-bottom{flex-direction:column;align-items:flex-start;}
+    .price-amount .num{font-size:27px;}
+    .faq-item summary{font-size:15px;gap:var(--s2);}
   }
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto;}
@@ -400,32 +448,61 @@
 </div>
 
 <section class="hero wrap">
-  <div>
+  <div class="hero-intro">
     <p class="eyebrow">Undangan digital pernikahan</p>
     <h1>Undangan yang terasa <span class="script">personal</span>, bukan template sejuta orang.</h1>
     <p class="hero-lead">Pilih tema kurasi, isi data acara, lalu bagikan link personal ke setiap tamu lengkap dengan pesan otomatis. Buat sendiri atau biar admin kami yang kerjakan — harganya sama.</p>
+  </div>
+  <div class="hero-cta">
     <div class="hero-actions">
       <a class="btn btn-primary" href="#daftar">Daftar &amp; coba gratis</a>
       <a class="btn btn-outline" href="#dibuatin-admin">Minta dibuatin admin</a>
     </div>
     <p class="hero-note">Gratis untuk mencoba dan melihat hasil. Bayar hanya saat kamu aktifkan undangan.</p>
-    <div class="hero-trust">
-      <div class="trust-item"><div class="n">3 menit</div><div class="l">Rata-rata sampai jadi</div></div>
-      <div class="trust-item"><div class="n">Tanpa</div><div class="l">Masa aktif &amp; kedaluwarsa</div></div>
-      <div class="trust-item"><div class="n">Unlimited</div><div class="l">Nama tamu &amp; penerima</div></div>
-    </div>
   </div>
-  <div class="card-stack">
-    <div class="invite-card back">
-      <p class="ec">The wedding of</p>
-      <div class="names">Budi &amp; Wulan</div>
+  <div class="hero-trust">
+    <div class="trust-item"><div class="n">3 menit</div><div class="l">Rata-rata sampai jadi</div></div>
+    <div class="trust-item"><div class="n">Tanpa</div><div class="l">Masa aktif &amp; kedaluwarsa</div></div>
+    <div class="trust-item"><div class="n">Unlimited</div><div class="l">Nama tamu &amp; penerima</div></div>
+  </div>
+  <div class="hero-slider" id="heroSlider">
+    <div class="slider-frame">
+      <div class="slider-viewport">
+        <div class="slider-track" id="sliderTrack">
+          <div class="slide-card">
+            <p class="ec">The wedding of</p>
+            <div class="names">Andi &amp; Sarah</div>
+            <div class="divider"></div>
+            <p class="date">14 . 11 . 2026</p>
+          </div>
+          <div class="slide-card">
+            <p class="ec">The wedding of</p>
+            <div class="names">Budi &amp; Wulan</div>
+            <div class="divider"></div>
+            <p class="date">22 . 08 . 2026</p>
+          </div>
+          <div class="slide-card">
+            <p class="ec">The wedding of</p>
+            <div class="names">Dimas &amp; Citra</div>
+            <div class="divider"></div>
+            <p class="date">05 . 12 . 2026</p>
+          </div>
+          <div class="slide-card">
+            <p class="ec">The wedding of</p>
+            <div class="names">Rian &amp; Putri</div>
+            <div class="divider"></div>
+            <p class="date">19 . 09 . 2026</p>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="slider-arrow prev" id="sliderPrev" aria-label="Slide sebelumnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button type="button" class="slider-arrow next" id="sliderNext" aria-label="Slide selanjutnya">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
     </div>
-    <div class="invite-card">
-      <p class="ec">The wedding of</p>
-      <div class="names">Andi &amp; Sarah</div>
-      <div class="divider"></div>
-      <p class="date">14 . 11 . 2026</p>
-    </div>
+    <div class="slider-dots" id="sliderDots"></div>
   </div>
 </section>
 
@@ -779,7 +856,7 @@
       <h2>Siap buat undangan pernikahanmu?</h2>
       <p>Daftar gratis, lihat hasilnya dulu, dan bayar hanya kalau kamu suka.</p>
       <div class="cta-actions">
-        <a class="btn btn-primary" href="#">Daftar gratis sekarang</a>
+        <a class="btn btn-primary" href="#daftar">Daftar gratis sekarang</a>
         <a class="btn btn-outline" href="https://wa.me/62xxxxxxxxxx" target="_blank" rel="noopener">Tanya admin dulu</a>
       </div>
     </div>
@@ -899,6 +976,60 @@
     if (b < 0 && window.innerWidth <= 960) sticky.classList.add('show');
     else sticky.classList.remove('show');
   }, {passive:true});
+
+  var track = document.getElementById('sliderTrack');
+  var viewport = document.querySelector('.slider-viewport');
+  var dotsWrap = document.getElementById('sliderDots');
+  var prevBtn = document.getElementById('sliderPrev');
+  var nextBtn = document.getElementById('sliderNext');
+  var slides = Array.prototype.slice.call(track.children);
+  var slideCount = slides.length;
+  var activeSlide = 0;
+
+  slides.forEach(function(_, i){
+    var dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'slider-dot';
+    dot.setAttribute('aria-label', 'Ke slide ' + (i + 1));
+    dot.addEventListener('click', function(){ goToSlide(i); });
+    dotsWrap.appendChild(dot);
+  });
+  var dots = Array.prototype.slice.call(dotsWrap.children);
+
+  function renderSlider(){
+    slides.forEach(function(s, i){
+      var diff = (i - activeSlide + slideCount) % slideCount;
+      var pos = diff === 0 ? 'active' : diff === 1 ? 'next' : diff === slideCount - 1 ? 'prev' : 'hidden';
+      s.dataset.pos = pos;
+    });
+    dots.forEach(function(d, i){ d.classList.toggle('active', i === activeSlide); });
+  }
+  function goToSlide(i){
+    activeSlide = (i + slideCount) % slideCount;
+    renderSlider();
+  }
+  function nextSlide(){ goToSlide(activeSlide + 1); }
+  function prevSlide(){ goToSlide(activeSlide - 1); }
+
+  prevBtn.addEventListener('click', prevSlide);
+  nextBtn.addEventListener('click', nextSlide);
+
+  var touchStartX = null;
+  var touchCurrentX = null;
+  viewport.addEventListener('touchstart', function(e){
+    touchStartX = touchCurrentX = e.touches[0].clientX;
+  }, {passive:true});
+  viewport.addEventListener('touchmove', function(e){
+    touchCurrentX = e.touches[0].clientX;
+  }, {passive:true});
+  viewport.addEventListener('touchend', function(){
+    if (touchStartX === null || touchCurrentX === null) return;
+    var dx = touchCurrentX - touchStartX;
+    if (Math.abs(dx) > 40) { dx < 0 ? nextSlide() : prevSlide(); }
+    touchStartX = touchCurrentX = null;
+  });
+
+  renderSlider();
 })();
 </script>
 
@@ -1129,19 +1260,12 @@
     });
   }
 
-  Array.prototype.forEach.call(document.querySelectorAll('a[href="#masuk"]'), function(a){
-    a.addEventListener('click', function(e){
-      e.preventDefault();
-      if (a.dataset.mode === 'signout') { sb.auth.signOut(); return; }
-      openModal('login');
-    });
-  });
-  Array.prototype.forEach.call(document.querySelectorAll('a[href="#daftar"]'), function(a){
-    a.addEventListener('click', function(e){
-      e.preventDefault();
-      if (a.dataset.mode === 'signout') { sb.auth.signOut(); return; }
-      openModal('signup');
-    });
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href="#masuk"], a[href="#daftar"]');
+    if (!a) return;
+    e.preventDefault();
+    if (a.dataset.mode === 'signout') { sb.auth.signOut(); return; }
+    openModal(a.getAttribute('href') === '#masuk' ? 'login' : 'signup');
   });
 
   function hasRecoveryParams(){
