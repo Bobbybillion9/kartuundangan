@@ -1212,12 +1212,15 @@
       showMsg(res.error.message, 'err');
       return;
     }
+    if (alreadyRegistered) {
+      signupBtn.disabled = false;
+      showMsg('Email ini sudah terdaftar. Silakan gunakan menu Masuk.', 'err');
+      return;
+    }
     signupBtn.disabled = false;
     signupEmailLabel.textContent = email;
     showView('signupVerify');
-    showMsg(alreadyRegistered
-      ? 'Kalau email ini sudah terdaftar, cek inbox untuk instruksi masuk.'
-      : 'Kode terkirim, cek emailmu.', 'ok');
+    showMsg('Kode terkirim, cek emailmu.', 'ok');
     setTimeout(function(){ signupCode.focus(); }, 50);
   });
 
