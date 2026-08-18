@@ -93,6 +93,11 @@
   .nav-right{display:flex;align-items:center;gap:10px;}
   .nav-login{font-size:14px;color:var(--ink-mid);}
   .nav-login:hover{color:var(--accent-dark);}
+  .nav-account{position:relative;display:inline-flex;align-items:center;}
+  .nav-account-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:160px;background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-md);box-shadow:var(--shadow);padding:6px;display:none;flex-direction:column;z-index:130;}
+  .nav-account-menu.open{display:flex;}
+  .nav-account-item{display:block;width:100%;text-align:left;padding:9px 10px;border-radius:var(--r-sm);font-size:14px;color:var(--ink-mid);background:none;border:none;font-family:inherit;cursor:pointer;}
+  .nav-account-item:hover{background:var(--paper);color:var(--ink);}
   .icon-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink-mid);border:1px solid var(--line);flex-shrink:0;}
   .icon-btn:hover{background:var(--paper-2);}
   .desktop-only{display:inline-flex;}
@@ -249,6 +254,11 @@
   .auth-form input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
   .auth-form input.code-input{letter-spacing:0.5em;text-align:center;font-family:'Fraunces',serif;font-size:20px;padding:11px 8px;}
   .otp-info{font-size:13px;color:var(--ink-mid);margin-bottom:var(--s3);}
+  .badge{display:inline-block;padding:3px 10px;border-radius:var(--r-full);font-size:12px;background:var(--paper);border:1px solid var(--line);color:var(--ink-mid);margin-right:6px;}
+  .profile-badges{margin-bottom:var(--s3);}
+  .profile-name-row{display:flex;gap:8px;margin-bottom:var(--s3);}
+  .profile-name-row input{flex:1;margin-bottom:0;}
+  .profile-readonly{padding:11px 14px;border-radius:var(--r-sm);background:var(--paper);border:1.5px solid var(--line-soft);color:var(--ink-mid);font-size:15px;margin-bottom:var(--s3);}
   .auth-msg{font-size:13px;text-align:center;margin-top:var(--s3);min-height:18px;color:var(--ink-mid);}
   .auth-msg.err{color:#C0503D;}
   html[data-theme="dark"] .auth-msg.err{color:#E08A78;}
@@ -343,7 +353,14 @@
         <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
         <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
       </button>
-      <a class="nav-login" href="#masuk">Masuk</a>
+      <div class="nav-account" id="navAccount">
+        <a class="nav-login" href="#masuk" id="navAccountBtn">Masuk</a>
+        <div class="nav-account-menu" id="navAccountMenu">
+          <button type="button" class="nav-account-item" id="menuProfilBtn">Profil</button>
+          <a class="nav-account-item" id="menuBantuanLink" href="https://wa.me/62xxxxxxxxxx" target="_blank" rel="noopener">Bantuan</a>
+          <button type="button" class="nav-account-item" id="menuKeluarBtn">Keluar</button>
+        </div>
+      </div>
       <a class="btn btn-primary btn-sm desktop-only nav-signup" href="#daftar">Daftar gratis</a>
       <button class="burger" id="burgerBtn" aria-label="Buka menu">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
@@ -368,7 +385,9 @@
   </div>
   <div class="drawer-foot">
     <a class="btn btn-primary btn-block nav-signup" href="#daftar">Daftar gratis</a>
-    <a class="btn btn-ghost btn-block" href="#masuk">Masuk</a>
+    <a class="btn btn-ghost btn-block" href="#masuk" id="drawerLoginBtn">Masuk</a>
+    <a class="btn btn-ghost btn-block" href="#" id="drawerProfilBtn" style="display:none">Profil</a>
+    <a class="btn btn-ghost btn-block" href="#" id="drawerKeluarBtn" style="display:none">Keluar</a>
   </div>
 </div>
 
@@ -441,6 +460,31 @@
       <input type="password" id="recoveryPassword2" placeholder="Ulangi password baru" required minlength="6" autocomplete="new-password">
       <button type="submit" class="btn btn-primary btn-block" id="recoveryBtn">Simpan password baru</button>
     </form>
+
+    <div class="auth-form" id="profileView" style="display:none">
+      <label for="profileName">Nama tampilan</label>
+      <div class="profile-name-row">
+        <input type="text" id="profileName" placeholder="Nama kamu" maxlength="80">
+        <button type="button" class="btn btn-ghost btn-sm" id="profileNameSaveBtn">Simpan</button>
+      </div>
+
+      <label>Email</label>
+      <p class="profile-readonly" id="profileEmail"></p>
+
+      <label>Metode masuk terhubung</label>
+      <div class="profile-badges" id="profileBadges"></div>
+
+      <button type="button" class="btn btn-outline btn-block" id="profilePasswordToggleBtn">Ganti Password</button>
+      <form id="profilePasswordForm" class="profile-password-form" style="display:none">
+        <label for="profileNewPassword">Password baru</label>
+        <input type="password" id="profileNewPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+        <label for="profileNewPassword2">Konfirmasi password baru</label>
+        <input type="password" id="profileNewPassword2" placeholder="Ulangi password baru" required minlength="6" autocomplete="new-password">
+        <button type="submit" class="btn btn-primary btn-block" id="profilePasswordSubmitBtn">Simpan password</button>
+      </form>
+
+      <button type="button" class="btn btn-ghost btn-block" id="profileLogoutBtn">Keluar</button>
+    </div>
 
     <p class="auth-msg" id="authMsg" aria-live="polite"></p>
     <p class="auth-legal" id="authLegal">Dengan melanjutkan, kamu menyetujui Syarat &amp; Ketentuan kami.</p>
@@ -892,7 +936,7 @@
         <h4>Akun &amp; bantuan</h4>
         <ul>
           <li><a class="nav-signup" href="#daftar">Daftar</a></li>
-          <li><a href="#masuk">Masuk</a></li>
+          <li><a class="nav-login-plain" href="#masuk">Masuk</a></li>
           <li><a href="https://wa.me/62xxxxxxxxxx">Kontak WhatsApp</a></li>
           <li><a href="#">Syarat &amp; ketentuan</a></li>
         </ul>
@@ -1083,14 +1127,40 @@
   var recoveryPassword2 = document.getElementById('recoveryPassword2');
   var recoveryBtn = document.getElementById('recoveryBtn');
 
-  var allForms = [loginForm, signupForm, signupVerifyForm, forgotForm, recoveryForm];
+  var navAccount = document.getElementById('navAccount');
+  var navAccountBtn = document.getElementById('navAccountBtn');
+  var navAccountMenu = document.getElementById('navAccountMenu');
+  var menuProfilBtn = document.getElementById('menuProfilBtn');
+  var menuBantuanLink = document.getElementById('menuBantuanLink');
+  var menuKeluarBtn = document.getElementById('menuKeluarBtn');
+
+  var drawerLoginBtn = document.getElementById('drawerLoginBtn');
+  var drawerProfilBtn = document.getElementById('drawerProfilBtn');
+  var drawerKeluarBtn = document.getElementById('drawerKeluarBtn');
+
+  var profileView = document.getElementById('profileView');
+  var profileName = document.getElementById('profileName');
+  var profileNameSaveBtn = document.getElementById('profileNameSaveBtn');
+  var profileEmail = document.getElementById('profileEmail');
+  var profileBadges = document.getElementById('profileBadges');
+  var profilePasswordToggleBtn = document.getElementById('profilePasswordToggleBtn');
+  var profilePasswordForm = document.getElementById('profilePasswordForm');
+  var profileNewPassword = document.getElementById('profileNewPassword');
+  var profileNewPassword2 = document.getElementById('profileNewPassword2');
+  var profilePasswordSubmitBtn = document.getElementById('profilePasswordSubmitBtn');
+  var profileLogoutBtn = document.getElementById('profileLogoutBtn');
+
+  var currentSession = null;
+
+  var allForms = [loginForm, signupForm, signupVerifyForm, forgotForm, recoveryForm, profileView];
 
   var views = {
     login:        { title:'Masuk ke akunmu', sub:'', showTabs:true,  showGoogle:true,  form:loginForm,        switchEl:toSignup, focus:loginEmail },
     signup:       { title:'Buat akun baru',  sub:'', showTabs:true,  showGoogle:true,  form:signupForm,       switchEl:toLogin,  focus:signupEmail },
     signupVerify: { title:'Verifikasi email', sub:'Masukkan kode 6 digit yang kami kirim ke emailmu.', showTabs:false, showGoogle:false, form:signupVerifyForm, switchEl:null, focus:signupCode },
     forgot:       { title:'Lupa kata sandi?', sub:'Masukkan email akunmu, kami kirim link untuk reset password.', showTabs:false, showGoogle:false, form:forgotForm, switchEl:null, focus:forgotEmail },
-    recovery:     { title:'Buat password baru', sub:'Masukkan password baru untuk akunmu.', showTabs:false, showGoogle:false, form:recoveryForm, switchEl:null, focus:recoveryPassword }
+    recovery:     { title:'Buat password baru', sub:'Masukkan password baru untuk akunmu.', showTabs:false, showGoogle:false, form:recoveryForm, switchEl:null, focus:recoveryPassword },
+    profile:      { title:'Profil kamu', sub:'', showTabs:false, showGoogle:false, form:profileView, switchEl:null, focus:null }
   };
 
   function showMsg(text, type){
@@ -1118,7 +1188,7 @@
   }
 
   function resetForms(){
-    allForms.forEach(function(f){ f.reset(); });
+    allForms.forEach(function(f){ if (f.tagName === 'FORM') f.reset(); });
   }
 
   function openModal(view){
@@ -1127,17 +1197,55 @@
     showView(name);
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-    setTimeout(function(){ views[name].focus.focus(); }, 50);
+    setTimeout(function(){ if (views[name].focus) views[name].focus.focus(); }, 50);
   }
   function closeModal(){
     overlay.classList.remove('open');
     document.body.style.overflow = '';
   }
 
+  function hasPasswordIdentity(session){
+    var identities = session.user.identities || [];
+    return identities.some(function(i){ return i.provider === 'email'; })
+        || !!(session.user.user_metadata && session.user.user_metadata.has_password);
+  }
+
+  function makeBadge(text){
+    var span = document.createElement('span');
+    span.className = 'badge';
+    span.textContent = text;
+    return span;
+  }
+
+  function renderProfile(){
+    if (!currentSession) return;
+    var user = currentSession.user;
+    profileName.value = user.user_metadata.full_name || '';
+    profileEmail.textContent = user.email || '';
+
+    var identities = user.identities || [];
+    var hasGoogle = identities.some(function(i){ return i.provider === 'google'; });
+    var hasPw = hasPasswordIdentity(currentSession);
+
+    profileBadges.innerHTML = '';
+    if (hasGoogle) profileBadges.appendChild(makeBadge('Google'));
+    if (hasPw) profileBadges.appendChild(makeBadge('Email'));
+
+    profilePasswordToggleBtn.textContent = hasPw ? 'Ganti Password' : 'Set Password';
+    profilePasswordForm.style.display = 'none';
+    profilePasswordForm.reset();
+  }
+
+  function openProfileModal(){
+    openModal('profile');
+    renderProfile();
+  }
+
   closeBtn.addEventListener('click', closeModal);
   overlay.addEventListener('click', function(e){ if (e.target === overlay) closeModal(); });
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    if (e.key === 'Escape') navAccountMenu.classList.remove('open');
   });
 
   tabLoginBtn.addEventListener('click', function(){ showView('login'); loginEmail.focus(); });
@@ -1259,13 +1367,24 @@
   });
 
   function applySession(session){
+    currentSession = session;
     var loggedIn = !!session;
     var label = loggedIn ? (session.user.email || session.user.user_metadata.full_name || 'Akun') : null;
-    Array.prototype.forEach.call(document.querySelectorAll('a[href="#masuk"]'), function(a){
+
+    Array.prototype.forEach.call(document.querySelectorAll('a.nav-login-plain'), function(a){
       a.textContent = loggedIn ? label : 'Masuk';
       a.dataset.mode = loggedIn ? 'signout' : 'login';
       a.title = loggedIn ? 'Klik untuk keluar' : '';
     });
+
+    navAccountBtn.textContent = loggedIn ? label : 'Masuk';
+    navAccountBtn.dataset.mode = loggedIn ? 'account' : 'login';
+    navAccountMenu.classList.remove('open');
+
+    drawerLoginBtn.style.display = loggedIn ? 'none' : '';
+    drawerProfilBtn.style.display = loggedIn ? 'block' : 'none';
+    drawerKeluarBtn.style.display = loggedIn ? 'block' : 'none';
+
     Array.prototype.forEach.call(document.querySelectorAll('a.nav-signup'), function(a){
       a.dataset.mode = loggedIn ? 'signout' : 'signup';
       a.style.display = loggedIn ? 'none' : '';
@@ -1273,11 +1392,79 @@
   }
 
   document.addEventListener('click', function(e){
+    var toggle = e.target.closest('#navAccountBtn');
+    if (toggle) {
+      e.preventDefault();
+      if (toggle.dataset.mode === 'account') {
+        navAccountMenu.classList.toggle('open');
+      } else {
+        openModal('login');
+      }
+      return;
+    }
     var a = e.target.closest('a[href="#masuk"], a[href="#daftar"]');
-    if (!a) return;
+    if (a) {
+      e.preventDefault();
+      if (a.dataset.mode === 'signout') { sb.auth.signOut(); return; }
+      openModal(a.getAttribute('href') === '#masuk' ? 'login' : 'signup');
+      return;
+    }
+    if (!e.target.closest('#navAccount')) { navAccountMenu.classList.remove('open'); }
+  });
+
+  menuProfilBtn.addEventListener('click', function(){
+    navAccountMenu.classList.remove('open');
+    openProfileModal();
+  });
+  menuBantuanLink.addEventListener('click', function(){
+    navAccountMenu.classList.remove('open');
+  });
+  menuKeluarBtn.addEventListener('click', function(){
+    navAccountMenu.classList.remove('open');
+    sb.auth.signOut();
+  });
+
+  drawerProfilBtn.addEventListener('click', function(e){ e.preventDefault(); openProfileModal(); });
+  drawerKeluarBtn.addEventListener('click', function(e){ e.preventDefault(); sb.auth.signOut(); });
+
+  profileNameSaveBtn.addEventListener('click', async function(){
+    var name = profileName.value.trim();
+    profileNameSaveBtn.disabled = true;
+    showMsg('Menyimpan...');
+    var res = await sb.auth.updateUser({ data: { full_name: name } });
+    profileNameSaveBtn.disabled = false;
+    if (res.error) { showMsg(res.error.message, 'err'); return; }
+    if (currentSession) currentSession.user = res.data.user;
+    showMsg('Nama tersimpan.', 'ok');
+  });
+
+  profilePasswordToggleBtn.addEventListener('click', function(){
+    var willShow = profilePasswordForm.style.display === 'none';
+    profilePasswordForm.style.display = willShow ? 'block' : 'none';
+    if (willShow) profileNewPassword.focus();
+  });
+
+  profilePasswordForm.addEventListener('submit', async function(e){
     e.preventDefault();
-    if (a.dataset.mode === 'signout') { sb.auth.signOut(); return; }
-    openModal(a.getAttribute('href') === '#masuk' ? 'login' : 'signup');
+    var p1 = profileNewPassword.value;
+    var p2 = profileNewPassword2.value;
+    if (p1.length < 6) { showMsg('Password minimal 6 karakter.', 'err'); return; }
+    if (p1 !== p2) { showMsg('Konfirmasi password tidak sama.', 'err'); return; }
+    profilePasswordSubmitBtn.disabled = true;
+    showMsg('Menyimpan...');
+    var res = await sb.auth.updateUser({ password: p1, data: { has_password: true } });
+    profilePasswordSubmitBtn.disabled = false;
+    if (res.error) { showMsg(res.error.message, 'err'); return; }
+    if (currentSession) currentSession.user = res.data.user;
+    showMsg('Password berhasil disimpan.', 'ok');
+    profilePasswordForm.reset();
+    profilePasswordForm.style.display = 'none';
+    renderProfile();
+  });
+
+  profileLogoutBtn.addEventListener('click', function(){
+    closeModal();
+    sb.auth.signOut();
   });
 
   function hasRecoveryParams(){
