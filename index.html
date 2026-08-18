@@ -259,6 +259,7 @@
   .profile-name-row{display:flex;gap:8px;margin-bottom:var(--s3);}
   .profile-name-row input{flex:1;margin-bottom:0;}
   .profile-readonly{padding:11px 14px;border-radius:var(--r-sm);background:var(--paper);border:1.5px solid var(--line-soft);color:var(--ink-mid);font-size:15px;margin-bottom:var(--s3);}
+  .profile-actions{display:flex;flex-direction:column;gap:var(--s2);}
   .auth-msg{font-size:13px;text-align:center;margin-top:var(--s3);min-height:18px;color:var(--ink-mid);}
   .auth-msg.err{color:#C0503D;}
   html[data-theme="dark"] .auth-msg.err{color:#E08A78;}
@@ -474,16 +475,18 @@
       <label>Metode masuk terhubung</label>
       <div class="profile-badges" id="profileBadges"></div>
 
-      <button type="button" class="btn btn-outline btn-block" id="profilePasswordToggleBtn">Ganti Password</button>
-      <form id="profilePasswordForm" class="profile-password-form" style="display:none">
-        <label for="profileNewPassword">Password baru</label>
-        <input type="password" id="profileNewPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
-        <label for="profileNewPassword2">Konfirmasi password baru</label>
-        <input type="password" id="profileNewPassword2" placeholder="Ulangi password baru" required minlength="6" autocomplete="new-password">
-        <button type="submit" class="btn btn-primary btn-block" id="profilePasswordSubmitBtn">Simpan password</button>
-      </form>
+      <div class="profile-actions">
+        <button type="button" class="btn btn-outline btn-block" id="profilePasswordToggleBtn">Ganti Password</button>
+        <form id="profilePasswordForm" class="profile-password-form" style="display:none">
+          <label for="profileNewPassword">Password baru</label>
+          <input type="password" id="profileNewPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+          <label for="profileNewPassword2">Konfirmasi password baru</label>
+          <input type="password" id="profileNewPassword2" placeholder="Ulangi password baru" required minlength="6" autocomplete="new-password">
+          <button type="submit" class="btn btn-primary btn-block" id="profilePasswordSubmitBtn">Simpan password</button>
+        </form>
 
-      <button type="button" class="btn btn-ghost btn-block" id="profileLogoutBtn">Keluar</button>
+        <button type="button" class="btn btn-ghost btn-block" id="profileLogoutBtn">Keluar</button>
+      </div>
     </div>
 
     <p class="auth-msg" id="authMsg" aria-live="polite"></p>
