@@ -1098,7 +1098,10 @@
     msg.className = 'auth-msg' + (type ? ' ' + type : '');
   }
 
+  var currentView = 'login';
+
   function showView(name){
+    currentView = name;
     var v = views[name];
     authTitle.textContent = v.title;
     authSub.textContent = v.sub;
@@ -1144,11 +1147,17 @@
 
   googleBtn.addEventListener('click', async function(){
     showMsg('Mengalihkan ke Google...');
+    googleBtn.disabled = true;
+    views[currentView].form.style.display = 'none';
     var res = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin + window.location.pathname }
     });
-    if (res.error) showMsg(res.error.message, 'err');
+    if (res.error) {
+      views[currentView].form.style.display = 'block';
+      googleBtn.disabled = false;
+      showMsg(res.error.message, 'err');
+    }
   });
 
   loginForm.addEventListener('submit', async function(e){
