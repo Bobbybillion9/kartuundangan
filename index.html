@@ -1168,7 +1168,7 @@
     showMsg('Memproses...');
     var res = await sb.auth.signInWithPassword({ email: email, password: password });
     loginBtn.disabled = false;
-    if (res.error) { showMsg('Email atau kata sandi salah.', 'err'); return; }
+    if (res.error) { showMsg('Email atau kata sandi salah. Kalau kamu daftar lewat Google, coba tombol "Lanjutkan dengan Google" di atas.', 'err'); return; }
     showMsg('Berhasil masuk!', 'ok');
     setTimeout(closeModal, 700);
   });
