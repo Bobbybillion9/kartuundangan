@@ -1203,7 +1203,6 @@
       showMsg(res.error.message, 'err');
       return;
     }
-    try { await sb.auth.signInWithOtp({ email: email, options: { shouldCreateUser: false } }); } catch (err) {}
     signupBtn.disabled = false;
     signupEmailLabel.textContent = email;
     showView('signupVerify');
@@ -1225,7 +1224,7 @@
     if (code.length !== 6) { showMsg('Masukkan 6 digit kode dari email.', 'err'); return; }
     signupVerifyBtn.disabled = true;
     showMsg('Memverifikasi...');
-    var res = await sb.auth.verifyOtp({ email: email, token: code, type: 'email' });
+    var res = await sb.auth.verifyOtp({ email: email, token: code, type: 'signup' });
     signupVerifyBtn.disabled = false;
     if (res.error) { showMsg(res.error.message, 'err'); return; }
     showMsg('Berhasil! Kamu sudah masuk.', 'ok');
