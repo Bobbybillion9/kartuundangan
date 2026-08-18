@@ -344,7 +344,7 @@
         <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
       </button>
       <a class="nav-login" href="#masuk">Masuk</a>
-      <a class="btn btn-primary btn-sm desktop-only" href="#daftar">Daftar gratis</a>
+      <a class="btn btn-primary btn-sm desktop-only nav-signup" href="#daftar">Daftar gratis</a>
       <button class="burger" id="burgerBtn" aria-label="Buka menu">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -367,7 +367,7 @@
     <a href="#faq">FAQ</a>
   </div>
   <div class="drawer-foot">
-    <a class="btn btn-primary btn-block" href="#daftar">Daftar gratis</a>
+    <a class="btn btn-primary btn-block nav-signup" href="#daftar">Daftar gratis</a>
     <a class="btn btn-ghost btn-block" href="#masuk">Masuk</a>
   </div>
 </div>
@@ -891,7 +891,7 @@
       <div class="foot-col">
         <h4>Akun &amp; bantuan</h4>
         <ul>
-          <li><a href="#daftar">Daftar</a></li>
+          <li><a class="nav-signup" href="#daftar">Daftar</a></li>
           <li><a href="#masuk">Masuk</a></li>
           <li><a href="https://wa.me/62xxxxxxxxxx">Kontak WhatsApp</a></li>
           <li><a href="#">Syarat &amp; ketentuan</a></li>
@@ -914,7 +914,7 @@
     <div class="p1">Coba gratis, bayar saat aktivasi</div>
     <div class="p2">Mulai Rp49.000 · tanpa masa aktif</div>
   </div>
-  <a class="btn btn-primary btn-sm" href="#daftar">Daftar</a>
+  <a class="btn btn-primary btn-sm nav-signup" href="#daftar">Daftar</a>
 </div>
 
 <script>
@@ -1266,8 +1266,9 @@
       a.dataset.mode = loggedIn ? 'signout' : 'login';
       a.title = loggedIn ? 'Klik untuk keluar' : '';
     });
-    Array.prototype.forEach.call(document.querySelectorAll('a[href="#daftar"]'), function(a){
+    Array.prototype.forEach.call(document.querySelectorAll('a.nav-signup'), function(a){
       a.dataset.mode = loggedIn ? 'signout' : 'signup';
+      a.style.display = loggedIn ? 'none' : '';
     });
   }
 
