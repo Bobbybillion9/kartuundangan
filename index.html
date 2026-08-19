@@ -455,11 +455,11 @@
     </form>
 
     <form id="recoveryForm" class="auth-form" style="display:none">
-      <label for="recoveryPassword">Password baru</label>
+      <label for="recoveryPassword">Kata Sandi Baru</label>
       <input type="password" id="recoveryPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
-      <label for="recoveryPassword2">Konfirmasi password baru</label>
-      <input type="password" id="recoveryPassword2" placeholder="Ulangi password baru" required minlength="6" autocomplete="new-password">
-      <button type="submit" class="btn btn-primary btn-block" id="recoveryBtn">Simpan password baru</button>
+      <label for="recoveryPassword2">Konfirmasi Kata Sandi Baru</label>
+      <input type="password" id="recoveryPassword2" placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
+      <button type="submit" class="btn btn-primary btn-block" id="recoveryBtn">Simpan kata sandi baru</button>
     </form>
 
     <div class="auth-form" id="profileView" style="display:none">
@@ -476,7 +476,7 @@
       <div class="profile-badges" id="profileBadges"></div>
 
       <div class="profile-actions">
-        <button type="button" class="btn btn-outline btn-block" id="profilePasswordToggleBtn">Ganti Password</button>
+        <button type="button" class="btn btn-outline btn-block" id="profilePasswordToggleBtn">Ganti Kata Sandi</button>
 
         <button type="button" class="btn btn-ghost btn-block" id="profileLogoutBtn">Keluar</button>
       </div>
@@ -1152,8 +1152,8 @@
     login:        { title:'Masuk ke akunmu', sub:'', showTabs:true,  showGoogle:true,  form:loginForm,        switchEl:toSignup, focus:loginEmail },
     signup:       { title:'Buat akun baru',  sub:'', showTabs:true,  showGoogle:true,  form:signupForm,       switchEl:toLogin,  focus:signupEmail },
     signupVerify: { title:'Verifikasi email', sub:'Masukkan kode 6 digit yang kami kirim ke emailmu.', showTabs:false, showGoogle:false, form:signupVerifyForm, switchEl:null, focus:signupCode },
-    forgot:       { title:'Lupa kata sandi?', sub:'Masukkan email akunmu, kami kirim link untuk reset password.', showTabs:false, showGoogle:false, form:forgotForm, switchEl:null, focus:forgotEmail },
-    recovery:     { title:'Buat password baru', sub:'Masukkan password baru untuk akunmu.', showTabs:false, showGoogle:false, form:recoveryForm, switchEl:null, focus:recoveryPassword },
+    forgot:       { title:'Lupa kata sandi?', sub:'Masukkan email akunmu, kami kirim link untuk reset kata sandi.', showTabs:false, showGoogle:false, form:forgotForm, switchEl:null, focus:forgotEmail },
+    recovery:     { title:'Buat Kata Sandi Baru', sub:'Masukkan kata sandi baru untuk akunmu.', showTabs:false, showGoogle:false, form:recoveryForm, switchEl:null, focus:recoveryPassword },
     profile:      { title:'Profil kamu', sub:'', showTabs:false, showGoogle:false, form:profileView, switchEl:null, focus:null }
   };
 
@@ -1225,7 +1225,7 @@
     if (hasGoogle) profileBadges.appendChild(makeBadge('Google'));
     if (hasPw) profileBadges.appendChild(makeBadge('Email'));
 
-    profilePasswordToggleBtn.textContent = hasPw ? 'Ganti Password' : 'Set Password';
+    profilePasswordToggleBtn.textContent = hasPw ? 'Ganti Kata Sandi' : 'Atur Kata Sandi';
   }
 
   function openProfileModal(){
@@ -1294,7 +1294,7 @@
     });
     forgotBtn.disabled = false;
     if (res.error) { showMsg(res.error.message, 'err'); return; }
-    showMsg('Cek email kamu untuk link reset password.', 'ok');
+    showMsg('Cek email kamu untuk link reset kata sandi.', 'ok');
   });
 
   signupForm.addEventListener('submit', async function(e){
@@ -1346,14 +1346,14 @@
     e.preventDefault();
     var p1 = recoveryPassword.value;
     var p2 = recoveryPassword2.value;
-    if (p1.length < 6) { showMsg('Password minimal 6 karakter.', 'err'); return; }
-    if (p1 !== p2) { showMsg('Konfirmasi password tidak sama.', 'err'); return; }
+    if (p1.length < 6) { showMsg('Kata sandi minimal 6 karakter.', 'err'); return; }
+    if (p1 !== p2) { showMsg('Konfirmasi kata sandi tidak sama.', 'err'); return; }
     recoveryBtn.disabled = true;
     showMsg('Menyimpan...');
     var res = await sb.auth.updateUser({ password: p1, data: { has_password: true } });
     recoveryBtn.disabled = false;
     if (res.error) { showMsg(res.error.message, 'err'); return; }
-    showMsg('Password berhasil diperbarui!', 'ok');
+    showMsg('Kata sandi berhasil diperbarui!', 'ok');
     setTimeout(function(){ showView('login'); }, 1200);
   });
 
@@ -1443,7 +1443,7 @@
     });
     profilePasswordToggleBtn.disabled = false;
     if (res.error) { showMsg(res.error.message, 'err'); return; }
-    showMsg('Link reset password sudah dikirim ke emailmu.', 'ok');
+    showMsg('Link reset kata sandi sudah dikirim ke emailmu.', 'ok');
   });
 
   profileLogoutBtn.addEventListener('click', function(){
