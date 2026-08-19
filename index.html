@@ -1442,6 +1442,7 @@
   });
 
   profileLogoutBtn.addEventListener('click', function(){
+    if (!window.confirm('Yakin mau keluar?')) return;
     closeModal();
     sb.auth.signOut();
   });
