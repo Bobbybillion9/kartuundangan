@@ -1078,7 +1078,9 @@
 (function(){
   var SUPABASE_URL = 'https://ebjwjnxunedjftgzzbch.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_qUFa64f8yhx_3dYYwaP3Aw_kHD6JvuA';
-  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { flowType: 'implicit' }
+  });
 
   var overlay = document.getElementById('authOverlay');
   var closeBtn = document.getElementById('authClose');
