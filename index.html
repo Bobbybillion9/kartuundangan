@@ -1396,7 +1396,7 @@
     var a = e.target.closest('a[href="#masuk"], a[href="#daftar"]');
     if (a) {
       e.preventDefault();
-      if (a.dataset.mode === 'signout') { sb.auth.signOut(); return; }
+      if (a.dataset.mode === 'signout') { if (window.confirm('Yakin mau keluar?')) sb.auth.signOut(); return; }
       openModal(a.getAttribute('href') === '#masuk' ? 'login' : 'signup');
       return;
     }
@@ -1412,11 +1412,16 @@
   });
   menuKeluarBtn.addEventListener('click', function(){
     navAccountMenu.classList.remove('open');
+    if (!window.confirm('Yakin mau keluar?')) return;
     sb.auth.signOut();
   });
 
   drawerProfilBtn.addEventListener('click', function(e){ e.preventDefault(); openProfileModal(); });
-  drawerKeluarBtn.addEventListener('click', function(e){ e.preventDefault(); sb.auth.signOut(); });
+  drawerKeluarBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    if (!window.confirm('Yakin mau keluar?')) return;
+    sb.auth.signOut();
+  });
 
   profileNameSaveBtn.addEventListener('click', async function(){
     var name = profileName.value.trim();
