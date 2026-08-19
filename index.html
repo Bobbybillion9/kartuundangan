@@ -250,6 +250,19 @@
   .modal-card-sm{max-width:340px;}
   #confirmOverlay{z-index:130;}
   .modal-close{position:absolute;top:var(--s3);right:var(--s3);}
+
+  .workspace-overlay{position:fixed;inset:0;background:var(--paper);z-index:110;display:none;overflow-y:auto;}
+  .workspace-overlay.open{display:block;}
+  .workspace-shell{max-width:1120px;margin:0 auto;padding:var(--s4) var(--s3) var(--s6);}
+  .workspace-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:var(--s4);border-bottom:1px solid var(--line-soft);margin-bottom:var(--s5);}
+  .workspace-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--s3);margin-top:var(--s4);}
+  .tpl-pick-card{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;}
+  .tpl-pick-body{padding:var(--s3);display:flex;flex-direction:column;gap:8px;}
+  .tpl-pick-body .name{font-family:'Fraunces',serif;font-size:17px;color:var(--ink);}
+  .tpl-pick-body .cat{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);}
+  .workspace-msg{text-align:center;color:var(--ink-mid);font-size:14px;margin-top:var(--s4);min-height:18px;}
+  .workspace-placeholder{text-align:center;padding:var(--s7) 0;}
+  .workspace-placeholder h2{margin-bottom:var(--s2);}
   .modal-head{text-align:center;margin-bottom:var(--s4);}
   .modal-head .logo{display:block;margin-bottom:var(--s3);}
   .modal-head h3{margin-bottom:6px;}
@@ -545,6 +558,35 @@
     <div class="profile-actions">
       <button type="button" class="btn btn-danger btn-block" id="confirmOkBtn">Ya, Keluar</button>
       <button type="button" class="btn btn-ghost btn-block" id="confirmCancelBtn">Batal</button>
+    </div>
+  </div>
+</div>
+
+<div class="workspace-overlay" id="workspaceOverlay">
+  <div class="workspace-shell">
+    <div class="workspace-head">
+      <span class="logo">Kartu <span class="script">Undangan</span></span>
+      <button class="icon-btn" id="workspaceClose" aria-label="Tutup">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="workspace-step" id="stepTheme">
+      <div class="section-head">
+        <p class="eyebrow">Langkah 1</p>
+        <h2>Pilih Tema</h2>
+        <p>Pilih tema undangan yang paling cocok untuk acaramu. Bisa diganti lagi nanti.</p>
+      </div>
+      <div class="workspace-grid" id="templateGrid"></div>
+      <p class="workspace-msg" id="workspaceMsg"></p>
+    </div>
+
+    <div class="workspace-step" id="stepPlaceholder" style="display:none">
+      <div class="workspace-placeholder">
+        <h2>Lanjut ke isi data — segera hadir</h2>
+        <p>Tema kamu sudah tersimpan. Form isi data undangan sedang kami siapkan.</p>
+        <button type="button" class="btn btn-ghost" id="backToThemeBtn">Kembali pilih tema</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1310,6 +1352,86 @@
     });
   }
 
+  var workspaceOverlay = document.getElementById('workspaceOverlay');
+  var workspaceClose = document.getElementById('workspaceClose');
+  var stepTheme = document.getElementById('stepTheme');
+  var stepPlaceholder = document.getElementById('stepPlaceholder');
+  var templateGrid = document.getElementById('templateGrid');
+  var workspaceMsg = document.getElementById('workspaceMsg');
+  var backToThemeBtn = document.getElementById('backToThemeBtn');
+
+  function showWorkspaceStep(name){
+    stepTheme.style.display = name === 'theme' ? 'block' : 'none';
+    stepPlaceholder.style.display = name === 'placeholder' ? 'block' : 'none';
+  }
+
+  function openWorkspace(){
+    workspaceOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    showWorkspaceStep('theme');
+    loadTemplates();
+  }
+  function closeWorkspace(){
+    workspaceOverlay.classList.remove('open');
+    if (!overlay.classList.contains('open') && !confirmOverlay.classList.contains('open')) {
+      document.body.style.overflow = '';
+    }
+  }
+
+  function renderTemplateCard(t){
+    var card = document.createElement('article');
+    card.className = 'tpl-pick-card';
+
+    var preview = document.createElement('div');
+    preview.className = 'tpl-preview';
+    var previewSpan = document.createElement('span');
+    previewSpan.textContent = t.name;
+    preview.appendChild(previewSpan);
+
+    var body = document.createElement('div');
+    body.className = 'tpl-pick-body';
+    var cat = document.createElement('span');
+    cat.className = 'cat'; cat.textContent = t.category || '';
+    var name = document.createElement('span');
+    name.className = 'name'; name.textContent = t.name;
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'btn btn-primary btn-block pick-theme-btn';
+    btn.dataset.id = t.id; btn.textContent = 'Pakai Tema Ini';
+
+    body.append(cat, name, btn);
+    card.append(preview, body);
+    templateGrid.appendChild(card);
+  }
+
+  async function loadTemplates(){
+    templateGrid.innerHTML = '';
+    workspaceMsg.textContent = 'Memuat tema...';
+    var res = await sb.from('templates').select('id,name,category').order('name');
+    if (res.error) { workspaceMsg.textContent = 'Gagal memuat tema. Coba lagi nanti.'; return; }
+    if (!res.data.length) { workspaceMsg.textContent = 'Belum ada tema tersedia saat ini.'; return; }
+    workspaceMsg.textContent = '';
+    res.data.forEach(renderTemplateCard);
+  }
+
+  templateGrid.addEventListener('click', async function(e){
+    var btn = e.target.closest('.pick-theme-btn');
+    if (!btn || !currentSession) return;
+    btn.disabled = true;
+    workspaceMsg.textContent = 'Menyimpan pilihan tema...';
+    var res = await sb.from('invitations').insert({
+      user_id: currentSession.user.id,
+      template_id: btn.dataset.id,
+      status: 'draft'
+    }).select().single();
+    btn.disabled = false;
+    if (res.error) { workspaceMsg.textContent = 'Gagal menyimpan tema: ' + res.error.message; return; }
+    workspaceMsg.textContent = '';
+    showWorkspaceStep('placeholder');
+  });
+
+  workspaceClose.addEventListener('click', closeWorkspace);
+  backToThemeBtn.addEventListener('click', function(){ showWorkspaceStep('theme'); });
+
   function hasPasswordIdentity(session){
     var identities = session.user.identities || [];
     return identities.some(function(i){ return i.provider === 'email'; })
@@ -1349,6 +1471,7 @@
   document.addEventListener('keydown', function(e){
     if (e.key !== 'Escape') return;
     if (confirmOverlay.classList.contains('open')) { confirmCancelBtn.click(); return; }
+    if (workspaceOverlay.classList.contains('open')) { closeWorkspace(); return; }
     if (overlay.classList.contains('open')) closeModal();
     if (e.key === 'Escape') navAccountMenu.classList.remove('open');
   });
@@ -1521,6 +1644,7 @@
     if (a) {
       e.preventDefault();
       if (a.dataset.mode === 'signout') { if (await confirmLogout()) sb.auth.signOut(); return; }
+      if (a.getAttribute('href') === '#daftar' && currentSession) { openWorkspace(); return; }
       openModal(a.getAttribute('href') === '#masuk' ? 'login' : 'signup');
       return;
     }
