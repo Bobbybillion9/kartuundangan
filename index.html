@@ -98,6 +98,8 @@
   .nav-login{font-size:14px;color:var(--ink-mid);}
   .nav-login:hover{color:var(--accent-dark);}
   .nav-account{position:relative;display:inline-flex;align-items:center;}
+  .nav-avatar{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:14px;flex-shrink:0;}
+  .nav-avatar-sm{width:28px;height:28px;font-size:12.5px;margin-right:8px;vertical-align:middle;}
   .nav-account-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:160px;background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-md);box-shadow:var(--shadow);padding:6px;display:none;flex-direction:column;z-index:130;}
   .nav-account-menu.open{display:flex;}
   .nav-account-item{display:block;width:100%;text-align:left;padding:9px 10px;border-radius:var(--r-sm);font-size:14px;color:var(--ink-mid);background:none;border:none;font-family:inherit;cursor:pointer;}
@@ -369,7 +371,10 @@
         <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
       </button>
       <div class="nav-account" id="navAccount">
-        <a class="nav-login" href="#masuk" id="navAccountBtn">Masuk</a>
+        <a class="nav-login" href="#masuk" id="navAccountBtn">
+          <span id="navAccountText">Masuk</span>
+          <span class="nav-avatar" id="navAvatar" style="display:none" aria-hidden="true"></span>
+        </a>
         <div class="nav-account-menu" id="navAccountMenu">
           <button type="button" class="nav-account-item" id="menuProfilBtn">Profil</button>
           <a class="nav-account-item" id="menuBantuanLink" href="https://wa.me/62xxxxxxxxxx" target="_blank" rel="noopener">Bantuan</a>
@@ -401,7 +406,10 @@
   <div class="drawer-foot">
     <a class="btn btn-primary btn-block nav-signup" href="#daftar">Daftar gratis</a>
     <a class="btn btn-ghost btn-block" href="#masuk" id="drawerLoginBtn">Masuk</a>
-    <a class="btn btn-ghost btn-block" href="#" id="drawerProfilBtn" style="display:none">Profil</a>
+    <a class="btn btn-ghost btn-block" href="#" id="drawerProfilBtn" style="display:none">
+      <span class="nav-avatar nav-avatar-sm" id="drawerAvatar" aria-hidden="true"></span>
+      Profil
+    </a>
     <a class="btn btn-ghost btn-block" href="#" id="drawerKeluarBtn" style="display:none">Keluar</a>
   </div>
 </div>
@@ -1181,6 +1189,8 @@
 
   var navAccount = document.getElementById('navAccount');
   var navAccountBtn = document.getElementById('navAccountBtn');
+  var navAccountText = document.getElementById('navAccountText');
+  var navAvatar = document.getElementById('navAvatar');
   var navAccountMenu = document.getElementById('navAccountMenu');
   var menuProfilBtn = document.getElementById('menuProfilBtn');
   var menuBantuanLink = document.getElementById('menuBantuanLink');
@@ -1188,6 +1198,7 @@
 
   var drawerLoginBtn = document.getElementById('drawerLoginBtn');
   var drawerProfilBtn = document.getElementById('drawerProfilBtn');
+  var drawerAvatar = document.getElementById('drawerAvatar');
   var drawerKeluarBtn = document.getElementById('drawerKeluarBtn');
 
   var profileView = document.getElementById('profileView');
@@ -1460,6 +1471,12 @@
     setTimeout(function(){ showView('login'); }, 1200);
   });
 
+  function getInitial(session){
+    var name = (session.user.user_metadata && session.user.user_metadata.full_name || '').trim();
+    var source = name || session.user.email || '';
+    return source.charAt(0).toUpperCase() || '?';
+  }
+
   function applySession(session){
     currentSession = session;
     var loggedIn = !!session;
@@ -1471,12 +1488,16 @@
       a.title = loggedIn ? 'Klik untuk keluar' : '';
     });
 
-    navAccountBtn.textContent = loggedIn ? label : 'Masuk';
+    navAccountText.style.display = loggedIn ? 'none' : 'inline';
+    navAvatar.style.display = loggedIn ? 'inline-flex' : 'none';
+    if (loggedIn) navAvatar.textContent = getInitial(session);
+    navAccountBtn.title = loggedIn ? label : '';
     navAccountBtn.dataset.mode = loggedIn ? 'account' : 'login';
     navAccountMenu.classList.remove('open');
 
     drawerLoginBtn.style.display = loggedIn ? 'none' : '';
     drawerProfilBtn.style.display = loggedIn ? 'block' : 'none';
+    if (loggedIn) drawerAvatar.textContent = getInitial(session);
     drawerKeluarBtn.style.display = loggedIn ? 'block' : 'none';
 
     Array.prototype.forEach.call(document.querySelectorAll('a.nav-signup'), function(a){
