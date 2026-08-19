@@ -259,6 +259,14 @@
   .auth-form input{width:100%;padding:11px 14px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:inherit;margin-bottom:var(--s3);}
   .auth-form input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
   .auth-form input.code-input{letter-spacing:0.5em;text-align:center;font-family:'Fraunces',serif;font-size:20px;padding:11px 8px;}
+  .pw-field{position:relative;}
+  .pw-field input{padding-right:42px;}
+  .pw-toggle{position:absolute;top:0;bottom:0;right:4px;margin:auto 0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--ink-soft);}
+  .pw-toggle:hover{color:var(--ink-mid);background:var(--paper-2);}
+  .pw-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .pw-toggle .icon-eye-off{display:none;}
+  .pw-toggle.is-visible .icon-eye{display:none;}
+  .pw-toggle.is-visible .icon-eye-off{display:block;}
   .otp-info{font-size:13px;color:var(--ink-mid);margin-bottom:var(--s3);}
   .badge{display:inline-block;padding:3px 10px;border-radius:var(--r-full);font-size:12px;background:var(--paper);border:1px solid var(--line);color:var(--ink-mid);margin-right:6px;}
   .profile-badges{margin-bottom:var(--s3);}
@@ -430,7 +438,13 @@
       <label for="loginEmail">Email</label>
       <input type="email" id="loginEmail" placeholder="nama@email.com" required autocomplete="email">
       <label for="loginPassword">Kata sandi</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+      <div class="pw-field">
+        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+        <button type="button" class="pw-toggle" data-target="loginPassword" aria-label="Tampilkan kata sandi" aria-pressed="false">
+          <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A11 11 0 0 1 12 19c-7 0-11-7-11-7a19.6 19.6 0 0 1 5.1-5.9M9.9 4.2A10.4 10.4 0 0 1 12 4c7 0 11 7 11 7a19.6 19.6 0 0 1-2.2 3.1M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M1 1l22 22"/></svg>
+        </button>
+      </div>
       <a href="#" class="auth-forgot" id="forgotLink">Lupa kata sandi?</a>
       <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Masuk</button>
     </form>
@@ -440,7 +454,13 @@
       <label for="signupEmail">Email</label>
       <input type="email" id="signupEmail" placeholder="nama@email.com" required autocomplete="email">
       <label for="signupPassword">Kata sandi</label>
-      <input type="password" id="signupPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+      <div class="pw-field">
+        <input type="password" id="signupPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+        <button type="button" class="pw-toggle" data-target="signupPassword" aria-label="Tampilkan kata sandi" aria-pressed="false">
+          <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A11 11 0 0 1 12 19c-7 0-11-7-11-7a19.6 19.6 0 0 1 5.1-5.9M9.9 4.2A10.4 10.4 0 0 1 12 4c7 0 11 7 11 7a19.6 19.6 0 0 1-2.2 3.1M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M1 1l22 22"/></svg>
+        </button>
+      </div>
       <button type="submit" class="btn btn-primary btn-block" id="signupBtn">Daftar</button>
     </form>
     <p class="auth-switch" id="toLogin" style="display:none">Sudah punya akun? <a href="#" id="toLoginLink">Masuk</a></p>
@@ -462,9 +482,21 @@
 
     <form id="recoveryForm" class="auth-form" style="display:none">
       <label for="recoveryPassword">Kata Sandi Baru</label>
-      <input type="password" id="recoveryPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+      <div class="pw-field">
+        <input type="password" id="recoveryPassword" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+        <button type="button" class="pw-toggle" data-target="recoveryPassword" aria-label="Tampilkan kata sandi" aria-pressed="false">
+          <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A11 11 0 0 1 12 19c-7 0-11-7-11-7a19.6 19.6 0 0 1 5.1-5.9M9.9 4.2A10.4 10.4 0 0 1 12 4c7 0 11 7 11 7a19.6 19.6 0 0 1-2.2 3.1M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M1 1l22 22"/></svg>
+        </button>
+      </div>
       <label for="recoveryPassword2">Konfirmasi Kata Sandi Baru</label>
-      <input type="password" id="recoveryPassword2" placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
+      <div class="pw-field">
+        <input type="password" id="recoveryPassword2" placeholder="Ulangi kata sandi baru" required minlength="6" autocomplete="new-password">
+        <button type="button" class="pw-toggle" data-target="recoveryPassword2" aria-label="Tampilkan kata sandi" aria-pressed="false">
+          <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A11 11 0 0 1 12 19c-7 0-11-7-11-7a19.6 19.6 0 0 1 5.1-5.9M9.9 4.2A10.4 10.4 0 0 1 12 4c7 0 11 7 11 7a19.6 19.6 0 0 1-2.2 3.1M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M1 1l22 22"/></svg>
+        </button>
+      </div>
       <button type="submit" class="btn btn-primary btn-block" id="recoveryBtn">Simpan kata sandi baru</button>
     </form>
 
@@ -1205,7 +1237,29 @@
 
   function resetForms(){
     allForms.forEach(function(f){ if (f.tagName === 'FORM') f.reset(); });
+    document.querySelectorAll('.pw-toggle').forEach(function(btn){
+      var input = document.getElementById(btn.dataset.target);
+      if (input) input.type = 'password';
+      btn.classList.remove('is-visible');
+      btn.setAttribute('aria-pressed', 'false');
+      btn.setAttribute('aria-label', 'Tampilkan kata sandi');
+    });
   }
+
+  function initPasswordToggles(){
+    document.querySelectorAll('.pw-toggle').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var input = document.getElementById(btn.dataset.target);
+        if (!input) return;
+        var toText = input.type === 'password';
+        input.type = toText ? 'text' : 'password';
+        btn.classList.toggle('is-visible', toText);
+        btn.setAttribute('aria-pressed', String(toText));
+        btn.setAttribute('aria-label', toText ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+      });
+    });
+  }
+  initPasswordToggles();
 
   function openModal(view){
     resetForms();
