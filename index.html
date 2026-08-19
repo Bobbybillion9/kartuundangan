@@ -81,6 +81,10 @@
   .btn-outline{border-color:var(--accent);color:var(--accent-dark);}
   .btn-outline:hover{background:var(--accent-tint);}
   .btn-ghost{background:var(--card);border-color:var(--line);color:var(--ink);}
+  .btn-danger{background:#C0503D;color:#fff;}
+  .btn-danger:hover{background:#A8432F;}
+  html[data-theme="dark"] .btn-danger{background:#E08A78;color:#2B2822;}
+  html[data-theme="dark"] .btn-danger:hover{background:#D67862;}
   .btn-sm{padding:9px 18px;font-size:13.5px;}
   .btn-block{width:100%;}
 
@@ -241,6 +245,8 @@
   html[data-theme="dark"] .modal-overlay{background:rgba(0,0,0,0.65);}
   .modal-overlay.open{display:flex;}
   .modal-card{position:relative;width:100%;max-width:400px;max-height:calc(100vh - var(--s5));overflow-y:auto;background:var(--card);border-radius:var(--r-lg);border:1px solid var(--line-soft);box-shadow:var(--shadow);padding:var(--s5) var(--s4) var(--s4);}
+  .modal-card-sm{max-width:340px;}
+  #confirmOverlay{z-index:130;}
   .modal-close{position:absolute;top:var(--s3);right:var(--s3);}
   .modal-head{text-align:center;margin-bottom:var(--s4);}
   .modal-head .logo{display:block;margin-bottom:var(--s3);}
@@ -484,6 +490,22 @@
 
     <p class="auth-msg" id="authMsg" aria-live="polite"></p>
     <p class="auth-legal" id="authLegal">Dengan melanjutkan, kamu menyetujui Syarat &amp; Ketentuan kami.</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal-card modal-card-sm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <button class="icon-btn modal-close" id="confirmClose" aria-label="Tutup">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-head">
+      <h3 id="confirmTitle">Konfirmasi Keluar</h3>
+      <p class="modal-sub" id="confirmText">Yakin mau keluar dari akun ini?</p>
+    </div>
+    <div class="profile-actions">
+      <button type="button" class="btn btn-danger btn-block" id="confirmOkBtn">Ya, Keluar</button>
+      <button type="button" class="btn btn-ghost btn-block" id="confirmCancelBtn">Batal</button>
+    </div>
   </div>
 </div>
 
@@ -1198,6 +1220,31 @@
     document.body.style.overflow = '';
   }
 
+  var confirmOverlay = document.getElementById('confirmOverlay');
+  var confirmOkBtn = document.getElementById('confirmOkBtn');
+  var confirmCancelBtn = document.getElementById('confirmCancelBtn');
+  var confirmCloseBtn = document.getElementById('confirmClose');
+
+  function confirmLogout(){
+    return new Promise(function(resolve){
+      confirmOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      function cleanup(result){
+        confirmOverlay.classList.remove('open');
+        if (!overlay.classList.contains('open')) document.body.style.overflow = '';
+        confirmOkBtn.removeEventListener('click', onOk);
+        confirmCancelBtn.removeEventListener('click', onCancel);
+        confirmCloseBtn.removeEventListener('click', onCancel);
+        resolve(result);
+      }
+      function onOk(){ cleanup(true); }
+      function onCancel(){ cleanup(false); }
+      confirmOkBtn.addEventListener('click', onOk);
+      confirmCancelBtn.addEventListener('click', onCancel);
+      confirmCloseBtn.addEventListener('click', onCancel);
+    });
+  }
+
   function hasPasswordIdentity(session){
     var identities = session.user.identities || [];
     return identities.some(function(i){ return i.provider === 'email'; })
@@ -1235,7 +1282,9 @@
 
   closeBtn.addEventListener('click', closeModal);
   document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    if (e.key !== 'Escape') return;
+    if (confirmOverlay.classList.contains('open')) { confirmCancelBtn.click(); return; }
+    if (overlay.classList.contains('open')) closeModal();
     if (e.key === 'Escape') navAccountMenu.classList.remove('open');
   });
 
@@ -1382,7 +1431,7 @@
     });
   }
 
-  document.addEventListener('click', function(e){
+  document.addEventListener('click', async function(e){
     var toggle = e.target.closest('#navAccountBtn');
     if (toggle) {
       e.preventDefault();
@@ -1396,7 +1445,7 @@
     var a = e.target.closest('a[href="#masuk"], a[href="#daftar"]');
     if (a) {
       e.preventDefault();
-      if (a.dataset.mode === 'signout') { if (window.confirm('Yakin mau keluar?')) sb.auth.signOut(); return; }
+      if (a.dataset.mode === 'signout') { if (await confirmLogout()) sb.auth.signOut(); return; }
       openModal(a.getAttribute('href') === '#masuk' ? 'login' : 'signup');
       return;
     }
@@ -1410,16 +1459,16 @@
   menuBantuanLink.addEventListener('click', function(){
     navAccountMenu.classList.remove('open');
   });
-  menuKeluarBtn.addEventListener('click', function(){
+  menuKeluarBtn.addEventListener('click', async function(){
     navAccountMenu.classList.remove('open');
-    if (!window.confirm('Yakin mau keluar?')) return;
+    if (!(await confirmLogout())) return;
     sb.auth.signOut();
   });
 
   drawerProfilBtn.addEventListener('click', function(e){ e.preventDefault(); openProfileModal(); });
-  drawerKeluarBtn.addEventListener('click', function(e){
+  drawerKeluarBtn.addEventListener('click', async function(e){
     e.preventDefault();
-    if (!window.confirm('Yakin mau keluar?')) return;
+    if (!(await confirmLogout())) return;
     sb.auth.signOut();
   });
 
@@ -1446,8 +1495,8 @@
     showMsg('Link reset kata sandi sudah dikirim ke emailmu.', 'ok');
   });
 
-  profileLogoutBtn.addEventListener('click', function(){
-    if (!window.confirm('Yakin mau keluar?')) return;
+  profileLogoutBtn.addEventListener('click', async function(){
+    if (!(await confirmLogout())) return;
     closeModal();
     sb.auth.signOut();
   });
