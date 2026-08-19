@@ -241,6 +241,8 @@
   .auth-form input.code-input{letter-spacing:0.5em;text-align:center;font-family:'Fraunces',serif;font-size:20px;padding:11px 8px;}
   .pw-field{position:relative;margin-bottom:var(--s3);}
   .pw-field input{padding-right:42px;margin-bottom:0;}
+  .pw-field input::-ms-reveal,
+  .pw-field input::-ms-clear{display:none;}
   .pw-toggle{position:absolute;top:50%;right:4px;transform:translateY(-50%);width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--ink-soft);}
   .pw-toggle:hover{color:var(--ink-mid);background:var(--paper-2);}
   .pw-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
