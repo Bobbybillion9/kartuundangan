@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pratinjau Template — Kartu Undangan</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&family=Inter:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+
+<!-- Halaman mandiri (bukan bagian dashboard) — jadi butuh sedikit CSS
+     sendiri di sini untuk bar mengambang & bingkai iframe, di luar
+     token warna/tipografi bersama yang tetap dipakai dari
+     ../assets/style.css supaya nuansanya konsisten dengan dashboard. -->
+<style>
+  html,body{height:100%;}
+  body{overflow:hidden;background:var(--paper-2);}
+
+  .preview-bar{
+    position:fixed;top:0;left:0;right:0;z-index:200;
+    display:flex;align-items:center;justify-content:space-between;gap:var(--s2);
+    height:52px;padding:0 var(--s3);
+    background:var(--card);border-bottom:1px solid var(--line-soft);
+    box-shadow:var(--shadow);
+  }
+  .preview-bar-label{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap;}
+  .preview-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+
+  .preview-frame-wrap{position:fixed;top:52px;left:0;right:0;bottom:0;}
+  .preview-frame{width:100%;height:100%;border:none;display:block;background:var(--paper);}
+
+  .preview-error{max-width:420px;margin:112px auto 0;text-align:center;padding:0 var(--s3);}
+</style>
+</head>
+<body>
+
+<div class="preview-bar">
+  <span class="preview-bar-label"><span class="preview-dot" aria-hidden="true"></span> Mode Pratinjau</span>
+  <a class="btn btn-outline btn-sm" href="../app.html">Kembali ke Template Tema</a>
+</div>
+
+<div class="preview-frame-wrap" id="frameWrap">
+  <iframe class="preview-frame" id="previewFrame" title="Pratinjau undangan" src="about:blank"></iframe>
+</div>
+
+<script>
+(function(){
+  // ?tema=elegan-klasik/sage-rose -> muat templates/<tema>/index.html apa
+  // adanya lewat iframe, supaya tamu benar-benar melihat file yang sama
+  // persis dengan yang nanti dibagikan (bukan salinan/render ulang).
+  // "tema" boleh berisi satu atau beberapa segmen folder (dipisah "/"),
+  // masing-masing segmen huruf/angka/tanda hubung saja — tanpa "." sama
+  // sekali sehingga traversal path (..) mustahil lolos validasi ini.
+  var params = new URLSearchParams(window.location.search);
+  var tema = params.get('tema') || '';
+  var safe = /^[a-z0-9-]+(?:\/[a-z0-9-]+)*$/i.test(tema) ? tema : '';
+  var frame = document.getElementById('previewFrame');
+  var wrap = document.getElementById('frameWrap');
+
+  if (!safe) {
+    wrap.innerHTML = '<div class="preview-error"><h2>Template tidak ditemukan</h2><p>Parameter tema pada URL tidak ada atau tidak valid. Kembali ke halaman Template Tema dan klik Pratinjau lagi.</p></div>';
+  } else {
+    document.title = 'Pratinjau ' + safe + ' — Kartu Undangan';
+    frame.src = safe + '/index.html';
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -52,6 +52,7 @@
   html[data-theme="dark"] .btn-danger:hover{background:#D67862;}
   .btn-sm{padding:9px 18px;font-size:13.5px;}
   .btn-block{width:100%;}
+  .btn:disabled,.btn[disabled]{opacity:.5;cursor:not-allowed;pointer-events:none;}
 
   header{position:sticky;top:0;z-index:70;background:var(--paper);border-bottom:1px solid var(--line-soft);}
   nav{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);padding:13px 0;}

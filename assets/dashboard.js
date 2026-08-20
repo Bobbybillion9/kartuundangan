@@ -163,4 +163,84 @@
     renderProfileNav(e.detail.session);
   });
   renderProfileNav(KU.getSession());
+
+  // ---------------- Template Tema (grid) ----------------
+  // Data statis untuk sekarang — tinggal tambah entri di sini begitu
+  // template lain selesai dibuat. "id" harus sama dengan path folder
+  // relatif di dalam templates/ (boleh bertingkat, mis. "kategori/nama")
+  // supaya link Pratinjau (templates/pratinjau.html?tema=id) dan
+  // thumbnail-nya tetap benar. "kategori" dipakai untuk pengelompokan
+  // tampilan di grid, terpisah dari struktur folder fisiknya.
+  var THEME_TEMPLATES = [
+    {
+      id: 'elegan-klasik/sage-rose',
+      name: 'Sage Rose',
+      kategori: 'Elegan Klasik',
+      desc: 'Nuansa dusty rose & sage yang lembut, foto utama berbentuk kubah, dan monogram bertinta emas yang menggambar diri saat dibuka.',
+      thumb: 'templates/elegan-klasik/sage-rose/assets/thumbnail.jpg'
+    }
+  ];
+
+  function renderThemeTemplateCard(t){
+    var card = document.createElement('article');
+    card.className = 'tpl-card';
+
+    var preview = document.createElement('div');
+    preview.className = 'tpl-preview';
+    var img = document.createElement('img');
+    img.src = t.thumb;
+    img.alt = 'Pratinjau ' + t.name;
+    img.loading = 'lazy';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+    preview.appendChild(img);
+
+    var body = document.createElement('div');
+    body.className = 'tpl-body';
+
+    var row = document.createElement('div');
+    row.className = 'tpl-row';
+    var name = document.createElement('span');
+    name.className = 'name';
+    name.textContent = t.name;
+    row.appendChild(name);
+
+    var desc = document.createElement('p');
+    desc.className = 'tpl-desc';
+    desc.textContent = t.desc;
+
+    var actions = document.createElement('div');
+    actions.className = 'tpl-actions';
+
+    var previewBtn = document.createElement('a');
+    previewBtn.className = 'btn btn-outline';
+    previewBtn.href = 'templates/pratinjau.html?tema=' + encodeURIComponent(t.id);
+    previewBtn.target = '_blank';
+    previewBtn.rel = 'noopener';
+    previewBtn.textContent = 'Pratinjau';
+
+    var useBtn = document.createElement('button');
+    useBtn.type = 'button';
+    useBtn.className = 'btn btn-ghost';
+    useBtn.disabled = true;
+    useBtn.setAttribute('aria-disabled', 'true');
+    var useLabel = document.createElement('span');
+    useLabel.textContent = 'Gunakan';
+    var useBadge = document.createElement('span');
+    useBadge.className = 'badge';
+    useBadge.textContent = 'Segera Hadir';
+    useBtn.append(useLabel, useBadge);
+
+    actions.append(previewBtn, useBtn);
+    body.append(row, desc, actions);
+    card.append(preview, body);
+    return card;
+  }
+
+  function renderThemeTemplateGrid(){
+    var grid = document.getElementById('themeTemplateGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    THEME_TEMPLATES.forEach(function(t){ grid.appendChild(renderThemeTemplateCard(t)); });
+  }
+  renderThemeTemplateGrid();
 })();
