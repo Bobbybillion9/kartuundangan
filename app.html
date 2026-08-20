@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Kartu Undangan</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="app-shell">
+
+<nav class="sidebar" id="sidebar" aria-label="Navigasi utama">
+  <a class="logo sidebar-logo" href="app.html">Kartu <span class="script">Undangan</span></a>
+  <div class="side-nav" id="sideNav">
+    <div class="nav-pill" id="sidePill" aria-hidden="true"></div>
+    <button type="button" class="side-item" data-view="home" aria-label="Home">
+      <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1V10"/></svg></span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button type="button" class="side-item" data-view="desain" aria-label="Desain Kamu">
+      <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4.5"/></svg></span>
+      <span class="nav-label">Desain Kamu</span>
+    </button>
+    <button type="button" class="side-item" data-view="tema" aria-label="Template Tema">
+      <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></span>
+      <span class="nav-label">Template Tema</span>
+    </button>
+    <button type="button" class="side-item" data-view="harga" aria-label="Harga">
+      <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h8l10 10-8 8L3 11V3z"/><circle cx="7.5" cy="7.5" r="1.3" fill="currentColor" stroke="none"/></svg></span>
+      <span class="nav-label">Harga</span>
+    </button>
+    <button type="button" class="side-item" data-view="profil" aria-label="Profil">
+      <span class="nav-icon">
+        <svg id="sideProfilIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5"/></svg>
+        <span class="nav-avatar-badge" id="sideAvatarBadge" style="display:none" aria-hidden="true"></span>
+      </span>
+      <span class="nav-label" id="sideProfilLabel">Masuk</span>
+    </button>
+  </div>
+</nav>
+
+<nav class="tabbar" id="tabbar" aria-label="Navigasi utama">
+  <div class="nav-pill" id="tabPill" aria-hidden="true"></div>
+  <button type="button" class="tab-item" data-view="home" aria-label="Home">
+    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1V10"/></svg></span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button type="button" class="tab-item" data-view="desain" aria-label="Desain Kamu">
+    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4.5"/></svg></span>
+    <span class="nav-label">Desain</span>
+  </button>
+  <button type="button" class="tab-item" data-view="tema" aria-label="Template Tema">
+    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></span>
+    <span class="nav-label">Tema</span>
+  </button>
+  <button type="button" class="tab-item" data-view="harga" aria-label="Harga">
+    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h8l10 10-8 8L3 11V3z"/><circle cx="7.5" cy="7.5" r="1.3" fill="currentColor" stroke="none"/></svg></span>
+    <span class="nav-label">Harga</span>
+  </button>
+  <button type="button" class="tab-item" data-view="profil" aria-label="Profil">
+    <span class="nav-icon">
+      <svg id="tabProfilIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5"/></svg>
+      <span class="nav-avatar-badge" id="tabAvatarBadge" style="display:none" aria-hidden="true"></span>
+    </span>
+    <span class="nav-label" id="tabProfilLabel">Masuk</span>
+  </button>
+</nav>
+
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal-card modal-card-sm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <button class="icon-btn modal-close" id="confirmClose" aria-label="Tutup">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-head">
+      <h3 id="confirmTitle">Konfirmasi Keluar</h3>
+      <p class="modal-sub" id="confirmText">Yakin mau keluar dari akun ini?</p>
+    </div>
+    <div class="profile-actions">
+      <button type="button" class="btn btn-danger btn-block" id="confirmOkBtn">Ya, Keluar</button>
+      <button type="button" class="btn btn-ghost btn-block" id="confirmCancelBtn">Batal</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="dash-view" id="view-home">
+    <div class="workspace-placeholder">
+      <h2>Home — segera hadir</h2>
+      <p>Ringkasan aktivitas undanganmu akan tampil di sini.</p>
+    </div>
+  </section>
+
+  <section class="dash-view" id="view-desain">
+    <div class="dash-empty">
+      <div class="dash-empty-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+      </div>
+      <h2>Belum ada undangan</h2>
+      <p>Mulai buat undangan pernikahan digital pertamamu. Pilih tema, isi data acara, lalu bagikan ke tamu.</p>
+      <button type="button" class="btn btn-primary" id="createInvitationBtn">Buat Undangan Baru</button>
+    </div>
+  </section>
+
+  <section class="dash-view" id="view-tema">
+    <div class="workspace-placeholder">
+      <h2>Template Tema — segera hadir</h2>
+      <p>Jelajahi seluruh koleksi tema di sini.</p>
+    </div>
+  </section>
+
+  <section class="dash-view" id="view-harga">
+    <div class="workspace-placeholder">
+      <h2>Harga — segera hadir</h2>
+      <p>Detail paket dan aktivasi akan tampil di sini.</p>
+    </div>
+  </section>
+
+  <section class="dash-view" id="view-profil">
+    <div class="section-head">
+      <h2>Profil</h2>
+    </div>
+
+    <div class="profile-block profile-block-head">
+      <span class="nav-avatar-badge profile-avatar-lg" id="profileAvatarBadge" aria-hidden="true"></span>
+      <div>
+        <h3 id="profileDisplayName">Akun</h3>
+        <p id="profileEmailSub">Kamu belum masuk.</p>
+      </div>
+    </div>
+
+    <div class="profile-block">
+      <label for="profileNameInput">Nama tampilan</label>
+      <div class="profile-name-row">
+        <input type="text" id="profileNameInput" placeholder="Nama kamu" maxlength="80">
+        <button type="button" class="btn btn-ghost btn-sm" id="profileNameSaveBtn">Simpan</button>
+      </div>
+
+      <label>Email</label>
+      <p class="profile-readonly" id="profileEmail"></p>
+
+      <label>Metode masuk terhubung</label>
+      <div class="profile-badges" id="profileBadges"></div>
+
+      <p class="profile-msg" id="profileMsg" aria-live="polite"></p>
+    </div>
+
+    <div class="profile-block">
+      <h3>Tema Tampilan</h3>
+      <div class="toggle-wrap">
+        <span class="toggle-label" id="lblThemeLight">Terang</span>
+        <button type="button" class="switch" id="themeSwitch" aria-label="Ganti tema terang atau gelap"><span class="knob"></span></button>
+        <span class="toggle-label" id="lblThemeDark">Gelap</span>
+      </div>
+    </div>
+
+    <div class="profile-block">
+      <button type="button" class="btn btn-outline btn-block" id="profilePasswordToggleBtn">Ganti Kata Sandi</button>
+    </div>
+
+    <div class="profile-block">
+      <h3>Bantuan</h3>
+      <p>Ada kendala atau pertanyaan? Hubungi kami langsung.</p>
+      <a class="btn btn-outline btn-sm" href="https://wa.me/62xxxxxxxxxx" target="_blank" rel="noopener">Chat via WhatsApp</a>
+    </div>
+
+    <div class="profile-block">
+      <button type="button" class="btn btn-danger" id="menuKeluarBtn">Keluar</button>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/auth-core.js"></script>
+<script src="assets/dashboard.js"></script>
+
+</body>
+</html>

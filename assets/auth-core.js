@@ -54,16 +54,20 @@
     var loggedIn = !!session;
     var label = loggedIn ? (session.user.email || session.user.user_metadata.full_name || 'Akun') : null;
 
-    navAccountText.style.display = loggedIn ? 'none' : 'inline';
-    navAvatar.style.display = loggedIn ? 'inline-flex' : 'none';
-    if (loggedIn) navAvatar.textContent = getInitial(session);
-    navAccountBtn.title = loggedIn ? label : '';
-    navAccountBtn.dataset.mode = loggedIn ? 'account' : 'login';
-    navAccountMenu.classList.remove('open');
+    if (navAccountText) navAccountText.style.display = loggedIn ? 'none' : 'inline';
+    if (navAvatar) {
+      navAvatar.style.display = loggedIn ? 'inline-flex' : 'none';
+      if (loggedIn) navAvatar.textContent = getInitial(session);
+    }
+    if (navAccountBtn) {
+      navAccountBtn.title = loggedIn ? label : '';
+      navAccountBtn.dataset.mode = loggedIn ? 'account' : 'login';
+    }
+    if (navAccountMenu) navAccountMenu.classList.remove('open');
   }
 
   document.addEventListener('click', function(e){
-    if (!e.target.closest('#navAccount')) navAccountMenu.classList.remove('open');
+    if (navAccountMenu && !e.target.closest('#navAccount')) navAccountMenu.classList.remove('open');
   });
 
   var escapeHandlers = [];
@@ -75,7 +79,7 @@
     for (var i = 0; i < escapeHandlers.length; i++) {
       if (escapeHandlers[i]()) return;
     }
-    navAccountMenu.classList.remove('open');
+    if (navAccountMenu) navAccountMenu.classList.remove('open');
   });
 
   function emitSession(session){
