@@ -1,10 +1,4 @@
 (function(){
-  var SUPABASE_URL = 'https://ebjwjnxunedjftgzzbch.supabase.co';
-  var SUPABASE_KEY = 'sb_publishable_qUFa64f8yhx_3dYYwaP3Aw_kHD6JvuA';
-  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { flowType: 'implicit' }
-  });
-
   var overlay = document.getElementById('authOverlay');
   var closeBtn = document.getElementById('authClose');
   var authTitle = document.getElementById('authTitle');
@@ -48,10 +42,7 @@
   var recoveryPassword2 = document.getElementById('recoveryPassword2');
   var recoveryBtn = document.getElementById('recoveryBtn');
 
-  var navAccount = document.getElementById('navAccount');
   var navAccountBtn = document.getElementById('navAccountBtn');
-  var navAccountText = document.getElementById('navAccountText');
-  var navAvatar = document.getElementById('navAvatar');
   var navAccountMenu = document.getElementById('navAccountMenu');
   var menuProfilBtn = document.getElementById('menuProfilBtn');
   var menuBantuanLink = document.getElementById('menuBantuanLink');
@@ -69,8 +60,6 @@
   var profileBadges = document.getElementById('profileBadges');
   var profilePasswordToggleBtn = document.getElementById('profilePasswordToggleBtn');
   var profileLogoutBtn = document.getElementById('profileLogoutBtn');
-
-  var currentSession = null;
 
   var allForms = [loginForm, signupForm, signupVerifyForm, forgotForm, recoveryForm, profileView];
 
@@ -146,31 +135,6 @@
     document.body.style.overflow = '';
   }
 
-  var confirmOverlay = document.getElementById('confirmOverlay');
-  var confirmOkBtn = document.getElementById('confirmOkBtn');
-  var confirmCancelBtn = document.getElementById('confirmCancelBtn');
-  var confirmCloseBtn = document.getElementById('confirmClose');
-
-  function confirmLogout(){
-    return new Promise(function(resolve){
-      confirmOverlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      function cleanup(result){
-        confirmOverlay.classList.remove('open');
-        if (!overlay.classList.contains('open')) document.body.style.overflow = '';
-        confirmOkBtn.removeEventListener('click', onOk);
-        confirmCancelBtn.removeEventListener('click', onCancel);
-        confirmCloseBtn.removeEventListener('click', onCancel);
-        resolve(result);
-      }
-      function onOk(){ cleanup(true); }
-      function onCancel(){ cleanup(false); }
-      confirmOkBtn.addEventListener('click', onOk);
-      confirmCancelBtn.addEventListener('click', onCancel);
-      confirmCloseBtn.addEventListener('click', onCancel);
-    });
-  }
-
   var workspaceOverlay = document.getElementById('workspaceOverlay');
   var workspaceClose = document.getElementById('workspaceClose');
   var stepTheme = document.getElementById('stepTheme');
@@ -192,7 +156,7 @@
   }
   function closeWorkspace(){
     workspaceOverlay.classList.remove('open');
-    if (!overlay.classList.contains('open') && !confirmOverlay.classList.contains('open')) {
+    if (!overlay.classList.contains('open')) {
       document.body.style.overflow = '';
     }
   }
@@ -225,7 +189,7 @@
   async function loadTemplates(){
     templateGrid.innerHTML = '';
     workspaceMsg.textContent = 'Memuat tema...';
-    var res = await sb.from('templates').select('id,name,category').order('name');
+    var res = await KU.sb.from('templates').select('id,name,category').order('name');
     if (res.error) { workspaceMsg.textContent = 'Gagal memuat tema. Coba lagi nanti.'; return; }
     if (!res.data.length) { workspaceMsg.textContent = 'Belum ada tema tersedia saat ini.'; return; }
     workspaceMsg.textContent = '';
@@ -234,11 +198,12 @@
 
   templateGrid.addEventListener('click', async function(e){
     var btn = e.target.closest('.pick-theme-btn');
-    if (!btn || !currentSession) return;
+    var session = KU.getSession();
+    if (!btn || !session) return;
     btn.disabled = true;
     workspaceMsg.textContent = 'Menyimpan pilihan tema...';
-    var res = await sb.from('invitations').insert({
-      user_id: currentSession.user.id,
+    var res = await KU.sb.from('invitations').insert({
+      user_id: session.user.id,
       template_id: btn.dataset.id,
       status: 'draft'
     }).select().single();
@@ -251,12 +216,6 @@
   workspaceClose.addEventListener('click', closeWorkspace);
   backToThemeBtn.addEventListener('click', function(){ showWorkspaceStep('theme'); });
 
-  function hasPasswordIdentity(session){
-    var identities = session.user.identities || [];
-    return identities.some(function(i){ return i.provider === 'email'; })
-        || !!(session.user.user_metadata && session.user.user_metadata.has_password);
-  }
-
   function makeBadge(text){
     var span = document.createElement('span');
     span.className = 'badge';
@@ -265,14 +224,15 @@
   }
 
   function renderProfile(){
-    if (!currentSession) return;
-    var user = currentSession.user;
+    var session = KU.getSession();
+    if (!session) return;
+    var user = session.user;
     profileName.value = user.user_metadata.full_name || '';
     profileEmail.textContent = user.email || '';
 
     var identities = user.identities || [];
     var hasGoogle = identities.some(function(i){ return i.provider === 'google'; });
-    var hasPw = hasPasswordIdentity(currentSession);
+    var hasPw = KU.hasPasswordIdentity(session);
 
     profileBadges.innerHTML = '';
     if (hasGoogle) profileBadges.appendChild(makeBadge('Google'));
@@ -287,12 +247,10 @@
   }
 
   closeBtn.addEventListener('click', closeModal);
-  document.addEventListener('keydown', function(e){
-    if (e.key !== 'Escape') return;
-    if (confirmOverlay.classList.contains('open')) { confirmCancelBtn.click(); return; }
-    if (workspaceOverlay.classList.contains('open')) { closeWorkspace(); return; }
+  KU.registerEscapeHandler(function(){
+    if (workspaceOverlay.classList.contains('open')) { closeWorkspace(); return true; }
     if (overlay.classList.contains('open')) closeModal();
-    if (e.key === 'Escape') navAccountMenu.classList.remove('open');
+    return false;
   });
 
   tabLoginBtn.addEventListener('click', function(){ showView('login'); loginEmail.focus(); });
@@ -304,7 +262,7 @@
     showMsg('Mengalihkan ke Google...');
     googleBtn.disabled = true;
     views[currentView].form.style.display = 'none';
-    var res = await sb.auth.signInWithOAuth({
+    var res = await KU.sb.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin + window.location.pathname }
     });
@@ -321,7 +279,7 @@
     var password = loginPassword.value;
     loginBtn.disabled = true;
     showMsg('Memproses...');
-    var res = await sb.auth.signInWithPassword({ email: email, password: password });
+    var res = await KU.sb.auth.signInWithPassword({ email: email, password: password });
     loginBtn.disabled = false;
     if (res.error) { showMsg('Email atau kata sandi salah. Kalau kamu daftar lewat Google, coba tombol "Lanjutkan dengan Google" di atas.', 'err'); return; }
     showMsg('Berhasil masuk!', 'ok');
@@ -345,7 +303,7 @@
     var email = forgotEmail.value.trim();
     forgotBtn.disabled = true;
     showMsg('Mengirim...');
-    var res = await sb.auth.resetPasswordForEmail(email, {
+    var res = await KU.sb.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + window.location.pathname
     });
     forgotBtn.disabled = false;
@@ -359,7 +317,7 @@
     var password = signupPassword.value;
     signupBtn.disabled = true;
     showMsg('Memproses...');
-    var res = await sb.auth.signUp({ email: email, password: password });
+    var res = await KU.sb.auth.signUp({ email: email, password: password });
     var alreadyRegistered = (res.error && /registered|exists/i.test(res.error.message)) ||
       (!res.error && res.data && res.data.user && Array.isArray(res.data.user.identities) && res.data.user.identities.length === 0);
     if (res.error && !alreadyRegistered) {
@@ -391,7 +349,7 @@
     if (code.length !== 6) { showMsg('Masukkan 6 digit kode dari email.', 'err'); return; }
     signupVerifyBtn.disabled = true;
     showMsg('Memverifikasi...');
-    var res = await sb.auth.verifyOtp({ email: email, token: code, type: 'signup' });
+    var res = await KU.sb.auth.verifyOtp({ email: email, token: code, type: 'signup' });
     signupVerifyBtn.disabled = false;
     if (res.error) { showMsg(res.error.message, 'err'); return; }
     showMsg('Berhasil! Kamu sudah masuk.', 'ok');
@@ -406,21 +364,14 @@
     if (p1 !== p2) { showMsg('Konfirmasi kata sandi tidak sama.', 'err'); return; }
     recoveryBtn.disabled = true;
     showMsg('Menyimpan...');
-    var res = await sb.auth.updateUser({ password: p1, data: { has_password: true } });
+    var res = await KU.sb.auth.updateUser({ password: p1, data: { has_password: true } });
     recoveryBtn.disabled = false;
     if (res.error) { showMsg(res.error.message, 'err'); return; }
     showMsg('Kata sandi berhasil diperbarui!', 'ok');
     setTimeout(function(){ showView('login'); }, 1200);
   });
 
-  function getInitial(session){
-    var name = (session.user.user_metadata && session.user.user_metadata.full_name || '').trim();
-    var source = name || session.user.email || '';
-    return source.charAt(0).toUpperCase() || '?';
-  }
-
   function applySession(session){
-    currentSession = session;
     var loggedIn = !!session;
     var label = loggedIn ? (session.user.email || session.user.user_metadata.full_name || 'Akun') : null;
 
@@ -430,16 +381,9 @@
       a.title = loggedIn ? 'Klik untuk keluar' : '';
     });
 
-    navAccountText.style.display = loggedIn ? 'none' : 'inline';
-    navAvatar.style.display = loggedIn ? 'inline-flex' : 'none';
-    if (loggedIn) navAvatar.textContent = getInitial(session);
-    navAccountBtn.title = loggedIn ? label : '';
-    navAccountBtn.dataset.mode = loggedIn ? 'account' : 'login';
-    navAccountMenu.classList.remove('open');
-
     drawerLoginBtn.style.display = loggedIn ? 'none' : '';
     drawerProfilBtn.style.display = loggedIn ? 'block' : 'none';
-    if (loggedIn) drawerAvatar.textContent = getInitial(session);
+    if (loggedIn) drawerAvatar.textContent = KU.getInitial(session);
     drawerKeluarBtn.style.display = loggedIn ? 'block' : 'none';
 
     Array.prototype.forEach.call(document.querySelectorAll('a.nav-signup'), function(a){
@@ -462,12 +406,11 @@
     var a = e.target.closest('a[href="#masuk"], a[href="#daftar"]');
     if (a) {
       e.preventDefault();
-      if (a.dataset.mode === 'signout') { if (await confirmLogout()) sb.auth.signOut(); return; }
-      if (a.getAttribute('href') === '#daftar' && currentSession) { openWorkspace(); return; }
+      if (a.dataset.mode === 'signout') { if (await KU.confirmLogout()) KU.sb.auth.signOut(); return; }
+      if (a.getAttribute('href') === '#daftar' && KU.getSession()) { openWorkspace(); return; }
       openModal(a.getAttribute('href') === '#masuk' ? 'login' : 'signup');
       return;
     }
-    if (!e.target.closest('#navAccount')) { navAccountMenu.classList.remove('open'); }
   });
 
   menuProfilBtn.addEventListener('click', function(){
@@ -479,33 +422,33 @@
   });
   menuKeluarBtn.addEventListener('click', async function(){
     navAccountMenu.classList.remove('open');
-    if (!(await confirmLogout())) return;
-    sb.auth.signOut();
+    if (!(await KU.confirmLogout())) return;
+    KU.sb.auth.signOut();
   });
 
   drawerProfilBtn.addEventListener('click', function(e){ e.preventDefault(); openProfileModal(); });
   drawerKeluarBtn.addEventListener('click', async function(e){
     e.preventDefault();
-    if (!(await confirmLogout())) return;
-    sb.auth.signOut();
+    if (!(await KU.confirmLogout())) return;
+    KU.sb.auth.signOut();
   });
 
   profileNameSaveBtn.addEventListener('click', async function(){
     var name = profileName.value.trim();
     profileNameSaveBtn.disabled = true;
     showMsg('Menyimpan...');
-    var res = await sb.auth.updateUser({ data: { full_name: name } });
+    var res = await KU.sb.auth.updateUser({ data: { full_name: name } });
     profileNameSaveBtn.disabled = false;
     if (res.error) { showMsg(res.error.message, 'err'); return; }
-    if (currentSession) currentSession.user = res.data.user;
     showMsg('Nama tersimpan.', 'ok');
   });
 
   profilePasswordToggleBtn.addEventListener('click', async function(){
-    if (!currentSession) return;
+    var session = KU.getSession();
+    if (!session) return;
     profilePasswordToggleBtn.disabled = true;
     showMsg('Mengirim...');
-    var res = await sb.auth.resetPasswordForEmail(currentSession.user.email, {
+    var res = await KU.sb.auth.resetPasswordForEmail(session.user.email, {
       redirectTo: window.location.origin + window.location.pathname
     });
     profilePasswordToggleBtn.disabled = false;
@@ -514,9 +457,9 @@
   });
 
   profileLogoutBtn.addEventListener('click', async function(){
-    if (!(await confirmLogout())) return;
+    if (!(await KU.confirmLogout())) return;
     closeModal();
-    sb.auth.signOut();
+    KU.sb.auth.signOut();
   });
 
   function hasRecoveryParams(){
@@ -528,9 +471,11 @@
     openModal('recovery');
     window.history.replaceState(null, '', window.location.pathname);
   }
-  sb.auth.onAuthStateChange(function(event, session){
-    if (event === 'PASSWORD_RECOVERY') { openModal('recovery'); }
-    applySession(session);
+
+  document.addEventListener('ku:authevent', function(e){
+    if (e.detail.event === 'PASSWORD_RECOVERY') openModal('recovery');
   });
-  sb.auth.getSession().then(function(res){ applySession(res.data.session); });
+  document.addEventListener('ku:session', function(e){
+    applySession(e.detail.session);
+  });
 })();
