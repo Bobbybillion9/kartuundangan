@@ -180,9 +180,267 @@
     if (frameWindow && frameWindow.mulaiHitungMundur) frameWindow.mulaiHitungMundur(countdownIso);
   }
 
+  // ============================================================
+  // RSVP & Ucapan: sambungkan form yang ada di tiap template ke tabel
+  // rsvp/ucapan (lihat scratch_migration_rsvp_ucapan.sql). Dipanggil
+  // HANYA dari undangan.html (halaman publik tamu) — bukan dari
+  // templates/pratinjau.html, supaya pemilik yang sedang pratinjau
+  // undangannya sendiri (yang biasanya masih berstatus draft) tidak
+  // ketemu error "gagal kirim" gara-gara policy INSERT mensyaratkan
+  // status 'aktif'. Di pratinjau, form-form ini sengaja dibiarkan
+  // memakai perilaku demo bawaan tiap template (lihat <script> di
+  // masing-masing index.html tema).
+  //
+  // Form aslinya (di tiap index.html tema) sudah punya listener submit
+  // demo (console.log + tampilan lokal saja). Supaya tidak dobel jalan
+  // bareng listener asli di sini, elemen form di-clone lalu ditukar ke
+  // DOM (cloneNode tidak ikut membawa listener lama) sebelum listener
+  // yang sungguhan dipasang — jadi tiap tema otomatis "tersambung"
+  // tanpa perlu file index.html-nya sendiri diubah satu per satu.
+
+  var PESAN_ERROR_UMUM = 'Terjadi kesalahan. Periksa koneksi internetmu, lalu coba lagi.';
+
+  function formatWaktuRelatif(iso){
+    var target = new Date(iso).getTime();
+    if (isNaN(target)) return '';
+    var diffDetik = Math.floor((Date.now() - target) / 1000);
+    if (diffDetik < 60) return 'Baru saja';
+    var diffMenit = Math.floor(diffDetik / 60);
+    if (diffMenit < 60) return diffMenit + ' menit lalu';
+    var diffJam = Math.floor(diffMenit / 60);
+    if (diffJam < 24) return diffJam + ' jam lalu';
+    var diffHari = Math.floor(diffJam / 24);
+    if (diffHari < 7) return diffHari + ' hari lalu';
+    var diffMinggu = Math.floor(diffHari / 7);
+    if (diffMinggu < 5) return diffMinggu + ' minggu lalu';
+    var diffBulan = Math.floor(diffHari / 30);
+    if (diffBulan < 12) return diffBulan + ' bulan lalu';
+    return Math.floor(diffHari / 365) + ' tahun lalu';
+  }
+
+  // Sama seperti initPillGroup di tiap template index.html — dipasang
+  // ulang di sini karena clone form melepas listener lama.
+  function initPillGroupUmum(group){
+    var hiddenInput = group.parentElement.querySelector('input[type="hidden"]');
+    var buttons = Array.prototype.slice.call(group.querySelectorAll('.pill-btn'));
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        buttons.forEach(function(b){ b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        hiddenInput.value = btn.dataset.value;
+        hiddenInput.dispatchEvent(new Event('change'));
+      });
+    });
+  }
+
+  function kunciForm(form, msgEl, pesan){
+    Array.prototype.slice.call(form.querySelectorAll('input, textarea, button')).forEach(function(el){ el.disabled = true; });
+    msgEl.textContent = pesan;
+    msgEl.className = 'form-msg ok';
+  }
+
+  function setupRsvpForm(doc, inv, sb){
+    var formLama = doc.getElementById('rsvpForm');
+    if (!formLama) return;
+    var form = formLama.cloneNode(true);
+    formLama.parentNode.replaceChild(form, formLama);
+
+    var msgEl = form.querySelector('#rsvpMsg');
+    var fieldJumlah = form.querySelector('#fieldJumlahTamu');
+    var jumlahInput = form.querySelector('#rsvpJumlah');
+    var namaInput = form.querySelector('#rsvpNama');
+    var pihakInput = form.querySelector('input[name="pihak"]');
+    var kehadiranInput = form.querySelector('input[name="kehadiran"]');
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    form.querySelectorAll('.pill-group').forEach(initPillGroupUmum);
+
+    kehadiranInput.addEventListener('change', function(){
+      var tidakHadir = kehadiranInput.value === 'tidak_hadir';
+      fieldJumlah.classList.toggle('is-hidden', tidakHadir);
+      if (tidakHadir) jumlahInput.value = '';
+    });
+
+    var storageKey = 'ku-rsvp-sent:' + inv.id;
+    if (localStorage.getItem(storageKey)) {
+      kunciForm(form, msgEl, 'Terima kasih, kamu sudah mengonfirmasi kehadiran untuk undangan ini sebelumnya.');
+      return;
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var namaTamu = namaInput.value.trim();
+      if (!namaTamu) {
+        msgEl.textContent = 'Nama tamu wajib diisi ya.';
+        msgEl.className = 'form-msg err';
+        return;
+      }
+      if (!pihakInput.value || !kehadiranInput.value) {
+        msgEl.textContent = 'Lengkapi dulu pilihan pihak dan kehadiran ya.';
+        msgEl.className = 'form-msg err';
+        return;
+      }
+      var kehadiran = kehadiranInput.value;
+      var jumlahTamu = kehadiran === 'tidak_hadir' ? 0 : (parseInt(jumlahInput.value, 10) || 1);
+
+      submitBtn.disabled = true;
+      msgEl.textContent = 'Mengirim...';
+      msgEl.className = 'form-msg';
+
+      sb.from('rsvp').insert({
+        invitation_id: inv.id,
+        nama_tamu: namaTamu,
+        pihak: pihakInput.value,
+        kehadiran: kehadiran,
+        jumlah_tamu: jumlahTamu
+      }).then(function(res){
+        if (res.error) {
+          submitBtn.disabled = false;
+          msgEl.textContent = PESAN_ERROR_UMUM;
+          msgEl.className = 'form-msg err';
+          return;
+        }
+        localStorage.setItem(storageKey, '1');
+        kunciForm(form, msgEl, 'Terima kasih, konfirmasi kehadiranmu sudah kami terima!');
+      }, function(){
+        submitBtn.disabled = false;
+        msgEl.textContent = PESAN_ERROR_UMUM;
+        msgEl.className = 'form-msg err';
+      });
+    });
+  }
+
+  var UCAPAN_PER_HALAMAN = 10;
+
+  function buatUcapanItem(doc, row){
+    var item = doc.createElement('div');
+    item.className = 'ucapan-item';
+    var head = doc.createElement('div');
+    head.className = 'ucapan-head';
+    var name = doc.createElement('span');
+    name.className = 'ucapan-name';
+    name.textContent = row.nama;
+    var time = doc.createElement('span');
+    time.className = 'ucapan-time';
+    time.textContent = formatWaktuRelatif(row.created_at);
+    head.appendChild(name);
+    head.appendChild(time);
+    var text = doc.createElement('p');
+    text.className = 'ucapan-text';
+    text.textContent = row.pesan;
+    item.appendChild(head);
+    item.appendChild(text);
+    return item;
+  }
+
+  function buatPesanUcapan(doc, teks){
+    var p = doc.createElement('p');
+    p.className = 'section-lead center';
+    p.textContent = teks;
+    return p;
+  }
+
+  function setupUcapanSection(doc, inv, sb){
+    var ucapanList = doc.getElementById('ucapanList');
+    var formLama = doc.getElementById('ucapanForm');
+    if (!ucapanList || !formLama) return;
+
+    var form = formLama.cloneNode(true);
+    formLama.parentNode.replaceChild(form, formLama);
+    var msgEl = form.querySelector('#ucapanMsg');
+    var namaInput = form.querySelector('#ucapanNama');
+    var pesanInput = form.querySelector('#ucapanPesan');
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    ucapanList.innerHTML = '';
+    ucapanList.appendChild(buatPesanUcapan(doc, 'Memuat ucapan...'));
+
+    var semua = [];
+    var jumlahTampil = 0;
+    var tombolLebih = null;
+
+    function tampilkanBatch(){
+      var batch = semua.slice(jumlahTampil, jumlahTampil + UCAPAN_PER_HALAMAN);
+      batch.forEach(function(row){ ucapanList.appendChild(buatUcapanItem(doc, row)); });
+      jumlahTampil += batch.length;
+      if (tombolLebih) tombolLebih.style.display = jumlahTampil < semua.length ? '' : 'none';
+    }
+
+    function pasangTombolLebih(){
+      if (tombolLebih) return;
+      var wrap = doc.createElement('div');
+      wrap.className = 'center';
+      wrap.style.marginTop = 'var(--s3)';
+      var btn = doc.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn-outline';
+      btn.textContent = 'Lihat lebih banyak';
+      btn.addEventListener('click', tampilkanBatch);
+      wrap.appendChild(btn);
+      ucapanList.parentNode.insertBefore(wrap, ucapanList.nextSibling);
+      tombolLebih = btn;
+      tombolLebih.style.display = jumlahTampil < semua.length ? '' : 'none';
+    }
+
+    sb.from('ucapan').select('*').eq('invitation_id', inv.id).order('created_at', { ascending: false }).then(function(res){
+      ucapanList.innerHTML = '';
+      if (res.error) {
+        ucapanList.appendChild(buatPesanUcapan(doc, 'Gagal memuat ucapan. Muat ulang halaman untuk mencoba lagi.'));
+        return;
+      }
+      semua = res.data || [];
+      if (semua.length === 0) {
+        ucapanList.appendChild(buatPesanUcapan(doc, 'Belum ada ucapan. Jadilah yang pertama mengirimkan doa untuk kedua mempelai!'));
+        return;
+      }
+      if (semua.length > UCAPAN_PER_HALAMAN) pasangTombolLebih();
+      tampilkanBatch();
+    }, function(){
+      ucapanList.innerHTML = '';
+      ucapanList.appendChild(buatPesanUcapan(doc, 'Gagal terhubung ke server. Periksa koneksi internetmu.'));
+    });
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var nama = namaInput.value.trim();
+      var pesan = pesanInput.value.trim();
+      if (!nama || !pesan) {
+        msgEl.textContent = 'Nama dan pesan wajib diisi ya.';
+        msgEl.className = 'form-msg err';
+        return;
+      }
+      submitBtn.disabled = true;
+      msgEl.textContent = 'Mengirim...';
+      msgEl.className = 'form-msg';
+
+      sb.from('ucapan').insert({ invitation_id: inv.id, nama: nama, pesan: pesan }).select().single().then(function(res){
+        submitBtn.disabled = false;
+        if (res.error || !res.data) {
+          msgEl.textContent = PESAN_ERROR_UMUM;
+          msgEl.className = 'form-msg err';
+          return;
+        }
+        semua.unshift(res.data);
+        if (ucapanList.querySelector('.section-lead')) ucapanList.innerHTML = '';
+        ucapanList.insertBefore(buatUcapanItem(doc, res.data), ucapanList.firstChild);
+        jumlahTampil += 1;
+        if (semua.length > UCAPAN_PER_HALAMAN) pasangTombolLebih();
+        msgEl.textContent = 'Terima kasih atas ucapan dan doanya!';
+        msgEl.className = 'form-msg ok';
+        form.reset();
+      }, function(){
+        submitBtn.disabled = false;
+        msgEl.textContent = PESAN_ERROR_UMUM;
+        msgEl.className = 'form-msg err';
+      });
+    });
+  }
+
   window.RenderUndangan = {
     applyPalette: applyPalette,
     populateSlots: populateSlots,
-    terapkanKeFrame: terapkanKeFrame
+    terapkanKeFrame: terapkanKeFrame,
+    setupRsvpForm: setupRsvpForm,
+    setupUcapanSection: setupUcapanSection
   };
 })();

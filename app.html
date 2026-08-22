@@ -129,13 +129,78 @@
       <button type="button" class="ws-tab" data-tab="desain">Desain</button>
       <button type="button" class="ws-tab" data-tab="pratinjau">Pratinjau</button>
       <button type="button" class="ws-tab" data-tab="bagikan">Bagikan</button>
+      <button type="button" class="ws-tab" data-tab="tamu">Tamu &amp; Ucapan</button>
     </div>
 
     <div class="ws-panel" id="wsPanel-isi-data">
       <form id="wsForm">
         <div class="profile-block">
+          <h3>Foto</h3>
+          <p>Foto ini akan tampil sebagai foto sampul besar di bagian paling atas undangan.</p>
+          <div class="field-grid">
+            <div class="field field-full">
+              <label>Foto Utama</label>
+              <div class="foto-upload" data-kolom="foto_utama_url">
+                <input type="file" class="foto-upload-input" id="input_foto_utama_url" accept="image/jpeg,image/png,image/webp" hidden>
+                <div class="foto-upload-zone" id="zone_foto_utama_url" tabindex="0" role="button" aria-label="Unggah foto utama">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+                  <span>Klik atau seret foto ke sini</span>
+                  <span class="foto-upload-hint">JPG, PNG, atau WEBP &middot; maks 5 MB</span>
+                </div>
+                <div class="foto-upload-preview" id="preview_foto_utama_url" hidden>
+                  <img id="img_foto_utama_url" alt="Pratinjau foto utama">
+                  <div class="foto-upload-actions">
+                    <button type="button" class="btn btn-ghost btn-sm" data-act="ganti">Ganti</button>
+                    <button type="button" class="btn btn-ghost btn-sm" data-act="hapus">Hapus</button>
+                  </div>
+                </div>
+                <p class="foto-upload-status" id="status_foto_utama_url" aria-live="polite"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-block">
           <h3>Mempelai</h3>
           <div class="field-grid">
+            <div class="field">
+              <label>Foto Mempelai Pria</label>
+              <div class="foto-upload" data-kolom="foto_pria_url">
+                <input type="file" class="foto-upload-input" id="input_foto_pria_url" accept="image/jpeg,image/png,image/webp" hidden>
+                <div class="foto-upload-zone" id="zone_foto_pria_url" tabindex="0" role="button" aria-label="Unggah foto mempelai pria">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+                  <span>Klik atau seret foto ke sini</span>
+                  <span class="foto-upload-hint">JPG, PNG, atau WEBP &middot; maks 5 MB</span>
+                </div>
+                <div class="foto-upload-preview" id="preview_foto_pria_url" hidden>
+                  <img id="img_foto_pria_url" alt="Pratinjau foto mempelai pria">
+                  <div class="foto-upload-actions">
+                    <button type="button" class="btn btn-ghost btn-sm" data-act="ganti">Ganti</button>
+                    <button type="button" class="btn btn-ghost btn-sm" data-act="hapus">Hapus</button>
+                  </div>
+                </div>
+                <p class="foto-upload-status" id="status_foto_pria_url" aria-live="polite"></p>
+              </div>
+            </div>
+            <div class="field">
+              <label>Foto Mempelai Wanita</label>
+              <div class="foto-upload" data-kolom="foto_wanita_url">
+                <input type="file" class="foto-upload-input" id="input_foto_wanita_url" accept="image/jpeg,image/png,image/webp" hidden>
+                <div class="foto-upload-zone" id="zone_foto_wanita_url" tabindex="0" role="button" aria-label="Unggah foto mempelai wanita">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+                  <span>Klik atau seret foto ke sini</span>
+                  <span class="foto-upload-hint">JPG, PNG, atau WEBP &middot; maks 5 MB</span>
+                </div>
+                <div class="foto-upload-preview" id="preview_foto_wanita_url" hidden>
+                  <img id="img_foto_wanita_url" alt="Pratinjau foto mempelai wanita">
+                  <div class="foto-upload-actions">
+                    <button type="button" class="btn btn-ghost btn-sm" data-act="ganti">Ganti</button>
+                    <button type="button" class="btn btn-ghost btn-sm" data-act="hapus">Hapus</button>
+                  </div>
+                </div>
+                <p class="foto-upload-status" id="status_foto_wanita_url" aria-live="polite"></p>
+              </div>
+            </div>
             <div class="field">
               <label for="f_nama_pria_panggilan">Nama panggilan pria</label>
               <input type="text" id="f_nama_pria_panggilan" name="nama_pria_panggilan" placeholder="mis. Andi">
@@ -169,6 +234,7 @@
             <div class="field">
               <label for="f_tanggal_akad">Tanggal akad</label>
               <input type="date" id="f_tanggal_akad" name="tanggal_akad">
+              <p class="field-error" id="err_tanggal_akad"></p>
             </div>
             <div class="field">
               <label for="f_waktu_akad">Waktu akad</label>
@@ -177,6 +243,7 @@
             <div class="field">
               <label for="f_tanggal_resepsi">Tanggal resepsi</label>
               <input type="date" id="f_tanggal_resepsi" name="tanggal_resepsi">
+              <p class="field-error" id="err_tanggal_resepsi"></p>
             </div>
             <div class="field">
               <label for="f_waktu_resepsi">Waktu resepsi</label>
@@ -199,6 +266,7 @@
             <div class="field field-full">
               <label for="f_lokasi_maps_url">Link Google Maps</label>
               <input type="url" id="f_lokasi_maps_url" name="lokasi_maps_url" placeholder="https://maps.google.com/...">
+              <p class="field-error" id="err_lokasi_maps_url"></p>
             </div>
           </div>
         </div>
@@ -218,6 +286,21 @@
         </div>
 
         <div class="profile-block">
+          <h3>Galeri Momen</h3>
+          <p>Unggah beberapa foto kenangan kalian, maksimal 6 foto.</p>
+          <div class="foto-galeri-upload">
+            <input type="file" class="foto-upload-input" id="galeriInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
+            <div class="foto-upload-zone" id="galeriZone" tabindex="0" role="button" aria-label="Unggah foto galeri">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+              <span>Klik atau seret beberapa foto ke sini</span>
+              <span class="foto-upload-hint" id="galeriHint">JPG, PNG, atau WEBP &middot; maks 5 MB per foto &middot; 0/6 foto</span>
+            </div>
+            <div class="foto-galeri-grid" id="galeriGridUpload"></div>
+            <p class="foto-upload-status" id="galeriStatus" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="profile-block">
           <h3>Tanda Kasih</h3>
           <h4 class="ws-subhead">Rekening 1</h4>
           <div class="field-grid">
@@ -228,6 +311,7 @@
             <div class="field">
               <label for="f_no_rekening_1">Nomor rekening</label>
               <input type="text" id="f_no_rekening_1" name="no_rekening_1" placeholder="mis. 1234567890">
+              <p class="field-error" id="err_no_rekening_1"></p>
             </div>
             <div class="field field-full">
               <label for="f_pemilik_rekening_1">Nama pemilik rekening</label>
@@ -243,6 +327,7 @@
             <div class="field">
               <label for="f_no_rekening_2">Nomor rekening</label>
               <input type="text" id="f_no_rekening_2" name="no_rekening_2" placeholder="mis. 0987654321">
+              <p class="field-error" id="err_no_rekening_2"></p>
             </div>
             <div class="field field-full">
               <label for="f_pemilik_rekening_2">Nama pemilik rekening</label>
@@ -276,10 +361,97 @@
       </div>
     </div>
     <div class="ws-panel" id="wsPanel-bagikan">
-      <div class="workspace-placeholder">
-        <h2>Bagikan — segera hadir</h2>
-        <p>Buat link undangan dan bagikan ke daftar tamumu di sini.</p>
+      <div class="profile-block">
+        <h3>Alamat Undangan</h3>
+        <p>Ini alamat unik yang dipakai tamu untuk membuka undanganmu. Dibuat otomatis dari nama kalian, dan boleh diubah.</p>
+        <div class="field">
+          <label for="f_slug">Slug</label>
+          <div class="slug-input-row">
+            <span class="slug-prefix">kartuundangan.link/u/</span>
+            <input type="text" id="f_slug" placeholder="mis. bagus-wulandari" autocomplete="off" spellcheck="false">
+            <button type="button" class="btn btn-ghost btn-sm" id="slugSaveBtn">Simpan</button>
+          </div>
+        </div>
+        <p class="ws-save-msg" id="slugMsg" aria-live="polite"></p>
       </div>
+
+      <div class="profile-block">
+        <h3>Status Undangan</h3>
+        <div class="status-row">
+          <span class="badge" id="statusBadge">Draf</span>
+          <button type="button" class="btn btn-primary btn-sm" id="activateBtn">Aktifkan Undangan</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="deactivateBtn" style="display:none;">Nonaktifkan Undangan</button>
+        </div>
+        <ul class="activate-checklist" id="activateChecklist" style="display:none;"></ul>
+        <p class="ws-save-msg" id="statusMsg" aria-live="polite"></p>
+      </div>
+
+      <div class="profile-block" id="shareLockedBlock">
+        <h3>Bagikan ke Tamu</h3>
+        <p>Undangan masih berstatus Draf. Aktifkan undangan dulu supaya link-nya bisa dibagikan ke tamu.</p>
+      </div>
+
+      <div class="profile-block" id="shareActiveBlock" style="display:none;">
+        <h3>Bagikan ke Tamu</h3>
+        <p>Undangan sudah aktif. Bagikan link ini ke tamu-tamumu.</p>
+        <div class="share-link-row">
+          <input type="text" id="shareUrlInput" readonly aria-label="Link undangan">
+          <button type="button" class="btn btn-outline btn-sm" id="copyLinkBtn">Salin Link</button>
+        </div>
+        <p class="ws-save-msg" id="copyMsg" aria-live="polite"></p>
+        <a class="btn btn-primary" id="shareWaBtn" href="#" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:-4px;"><path d="M17.6 6.3A8.9 8.9 0 0 0 3.3 16.8L2 22l5.3-1.4a8.9 8.9 0 0 0 4.3 1.1h0a8.9 8.9 0 0 0 6.1-15.3zM12 20.1h0a7.5 7.5 0 0 1-3.8-1l-.3-.2-2.8.7.8-2.7-.2-.3a7.5 7.5 0 1 1 13.9-4A7.5 7.5 0 0 1 12 20.1zm4.1-5.6c-.2-.1-1.3-.7-1.5-.7s-.4-.1-.5.1-.5.7-.7.8-.3.1-.5 0a6.1 6.1 0 0 1-1.8-1.1 6.8 6.8 0 0 1-1.2-1.5c-.1-.2 0-.4.1-.5l.4-.4a1.6 1.6 0 0 0 .2-.4.4.4 0 0 0 0-.4c0-.1-.5-1.2-.7-1.6s-.4-.4-.5-.4h-.5a.9.9 0 0 0-.6.3 2.7 2.7 0 0 0-.9 2 4.7 4.7 0 0 0 1 2.5 10.7 10.7 0 0 0 4.1 3.6c.6.2 1 .4 1.4.5a3.3 3.3 0 0 0 1.5.1 2.5 2.5 0 0 0 1.6-1.1 2 2 0 0 0 .1-1.1c-.1-.1-.2-.2-.4-.3z"/></svg>
+          Bagikan ke WhatsApp
+        </a>
+      </div>
+    </div>
+    <div class="ws-panel" id="wsPanel-tamu">
+      <div class="profile-block">
+        <h3>Ringkasan Kehadiran</h3>
+        <div class="stat-row" id="rsvpStatRow">
+          <div class="stat-tile">
+            <span class="stat-num" id="statHadir">0</span>
+            <span class="stat-label">Hadir</span>
+          </div>
+          <div class="stat-tile">
+            <span class="stat-num" id="statTidakHadir">0</span>
+            <span class="stat-label">Tidak Hadir</span>
+          </div>
+          <div class="stat-tile">
+            <span class="stat-num" id="statJumlahTamu">0</span>
+            <span class="stat-label">Tamu Akan Datang</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-block">
+        <div class="profile-block-head">
+          <h3>Daftar Konfirmasi Kehadiran</h3>
+        </div>
+        <div class="rsvp-table-wrap">
+          <table class="rsvp-table" id="rsvpTable">
+            <thead>
+              <tr>
+                <th>Nama Tamu</th>
+                <th>Pihak</th>
+                <th>Kehadiran</th>
+                <th>Jumlah</th>
+                <th>Waktu Kirim</th>
+              </tr>
+            </thead>
+            <tbody id="rsvpTableBody"></tbody>
+          </table>
+        </div>
+        <p class="workspace-msg" id="rsvpEmptyMsg" style="display:none;">Belum ada tamu yang mengonfirmasi kehadiran.</p>
+      </div>
+
+      <div class="profile-block">
+        <h3>Ucapan &amp; Doa dari Tamu</h3>
+        <div class="ucapan-admin-list" id="ucapanAdminList"></div>
+        <p class="workspace-msg" id="ucapanEmptyMsg" style="display:none;">Belum ada ucapan dari tamu.</p>
+      </div>
+
+      <p class="ws-save-msg" id="tamuMsg" aria-live="polite"></p>
     </div>
   </section>
 
@@ -346,6 +518,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/auth-core.js"></script>
+<script src="assets/theme-templates.js"></script>
 <script src="assets/dashboard.js"></script>
 
 </body>

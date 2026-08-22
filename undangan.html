@@ -111,6 +111,8 @@
         var countdownIso = window.RenderUndangan.populateSlots(doc, inv);
         if (inv.data && inv.data.palet) window.RenderUndangan.applyPalette(doc, inv.data.palet);
         window.RenderUndangan.terapkanKeFrame(frame.contentWindow, countdownIso);
+        window.RenderUndangan.setupRsvpForm(doc, inv, sb);
+        window.RenderUndangan.setupUcapanSection(doc, inv, sb);
       } catch (err) {
         tampilkanHalaman('Undangan Tidak Bisa Ditampilkan', 'Terjadi kesalahan saat menampilkan undangan ini. Silakan muat ulang halaman.');
       }

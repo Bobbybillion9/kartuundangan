@@ -20,11 +20,20 @@
   }
 
   var confirmOverlay = document.getElementById('confirmOverlay');
+  var confirmTitleEl = document.getElementById('confirmTitle');
+  var confirmTextEl = document.getElementById('confirmText');
   var confirmOkBtn = document.getElementById('confirmOkBtn');
   var confirmCancelBtn = document.getElementById('confirmCancelBtn');
   var confirmCloseBtn = document.getElementById('confirmClose');
 
-  function confirmLogout(){
+  // Modal konfirmasi Ya/Batal generik — dipakai logout dan aksi lain
+  // yang perlu konfirmasi (mis. nonaktifkan undangan) lewat satu modal
+  // yang sama, tinggal timpa judul/teks/label tombolnya.
+  function confirmAction(opts){
+    opts = opts || {};
+    confirmTitleEl.textContent = opts.title || 'Konfirmasi';
+    confirmTextEl.textContent = opts.text || '';
+    confirmOkBtn.textContent = opts.okText || 'Ya';
     return new Promise(function(resolve){
       confirmOverlay.classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -42,6 +51,10 @@
       confirmCancelBtn.addEventListener('click', onCancel);
       confirmCloseBtn.addEventListener('click', onCancel);
     });
+  }
+
+  function confirmLogout(){
+    return confirmAction({ title: 'Konfirmasi Keluar', text: 'Yakin mau keluar dari akun ini?', okText: 'Ya, Keluar' });
   }
 
   var navAccountBtn = document.getElementById('navAccountBtn');
@@ -101,6 +114,7 @@
     getInitial: getInitial,
     hasPasswordIdentity: hasPasswordIdentity,
     confirmLogout: confirmLogout,
+    confirmAction: confirmAction,
     getSession: function(){ return currentSession; },
     registerEscapeHandler: registerEscapeHandler
   };
