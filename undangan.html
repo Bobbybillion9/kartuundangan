@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undangan Pernikahan — Kartu Undangan</title>
+<meta name="description" content="Undangan pernikahan digital, dibuat dengan kartuundangan.link.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Undangan Pernikahan — Kartu Undangan">
+<meta property="og:description" content="Undangan pernikahan digital, dibuat dengan kartuundangan.link.">
+<meta name="robots" content="noindex, nofollow">
+
+<!-- Catatan: tag og:* di atas cuma fallback generik untuk isi file
+     statis ini. Judul/deskripsi/gambar yang SESUAI tiap undangan (buat
+     pratinjau link WhatsApp dkk) dihasilkan di server oleh
+     api/u/[slug].js — lihat komentar di file itu. Bot pratinjau link
+     tidak menjalankan JavaScript, jadi document.title yang diubah di
+     bawah cuma berlaku untuk pengunjung manusia sungguhan. -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&family=Inter:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+
+<style>
+  html,body{height:100%;}
+  body{overflow:hidden;background:var(--paper-2);}
+  .frame-wrap{position:fixed;inset:0;}
+  .undangan-frame{width:100%;height:100%;border:none;display:block;background:var(--paper);}
+  .page-state{max-width:440px;margin:0 auto;padding:0 var(--s3);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+  .page-state h1{margin-bottom:var(--s2);}
+</style>
+</head>
+<body>
+
+<div class="frame-wrap" id="frameWrap">
+  <iframe class="undangan-frame" id="undanganFrame" title="Undangan pernikahan" src="about:blank"></iframe>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/theme-templates.js"></script>
+<script src="assets/render-undangan.js"></script>
+<script>
+(function(){
+  // Slug normalnya diambil dari path URL /u/<slug> (lewat rewrite
+  // vercel.json, alamat di address bar tamu tetap /u/<slug>). Fallback
+  // ?slug= dipakai saat halaman ini dibuka langsung tanpa rewrite, mis.
+  // untuk pengembangan/pengetesan lokal.
+  var params = new URLSearchParams(window.location.search);
+  var dariPath = /\/u\/([a-z0-9-]+)\/?(?:[?#]|$)/i.exec(window.location.pathname + window.location.search);
+  var slug = params.get('slug') || (dariPath && dariPath[1]) || '';
+
+  var frame = document.getElementById('undanganFrame');
+  var wrap = document.getElementById('frameWrap');
+
+  function tampilkanHalaman(judul, pesan){
+    wrap.innerHTML = '<div class="page-state"><h1>' + judul + '</h1><p>' + pesan + '</p></div>';
+  }
+
+  if (!/^[a-z0-9-]+$/i.test(slug)) {
+    tampilkanHalaman('Undangan tidak ditemukan', 'Alamat undangan ini tidak valid. Periksa kembali link yang kamu terima.');
+    return;
+  }
+
+  var SUPABASE_URL = 'https://ebjwjnxunedjftgzzbch.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_qUFa64f8yhx_3dYYwaP3Aw_kHD6JvuA';
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: 'implicit' } });
+
+  function cariTemplateMeta(inv){
+    return window.THEME_TEMPLATES.filter(function(t){
+      return t.kategori === inv.kategori_desain && t.name === inv.nama_desain;
+    })[0];
+  }
+
+  // RLS invitations cuma mengizinkan siapa pun (tanpa login) membaca
+  // baris berstatus 'aktif' (lihat scratch_migration_public_page.sql).
+  // Jadi slug salah DAN slug ada-tapi-masih-draft sama-sama muncul
+  // sebagai baris kosong di sini — keduanya perlu pesan yang beda ke
+  // tamu, makanya dicek ulang lewat fungsi cek_status_undangan
+  // (SECURITY DEFINER) yang cuma membocorkan status-nya saja, bukan
+  // data pribadi di baris draft itu.
+  function tampilkanTidakDitemukanAtauDraft(){
+    sb.rpc('cek_status_undangan', { p_slug: slug }).then(function(cek){
+      var status = cek && !cek.error ? cek.data : null;
+      if (status === 'draft') {
+        tampilkanHalaman('Undangan Belum Aktif', 'Pasangan ini belum mengaktifkan undangannya. Coba hubungi mereka langsung, atau buka lagi link ini beberapa saat lagi.');
+      } else {
+        tampilkanHalaman('Undangan Tidak Ditemukan', 'Alamat undangan ini tidak valid atau sudah tidak tersedia. Periksa kembali link yang kamu terima.');
+      }
+    }, function(){
+      tampilkanHalaman('Undangan Tidak Ditemukan', 'Alamat undangan ini tidak valid atau sudah tidak tersedia. Periksa kembali link yang kamu terima.');
+    });
+  }
+
+  sb.from('invitations').select('*').eq('slug', slug).eq('status', 'aktif').single().then(function(res){
+    if (res.error || !res.data) { tampilkanTidakDitemukanAtauDraft(); return; }
+
+    var inv = res.data;
+    var template = cariTemplateMeta(inv);
+    if (!template) {
+      tampilkanHalaman('Undangan Tidak Bisa Ditampilkan', 'Tema undangan ini tidak dikenali. Silakan hubungi pasangan yang mengundangmu.');
+      return;
+    }
+
+    document.title = (inv.nama_pria_panggilan || 'Mempelai Pria') + ' & ' + (inv.nama_wanita_panggilan || 'Mempelai Wanita') + ' — Undangan Pernikahan';
+
+    frame.addEventListener('load', function onLoad(){
+      var doc = frame.contentDocument;
+      if (!doc) return;
+      try {
+        var countdownIso = window.RenderUndangan.populateSlots(doc, inv);
+        if (inv.data && inv.data.palet) window.RenderUndangan.applyPalette(doc, inv.data.palet);
+        window.RenderUndangan.terapkanKeFrame(frame.contentWindow, countdownIso);
+      } catch (err) {
+        tampilkanHalaman('Undangan Tidak Bisa Ditampilkan', 'Terjadi kesalahan saat menampilkan undangan ini. Silakan muat ulang halaman.');
+      }
+    });
+    frame.src = 'templates/' + template.id + '/index.html';
+  }, function(){
+    tampilkanHalaman('Gagal Memuat Undangan', 'Gagal terhubung ke server. Periksa koneksi internetmu lalu coba lagi.');
+  });
+})();
+</script>
+
+</body>
+</html>
