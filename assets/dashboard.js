@@ -354,6 +354,9 @@
   var paletteGrid = document.getElementById('paletteGrid');
   var paletteMsg = document.getElementById('paletteMsg');
 
+  var pratinjauFrame = document.getElementById('pratinjauFrame');
+  var pratinjauEditBtn = document.getElementById('pratinjauEditBtn');
+
   var currentInvitation = null;
   var currentTemplateMeta = null;
 
@@ -370,10 +373,21 @@
       var panel = document.getElementById('wsPanel-' + name);
       if (panel) panel.classList.toggle('active', name === tab);
     });
+    if (tab === 'pratinjau') loadPratinjauFrame();
     if (persist && currentInvitation && currentInvitation.last_active_tab !== tab) {
       currentInvitation.last_active_tab = tab;
       KU.sb.from('invitations').update({ last_active_tab: tab }).eq('id', currentInvitation.id).then(function(){});
     }
+  }
+
+  function loadPratinjauFrame(){
+    if (!pratinjauFrame || !currentInvitation || !currentTemplateMeta) return;
+    // parameter "_t" cuma pemicu reload penuh (bukan dipakai pratinjau.html)
+    // supaya data terbaru selalu diambil ulang tiap kali tab ini dibuka,
+    // bukan menampilkan hasil fetch lama dari kunjungan sebelumnya.
+    pratinjauFrame.src = 'templates/pratinjau.html?tema=' + encodeURIComponent(currentTemplateMeta.id) +
+      '&invitation_id=' + encodeURIComponent(currentInvitation.id) +
+      '&_t=' + Date.now();
   }
 
   function populateForm(inv){
@@ -487,6 +501,8 @@
   wsTabButtons.forEach(function(b){
     b.addEventListener('click', function(){ showWsTab(b.dataset.tab, true); });
   });
+
+  if (pratinjauEditBtn) pratinjauEditBtn.addEventListener('click', function(){ showWsTab('isi-data', true); });
 
   if (wsForm) {
     wsForm.addEventListener('submit', async function(e){

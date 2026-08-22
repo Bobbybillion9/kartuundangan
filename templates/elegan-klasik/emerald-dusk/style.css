@@ -1,0 +1,694 @@
+:root{
+  /* Latar: hijau zamrud pekat di atas, meredup hampir hitam di bawah
+     (lihat gradasi 3-stop di .invitation). --ivory & --paper dipakai
+     ulang sebagai dua tingkat gelap yang berdekatan (bukan "kertas
+     terang" seperti nama aslinya di tema lain) supaya seluruh rule
+     lain yang sudah memakai var(--ivory)/var(--paper) otomatis ikut
+     nuansa gelap tanpa perlu ditulis ulang satu-satu. */
+  --ivory:#0B2620;
+  --paper:#0E241F;
+  --card:#16362F;
+  --ink:#EDE4D3;
+  --ink-mid:#CBBFA6;
+  --ink-soft:#9A8F78;
+  /* --rose/--rose-dark = emas terang (aksen utama & CTA); --gold = emas
+     tua (garis/tepi/stop gelap shimmer); --champagne = titik paling
+     terang pada gradient emas & warna monogram/skrip. --sage = aksen
+     sekunder hijau sage pucat untuk label kecil. */
+  --rose:#D6B463;
+  --rose-dark:#C29A44;
+  --rose-tint:rgba(214,180,99,0.12);
+  --sage:#9FB79A;
+  --sage-tint:rgba(159,183,154,0.10);
+  --gold:#9C7A29;
+  --champagne:#F2E3B8;
+  --line:rgba(156,122,41,0.24);
+  --line-soft:rgba(156,122,41,0.15);
+  --shadow:0 24px 55px -22px rgba(0,0,0,0.65);
+  --s1:6px; --s2:12px; --s3:20px; --s4:28px; --s5:40px; --s6:56px; --s7:80px;
+  --r-sm:10px; --r-md:18px; --r-lg:28px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{
+  font-family:'Jost',sans-serif;
+  background:var(--ivory);
+  color:var(--ink);
+  line-height:1.75;
+  font-size:16px;
+  font-weight:400;
+  letter-spacing:.012em;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:'Italiana',serif;font-weight:400;line-height:1.2;color:var(--champagne);letter-spacing:.01em;}
+p{color:var(--ink-mid);}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;}
+img{max-width:100%;display:block;}
+:focus-visible{outline:2px solid var(--rose);outline-offset:3px;}
+
+.script{font-family:'Pinyon Script',cursive;font-weight:400;color:var(--champagne);}
+
+/* ---------- kilau emas bergerak (shimmer) ----------
+   Dipakai pada judul besar (h1 sampul, h2 tiap section) dan pada garis
+   ornamen pemisah — BUKAN pada semua teks emas (nomor rekening,
+   hitung mundur, dsb tetap emas solid supaya tetap gampang dibaca &
+   tidak "ramai"). Siklus lambat (8s) & linear supaya terasa seperti
+   pantulan cahaya di foil asli, bukan berkedip. */
+@keyframes goldShimmer{
+  0%{background-position:0% 50%;}
+  100%{background-position:250% 50%;}
+}
+.shimmer-gold{
+  background-image:linear-gradient(100deg,
+    var(--champagne) 0%, var(--gold) 22%, var(--champagne) 45%,
+    var(--gold) 68%, var(--champagne) 90%);
+  background-size:250% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:goldShimmer 8s linear infinite;
+}
+
+/* ---------- layout shell ---------- */
+.invitation{
+  position:relative;
+  background-color:var(--paper);
+  background-image:linear-gradient(to bottom,
+    var(--ivory) 0%,
+    var(--paper) 38%,
+    #081D18 68%,
+    #050F0C 100%
+  );
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  overflow:hidden;
+}
+
+@media(min-width:640px){
+  body{
+    background-color:#050F0C;
+    background-image:
+      radial-gradient(circle at 15% 8%,rgba(156,122,41,0.10),transparent 45%),
+      radial-gradient(circle at 85% 92%,rgba(156,122,41,0.09),transparent 45%);
+    background-repeat:no-repeat,no-repeat;
+    background-size:auto,auto;
+    min-height:100vh;
+    padding:var(--s6) var(--s3);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+  }
+  .invitation{
+    width:100%;
+    max-width:460px;
+    border-radius:var(--r-lg);
+    box-shadow:var(--shadow),0 0 0 1px rgba(156,122,41,0.18);
+    border:1px solid var(--line-soft);
+  }
+}
+
+/* ---------- reveal-before-open lock ---------- */
+body.cover-locked{overflow-y:auto;overflow-x:hidden;height:100vh;}
+body.cover-locked .reveal-after-cover{display:none;}
+
+.reveal-after-cover{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;}
+.reveal-after-cover.in{opacity:1;transform:translateY(0);}
+
+/* ============================================================
+   SISTEM ANIMASI SCROLL PER-ELEMEN — sama seperti template lain.
+   data-rv="draw" tidak dipakai di tema ini (ornamen pemisah sekarang
+   berupa garis+permata CSS, bukan path SVG yang "digambar"), jadi
+   rule stroke-dashoffset tidak diikutkan supaya CSS tidak menyimpan
+   sisa kode yang tidak pernah aktif.
+   ============================================================ */
+[data-rv="text"]{
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .65s cubic-bezier(.22,.61,.36,1),transform .65s cubic-bezier(.22,.61,.36,1);
+  transition-delay:calc(var(--d,0) * 110ms);
+}
+[data-reveal].in-view [data-rv="text"]{opacity:1;transform:translateY(0);}
+
+[data-rv="img"]{
+  transform:scale(1.05);
+  transition:transform 1.1s cubic-bezier(.22,.61,.36,1);
+  transition-delay:calc(var(--d,0) * 110ms);
+}
+[data-reveal].in-view [data-rv="img"]{transform:scale(1);}
+
+/* ---------- ornamen pemisah antar section: garis emas + permata ----------
+   Satu motif konsisten dipakai di SEMUA divider (beda dari sage-rose
+   yang gonta-ganti motif botani, dan beda dari ivory-gold yang pakai
+   motif cincin/hati) — garis tipis berkilau dengan belah ketupat kecil
+   di tengah, seperti permata di kalung. */
+.section-divider{display:flex;justify-content:center;margin:0 0 var(--s5);}
+.ed-divider{display:flex;align-items:center;gap:12px;width:100%;max-width:230px;}
+.ed-divider-line{
+  flex:1;height:1px;
+  background-image:linear-gradient(90deg,
+    transparent, var(--champagne) 15%, var(--gold) 50%, var(--champagne) 85%, transparent);
+  background-size:250% 100%;
+  animation:goldShimmer 7s linear infinite;
+  opacity:.8;
+}
+.ed-divider-gem{
+  width:9px;height:9px;flex-shrink:0;
+  background-image:linear-gradient(135deg,var(--champagne),var(--gold),var(--champagne));
+  background-size:250% 250%;
+  animation:goldShimmer 7s linear infinite;
+  clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);
+  box-shadow:0 0 6px rgba(214,180,99,.5);
+}
+
+/* ---------- bintang berkelip (pengganti kelopak) ----------
+   Titik cahaya kecil, posisi diam (bukan melayang), opasitas
+   berdenyut pelan & acak per titik. Dilewati kalau prefers-reduced-
+   motion aktif atau perangkat lemah (lihat <script>). */
+.particles{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
+@keyframes starTwinkle{
+  0%,100%{opacity:.08;}
+  50%{opacity:var(--peak,.7);}
+}
+.star{
+  position:absolute;
+  width:2px;height:2px;
+  border-radius:50%;
+  background:var(--champagne);
+  box-shadow:0 0 4px 1px rgba(242,227,184,.5);
+  opacity:0;
+  animation:starTwinkle var(--dur,4s) ease-in-out var(--delay,0s) infinite;
+}
+.star--big{width:3px;height:3px;box-shadow:0 0 6px 1.5px rgba(242,227,184,.6);}
+
+/* ---------- ornaments (sudut penutup) ---------- */
+.ornament{position:absolute;width:92px;height:auto;color:var(--sage);opacity:.4;pointer-events:none;}
+.ornament path{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;}
+.ornament ellipse,.ornament circle{fill:currentColor;}
+.ornament.rose{color:var(--rose);opacity:.55;}
+.ornament.top-left{top:var(--s3);left:var(--s3);transform:rotate(0deg);}
+.ornament.top-right{top:var(--s3);right:var(--s3);transform:scaleX(-1);}
+.ornament.bottom-left{bottom:var(--s3);left:var(--s3);transform:scaleY(-1);}
+.ornament.bottom-right{bottom:var(--s3);right:var(--s3);transform:scale(-1,-1);}
+
+.divider{display:flex;align-items:center;justify-content:center;gap:10px;margin:var(--s4) 0;}
+.divider-line{width:36px;height:1px;background:var(--line);}
+.divider svg{width:20px;height:20px;color:var(--sage);}
+.divider svg path{fill:none;stroke:currentColor;stroke-width:1.5;}
+.divider svg circle{fill:var(--gold);}
+
+/* ---------- shared section rhythm ---------- */
+section{position:relative;padding:var(--s6) var(--s4);}
+.eyebrow{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--sage);font-weight:500;margin-bottom:var(--s2);
+}
+.eyebrow::before,.eyebrow::after{content:'';width:16px;height:1px;background:currentColor;opacity:.5;}
+.section-title{font-size:clamp(25px,7vw,31px);margin-bottom:var(--s2);}
+.section-lead{max-width:340px;margin:0 auto;font-size:14.5px;}
+.center{text-align:center;}
+
+/* ---------- cover ---------- */
+#cover{
+  position:relative;
+  min-height:100svh;
+  min-height:100vh;
+  overflow:hidden;
+  background:radial-gradient(circle at 50% 38%,#0E2A23 0%,var(--ivory) 55%,#050F0C 100%);
+}
+
+/* ============================================================
+   ANIMASI BUKA SAMPUL — Emerald Dusk: "CAHAYA MENYINGKAP"
+   Kontrak tetap sama seperti template lain: klik #openBtn memicu
+   class "is-opening" pada #cover; .cover-content harus tetap
+   terlihat sebelum class itu ditambahkan; setelah durasi animasi
+   selesai (lihat GLOW_DURATION di <script>), body.cover-locked
+   dilepas dan #cover disembunyikan.
+   Bedanya di sini: bukan pintu/tirai, tapi lingkaran cahaya hangat
+   (.cover-glow) yang membesar dari titik kecil di tengah (persis di
+   atas monogram) sampai memenuhi seluruh #cover, sekaligus teks-teks
+   yang tadinya redup (opacity rendah) ikut terang penuh.
+   ============================================================ */
+.cover-glow{
+  position:absolute;
+  top:36%;left:50%;
+  width:18px;height:18px;
+  transform:translate(-50%,-50%) scale(1);
+  border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(242,227,184,.95) 0%, rgba(198,154,68,.6) 35%, rgba(198,154,68,0) 70%);
+  filter:blur(2px);
+  z-index:1;
+  pointer-events:none;
+  opacity:.9;
+  transition:transform 1.15s cubic-bezier(.65,0,.35,1),opacity .5s ease .7s;
+}
+#cover.is-opening .cover-glow{transform:translate(-50%,-50%) scale(95);opacity:0;}
+
+.cover-content{
+  position:relative;
+  z-index:2;
+  min-height:100svh;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:var(--s6) var(--s4);
+  transition:opacity .4s ease .9s;
+}
+#cover.is-opening .cover-content{opacity:0;pointer-events:none;}
+/* ============================================================ */
+
+/* ---------- monogram sampul: satu-satunya elemen yang jelas
+   terlihat sebelum dibuka, berdenyut lembut seperti bara ---------- */
+.cover-monogram{
+  position:relative;
+  width:96px;height:96px;
+  margin:0 auto var(--s4);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  animation:monogramBreathe 4.5s ease-in-out infinite;
+}
+@keyframes monogramBreathe{
+  0%,100%{transform:scale(1);filter:brightness(1);}
+  50%{transform:scale(1.035);filter:brightness(1.18);}
+}
+.monogram-ring{position:absolute;inset:0;width:100%;height:100%;color:var(--gold);opacity:.75;filter:drop-shadow(0 0 8px rgba(198,154,68,.5));}
+.monogram-ring circle{fill:none;stroke:currentColor;stroke-width:1.1;}
+.monogram-ring path{fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:round;}
+.monogram-ring ellipse{fill:currentColor;}
+.monogram-letters{
+  position:relative;
+  font-family:'Pinyon Script',cursive;
+  font-size:44px;
+  line-height:1;
+  color:var(--champagne);
+  display:flex;align-items:center;
+  text-shadow:0 0 16px rgba(242,227,184,.55);
+}
+.monogram-letters .mono-a{margin-right:-8px;transform:translateY(-3px) rotate(-6deg);}
+.monogram-letters .mono-b{margin-left:-8px;transform:translateY(4px) rotate(6deg);}
+
+/* ---------- sisa teks sampul: mulai redup, terang penuh saat dibuka ---------- */
+.cover-guest{position:relative;z-index:2;font-size:12.5px;color:var(--ink-soft);letter-spacing:.07em;margin-bottom:var(--s4);opacity:.35;transition:opacity 1s ease .05s;}
+.cover-guest b{color:var(--ink-mid);font-weight:600;}
+#cover.is-opening .cover-guest{opacity:1;}
+
+.cover-eyebrow{position:relative;z-index:2;font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:var(--sage);font-weight:500;margin-bottom:var(--s3);opacity:.55;transition:opacity .9s ease .1s;}
+#cover.is-opening .cover-eyebrow{opacity:1;}
+
+.cover-names{position:relative;z-index:2;font-size:clamp(42px,13vw,54px);line-height:1.18;margin-bottom:var(--s2);opacity:.65;transition:opacity .9s ease .15s;}
+#cover.is-opening .cover-names{opacity:1;}
+.cover-names .amp{display:block;font-family:'Pinyon Script',cursive;font-size:.6em;color:var(--champagne);margin:4px 0;}
+
+.cover-date{position:relative;z-index:2;font-size:14.5px;letter-spacing:.13em;color:var(--ink-mid);margin-bottom:var(--s4);opacity:.45;transition:opacity .9s ease .2s;}
+#cover.is-opening .cover-date{opacity:1;}
+.cover-date span{padding:0 2px;}
+
+.btn-open{
+  position:relative;z-index:2;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:15px 30px;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--champagne),var(--rose-dark));
+  color:#241505;
+  font-size:14px;letter-spacing:.05em;font-weight:600;
+  box-shadow:0 16px 32px -14px rgba(198,154,68,.55),0 0 0 1px rgba(242,227,184,.25) inset;
+  animation:btnGlow 3.2s ease-in-out infinite;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+@keyframes btnGlow{
+  0%,100%{box-shadow:0 16px 32px -14px rgba(198,154,68,.55),0 0 0 1px rgba(242,227,184,.25) inset;}
+  50%{box-shadow:0 16px 36px -12px rgba(198,154,68,.8),0 0 0 1px rgba(242,227,184,.35) inset;}
+}
+.btn-open:hover{transform:translateY(-2px);}
+.btn-open svg{width:16px;height:16px;}
+
+/* ---------- foto utama (hero, sorot lampu panggung) ---------- */
+#fotoUtama{padding:0 0 var(--s6);}
+.hero-photo{
+  position:relative;
+  width:100%;
+  height:76vh;
+  min-height:420px;
+  max-height:640px;
+  overflow:hidden;
+  background:linear-gradient(160deg,#1B4239,#0B211C);
+  clip-path:ellipse(86% 100% at 50% 0%);
+  box-shadow:
+    inset 0 0 110px 46px var(--ivory),
+    inset 0 0 40px 8px rgba(0,0,0,.45);
+}
+.hero-photo-empty{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--rose-dark);
+}
+.hero-photo-empty svg{width:44px;height:44px;opacity:.4;stroke-width:1;}
+.hero-photo-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;}
+.hero-photo-fade{
+  position:absolute;left:0;right:0;bottom:0;height:32%;
+  background:linear-gradient(to top,rgba(5,15,12,.65),transparent);
+  pointer-events:none;
+}
+
+.hero-monogram{
+  position:relative;
+  z-index:3;
+  width:104px;height:104px;
+  margin:-58px auto 0;
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-monogram-ring{
+  position:absolute;inset:0;width:100%;height:100%;
+  color:var(--gold);
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,.5));
+}
+.hero-monogram-ring circle{fill:var(--paper);stroke:currentColor;stroke-width:1.1;}
+.hero-monogram-ring .ring-draw{stroke-dasharray:340;stroke-dashoffset:340;}
+.hero-monogram-ring .ring-leaf{
+  fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:round;
+  stroke-dasharray:40;stroke-dashoffset:40;
+}
+.hero-monogram-ring ellipse{fill:currentColor;opacity:0;transition:opacity .4s ease .8s;}
+#fotoUtama.in-view .hero-monogram-ring .ring-draw{transition:stroke-dashoffset 1.1s ease .15s;stroke-dashoffset:0;}
+#fotoUtama.in-view .hero-monogram-ring .ring-leaf{transition:stroke-dashoffset .6s ease .55s;stroke-dashoffset:0;}
+#fotoUtama.in-view .hero-monogram-ring ellipse{opacity:1;}
+
+.hero-monogram-letters{
+  position:relative;
+  font-family:'Pinyon Script',cursive;
+  font-size:42px;
+  line-height:1;
+  color:var(--champagne);
+  display:flex;align-items:center;
+  opacity:0;
+  transform:scale(.7);
+  text-shadow:0 0 14px rgba(242,227,184,.5);
+  transition:opacity .55s ease .95s,transform .55s ease .95s;
+}
+#fotoUtama.in-view .hero-monogram-letters{
+  opacity:1;transform:scale(1);
+  animation:monogramPulse 4.5s ease-in-out 1.5s infinite;
+}
+.hero-monogram-letters .mono-a{margin-right:-9px;transform:translateY(-3px) rotate(-6deg);}
+.hero-monogram-letters .mono-b{margin-left:-9px;transform:translateY(4px) rotate(6deg);}
+
+@keyframes monogramPulse{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.045);}
+}
+
+/* ---------- pembuka ---------- */
+.quote{
+  font-family:'Italiana',serif;
+  font-style:normal;
+  font-size:20px;
+  line-height:1.6;
+  color:var(--champagne);
+  max-width:340px;
+  margin:0 auto var(--s4);
+}
+.quote::before,.quote::after{content:'"';color:var(--rose);}
+.opening-text{max-width:360px;margin:0 auto;font-size:14.5px;}
+
+/* ---------- mempelai ---------- */
+.couple{display:flex;flex-direction:column;gap:var(--s5);margin-top:var(--s5);}
+.couple-card{text-align:center;}
+.photo-placeholder{
+  position:relative;
+  overflow:hidden;
+  width:168px;aspect-ratio:3/4;margin:0 auto var(--s3);
+  border-radius:var(--r-md);
+  background:linear-gradient(160deg,#1B4239,#0B211C);
+  border:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  color:var(--ink-soft);
+}
+.photo-placeholder svg{width:34px;height:34px;opacity:.55;}
+.photo-placeholder span{font-size:11px;letter-spacing:.04em;}
+.photo-placeholder-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.couple-name{font-size:22px;margin-bottom:6px;}
+.couple-role{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--sage);font-weight:500;margin-bottom:var(--s2);}
+.couple-parents{font-size:13.5px;max-width:260px;margin:0 auto;}
+.couple-amp{
+  align-self:center;
+  font-family:'Pinyon Script',cursive;
+  font-size:40px;
+  color:var(--rose);
+}
+
+/* ---------- acara ---------- */
+.event-list{display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s5);}
+.event-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--r-md);
+  padding:var(--s4);
+  text-align:center;
+}
+.event-icon{
+  width:44px;height:44px;margin:0 auto var(--s2);
+  border-radius:50%;
+  background:var(--rose-tint);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--rose);
+}
+.event-icon svg{width:20px;height:20px;}
+.event-name{font-size:18px;margin-bottom:4px;}
+.event-date{font-size:14px;color:var(--ink-mid);margin-bottom:2px;}
+.event-time{font-size:13px;color:var(--ink-soft);}
+.venue{
+  margin-top:var(--s4);
+  padding-top:var(--s4);
+  border-top:1px dashed var(--line);
+  text-align:center;
+}
+.venue-name{font-size:15.5px;font-weight:600;color:var(--champagne);margin-bottom:4px;}
+.venue-address{font-size:13.5px;max-width:280px;margin:0 auto var(--s3);}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 22px;
+  border-radius:999px;
+  border:1.5px solid var(--rose);
+  color:var(--rose);
+  font-size:13.5px;font-weight:500;
+  transition:background .2s ease;
+}
+.btn-outline:hover{background:var(--rose-tint);}
+.btn-outline svg{width:15px;height:15px;}
+
+/* ---------- hitung mundur: plat kuningan terukir ---------- */
+#countdown{text-align:center;}
+.countdown-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  max-width:340px;margin:var(--s5) auto 0;
+}
+.countdown-box{
+  background:var(--card);
+  border:1px solid var(--gold);
+  border-radius:var(--r-md);
+  padding:14px 4px;
+  box-shadow:0 10px 26px -16px rgba(0,0,0,.65),inset 0 1px 0 rgba(242,227,184,.06);
+  overflow:hidden;
+}
+.countdown-num{
+  font-family:'Italiana',serif;
+  font-size:clamp(23px,6vw,29px);
+  font-weight:400;
+  color:var(--champagne);
+  text-shadow:0 1px 0 rgba(0,0,0,.55),0 0 10px rgba(198,154,68,.25);
+  line-height:1;
+  margin-bottom:6px;
+  display:inline-block;
+}
+.countdown-num.tick{animation:countdownTick .45s cubic-bezier(.22,.61,.36,1);}
+@keyframes countdownTick{
+  0%{opacity:0;transform:translateY(10px);}
+  60%{opacity:1;}
+  100%{opacity:1;transform:translateY(0);}
+}
+.countdown-label{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--sage);}
+
+/* ---------- galeri pasangan ---------- */
+.galeri-grid{display:grid;gap:8px;margin-top:var(--s5);}
+.galeri-item{display:block;padding:0;border-radius:var(--r-sm);overflow:hidden;}
+.galeri-photo{width:100%;height:100%;margin:0;border-radius:0;transition:transform .3s ease;}
+.galeri-item:hover .galeri-photo{transform:scale(1.04);}
+
+.galeri--grid3{grid-template-columns:repeat(3,1fr);}
+.galeri--grid3 .galeri-item{aspect-ratio:1;}
+
+.galeri--masonry{grid-template-columns:repeat(2,1fr);grid-auto-rows:96px;grid-auto-flow:dense;}
+.galeri--masonry .galeri-item{height:100%;}
+.galeri--masonry .galeri-item:nth-child(1){grid-row:span 3;}
+.galeri--masonry .galeri-item:nth-child(4){grid-row:span 3;}
+.galeri--masonry .galeri-item:nth-child(2),
+.galeri--masonry .galeri-item:nth-child(3),
+.galeri--masonry .galeri-item:nth-child(5),
+.galeri--masonry .galeri-item:nth-child(6){grid-row:span 2;}
+
+/* ---------- lightbox ---------- */
+.lightbox{position:fixed;inset:0;background:rgba(4,12,10,0.94);z-index:200;display:none;align-items:center;justify-content:center;padding:var(--s4);}
+.lightbox.open{display:flex;}
+.lightbox-stage{width:100%;max-width:300px;}
+.lightbox-photo{width:100%;height:auto;aspect-ratio:3/4;margin:0;border-radius:var(--r-md);}
+.lightbox-close{position:absolute;top:var(--s3);right:var(--s3);width:38px;height:38px;border-radius:50%;background:rgba(242,227,184,0.1);color:var(--champagne);display:flex;align-items:center;justify-content:center;}
+.lightbox-close svg{width:18px;height:18px;}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(242,227,184,0.1);color:var(--champagne);display:flex;align-items:center;justify-content:center;}
+.lightbox-nav svg{width:18px;height:18px;}
+.lightbox-prev{left:var(--s2);}
+.lightbox-next{right:var(--s2);}
+
+/* ---------- form (konfirmasi kehadiran & ucapan) ----------
+   Perhatian khusus kontras: field, placeholder, dan tombol WAJIB
+   tetap jelas di latar gelap — kartu form (--card) lebih terang dari
+   halaman, input lebih terang lagi dari kartu, placeholder pakai
+   ink-mid (bukan ink-soft) supaya tidak tenggelam. */
+.form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--s4);margin-top:var(--s5);}
+.field{margin-bottom:var(--s3);}
+.field label{display:block;font-size:13px;color:var(--ink-mid);margin-bottom:6px;font-weight:500;}
+.field input[type="text"],
+.field input[type="number"],
+.field textarea{
+  width:100%;padding:11px 14px;border-radius:var(--r-sm);
+  border:1.5px solid var(--line);background:#1C433A;color:var(--ink);
+  font-size:15px;font-family:inherit;
+}
+.field input::placeholder,
+.field textarea::placeholder{color:var(--ink-mid);opacity:.62;}
+.field textarea{resize:vertical;min-height:84px;}
+.field input:focus-visible,.field textarea:focus-visible{outline:2px solid var(--rose);outline-offset:1px;border-color:var(--rose);}
+.field.is-hidden{display:none;}
+
+.pill-group{display:flex;gap:8px;}
+.pill-btn{
+  flex:1;padding:11px 8px;border-radius:var(--r-sm);
+  border:1.5px solid var(--line);background:#1C433A;
+  font-size:12.5px;font-weight:500;color:var(--ink-mid);
+  text-align:center;transition:background .2s ease,border-color .2s ease,color .2s ease;
+}
+.pill-btn.is-active{background:linear-gradient(135deg,var(--champagne),var(--rose-dark));border-color:var(--rose-dark);color:#241505;font-weight:600;}
+
+.btn-primary-full{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;padding:14px;border-radius:999px;
+  background:linear-gradient(135deg,var(--champagne),var(--rose-dark));
+  color:#241505;font-size:14.5px;font-weight:600;letter-spacing:.03em;
+  box-shadow:0 16px 30px -14px rgba(198,154,68,.5);
+  transition:transform .2s ease;
+}
+.btn-primary-full:hover{transform:translateY(-2px);}
+
+.form-msg{font-size:13px;text-align:center;margin-top:var(--s3);min-height:18px;color:var(--ink-mid);}
+.form-msg.err{color:#E6968C;}
+.form-msg.ok{color:#B9D79E;}
+
+/* ---------- ucapan list ---------- */
+.ucapan-list{margin-top:var(--s4);max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:var(--s3);padding-right:4px;}
+.ucapan-item{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s3);}
+.ucapan-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;}
+.ucapan-name{font-size:14px;font-weight:600;color:var(--champagne);}
+.ucapan-time{font-size:11px;color:var(--ink-soft);flex-shrink:0;}
+.ucapan-text{font-size:13.5px;line-height:1.6;}
+
+/* ---------- tanda kasih ---------- */
+.gift-intro{max-width:340px;margin:var(--s4) auto var(--s5);font-size:14px;text-align:center;}
+.gift-cards{display:flex;flex-direction:column;gap:var(--s3);}
+.gift-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s4);text-align:center;}
+.gift-bank{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);font-weight:600;margin-bottom:6px;}
+.gift-number{font-family:'Italiana',serif;font-size:22px;font-weight:400;color:var(--champagne);margin-bottom:4px;letter-spacing:.04em;}
+.gift-owner{font-size:13px;margin-bottom:var(--s3);}
+.btn-copy{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 18px;border-radius:999px;
+  border:1.5px solid var(--rose);color:var(--rose);
+  font-size:12.5px;font-weight:500;
+  transition:background .2s ease;
+}
+.btn-copy:hover{background:var(--rose-tint);}
+.btn-copy svg{width:14px;height:14px;}
+
+/* ---------- unggah bukti transfer ---------- */
+.upload-bukti{margin-top:var(--s4);}
+.field-label-block{display:block;font-size:13px;color:var(--ink-mid);margin-bottom:8px;font-weight:500;text-align:center;}
+.upload-input-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.upload-dropzone{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:var(--s4) var(--s3);
+  border:1.5px dashed var(--rose);
+  border-radius:var(--r-md);
+  background:var(--rose-tint);
+  color:var(--rose);
+  font-size:13px;text-align:center;
+  cursor:pointer;
+  transition:background .2s ease;
+}
+.upload-dropzone:hover{background:rgba(214,180,99,.2);}
+.upload-dropzone svg{width:26px;height:26px;}
+.upload-dropzone[hidden]{display:none;}
+.upload-preview{
+  display:flex;align-items:center;gap:var(--s3);
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:var(--s3);
+}
+.upload-preview[hidden]{display:none;}
+.upload-preview img{width:60px;height:60px;object-fit:cover;border-radius:var(--r-sm);flex-shrink:0;border:1px solid var(--line);}
+.upload-preview-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+.upload-filename{font-size:12.5px;color:var(--ink-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.upload-remove{align-self:flex-start;font-size:12px;color:var(--rose);text-decoration:underline;text-underline-offset:2px;}
+
+/* ---------- tombol mengambang ---------- */
+.float-btn{
+  position:fixed;
+  width:42px;height:42px;
+  border-radius:50%;
+  background:var(--card);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--rose);
+  z-index:140;
+  transition:opacity .25s ease,transform .25s ease,background .2s ease;
+}
+.float-btn:hover{background:rgba(214,180,99,.14);}
+.float-btn svg{width:18px;height:18px;}
+.float-music{top:var(--s3);right:8px;}
+.icon-music-on{display:none;}
+.icon-music-off{display:block;}
+.float-music.is-playing .icon-music-on{display:block;}
+.float-music.is-playing .icon-music-off{display:none;}
+.float-top{
+  bottom:var(--s3);right:8px;
+  opacity:0;pointer-events:none;transform:translateY(8px);
+}
+.float-top.show{opacity:1;pointer-events:auto;transform:translateY(0);}
+
+/* ---------- penutup ---------- */
+#penutup{
+  text-align:center;
+}
+.closing-text{max-width:340px;margin:0 auto var(--s5);font-size:14.5px;}
+.closing-signature{font-size:13px;color:var(--ink-soft);margin-bottom:6px;}
+.closing-names{font-family:'Pinyon Script',cursive;font-size:38px;color:var(--champagne);text-shadow:0 0 16px rgba(242,227,184,.35);}
+.credit{
+  margin-top:var(--s6);
+  font-size:11px;color:var(--ink-soft);opacity:.8;letter-spacing:.03em;
+}
+.credit-link{color:var(--rose);text-decoration:underline;text-underline-offset:2px;opacity:1;}
+
+@media(min-width:640px){
+  .ornament{width:78px;}
+  .couple{flex-direction:row;align-items:flex-start;justify-content:center;gap:var(--s4);}
+  .couple-card{flex:1;}
+  .gift-cards{flex-direction:row;}
+  .gift-cards .gift-card{flex:1;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{transition:none !important;animation:none !important;}
+  .particles{display:none;}
+  .shimmer-gold{background-image:none;-webkit-background-clip:initial;background-clip:initial;color:var(--champagne);}
+}

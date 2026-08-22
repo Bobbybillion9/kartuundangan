@@ -267,9 +267,12 @@
       </div>
     </div>
     <div class="ws-panel" id="wsPanel-pratinjau">
-      <div class="workspace-placeholder">
-        <h2>Pratinjau — segera hadir</h2>
-        <p>Lihat tampilan undanganmu persis seperti yang dilihat tamu.</p>
+      <div class="pratinjau-toolbar">
+        <p class="pratinjau-note">Ini pratinjau internal — belum bisa dibagikan ke tamu.</p>
+        <button type="button" class="btn btn-ghost btn-sm" id="pratinjauEditBtn">Edit Isi Data</button>
+      </div>
+      <div class="pratinjau-frame-wrap">
+        <iframe class="pratinjau-frame" id="pratinjauFrame" title="Pratinjau undangan" src="about:blank"></iframe>
       </div>
     </div>
     <div class="ws-panel" id="wsPanel-bagikan">

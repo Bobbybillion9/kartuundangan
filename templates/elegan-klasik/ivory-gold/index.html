@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andi & Sarah — Undangan Pernikahan</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="cover-locked">
+
+<!-- Partikel latar: diisi oleh JS (lihat initParticles di <script>)
+     dengan motif garis tipis emas (hati kecil, cincin bertaut, pita,
+     gelas) — kalau prefers-reduced-motion tidak aktif dan perangkat
+     tidak terdeteksi lemah. Kosong = tidak ada elemen, jadi aman
+     dibiarkan di DOM tanpa efek apa pun saat dilewati. -->
+<div class="particles" id="particles" aria-hidden="true"></div>
+
+<div class="invitation" id="invitation">
+
+  <!-- ============================================================
+       1. COVER + ANIMASI BUKA SAMPUL (Ivory Gold: TIRAI EMAS NAIK)
+       ------------------------------------------------------------
+       Modular by design — untuk tema lain dengan animasi berbeda,
+       ganti HANYA 3 bagian ini:
+         1) markup .cover-curtain-top / .cover-curtain-bottom di bawah
+         2) CSS #cover .cover-curtain* (lihat style.css, blok bertanda
+            sama "ANIMASI BUKA SAMPUL")
+         3) fungsi openCover() di <script> bawah halaman
+       Kontrak yang harus tetap dipenuhi tema pengganti:
+         - klik elemen #openBtn memicu class "is-opening" pada #cover
+         - setelah durasi animasi selesai, body.cover-locked dilepas
+           dan #cover disembunyikan supaya sisa halaman lanjut normal
+         - .cover-content (teks + tombol) tetap terlihat sebelum
+           animasi dimulai, apa pun gaya animasinya
+       ============================================================ -->
+  <section id="cover">
+    <div class="cover-curtain cover-curtain-top" aria-hidden="true">
+      <svg class="curtain-seam" viewBox="0 0 240 20" preserveAspectRatio="none" aria-hidden="true">
+        <path class="seam-line" d="M0 10H100M140 10H240"/>
+        <g class="seam-rings">
+          <circle cx="112" cy="10" r="7"/>
+          <circle cx="128" cy="10" r="7"/>
+        </g>
+      </svg>
+    </div>
+    <div class="cover-curtain cover-curtain-bottom" aria-hidden="true">
+      <svg class="curtain-seam" viewBox="0 0 240 20" preserveAspectRatio="none" aria-hidden="true">
+        <path class="seam-line" d="M0 10H100M140 10H240"/>
+        <g class="seam-rings">
+          <circle cx="112" cy="10" r="7"/>
+          <circle cx="128" cy="10" r="7"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="cover-content">
+      <p class="cover-guest">Kepada Yth. Bapak/Ibu/Saudara/i<br><b data-slot="nama_tamu">Tamu Undangan</b></p>
+
+      <p class="cover-eyebrow">Undangan Pernikahan</p>
+      <h1 class="cover-names">
+        <span data-slot="nama_pria_panggilan">Andi</span>
+        <span class="amp">&amp;</span>
+        <span data-slot="nama_wanita_panggilan">Sarah</span>
+      </h1>
+      <p class="cover-date"><span data-slot="tanggal_acara">Sabtu, 14 Maret 2026</span></p>
+
+      <button type="button" class="btn-open" id="openBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+        Buka Undangan
+      </button>
+    </div>
+  </section>
+
+  <div class="reveal-after-cover" id="revealGroup">
+
+    <!-- 1b. FOTO UTAMA — section paling atas dari isi undangan setelah
+         sampul dibuka. Foto lebar penuh, tinggi dominan, tepi bawah
+         berujung bersudut (CSS clip-path, motif kipas art-deco) menyatu
+         ke section berikutnya. Monogram di bawahnya menumpuk ke atas
+         foto tepat di titik sudut. -->
+    <section id="fotoUtama" data-reveal>
+      <div class="hero-photo" data-slot="foto_utama">
+        <div class="hero-photo-empty">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M32 12L52 24V40L32 52L12 40V24L32 12Z"/>
+            <path d="M32 12V52M12 24L52 40M52 24L12 40"/>
+          </svg>
+        </div>
+        <img class="hero-photo-img" src="assets/hero-placeholder.jpg" alt="" data-rv="img" style="--d:0">
+        <div class="hero-photo-fade" aria-hidden="true"></div>
+      </div>
+
+      <!-- Monogram inisial otomatis — dibentuk buatMonogram() di script
+           bawah dari nama_pria_panggilan/nama_wanita_panggilan. Bingkai
+           berupa dua cincin bertaut (motif "cincin kembar bertautan"),
+           masing-masing menggambar diri (stroke-dashoffset) lalu huruf
+           bergaya tulisan tangan memudar masuk di area tumpang tindih. -->
+      <div class="hero-monogram" id="heroMonogram" aria-hidden="true">
+        <svg class="hero-monogram-ring" viewBox="0 0 120 120">
+          <circle class="ring-draw ring-l" cx="43" cy="60" r="34"/>
+          <circle class="ring-draw ring-r" cx="77" cy="60" r="34"/>
+        </svg>
+        <span class="hero-monogram-letters">
+          <span class="mono-a" id="monoLetterA">A</span><span class="mono-sep">&amp;</span><span class="mono-b" id="monoLetterB">S</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- 2. PEMBUKA -->
+    <section id="pembuka" data-reveal>
+      <div class="section-divider" data-rv="draw" style="--d:0">
+        <svg class="divider-ornament div-heart" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H88M112 13H196"/>
+          <path class="motif-shape" d="M100 20C95.5 16.3 92.5 12.7 93.8 9.8C94.8 7.6 97.6 7.8 99.3 10.2C99.6 10.6 99.8 11 100 11.4C100.2 11 100.4 10.6 100.7 10.2C102.4 7.8 105.2 7.6 106.2 9.8C107.5 12.7 104.5 16.3 100 20Z"/>
+        </svg>
+      </div>
+      <p class="quote" data-rv="text" style="--d:1">Dua hati yang saling menemukan, dua keluarga yang saling merangkul, dan sebuah janji yang akan dijaga seumur hidup.</p>
+      <p class="opening-text center" data-slot="kalimat_pembuka" data-rv="text" style="--d:2">Dengan penuh rasa syukur, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu di hari bahagia kami.</p>
+    </section>
+
+    <!-- 3. MEMPELAI -->
+    <section id="mempelai" data-reveal>
+      <div class="section-divider" data-rv="draw" style="--d:0">
+        <svg class="divider-ornament div-rings" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H80M120 13H196"/>
+          <circle class="motif-shape" cx="93" cy="13" r="8"/>
+          <circle class="motif-shape" cx="107" cy="13" r="8"/>
+        </svg>
+      </div>
+      <div class="center">
+        <p class="eyebrow" data-rv="text" style="--d:1">Kedua Mempelai</p>
+        <h2 class="section-title" data-rv="text" style="--d:2">Yang Berbahagia</h2>
+      </div>
+
+      <div class="couple">
+        <div class="couple-card">
+          <div class="photo-placeholder" data-slot="foto_pria">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+            <span>Foto Mempelai Pria</span>
+            <img class="photo-placeholder-img" src="assets/couple-pria.jpg" alt="" data-rv="img" style="--d:3">
+          </div>
+          <p class="couple-role">Mempelai Pria</p>
+          <h3 class="couple-name" data-slot="nama_pria_lengkap" data-rv="text" style="--d:4">Andi Wijaya</h3>
+          <p class="couple-parents" data-slot="orangtua_pria">Putra dari Bapak Slamet Wijaya &amp; Ibu Ratna Wijaya</p>
+        </div>
+
+        <span class="couple-amp">&amp;</span>
+
+        <div class="couple-card">
+          <div class="photo-placeholder" data-slot="foto_wanita">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+            <span>Foto Mempelai Wanita</span>
+            <img class="photo-placeholder-img" src="assets/couple-wanita.jpg" alt="" data-rv="img" style="--d:3">
+          </div>
+          <p class="couple-role">Mempelai Wanita</p>
+          <h3 class="couple-name" data-slot="nama_wanita_lengkap" data-rv="text" style="--d:4">Sarah Amelia</h3>
+          <p class="couple-parents" data-slot="orangtua_wanita">Putri dari Bapak Hendra Kusuma &amp; Ibu Dewi Kusuma</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ACARA -->
+    <section id="acara" data-reveal>
+      <div class="section-divider" data-rv="draw" style="--d:0">
+        <svg class="divider-ornament div-ribbon" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H83M117 13H196"/>
+          <path class="motif-shape" d="M100 13C100 13 91 8 86 10.5C81.5 12.7 85 17 89.5 15.6C94 14.2 100 13 100 13C100 13 106 14.2 110.5 15.6C115 17 118.5 12.7 114 10.5C109 8 100 13 100 13Z"/>
+          <circle class="motif-dot" cx="100" cy="13" r="1.6"/>
+        </svg>
+      </div>
+      <div class="center">
+        <div class="section-icon" data-rv="text" style="--d:1" aria-hidden="true">
+          <svg viewBox="0 0 84 56">
+            <g transform="translate(30,48) rotate(14)">
+              <path d="M-8 0H8M0 0V-14M-14 -32C-14 -25 -7 -19 0 -14C7 -19 14 -25 14 -32"/>
+            </g>
+            <g transform="translate(54,48) rotate(-14)">
+              <path d="M-8 0H8M0 0V-14M-14 -32C-14 -25 -7 -19 0 -14C7 -19 14 -25 14 -32"/>
+            </g>
+          </svg>
+        </div>
+        <p class="eyebrow" data-rv="text" style="--d:2">Simpan Tanggalnya</p>
+        <h2 class="section-title" data-rv="text" style="--d:3">Rangkaian Acara</h2>
+      </div>
+
+      <div class="event-list">
+        <div class="event-card" data-rv="text" style="--d:4">
+          <div class="event-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="16" r="4"/><circle cx="17" cy="9" r="4"/></svg>
+          </div>
+          <h3 class="event-name">Akad Nikah</h3>
+          <p class="event-date" data-slot="tanggal_akad">Sabtu, 14 Maret 2026</p>
+          <p class="event-time"><span data-slot="waktu_akad">08.00 WIB</span> — selesai</p>
+        </div>
+
+        <div class="event-card" data-rv="text" style="--d:5">
+          <div class="event-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-1 7a5 5 0 0 1-10 0L6 3z"/><path d="M12 15v6M8 21h8"/></svg>
+          </div>
+          <h3 class="event-name">Resepsi</h3>
+          <p class="event-date" data-slot="tanggal_resepsi">Sabtu, 14 Maret 2026</p>
+          <p class="event-time"><span data-slot="waktu_resepsi">11.00 – 14.00 WIB</span></p>
+        </div>
+      </div>
+
+      <div class="venue" data-rv="text" style="--d:6">
+        <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
+        <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
+        <a class="btn-outline" data-slot="lokasi_maps_url" href="https://www.google.com/maps/search/?api=1&query=Gedung+Serbaguna+Bale+Asri+Jl+Melati+No+21+Bandung" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Lihat Lokasi
+        </a>
+      </div>
+    </section>
+
+    <!-- 5. HITUNG MUNDUR -->
+    <section id="countdown" data-reveal>
+      <div class="section-divider" data-rv="draw" style="--d:0">
+        <svg class="divider-ornament div-heart" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H88M112 13H196"/>
+          <path class="motif-shape" d="M100 20C95.5 16.3 92.5 12.7 93.8 9.8C94.8 7.6 97.6 7.8 99.3 10.2C99.6 10.6 99.8 11 100 11.4C100.2 11 100.4 10.6 100.7 10.2C102.4 7.8 105.2 7.6 106.2 9.8C107.5 12.7 104.5 16.3 100 20Z"/>
+        </svg>
+      </div>
+      <p class="eyebrow" data-rv="text" style="--d:1">Menuju Hari Bahagia</p>
+      <h2 class="section-title" data-rv="text" style="--d:2">Hitung Mundur</h2>
+      <div class="countdown-row" data-rv="text" style="--d:3" data-slot="tanggal_hitung_mundur" data-countdown-target="2026-03-14T08:00:00+07:00">
+        <div class="countdown-box">
+          <div class="countdown-num" id="cdDays">00</div>
+          <div class="countdown-label">Hari</div>
+        </div>
+        <div class="countdown-box">
+          <div class="countdown-num" id="cdHours">00</div>
+          <div class="countdown-label">Jam</div>
+        </div>
+        <div class="countdown-box">
+          <div class="countdown-num" id="cdMinutes">00</div>
+          <div class="countdown-label">Menit</div>
+        </div>
+        <div class="countdown-box">
+          <div class="countdown-num" id="cdSeconds">00</div>
+          <div class="countdown-label">Detik</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6a. GALERI MOMEN -->
+    <section id="galeri" data-reveal>
+      <div class="section-divider" data-rv="draw" style="--d:0">
+        <svg class="divider-ornament div-ribbon" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H83M117 13H196"/>
+          <path class="motif-shape" d="M100 13C100 13 91 8 86 10.5C81.5 12.7 85 17 89.5 15.6C94 14.2 100 13 100 13C100 13 106 14.2 110.5 15.6C115 17 118.5 12.7 114 10.5C109 8 100 13 100 13Z"/>
+          <circle class="motif-dot" cx="100" cy="13" r="1.6"/>
+        </svg>
+      </div>
+      <div class="center">
+        <p class="eyebrow" data-rv="text" style="--d:1">Momen Berharga</p>
+        <h2 class="section-title" data-rv="text" style="--d:2">Galeri Momen</h2>
+      </div>
+
+      <!-- Struktur grid galeri: ganti class galeri-grid dari
+           "galeri--grid3" ke "galeri--masonry" untuk varian susunan
+           campuran (dipilih user lewat workspace editor nanti).
+           Default: galeri--grid3. -->
+      <div class="galeri-grid galeri--grid3" id="galeriGrid">
+        <button type="button" class="galeri-item" data-index="0">
+          <div class="photo-placeholder galeri-photo" data-slot="foto_galeri_1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <img class="photo-placeholder-img" src="assets/galeri-1.jpg" alt="" data-rv="img" style="--d:3">
+          </div>
+        </button>
+        <button type="button" class="galeri-item" data-index="1">
+          <div class="photo-placeholder galeri-photo" data-slot="foto_galeri_2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <img class="photo-placeholder-img" src="assets/galeri-2.jpg" alt="" data-rv="img" style="--d:4">
+          </div>
+        </button>
+        <button type="button" class="galeri-item" data-index="2">
+          <div class="photo-placeholder galeri-photo" data-slot="foto_galeri_3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <img class="photo-placeholder-img" src="assets/galeri-3.jpg" alt="" data-rv="img" style="--d:5">
+          </div>
+        </button>
+        <button type="button" class="galeri-item" data-index="3">
+          <div class="photo-placeholder galeri-photo" data-slot="foto_galeri_4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <img class="photo-placeholder-img" src="assets/galeri-4.jpg" alt="" data-rv="img" style="--d:3">
+          </div>
+        </button>
+        <button type="button" class="galeri-item" data-index="4">
+          <div class="photo-placeholder galeri-photo" data-slot="foto_galeri_5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <img class="photo-placeholder-img" src="assets/galeri-5.jpg" alt="" data-rv="img" style="--d:4">
+          </div>
+        </button>
+        <button type="button" class="galeri-item" data-index="5">
+          <div class="photo-placeholder galeri-photo" data-slot="foto_galeri_6">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <img class="photo-placeholder-img" src="assets/galeri-6.jpg" alt="" data-rv="img" style="--d:5">
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- 6b. KONFIRMASI KEHADIRAN -->
+    <section id="rsvp" data-reveal>
+      <div class="section-divider" data-rv="draw" style="--d:0">
+        <svg class="divider-ornament div-rings" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H80M120 13H196"/>
+          <circle class="motif-shape" cx="93" cy="13" r="8"/>
+          <circle class="motif-shape" cx="107" cy="13" r="8"/>
+        </svg>
+      </div>
+      <div class="center">
+        <p class="eyebrow" data-rv="text" style="--d:1">Mohon Konfirmasi</p>
+        <h2 class="section-title" data-rv="text" style="--d:2">Konfirmasi Kehadiran</h2>
+        <p class="section-lead" data-rv="text" style="--d:3">Mohon konfirmasi kehadiran Bapak/Ibu/Saudara/i sebelum hari bahagia kami tiba.</p>
+      </div>
+
+      <form class="form-card" id="rsvpForm" data-rv="text" style="--d:4">
+        <div class="field">
+          <label for="rsvpNama">Nama Tamu</label>
+          <input type="text" id="rsvpNama" name="nama_tamu" placeholder="Nama lengkap Anda" required>
+        </div>
+
+        <div class="field">
+          <label>Anda hadir mewakili pihak mana?</label>
+          <div class="pill-group" data-field="pihak">
+            <button type="button" class="pill-btn" data-value="wanita">Pihak Mempelai Wanita</button>
+            <button type="button" class="pill-btn" data-value="pria">Pihak Mempelai Pria</button>
+          </div>
+          <input type="hidden" name="pihak">
+        </div>
+
+        <div class="field">
+          <label>Apakah Anda dapat hadir?</label>
+          <div class="pill-group" data-field="kehadiran">
+            <button type="button" class="pill-btn" data-value="hadir">Hadir</button>
+            <button type="button" class="pill-btn" data-value="tidak_hadir">Tidak Hadir</button>
+          </div>
+          <input type="hidden" name="kehadiran">
+        </div>
+
+        <div class="field" id="fieldJumlahTamu">
+          <label for="rsvpJumlah">Jumlah tamu (termasuk Anda sendiri)</label>
+          <input type="number" id="rsvpJumlah" name="jumlah_tamu" min="1" placeholder="Contoh: 2">
+        </div>
+
+        <button type="submit" class="btn-primary-full">Kirim Konfirmasi</button>
+        <p class="form-msg" id="rsvpMsg" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- 6c. UCAPAN & DOA -->
+    <section id="ucapan" data-reveal>
+      <div class="section-divider" data-rv="draw" style="--d:0">
+        <svg class="divider-ornament div-heart" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H88M112 13H196"/>
+          <path class="motif-shape" d="M100 20C95.5 16.3 92.5 12.7 93.8 9.8C94.8 7.6 97.6 7.8 99.3 10.2C99.6 10.6 99.8 11 100 11.4C100.2 11 100.4 10.6 100.7 10.2C102.4 7.8 105.2 7.6 106.2 9.8C107.5 12.7 104.5 16.3 100 20Z"/>
+        </svg>
+      </div>
+      <div class="center">
+        <p class="eyebrow" data-rv="text" style="--d:1">Untuk Kedua Mempelai</p>
+        <h2 class="section-title" data-rv="text" style="--d:2">Ucapan &amp; Doa</h2>
+        <p class="section-lead" data-rv="text" style="--d:3">Kirimkan ucapan dan doa terbaik untuk perjalanan baru kami.</p>
+      </div>
+
+      <form class="form-card" id="ucapanForm" data-rv="text" style="--d:4">
+        <div class="field">
+          <label for="ucapanNama">Nama</label>
+          <input type="text" id="ucapanNama" name="nama" placeholder="Nama Anda" required>
+        </div>
+        <div class="field">
+          <label for="ucapanPesan">Pesan</label>
+          <textarea id="ucapanPesan" name="pesan" rows="3" placeholder="Tulis ucapan dan doa untuk kami" required></textarea>
+        </div>
+        <button type="submit" class="btn-primary-full">Kirim Ucapan</button>
+        <p class="form-msg" id="ucapanMsg" aria-live="polite"></p>
+      </form>
+
+      <div class="ucapan-list" id="ucapanList" data-rv="text" style="--d:5">
+        <div class="ucapan-item">
+          <div class="ucapan-head"><span class="ucapan-name">Dimas &amp; Citra</span><span class="ucapan-time">2 hari lalu</span></div>
+          <p class="ucapan-text">Selamat menempuh hidup baru, semoga jadi keluarga yang sakinah, mawaddah, warahmah. Bahagia selalu Andi &amp; Sarah!</p>
+        </div>
+        <div class="ucapan-item">
+          <div class="ucapan-head"><span class="ucapan-name">Budi Santoso</span><span class="ucapan-time">4 hari lalu</span></div>
+          <p class="ucapan-text">Selamat ya buat kalian berdua, akhirnya sah juga. Semoga langgeng sampai kakek nenek!</p>
+        </div>
+        <div class="ucapan-item">
+          <div class="ucapan-head"><span class="ucapan-name">Rian &amp; Putri</span><span class="ucapan-time">1 minggu lalu</span></div>
+          <p class="ucapan-text">Turut berbahagia atas pernikahan kalian. Semoga selalu dilimpahi kebahagiaan dan rezeki yang berlimpah ya.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6d. TANDA KASIH -->
+    <section id="hadiah" data-reveal>
+      <div class="section-divider" data-rv="draw" style="--d:0">
+        <svg class="divider-ornament div-ribbon" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H83M117 13H196"/>
+          <path class="motif-shape" d="M100 13C100 13 91 8 86 10.5C81.5 12.7 85 17 89.5 15.6C94 14.2 100 13 100 13C100 13 106 14.2 110.5 15.6C115 17 118.5 12.7 114 10.5C109 8 100 13 100 13Z"/>
+          <circle class="motif-dot" cx="100" cy="13" r="1.6"/>
+        </svg>
+      </div>
+      <div class="center">
+        <div class="section-icon" data-rv="text" style="--d:1" aria-hidden="true">
+          <svg viewBox="0 0 64 54">
+            <rect x="8" y="38" width="48" height="12" rx="1.5"/>
+            <rect x="17" y="24" width="30" height="12" rx="1.5"/>
+            <rect x="25" y="12" width="14" height="10" rx="1.5"/>
+            <path d="M32 12V4"/>
+          </svg>
+        </div>
+        <p class="eyebrow" data-rv="text" style="--d:2">Dengan Kasih</p>
+        <h2 class="section-title" data-rv="text" style="--d:3">Tanda Kasih</h2>
+      </div>
+      <p class="gift-intro" data-slot="kalimat_hadiah" data-rv="text" style="--d:4">Doa restu Bapak/Ibu/Saudara/i sudah sangat berarti bagi kami. Namun jika ingin memberikan tanda kasih, kami sediakan melalui:</p>
+
+      <div class="gift-cards">
+        <div class="gift-card" data-rv="text" style="--d:5">
+          <p class="gift-bank" data-slot="nama_bank_1">Bank BCA</p>
+          <p class="gift-number" data-slot="no_rekening_1">1234567890</p>
+          <p class="gift-owner" data-slot="pemilik_rekening_1">a.n. Andi Wijaya</p>
+          <button type="button" class="btn-copy" data-copy="1234567890">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            Salin Nomor
+          </button>
+        </div>
+        <div class="gift-card" data-rv="text" style="--d:6">
+          <p class="gift-bank" data-slot="nama_bank_2">Bank Mandiri</p>
+          <p class="gift-number" data-slot="no_rekening_2">0987654321</p>
+          <p class="gift-owner" data-slot="pemilik_rekening_2">a.n. Sarah Amelia</p>
+          <button type="button" class="btn-copy" data-copy="0987654321">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+            Salin Nomor
+          </button>
+        </div>
+      </div>
+
+      <p class="form-msg" id="giftMsg" aria-live="polite"></p>
+
+      <!-- Unggah bukti transfer: pratinjau di sisi klien saja
+           (URL.createObjectURL), belum terhubung ke server. -->
+      <div class="upload-bukti" data-rv="text" style="--d:7">
+        <label class="field-label-block">Unggah Bukti Transfer</label>
+        <input type="file" id="buktiTransferInput" name="bukti_transfer" accept="image/*" class="upload-input-hidden">
+        <label for="buktiTransferInput" class="upload-dropzone" id="uploadDropzone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-5 5M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+          <span>Ketuk untuk unggah bukti transfer</span>
+        </label>
+        <div class="upload-preview" id="uploadPreview" hidden>
+          <img id="uploadPreviewImg" alt="Pratinjau bukti transfer">
+          <div class="upload-preview-info">
+            <span class="upload-filename" id="uploadFilename"></span>
+            <button type="button" class="upload-remove" id="uploadRemoveBtn">Hapus</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. PENUTUP -->
+    <section id="penutup" data-reveal>
+      <div class="section-divider" data-rv="draw" style="--d:0">
+        <svg class="divider-ornament div-heart" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H88M112 13H196"/>
+          <path class="motif-shape" d="M100 20C95.5 16.3 92.5 12.7 93.8 9.8C94.8 7.6 97.6 7.8 99.3 10.2C99.6 10.6 99.8 11 100 11.4C100.2 11 100.4 10.6 100.7 10.2C102.4 7.8 105.2 7.6 106.2 9.8C107.5 12.7 104.5 16.3 100 20Z"/>
+        </svg>
+      </div>
+      <p class="eyebrow" data-rv="text" style="--d:1">Terima Kasih</p>
+      <p class="closing-text" data-slot="kalimat_penutup" data-rv="text" style="--d:2">Terima kasih atas doa dan restu yang diberikan. Kehadiran serta kebahagiaan Bapak/Ibu/Saudara/i merupakan suatu kehormatan bagi kami.</p>
+
+      <div class="divider">
+        <span class="divider-line"></span>
+        <svg viewBox="0 0 20 18"><path d="M10 16.5C6 13.5 4 10.5 5.3 8.3C6.2 6.8 8.1 7.1 9 8.9C9.3 8.1 9.6 8.1 10 8.9C10.9 7.1 12.8 6.8 13.7 8.3C15 10.5 14 13.5 10 16.5Z"/></svg>
+        <span class="divider-line"></span>
+      </div>
+
+      <p class="closing-signature" data-rv="text" style="--d:3">Kami yang berbahagia,</p>
+      <p class="closing-names" data-rv="text" style="--d:4">
+        <span data-slot="nama_pria_panggilan">Andi</span> &amp; <span data-slot="nama_wanita_panggilan">Sarah</span>
+      </p>
+
+      <p class="credit" data-rv="text" style="--d:5">Dibuat dengan <a href="https://kartuundangan.link" target="_blank" rel="noopener" class="credit-link">kartuundangan.link</a></p>
+    </section>
+
+  </div>
+</div>
+
+<!-- Dua tombol mengambang: musik (sudut kanan atas) dan kembali ke
+     atas (sudut kanan bawah, muncul setelah digulir) — lihat CSS
+     ".float-btn" untuk alasan penempatannya. -->
+<audio id="bgMusic" loop preload="none" data-slot="musik_url">
+  <source src="" type="audio/mpeg">
+</audio>
+<button type="button" class="float-btn float-music" id="musicBtn" aria-label="Putar musik latar" aria-pressed="false">
+  <svg class="icon-music-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  <svg class="icon-music-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M3 3l18 18"/></svg>
+</button>
+<button type="button" class="float-btn float-top" id="topBtn" aria-label="Kembali ke atas">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<!-- Lightbox galeri: satu instance dipakai ulang untuk semua foto -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Tutup">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Foto sebelumnya">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="lightbox-stage">
+    <div class="photo-placeholder lightbox-photo" id="lightboxPhoto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span id="lightboxLabel">Foto 1</span>
+    </div>
+  </div>
+  <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Foto berikutnya">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</div>
+
+<script>
+(function(){
+  var body = document.body;
+  var openBtn = document.getElementById('openBtn');
+  var revealGroup = document.getElementById('revealGroup');
+  var cover = document.getElementById('cover');
+
+  // ---------------- Monogram inisial otomatis ----------------
+  // Dipisah jadi fungsi sendiri supaya gampang dipanggil ulang dari
+  // workspace editor kalau nama_pria_panggilan/nama_wanita_panggilan
+  // berubah setelah halaman dimuat.
+  function buatMonogram(){
+    var pria = document.querySelector('[data-slot="nama_pria_panggilan"]');
+    var wanita = document.querySelector('[data-slot="nama_wanita_panggilan"]');
+    var hurufA = pria ? pria.textContent.trim().charAt(0).toUpperCase() : '';
+    var hurufB = wanita ? wanita.textContent.trim().charAt(0).toUpperCase() : '';
+    var elA = document.getElementById('monoLetterA');
+    var elB = document.getElementById('monoLetterB');
+    if (elA) elA.textContent = hurufA;
+    if (elB) elB.textContent = hurufB;
+  }
+  buatMonogram();
+  // Diekspos ke window supaya workspace editor bisa memanggil ulang
+  // buatMonogram() setelah nama mempelai diganti user.
+  window.buatMonogram = buatMonogram;
+
+  // ============================================================
+  // ANIMASI BUKA SAMPUL (Ivory Gold: tirai emas naik dari tengah)
+  // Ganti isi openCover() ini kalau tema lain pakai animasi lain
+  // (pintu terbelah, amplop terbuka, dsb). CURTAIN_DURATION harus
+  // sama dengan lama transition CSS pada .cover-curtain di style.css.
+  // ============================================================
+  var CURTAIN_DURATION = 950;
+
+  function openCover(){
+    cover.classList.add('is-opening');
+    setTimeout(function(){
+      body.classList.remove('cover-locked');
+      cover.style.display = 'none';
+      // setTimeout dipakai (bukan requestAnimationFrame) supaya transisi
+      // tetap terpicu meski rAF ditangguhkan browser (mis. tab dianggap
+      // tidak terlihat) — jeda kecil di sini tetap cukup untuk memberi
+      // browser kesempatan me-render ulang display:none->block sebelum
+      // class transisi ditambahkan.
+      setTimeout(function(){
+        revealGroup.classList.add('in');
+        // #fotoUtama baru saja pindah dari display:none ke terlihat
+        // lewat perubahan class pada leluhurnya, bukan lewat scroll asli
+        // — IntersectionObserver tidak selalu langsung menghitung ulang
+        // dari perubahan semacam itu. revealVisibleSections() (dideklarasi
+        // di bawah bersama observer-nya) mengecek geometri secara manual
+        // supaya section pertama tidak "macet" di posisi sebelum animasi
+        // kalau pengguna belum sempat menggulir sama sekali.
+        if (window.revealVisibleSections) window.revealVisibleSections();
+      }, 20);
+    }, CURTAIN_DURATION);
+  }
+  openBtn.addEventListener('click', openCover);
+
+  // ---------------- Animasi scroll per-elemen ----------------
+  // prefersReducedMotion: kalau aktif, semua section langsung dapat
+  // class "in-view" saat load (tanpa menunggu scroll) supaya konten
+  // tampil langsung tanpa animasi apa pun — CSS-nya sendiri sudah
+  // menonaktifkan transition/animation lewat @media(prefers-reduced-
+  // motion:reduce), jadi di sini cukup lewati proses observasi.
+  var prefersReducedMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var io = null;
+
+  if (prefersReducedMotion) {
+    document.querySelectorAll('[data-reveal]').forEach(function(el){ el.classList.add('in-view'); });
+  } else if ('IntersectionObserver' in window) {
+    io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('[data-reveal]').forEach(function(el){ io.observe(el); });
+
+    // Pengecekan manual sebagai jaring pengaman: dipanggil openCover()
+    // tepat setelah sampul terbuka, karena perubahan display lewat
+    // class pada leluhur (bukan scroll asli) tidak selalu langsung
+    // memicu IntersectionObserver menghitung ulang.
+    window.revealVisibleSections = function(){
+      document.querySelectorAll('[data-reveal]:not(.in-view)').forEach(function(el){
+        var rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.8 && rect.bottom > 0) {
+          el.classList.add('in-view');
+          io.unobserve(el);
+        }
+      });
+    };
+  } else {
+    document.querySelectorAll('[data-reveal]').forEach(function(el){ el.classList.add('in-view'); });
+  }
+
+  // ---------------- Partikel latar: motif garis tipis emas ----------------
+  // Campuran 4 motif (hati kecil, cincin bertaut, pita, gelas) — garis
+  // monoline tipis, opasitas sangat rendah (diatur lewat keyframe
+  // particleFloat di CSS, puncaknya ~6%). Dilewati kalau reduced-motion
+  // aktif atau perangkat terdeteksi lemah (core CPU sedikit / RAM
+  // kecil), supaya tetap ringan di HP low-end.
+  var PARTICLE_MOTIFS = [
+    '<path d="M8 14C3.3 10.4 1.4 7 3.2 4.6C4.6 2.8 6.9 3.2 8 5.4C9.1 3.2 11.4 2.8 12.8 4.6C14.6 7 12.7 10.4 8 14Z"/>',
+    '<circle cx="5.6" cy="8" r="4.2"/><circle cx="10.4" cy="8" r="4.2"/>',
+    '<path d="M8 8C8 8 4 5 2.2 6.8C0.8 8.2 2.2 10 4 9.4C6 8.7 8 8 8 8C8 8 10 8.7 12 9.4C13.8 10 15.2 8.2 13.8 6.8C12 5 8 8 8 8Z"/>',
+    '<path d="M4.5 2C4.5 6 8 6.5 8 9.5V13M4 13H12M11.5 2C11.5 6 8 6.5 8 9.5"/>'
+  ];
+  (function initParticles(){
+    var weakDevice =
+      (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) ||
+      (navigator.deviceMemory && navigator.deviceMemory <= 2);
+    if (prefersReducedMotion || weakDevice) return;
+
+    var wrap = document.getElementById('particles');
+    if (!wrap) return;
+
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+    var COUNT = 12;
+    for (var i = 0; i < COUNT; i++) {
+      var svg = document.createElementNS(SVG_NS, 'svg');
+      svg.setAttribute('viewBox', '0 0 16 16');
+      svg.setAttribute('class', 'particle');
+      svg.innerHTML = PARTICLE_MOTIFS[i % PARTICLE_MOTIFS.length];
+      var duration = 26 + Math.random() * 16;
+      var delay = -(Math.random() * duration);
+      var drift = (Math.random() < 0.5 ? -1 : 1) * (20 + Math.random() * 40);
+      var rot = (Math.random() < 0.5 ? -1 : 1) * (15 + Math.random() * 20);
+      var size = 12 + Math.random() * 10;
+      svg.style.left = (Math.random() * 100) + '%';
+      svg.style.setProperty('--dur', duration + 's');
+      svg.style.setProperty('--delay', delay + 's');
+      svg.style.setProperty('--drift', drift + 'px');
+      svg.style.setProperty('--rot', rot + 'deg');
+      svg.style.width = size + 'px';
+      svg.style.height = size + 'px';
+      wrap.appendChild(svg);
+    }
+  })();
+
+  var target = new Date('2026-03-14T08:00:00+07:00').getTime();
+  var elDays = document.getElementById('cdDays');
+  var elHours = document.getElementById('cdHours');
+  var elMinutes = document.getElementById('cdMinutes');
+  var elSeconds = document.getElementById('cdSeconds');
+
+  function pad(n){ return String(n).padStart(2, '0'); }
+
+  // setNum: hanya beranimasi kalau angkanya benar-benar berubah, biar
+  // kotak Hari/Jam tidak ikut "berkedip" tiap detik seperti kotak Detik.
+  function setNum(el, val){
+    if (el.textContent === val) return;
+    el.textContent = val;
+    el.classList.remove('tick');
+    void el.offsetWidth;
+    el.classList.add('tick');
+  }
+
+  function tick(){
+    var diff = target - Date.now();
+    if (diff < 0) diff = 0;
+    var days = Math.floor(diff / 86400000);
+    var hours = Math.floor(diff % 86400000 / 3600000);
+    var minutes = Math.floor(diff % 3600000 / 60000);
+    var seconds = Math.floor(diff % 60000 / 1000);
+    setNum(elDays, pad(days));
+    setNum(elHours, pad(hours));
+    setNum(elMinutes, pad(minutes));
+    setNum(elSeconds, pad(seconds));
+    if (diff <= 0) clearInterval(timer);
+  }
+  tick();
+  var timer = setInterval(tick, 1000);
+
+  // ---------------- Galeri + lightbox ----------------
+  var galeriItems = Array.prototype.slice.call(document.querySelectorAll('.galeri-item'));
+  var lightbox = document.getElementById('lightbox');
+  var lightboxLabel = document.getElementById('lightboxLabel');
+  var lightboxClose = document.getElementById('lightboxClose');
+  var lightboxPrev = document.getElementById('lightboxPrev');
+  var lightboxNext = document.getElementById('lightboxNext');
+  var lightboxIndex = 0;
+
+  function showLightbox(index){
+    lightboxIndex = (index + galeriItems.length) % galeriItems.length;
+    lightboxLabel.textContent = 'Foto ' + (lightboxIndex + 1);
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    body.style.overflow = 'hidden';
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    if (!body.classList.contains('cover-locked')) body.style.overflow = '';
+  }
+  galeriItems.forEach(function(item, index){
+    item.addEventListener('click', function(){ showLightbox(index); });
+  });
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', function(){ showLightbox(lightboxIndex - 1); });
+  lightboxNext.addEventListener('click', function(){ showLightbox(lightboxIndex + 1); });
+  lightbox.addEventListener('click', function(e){ if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', function(e){
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') showLightbox(lightboxIndex - 1);
+    if (e.key === 'ArrowRight') showLightbox(lightboxIndex + 1);
+  });
+
+  // ---------------- Pill-group (dipakai form konfirmasi kehadiran) ----------------
+  function initPillGroup(group){
+    var hiddenInput = group.parentElement.querySelector('input[type="hidden"]');
+    var buttons = Array.prototype.slice.call(group.querySelectorAll('.pill-btn'));
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        buttons.forEach(function(b){ b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        hiddenInput.value = btn.dataset.value;
+        hiddenInput.dispatchEvent(new Event('change'));
+      });
+    });
+  }
+  document.querySelectorAll('.pill-group').forEach(initPillGroup);
+
+  // ---------------- Konfirmasi Kehadiran ----------------
+  var rsvpForm = document.getElementById('rsvpForm');
+  var rsvpMsg = document.getElementById('rsvpMsg');
+  var fieldJumlahTamu = document.getElementById('fieldJumlahTamu');
+  var kehadiranInput = rsvpForm.querySelector('input[name="kehadiran"]');
+
+  kehadiranInput.addEventListener('change', function(){
+    var tidakHadir = kehadiranInput.value === 'tidak_hadir';
+    fieldJumlahTamu.classList.toggle('is-hidden', tidakHadir);
+    if (tidakHadir) rsvpForm.querySelector('#rsvpJumlah').value = '';
+  });
+
+  rsvpForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var pihakInput = rsvpForm.querySelector('input[name="pihak"]');
+    if (!pihakInput.value || !kehadiranInput.value) {
+      rsvpMsg.textContent = 'Lengkapi dulu pilihan pihak dan kehadiran ya.';
+      rsvpMsg.className = 'form-msg err';
+      return;
+    }
+    var data = Object.fromEntries(new FormData(rsvpForm).entries());
+    console.log('Konfirmasi kehadiran terkirim:', data);
+    rsvpMsg.textContent = 'Terima kasih, konfirmasi kehadiranmu sudah kami terima!';
+    rsvpMsg.className = 'form-msg ok';
+    rsvpForm.reset();
+    document.querySelectorAll('#rsvpForm .pill-btn').forEach(function(b){ b.classList.remove('is-active'); });
+    fieldJumlahTamu.classList.remove('is-hidden');
+  });
+
+  // ---------------- Ucapan & Doa ----------------
+  var ucapanForm = document.getElementById('ucapanForm');
+  var ucapanMsg = document.getElementById('ucapanMsg');
+  var ucapanList = document.getElementById('ucapanList');
+
+  ucapanForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var data = Object.fromEntries(new FormData(ucapanForm).entries());
+    console.log('Ucapan terkirim:', data);
+
+    var item = document.createElement('div');
+    item.className = 'ucapan-item';
+    var head = document.createElement('div');
+    head.className = 'ucapan-head';
+    var name = document.createElement('span');
+    name.className = 'ucapan-name';
+    name.textContent = data.nama;
+    var time = document.createElement('span');
+    time.className = 'ucapan-time';
+    time.textContent = 'Baru saja';
+    head.append(name, time);
+    var text = document.createElement('p');
+    text.className = 'ucapan-text';
+    text.textContent = data.pesan;
+    item.append(head, text);
+    ucapanList.insertBefore(item, ucapanList.firstChild);
+
+    ucapanMsg.textContent = 'Terima kasih atas ucapan dan doanya!';
+    ucapanMsg.className = 'form-msg ok';
+    ucapanForm.reset();
+  });
+
+  // ---------------- Tanda Kasih: salin nomor rekening ----------------
+  function copyText(text){
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (err) {}
+    document.body.removeChild(ta);
+    return Promise.resolve();
+  }
+
+  var giftMsg = document.getElementById('giftMsg');
+  document.querySelectorAll('.btn-copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var value = btn.dataset.copy;
+      copyText(value).then(function(){
+        giftMsg.textContent = '"' + value + '" berhasil disalin.';
+        giftMsg.className = 'form-msg ok';
+      }).catch(function(){
+        giftMsg.textContent = 'Gagal menyalin, silakan salin manual: ' + value;
+        giftMsg.className = 'form-msg err';
+      });
+    });
+  });
+
+  // ---------------- Tombol musik ----------------
+  var musicBtn = document.getElementById('musicBtn');
+  var bgMusic = document.getElementById('bgMusic');
+  var isPlaying = false;
+
+  musicBtn.addEventListener('click', function(){
+    isPlaying = !isPlaying;
+    musicBtn.classList.toggle('is-playing', isPlaying);
+    musicBtn.setAttribute('aria-pressed', String(isPlaying));
+    musicBtn.setAttribute('aria-label', isPlaying ? 'Matikan musik latar' : 'Putar musik latar');
+    if (isPlaying) {
+      bgMusic.play().catch(function(){ /* belum ada musik_url, abaikan */ });
+    } else {
+      bgMusic.pause();
+    }
+  });
+
+  // ---------------- Tombol kembali ke atas ----------------
+  var topBtn = document.getElementById('topBtn');
+  window.addEventListener('scroll', function(){
+    topBtn.classList.toggle('show', window.scrollY > 500);
+  });
+  topBtn.addEventListener('click', function(){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ---------------- Unggah bukti transfer (pratinjau sisi klien) ----------------
+  var buktiInput = document.getElementById('buktiTransferInput');
+  var uploadDropzone = document.getElementById('uploadDropzone');
+  var uploadPreview = document.getElementById('uploadPreview');
+  var uploadPreviewImg = document.getElementById('uploadPreviewImg');
+  var uploadFilename = document.getElementById('uploadFilename');
+  var uploadRemoveBtn = document.getElementById('uploadRemoveBtn');
+  var buktiObjectUrl = null;
+
+  buktiInput.addEventListener('change', function(){
+    var file = buktiInput.files[0];
+    if (!file) return;
+    if (buktiObjectUrl) URL.revokeObjectURL(buktiObjectUrl);
+    buktiObjectUrl = URL.createObjectURL(file);
+    uploadPreviewImg.src = buktiObjectUrl;
+    uploadFilename.textContent = file.name;
+    uploadDropzone.hidden = true;
+    uploadPreview.hidden = false;
+  });
+
+  uploadRemoveBtn.addEventListener('click', function(){
+    buktiInput.value = '';
+    if (buktiObjectUrl) { URL.revokeObjectURL(buktiObjectUrl); buktiObjectUrl = null; }
+    uploadPreview.hidden = true;
+    uploadDropzone.hidden = false;
+  });
+})();
+</script>
+
+</body>
+</html>
