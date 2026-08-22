@@ -112,6 +112,170 @@
       <p>Pilih tampilan undangan yang paling cocok dengan acaramu. Klik Pratinjau untuk melihat tampilan lengkapnya seperti yang akan dilihat tamu.</p>
     </div>
     <div class="grid-3" id="themeTemplateGrid"></div>
+    <p class="workspace-msg" id="temaMsg" aria-live="polite"></p>
+  </section>
+
+  <section class="dash-view" id="view-workspace">
+    <div class="ws-head">
+      <button type="button" class="btn btn-ghost btn-sm" id="wsBackBtn">← Kembali ke Template Tema</button>
+      <div class="ws-head-title">
+        <span class="eyebrow" id="wsKategori"></span>
+        <h2 id="wsNamaDesain">Tema</h2>
+      </div>
+    </div>
+
+    <div class="ws-tabs" id="wsTabs">
+      <button type="button" class="ws-tab" data-tab="isi-data">Isi Data</button>
+      <button type="button" class="ws-tab" data-tab="desain">Desain</button>
+      <button type="button" class="ws-tab" data-tab="pratinjau">Pratinjau</button>
+      <button type="button" class="ws-tab" data-tab="bagikan">Bagikan</button>
+    </div>
+
+    <div class="ws-panel" id="wsPanel-isi-data">
+      <form id="wsForm">
+        <div class="profile-block">
+          <h3>Mempelai</h3>
+          <div class="field-grid">
+            <div class="field">
+              <label for="f_nama_pria_panggilan">Nama panggilan pria</label>
+              <input type="text" id="f_nama_pria_panggilan" name="nama_pria_panggilan" placeholder="mis. Andi">
+            </div>
+            <div class="field">
+              <label for="f_nama_wanita_panggilan">Nama panggilan wanita</label>
+              <input type="text" id="f_nama_wanita_panggilan" name="nama_wanita_panggilan" placeholder="mis. Sarah">
+            </div>
+            <div class="field">
+              <label for="f_nama_pria_lengkap">Nama lengkap pria</label>
+              <input type="text" id="f_nama_pria_lengkap" name="nama_pria_lengkap" placeholder="mis. Andi Wijaya, S.Kom.">
+            </div>
+            <div class="field">
+              <label for="f_nama_wanita_lengkap">Nama lengkap wanita</label>
+              <input type="text" id="f_nama_wanita_lengkap" name="nama_wanita_lengkap" placeholder="mis. Sarah Putri, S.E.">
+            </div>
+            <div class="field">
+              <label for="f_orangtua_pria">Orang tua pria</label>
+              <textarea id="f_orangtua_pria" name="orangtua_pria" placeholder="Putra dari Bapak ... dan Ibu ..."></textarea>
+            </div>
+            <div class="field">
+              <label for="f_orangtua_wanita">Orang tua wanita</label>
+              <textarea id="f_orangtua_wanita" name="orangtua_wanita" placeholder="Putri dari Bapak ... dan Ibu ..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-block">
+          <h3>Acara</h3>
+          <div class="field-grid">
+            <div class="field">
+              <label for="f_tanggal_akad">Tanggal akad</label>
+              <input type="date" id="f_tanggal_akad" name="tanggal_akad">
+            </div>
+            <div class="field">
+              <label for="f_waktu_akad">Waktu akad</label>
+              <input type="text" id="f_waktu_akad" name="waktu_akad" placeholder="mis. 08.00 - selesai WIB">
+            </div>
+            <div class="field">
+              <label for="f_tanggal_resepsi">Tanggal resepsi</label>
+              <input type="date" id="f_tanggal_resepsi" name="tanggal_resepsi">
+            </div>
+            <div class="field">
+              <label for="f_waktu_resepsi">Waktu resepsi</label>
+              <input type="text" id="f_waktu_resepsi" name="waktu_resepsi" placeholder="mis. 11.00 - 14.00 WIB">
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-block">
+          <h3>Lokasi</h3>
+          <div class="field-grid">
+            <div class="field field-full">
+              <label for="f_lokasi_nama">Nama tempat</label>
+              <input type="text" id="f_lokasi_nama" name="lokasi_nama" placeholder="mis. Gedung Serbaguna ABC">
+            </div>
+            <div class="field field-full">
+              <label for="f_lokasi_alamat">Alamat lengkap</label>
+              <textarea id="f_lokasi_alamat" name="lokasi_alamat" placeholder="Jl. ..., Kota, Provinsi"></textarea>
+            </div>
+            <div class="field field-full">
+              <label for="f_lokasi_maps_url">Link Google Maps</label>
+              <input type="url" id="f_lokasi_maps_url" name="lokasi_maps_url" placeholder="https://maps.google.com/...">
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-block">
+          <h3>Teks</h3>
+          <div class="field-grid">
+            <div class="field field-full">
+              <label for="f_kalimat_pembuka">Kalimat pembuka</label>
+              <textarea id="f_kalimat_pembuka" name="kalimat_pembuka" placeholder="mis. Dengan memohon rahmat Allah SWT..."></textarea>
+            </div>
+            <div class="field field-full">
+              <label for="f_kalimat_penutup">Kalimat penutup</label>
+              <textarea id="f_kalimat_penutup" name="kalimat_penutup" placeholder="mis. Merupakan suatu kehormatan dan kebahagiaan bagi kami..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-block">
+          <h3>Tanda Kasih</h3>
+          <h4 class="ws-subhead">Rekening 1</h4>
+          <div class="field-grid">
+            <div class="field">
+              <label for="f_nama_bank_1">Nama bank</label>
+              <input type="text" id="f_nama_bank_1" name="nama_bank_1" placeholder="mis. BCA">
+            </div>
+            <div class="field">
+              <label for="f_no_rekening_1">Nomor rekening</label>
+              <input type="text" id="f_no_rekening_1" name="no_rekening_1" placeholder="mis. 1234567890">
+            </div>
+            <div class="field field-full">
+              <label for="f_pemilik_rekening_1">Nama pemilik rekening</label>
+              <input type="text" id="f_pemilik_rekening_1" name="pemilik_rekening_1" placeholder="mis. Andi Wijaya">
+            </div>
+          </div>
+          <h4 class="ws-subhead">Rekening 2 (opsional)</h4>
+          <div class="field-grid">
+            <div class="field">
+              <label for="f_nama_bank_2">Nama bank</label>
+              <input type="text" id="f_nama_bank_2" name="nama_bank_2" placeholder="mis. Mandiri">
+            </div>
+            <div class="field">
+              <label for="f_no_rekening_2">Nomor rekening</label>
+              <input type="text" id="f_no_rekening_2" name="no_rekening_2" placeholder="mis. 0987654321">
+            </div>
+            <div class="field field-full">
+              <label for="f_pemilik_rekening_2">Nama pemilik rekening</label>
+              <input type="text" id="f_pemilik_rekening_2" name="pemilik_rekening_2" placeholder="mis. Sarah Putri">
+            </div>
+          </div>
+        </div>
+
+        <div class="ws-save-row">
+          <button type="submit" class="btn btn-primary" id="wsSaveBtn">Simpan</button>
+          <p class="ws-save-msg" id="wsSaveMsg" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+
+    <div class="ws-panel" id="wsPanel-desain">
+      <div class="workspace-placeholder">
+        <h2>Desain — segera hadir</h2>
+        <p>Pengaturan warna dan gaya tampilan undangan akan tampil di sini.</p>
+      </div>
+    </div>
+    <div class="ws-panel" id="wsPanel-pratinjau">
+      <div class="workspace-placeholder">
+        <h2>Pratinjau — segera hadir</h2>
+        <p>Lihat tampilan undanganmu persis seperti yang dilihat tamu.</p>
+      </div>
+    </div>
+    <div class="ws-panel" id="wsPanel-bagikan">
+      <div class="workspace-placeholder">
+        <h2>Bagikan — segera hadir</h2>
+        <p>Buat link undangan dan bagikan ke daftar tamumu di sini.</p>
+      </div>
+    </div>
   </section>
 
   <section class="dash-view" id="view-harga">

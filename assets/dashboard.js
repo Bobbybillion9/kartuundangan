@@ -42,6 +42,7 @@
     views.forEach(function(v){
       document.getElementById('view-' + v).classList.toggle('active', v === name);
     });
+    document.getElementById('view-workspace').classList.remove('active');
     viewLinks.forEach(function(a){
       a.classList.toggle('active', a.dataset.view === name);
     });
@@ -178,6 +179,20 @@
       kategori: 'Elegan Klasik',
       desc: 'Nuansa dusty rose & sage yang lembut, foto utama berbentuk kubah, dan monogram bertinta emas yang menggambar diri saat dibuka.',
       thumb: 'templates/elegan-klasik/sage-rose/assets/thumbnail.jpg'
+    },
+    {
+      id: 'elegan-klasik/ivory-gold',
+      name: 'Ivory Gold',
+      kategori: 'Elegan Klasik',
+      desc: 'Nuansa ivory & emas tua yang formal, motif garis tipis cincin bertaut dan hati kecil, dan tirai emas yang terbuka ke atas saat undangan dibuka.',
+      thumb: 'templates/elegan-klasik/ivory-gold/assets/thumbnail.jpg'
+    },
+    {
+      id: 'elegan-klasik/emerald-dusk',
+      name: 'Emerald Dusk',
+      kategori: 'Elegan Klasik',
+      desc: 'Nuansa resepsi malam: latar hijau zamrud pekat, emas berkilau lembut, dan sampul yang menyingkap dari gelap lewat cahaya hangat yang melebar dari tengah.',
+      thumb: 'templates/elegan-klasik/emerald-dusk/assets/thumbnail.jpg'
     }
   ];
 
@@ -220,15 +235,9 @@
 
     var useBtn = document.createElement('button');
     useBtn.type = 'button';
-    useBtn.className = 'btn btn-ghost';
-    useBtn.disabled = true;
-    useBtn.setAttribute('aria-disabled', 'true');
-    var useLabel = document.createElement('span');
-    useLabel.textContent = 'Gunakan';
-    var useBadge = document.createElement('span');
-    useBadge.className = 'badge';
-    useBadge.textContent = 'Segera Hadir';
-    useBtn.append(useLabel, useBadge);
+    useBtn.className = 'btn btn-ghost tpl-use-btn';
+    useBtn.dataset.id = t.id;
+    useBtn.textContent = 'Gunakan';
 
     actions.append(previewBtn, useBtn);
     body.append(row, desc, actions);
@@ -243,4 +252,166 @@
     THEME_TEMPLATES.forEach(function(t){ grid.appendChild(renderThemeTemplateCard(t)); });
   }
   renderThemeTemplateGrid();
+
+  // ---------------- Workspace Editor ----------------
+  var temaMsg = document.getElementById('temaMsg');
+  var themeTemplateGrid = document.getElementById('themeTemplateGrid');
+
+  function showTemaMsg(text, type){
+    if (!temaMsg) return;
+    temaMsg.textContent = text || '';
+    temaMsg.className = 'workspace-msg' + (type ? ' ' + type : '');
+  }
+
+  function friendlyErrorMessage(err){
+    if (!err) return 'Terjadi kesalahan. Silakan coba lagi.';
+    var msg = (err.message || '').toLowerCase();
+    if (msg.indexOf('failed to fetch') !== -1 || msg.indexOf('network') !== -1) {
+      return 'Gagal terhubung ke server. Periksa koneksi internetmu lalu coba lagi.';
+    }
+    if (err.code === '23505') return 'Data ini sudah dipakai. Silakan pakai nilai lain.';
+    if (err.code === '23514') return 'Ada data yang tidak sesuai format. Periksa kembali isian kamu.';
+    return 'Gagal menyimpan data. Silakan coba lagi beberapa saat lagi.';
+  }
+
+  async function ensureDraftForTemplate(t){
+    var session = KU.getSession();
+    var uid = session.user.id;
+
+    var existing = await KU.sb.from('invitations').select('*')
+      .eq('user_id', uid).eq('status', 'draft')
+      .order('created_at', { ascending: false }).limit(1);
+    if (existing.error) return { error: existing.error };
+
+    if (existing.data && existing.data.length) {
+      var row = existing.data[0];
+      if (row.kategori_desain !== t.kategori || row.nama_desain !== t.name) {
+        var upd = await KU.sb.from('invitations')
+          .update({ kategori_desain: t.kategori, nama_desain: t.name })
+          .eq('id', row.id).select().single();
+        if (upd.error) return { error: upd.error };
+        return { data: upd.data };
+      }
+      return { data: row };
+    }
+
+    var ins = await KU.sb.from('invitations').insert({
+      user_id: uid,
+      status: 'draft',
+      kategori_desain: t.kategori,
+      nama_desain: t.name
+    }).select().single();
+    if (ins.error) return { error: ins.error };
+    return { data: ins.data };
+  }
+
+  var FORM_FIELDS = [
+    'nama_pria_panggilan', 'nama_wanita_panggilan', 'nama_pria_lengkap', 'nama_wanita_lengkap',
+    'orangtua_pria', 'orangtua_wanita',
+    'tanggal_akad', 'waktu_akad', 'tanggal_resepsi', 'waktu_resepsi',
+    'lokasi_nama', 'lokasi_alamat', 'lokasi_maps_url',
+    'kalimat_pembuka', 'kalimat_penutup',
+    'nama_bank_1', 'no_rekening_1', 'pemilik_rekening_1',
+    'nama_bank_2', 'no_rekening_2', 'pemilik_rekening_2'
+  ];
+
+  var wsBackBtn = document.getElementById('wsBackBtn');
+  var wsKategori = document.getElementById('wsKategori');
+  var wsNamaDesain = document.getElementById('wsNamaDesain');
+  var wsTabs = document.getElementById('wsTabs');
+  var wsTabButtons = wsTabs ? wsTabs.querySelectorAll('.ws-tab') : [];
+  var wsForm = document.getElementById('wsForm');
+  var wsSaveBtn = document.getElementById('wsSaveBtn');
+  var wsSaveMsg = document.getElementById('wsSaveMsg');
+  var wsTabNames = ['isi-data', 'desain', 'pratinjau', 'bagikan'];
+
+  var currentInvitation = null;
+
+  function showWsSaveMsg(text, type){
+    if (!wsSaveMsg) return;
+    wsSaveMsg.textContent = text || '';
+    wsSaveMsg.className = 'ws-save-msg' + (type ? ' ' + type : '');
+  }
+
+  function showWsTab(tab, persist){
+    if (wsTabNames.indexOf(tab) === -1) tab = 'isi-data';
+    wsTabButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.tab === tab); });
+    wsTabNames.forEach(function(name){
+      var panel = document.getElementById('wsPanel-' + name);
+      if (panel) panel.classList.toggle('active', name === tab);
+    });
+    if (persist && currentInvitation && currentInvitation.last_active_tab !== tab) {
+      currentInvitation.last_active_tab = tab;
+      KU.sb.from('invitations').update({ last_active_tab: tab }).eq('id', currentInvitation.id).then(function(){});
+    }
+  }
+
+  function populateForm(inv){
+    FORM_FIELDS.forEach(function(f){
+      var el = wsForm.elements[f];
+      if (!el) return;
+      el.value = (inv && inv[f] != null) ? inv[f] : '';
+    });
+    showWsSaveMsg('');
+  }
+
+  function showWorkspaceView(){
+    views.forEach(function(v){
+      document.getElementById('view-' + v).classList.remove('active');
+    });
+    document.getElementById('view-workspace').classList.add('active');
+  }
+
+  function openWorkspace(invitation, template){
+    currentInvitation = invitation;
+    wsKategori.textContent = template.kategori;
+    wsNamaDesain.textContent = template.name;
+    populateForm(invitation);
+    showWsTab(invitation.last_active_tab || 'isi-data', false);
+    showWorkspaceView();
+  }
+
+  if (themeTemplateGrid) {
+    themeTemplateGrid.addEventListener('click', async function(e){
+      var btn = e.target.closest('.tpl-use-btn');
+      if (!btn) return;
+      var t = THEME_TEMPLATES.filter(function(x){ return x.id === btn.dataset.id; })[0];
+      if (!t) return;
+      var session = KU.getSession();
+      if (!session) { showTemaMsg('Kamu perlu masuk dulu untuk memilih tema ini.', 'err'); return; }
+      btn.disabled = true;
+      showTemaMsg('Menyiapkan workspace...');
+      var res = await ensureDraftForTemplate(t);
+      btn.disabled = false;
+      if (res.error) { showTemaMsg('Gagal menyiapkan undangan: ' + friendlyErrorMessage(res.error), 'err'); return; }
+      showTemaMsg('');
+      openWorkspace(res.data, t);
+    });
+  }
+
+  if (wsBackBtn) wsBackBtn.addEventListener('click', function(){ showView('tema'); });
+
+  wsTabButtons.forEach(function(b){
+    b.addEventListener('click', function(){ showWsTab(b.dataset.tab, true); });
+  });
+
+  if (wsForm) {
+    wsForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      if (!currentInvitation) return;
+      wsSaveBtn.disabled = true;
+      showWsSaveMsg('Menyimpan...');
+      var payload = {};
+      FORM_FIELDS.forEach(function(f){
+        var el = wsForm.elements[f];
+        var val = el ? el.value.trim() : '';
+        payload[f] = val === '' ? null : val;
+      });
+      var res = await KU.sb.from('invitations').update(payload).eq('id', currentInvitation.id).select().single();
+      wsSaveBtn.disabled = false;
+      if (res.error) { showWsSaveMsg('Gagal menyimpan: ' + friendlyErrorMessage(res.error), 'err'); return; }
+      currentInvitation = res.data;
+      showWsSaveMsg('Tersimpan!', 'ok');
+    });
+  }
 })();
