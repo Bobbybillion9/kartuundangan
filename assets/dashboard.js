@@ -315,6 +315,31 @@
     'nama_bank_2', 'no_rekening_2', 'pemilik_rekening_2'
   ];
 
+  // Palet warna per template — id template harus sama dengan id di
+  // THEME_TEMPLATES. Setiap varian tetap dalam koridor karakter asli
+  // template (sudah direview & disetujui): hanya suhu warna & logam
+  // aksennya yang berbeda per varian, struktur token CSS asli utuh.
+  var PALETTES = {
+    'elegan-klasik/ivory-gold': [
+      { id: 'rose-gold-ivory', name: 'Rose Gold Ivory', swatches: ['#FBF3EE', '#C98F7B', '#A66B57', '#F3DED6', '#2A2624'] },
+      { id: 'platinum-ivory', name: 'Platinum Ivory', swatches: ['#F7F7F5', '#9BA0A6', '#767B82', '#E7E9EA', '#262626'] },
+      { id: 'champagne-bronze', name: 'Champagne Bronze', swatches: ['#F5EBDA', '#A9713D', '#7E5327', '#EAD4AE', '#2A2118'] },
+      { id: 'pearl-sage-gold', name: 'Pearl Sage Gold', swatches: ['#F5F3E9', '#A8926A', '#7F6C4C', '#E5E2CF', '#262622'] }
+    ],
+    'elegan-klasik/sage-rose': [
+      { id: 'dusty-lavender-sage', name: 'Dusty Lavender Sage', swatches: ['#FAF6F3', '#B98CAE', '#916983', '#8E9483', '#372F35'] },
+      { id: 'terracotta-sage', name: 'Terracotta Sage', swatches: ['#FBF3EA', '#C4785A', '#9E5B41', '#8B9A76', '#3A2F26'] },
+      { id: 'powder-blue-sage', name: 'Powder Blue Sage', swatches: ['#F6F8F6', '#8FA3B3', '#6C8494', '#8FA087', '#333A3D'] },
+      { id: 'antique-rose-gold', name: 'Antique Rose Gold', swatches: ['#FAF3EC', '#B97C68', '#8E5A48', '#7E8A6C', '#362B24'] }
+    ],
+    'elegan-klasik/emerald-dusk': [
+      { id: 'sapphire-dusk', name: 'Sapphire Dusk', swatches: ['#0B1B2A', '#16324A', '#D8BB6B', '#F2E3DA', '#EDE7D8'] },
+      { id: 'burgundy-dusk', name: 'Burgundy Dusk', swatches: ['#2A0F14', '#3D191F', '#D8A25B', '#F0D9B0', '#F0E3DD'] },
+      { id: 'onyx-gold', name: 'Onyx Gold', swatches: ['#151412', '#242220', '#D8B463', '#F2E6C4', '#F1EDE4'] },
+      { id: 'teal-midnight', name: 'Teal Midnight', swatches: ['#08201F', '#123330', '#CDAF63', '#EFE0AE', '#E7E9DE'] }
+    ]
+  };
+
   var wsBackBtn = document.getElementById('wsBackBtn');
   var wsKategori = document.getElementById('wsKategori');
   var wsNamaDesain = document.getElementById('wsNamaDesain');
@@ -325,7 +350,12 @@
   var wsSaveMsg = document.getElementById('wsSaveMsg');
   var wsTabNames = ['isi-data', 'desain', 'pratinjau', 'bagikan'];
 
+  var paletteTemplateName = document.getElementById('paletteTemplateName');
+  var paletteGrid = document.getElementById('paletteGrid');
+  var paletteMsg = document.getElementById('paletteMsg');
+
   var currentInvitation = null;
+  var currentTemplateMeta = null;
 
   function showWsSaveMsg(text, type){
     if (!wsSaveMsg) return;
@@ -362,11 +392,74 @@
     document.getElementById('view-workspace').classList.add('active');
   }
 
+  function showPaletteMsg(text, type){
+    if (!paletteMsg) return;
+    paletteMsg.textContent = text || '';
+    paletteMsg.className = 'ws-save-msg' + (type ? ' ' + type : '');
+  }
+
+  function renderPaletteGrid(){
+    if (!paletteGrid) return;
+    paletteGrid.innerHTML = '';
+    showPaletteMsg('');
+    if (paletteTemplateName) paletteTemplateName.textContent = currentTemplateMeta ? currentTemplateMeta.name : '';
+    var list = currentTemplateMeta ? (PALETTES[currentTemplateMeta.id] || []) : [];
+    var activeId = currentInvitation && currentInvitation.data && currentInvitation.data.palet;
+    list.forEach(function(p){
+      var card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'palette-card' + (p.id === activeId ? ' selected' : '');
+      card.dataset.id = p.id;
+
+      var sw = document.createElement('div');
+      sw.className = 'palette-swatches';
+      p.swatches.forEach(function(hex){
+        var dot = document.createElement('span');
+        dot.className = 'palette-swatch';
+        dot.style.background = hex;
+        sw.appendChild(dot);
+      });
+
+      var row = document.createElement('div');
+      row.className = 'palette-name-row';
+      var nm = document.createElement('span');
+      nm.className = 'palette-name';
+      nm.textContent = p.name;
+      var check = document.createElement('span');
+      check.className = 'palette-check';
+      check.textContent = '✓';
+      row.append(nm, check);
+
+      card.append(sw, row);
+      paletteGrid.appendChild(card);
+    });
+  }
+
+  if (paletteGrid) {
+    paletteGrid.addEventListener('click', async function(e){
+      var btn = e.target.closest('.palette-card');
+      if (!btn || !currentInvitation) return;
+      var id = btn.dataset.id;
+      var already = currentInvitation.data && currentInvitation.data.palet === id;
+      if (already) return;
+      Array.prototype.forEach.call(paletteGrid.querySelectorAll('.palette-card'), function(b){
+        b.classList.toggle('selected', b === btn);
+      });
+      showPaletteMsg('Menyimpan...');
+      var res = await KU.sb.from('invitations').update({ data: { palet: id } }).eq('id', currentInvitation.id).select().single();
+      if (res.error) { showPaletteMsg('Gagal menyimpan: ' + friendlyErrorMessage(res.error), 'err'); return; }
+      currentInvitation = res.data;
+      showPaletteMsg('Tersimpan!', 'ok');
+    });
+  }
+
   function openWorkspace(invitation, template){
     currentInvitation = invitation;
+    currentTemplateMeta = template;
     wsKategori.textContent = template.kategori;
     wsNamaDesain.textContent = template.name;
     populateForm(invitation);
+    renderPaletteGrid();
     showWsTab(invitation.last_active_tab || 'isi-data', false);
     showWorkspaceView();
   }
