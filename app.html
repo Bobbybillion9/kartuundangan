@@ -96,13 +96,20 @@
   </section>
 
   <section class="dash-view" id="view-desain">
-    <div class="dash-empty">
+    <div class="dash-empty" id="desainEmptyState">
       <div class="dash-empty-icon">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
       </div>
       <h2>Belum ada undangan</h2>
       <p>Mulai buat undangan pernikahan digital pertamamu. Pilih tema, isi data acara, lalu bagikan ke tamu.</p>
       <button type="button" class="btn btn-primary" id="createInvitationBtn">Buat Undangan Baru</button>
+    </div>
+    <div id="desainContinueBlock" style="display:none;">
+      <div class="section-head">
+        <h2>Undanganmu</h2>
+        <p>Lanjutkan mengedit undangan yang sedang kamu buat.</p>
+      </div>
+      <div class="profile-block" id="desainInvitationCard"></div>
     </div>
   </section>
 

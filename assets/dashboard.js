@@ -47,11 +47,14 @@
       a.classList.toggle('active', a.dataset.view === name);
     });
     movePill(name);
+    if (name === 'desain') renderDesainView();
   }
   showView('desain');
 
   viewLinks.forEach(function(a){
-    a.addEventListener('click', function(){
+    a.addEventListener('click', async function(){
+      if (!(await confirmLeaveWorkspace())) return;
+      wsFormDirty = false;
       showView(a.dataset.view);
     });
   });
@@ -162,6 +165,7 @@
 
   document.addEventListener('ku:session', function(e){
     renderProfileNav(e.detail.session);
+    if (document.getElementById('view-desain').classList.contains('active')) renderDesainView();
   });
   renderProfileNav(KU.getSession());
 
@@ -457,6 +461,12 @@
   var wsSaveBtn = document.getElementById('wsSaveBtn');
   var wsSaveMsg = document.getElementById('wsSaveMsg');
   var wsTabNames = ['isi-data', 'desain', 'pratinjau', 'bagikan', 'tamu'];
+
+  // Ditandai true tiap kali ada input di tab Isi Data yang belum
+  // disimpan, dipakai confirmLeaveWorkspace() untuk menahan navigasi
+  // keluar workspace (sidebar/tabbar/tombol kembali) sampai user
+  // memastikan mau membuang perubahan itu.
+  var wsFormDirty = false;
 
   var paletteTemplateName = document.getElementById('paletteTemplateName');
   var paletteGrid = document.getElementById('paletteGrid');
@@ -1141,6 +1151,7 @@
     bersihkanSemuaFieldError();
     showWsSaveMsg('');
     hydrateFotoWorkspace(inv);
+    wsFormDirty = false;
   }
 
   if (wsForm) {
@@ -1148,13 +1159,39 @@
       var el = wsForm.elements[nama];
       if (el) el.addEventListener('blur', function(){ validasiField(nama); });
     });
+    wsForm.addEventListener('input', function(){ wsFormDirty = true; });
   }
+
+  // Dipanggil sebelum navigasi apa pun yang meninggalkan workspace
+  // (sidebar/tabbar, tombol kembali). Kalau tab Isi Data belum
+  // disimpan, tanya dulu lewat modal konfirmasi yang sama dipakai
+  // logout/hapus, supaya perubahan tidak hilang tanpa sadar.
+  function confirmLeaveWorkspace(){
+    var workspaceOpen = document.getElementById('view-workspace').classList.contains('active');
+    if (!workspaceOpen || !wsFormDirty) return Promise.resolve(true);
+    return KU.confirmAction({
+      title: 'Perubahan Belum Disimpan',
+      text: 'Ada perubahan pada Isi Data yang belum disimpan. Yakin mau meninggalkan halaman ini? Perubahan akan hilang.',
+      okText: 'Ya, Tinggalkan'
+    });
+  }
+
+  window.addEventListener('beforeunload', function(e){
+    if (document.getElementById('view-workspace').classList.contains('active') && wsFormDirty) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
 
   function showWorkspaceView(){
     views.forEach(function(v){
       document.getElementById('view-' + v).classList.remove('active');
     });
     document.getElementById('view-workspace').classList.add('active');
+    // Workspace dianggap bagian dari "Desain Kamu" — sorot menu itu &
+    // pindahkan pill supaya jelas posisi user saat sedang mengedit.
+    viewLinks.forEach(function(a){ a.classList.toggle('active', a.dataset.view === 'desain'); });
+    movePill('desain');
   }
 
   function showPaletteMsg(text, type){
@@ -1218,16 +1255,94 @@
     });
   }
 
+  // Header workspace menampilkan nama pasangan (bukan cuma nama
+  // template) supaya jelas undangan mana yang sedang diedit, terutama
+  // kalau nanti user punya lebih dari satu undangan.
+  function invitationDisplayName(inv){
+    var pria = inv && inv.nama_pria_panggilan;
+    var wanita = inv && inv.nama_wanita_panggilan;
+    if (pria && wanita) return pria + ' & ' + wanita;
+    if (pria || wanita) return pria || wanita;
+    return 'Undangan Baru';
+  }
+
+  function updateWsHeader(){
+    if (!currentInvitation || !currentTemplateMeta) return;
+    wsKategori.textContent = currentTemplateMeta.kategori + ' · ' + currentTemplateMeta.name;
+    wsNamaDesain.textContent = invitationDisplayName(currentInvitation);
+  }
+
   function openWorkspace(invitation, template){
     currentInvitation = invitation;
     currentTemplateMeta = template;
-    wsKategori.textContent = template.kategori;
-    wsNamaDesain.textContent = template.name;
+    updateWsHeader();
     populateForm(invitation);
     renderPaletteGrid();
     showWsTab(invitation.last_active_tab || 'isi-data', false);
     showWorkspaceView();
   }
+
+  // ---------------- Desain Kamu (jalan pulang ke workspace) ----------------
+  // "Desain Kamu" jadi hub untuk kembali ke undangan yang sedang
+  // dikerjakan tanpa harus lewat grid Template Tema lagi.
+  var desainEmptyState = document.getElementById('desainEmptyState');
+  var desainContinueBlock = document.getElementById('desainContinueBlock');
+  var desainInvitationCard = document.getElementById('desainInvitationCard');
+  var createInvitationBtn = document.getElementById('createInvitationBtn');
+
+  function findTemplateMetaForInvitation(inv){
+    return THEME_TEMPLATES.filter(function(t){
+      return t.kategori === inv.kategori_desain && t.name === inv.nama_desain;
+    })[0] || null;
+  }
+
+  function buildDesainInvitationCard(inv, tpl){
+    desainInvitationCard.innerHTML = '';
+
+    var eyebrow = document.createElement('span');
+    eyebrow.className = 'eyebrow';
+    eyebrow.textContent = tpl.kategori + ' · ' + tpl.name;
+
+    var title = document.createElement('h3');
+    title.textContent = invitationDisplayName(inv);
+
+    var row = document.createElement('div');
+    row.className = 'status-row';
+    var badge = document.createElement('span');
+    badge.className = 'badge' + (inv.status === 'aktif' ? ' badge-aktif' : '');
+    badge.textContent = inv.status === 'aktif' ? 'Aktif' : 'Draf';
+    var lanjutBtn = document.createElement('button');
+    lanjutBtn.type = 'button';
+    lanjutBtn.className = 'btn btn-primary btn-sm';
+    lanjutBtn.textContent = 'Lanjutkan Mengedit';
+    lanjutBtn.addEventListener('click', function(){ openWorkspace(inv, tpl); });
+    row.append(badge, lanjutBtn);
+
+    desainInvitationCard.append(eyebrow, title, row);
+  }
+
+  async function renderDesainView(){
+    if (!desainContinueBlock) return;
+    var session = KU.getSession();
+    if (!session) { desainEmptyState.style.display = ''; desainContinueBlock.style.display = 'none'; return; }
+
+    var res = await KU.sb.from('invitations').select('*')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false }).limit(1);
+    var inv = (!res.error && res.data && res.data.length) ? res.data[0] : null;
+    var tpl = inv ? findTemplateMetaForInvitation(inv) : null;
+
+    if (!inv || !tpl) {
+      desainEmptyState.style.display = '';
+      desainContinueBlock.style.display = 'none';
+      return;
+    }
+    desainEmptyState.style.display = 'none';
+    desainContinueBlock.style.display = '';
+    buildDesainInvitationCard(inv, tpl);
+  }
+
+  if (createInvitationBtn) createInvitationBtn.addEventListener('click', function(){ showView('tema'); });
 
   if (themeTemplateGrid) {
     themeTemplateGrid.addEventListener('click', async function(e){
@@ -1247,7 +1362,11 @@
     });
   }
 
-  if (wsBackBtn) wsBackBtn.addEventListener('click', function(){ showView('tema'); });
+  if (wsBackBtn) wsBackBtn.addEventListener('click', async function(){
+    if (!(await confirmLeaveWorkspace())) return;
+    wsFormDirty = false;
+    showView('tema');
+  });
 
   wsTabButtons.forEach(function(b){
     b.addEventListener('click', function(){ showWsTab(b.dataset.tab, true); });
@@ -1282,6 +1401,8 @@
       wsSaveBtn.disabled = false;
       if (res.error) { showWsSaveMsg('Gagal menyimpan: ' + friendlyErrorMessage(res.error), 'err'); return; }
       currentInvitation = res.data;
+      wsFormDirty = false;
+      updateWsHeader();
       showWsSaveMsg('Tersimpan!', 'ok');
     });
   }
