@@ -478,4 +478,96 @@
   document.addEventListener('ku:session', function(e){
     applySession(e.detail.session);
   });
+
+  // ---------------- Tema (section landing) ----------------
+  // Katalog & thumbnail dipusatkan di assets/theme-templates.js (satu-
+  // satunya sumber, dipakai bareng app.html) — di sini cuma menata kartu
+  // & menyambungkan Preview/Gunakan ke jalur yang sama dipakai dashboard.
+  var landingThemeGrid = document.getElementById('landingThemeGrid');
+  var PENDING_TEMPLATE_KEY = 'ku-pending-template';
+
+  function renderLandingThemeCard(t){
+    var card = document.createElement('article');
+    card.className = 'tpl-card';
+
+    var preview = document.createElement('div');
+    preview.className = 'tpl-preview';
+    var img = document.createElement('img');
+    img.src = t.thumb;
+    img.alt = 'Pratinjau ' + t.name;
+    img.loading = 'lazy';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+    preview.appendChild(img);
+
+    var body = document.createElement('div');
+    body.className = 'tpl-body';
+
+    var row = document.createElement('div');
+    row.className = 'tpl-row';
+    var name = document.createElement('span');
+    name.className = 'name';
+    name.textContent = t.name;
+    var price = document.createElement('span');
+    price.className = 'price';
+    price.textContent = 'Rp49.000';
+    row.append(name, price);
+
+    var desc = document.createElement('p');
+    desc.className = 'tpl-desc';
+    desc.textContent = t.desc;
+
+    var actions = document.createElement('div');
+    actions.className = 'tpl-actions';
+
+    var previewBtn = document.createElement('a');
+    previewBtn.className = 'btn btn-ghost';
+    previewBtn.href = 'templates/pratinjau.html?tema=' + encodeURIComponent(t.id);
+    previewBtn.target = '_blank';
+    previewBtn.rel = 'noopener';
+    previewBtn.textContent = 'Preview';
+
+    var useBtn = document.createElement('button');
+    useBtn.type = 'button';
+    useBtn.className = 'btn btn-primary landing-tpl-use-btn';
+    useBtn.dataset.id = t.id;
+    useBtn.textContent = 'Gunakan';
+
+    actions.append(previewBtn, useBtn);
+    body.append(row, desc, actions);
+    card.append(preview, body);
+    return card;
+  }
+
+  function renderLandingThemeGrid(){
+    if (!landingThemeGrid || !window.THEME_TEMPLATES) return;
+    landingThemeGrid.innerHTML = '';
+    window.THEME_TEMPLATES.forEach(function(t){ landingThemeGrid.appendChild(renderLandingThemeCard(t)); });
+  }
+  renderLandingThemeGrid();
+
+  // Login butuh keluar dari index.html ke app.html (workspace editor
+  // ada di sana) — kalau belum masuk, tema pilihan disimpan dulu di
+  // sessionStorage supaya begitu modal login berhasil, kita lanjutkan
+  // otomatis ke app.html?gunakan=<id> alih-alih membuang pilihannya.
+  if (landingThemeGrid) {
+    landingThemeGrid.addEventListener('click', function(e){
+      var btn = e.target.closest('.landing-tpl-use-btn');
+      if (!btn) return;
+      if (KU.getSession()) {
+        window.location.href = 'app.html?gunakan=' + encodeURIComponent(btn.dataset.id);
+        return;
+      }
+      try { sessionStorage.setItem(PENDING_TEMPLATE_KEY, btn.dataset.id); } catch (e2) {}
+      openModal('login');
+    });
+  }
+
+  document.addEventListener('ku:session', function(e){
+    if (!e.detail.session) return;
+    var pendingId;
+    try { pendingId = sessionStorage.getItem(PENDING_TEMPLATE_KEY); } catch (e2) { pendingId = null; }
+    if (!pendingId) return;
+    try { sessionStorage.removeItem(PENDING_TEMPLATE_KEY); } catch (e2) {}
+    window.location.href = 'app.html?gunakan=' + encodeURIComponent(pendingId);
+  });
 })();

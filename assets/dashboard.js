@@ -51,6 +51,11 @@
   }
   showView('desain');
 
+  // ?view=tema (dipakai link "Tampilkan lebih banyak tema" di index.html)
+  // buka langsung ke view itu, menimpa default 'desain' di atas.
+  var initialViewParam = new URLSearchParams(window.location.search).get('view');
+  if (initialViewParam && views.indexOf(initialViewParam) !== -1) showView(initialViewParam);
+
   viewLinks.forEach(function(a){
     a.addEventListener('click', async function(){
       if (!(await confirmLeaveWorkspace())) return;
@@ -166,6 +171,7 @@
   document.addEventListener('ku:session', function(e){
     renderProfileNav(e.detail.session);
     if (document.getElementById('view-desain').classList.contains('active')) renderDesainView();
+    handlePendingGunakan();
   });
   renderProfileNav(KU.getSession());
 
@@ -173,6 +179,40 @@
   // Katalog template dipusatkan di assets/theme-templates.js (dipakai
   // juga oleh undangan.html) — lihat file itu untuk menambah tema baru.
   var THEME_TEMPLATES = window.THEME_TEMPLATES;
+
+  // ?gunakan=<id template> (dipakai tombol "Gunakan" di section Tema
+  // index.html): begitu sesi login diketahui (event ku:session di atas
+  // selalu terpicu sekali saat load, entah ada sesi atau tidak), buat
+  // draft untuk template itu lalu langsung buka workspace-nya — persis
+  // jalur yang dipakai tombol Gunakan pada grid Template Tema di bawah.
+  // Kalau ternyata belum login (akses langsung tanpa lewat index.html),
+  // parameter ini didiamkan saja — halaman ini memang tidak punya form
+  // masuk sendiri.
+  var pendingGunakanId = new URLSearchParams(window.location.search).get('gunakan');
+
+  async function handlePendingGunakan(){
+    if (!pendingGunakanId) return;
+    var session = KU.getSession();
+    if (!session) return;
+    var id = pendingGunakanId;
+    pendingGunakanId = null;
+    history.replaceState(null, '', 'app.html');
+    var t = THEME_TEMPLATES.filter(function(x){ return x.id === id; })[0];
+    showView('tema');
+    if (!t) return;
+    showTemaMsg('Menyiapkan workspace...');
+    var res = await ensureDraftForTemplate(t);
+    if (res.error) { showTemaMsg('Gagal menyiapkan undangan: ' + friendlyErrorMessage(res.error), 'err'); return; }
+    showTemaMsg('');
+    openWorkspace(res.data, t);
+  }
+  // Sesi bisa saja sudah selesai di-resolve SEBELUM baris ini jalan
+  // (jeda pemuatan antar <script> memberi waktu promise getSession()
+  // di auth-core.js selesai lebih dulu), jadi event 'ku:session' di
+  // atas bisa saja sudah lewat dan tidak pernah tertangkap. Makanya
+  // dicoba juga langsung di sini pakai nilai sesi yang ada saat ini —
+  // sama seperti renderProfileNav(KU.getSession()) di atas.
+  handlePendingGunakan();
 
   function renderThemeTemplateCard(t){
     var card = document.createElement('article');
