@@ -135,87 +135,6 @@
     document.body.style.overflow = '';
   }
 
-  var workspaceOverlay = document.getElementById('workspaceOverlay');
-  var workspaceClose = document.getElementById('workspaceClose');
-  var stepTheme = document.getElementById('stepTheme');
-  var stepPlaceholder = document.getElementById('stepPlaceholder');
-  var templateGrid = document.getElementById('templateGrid');
-  var workspaceMsg = document.getElementById('workspaceMsg');
-  var backToThemeBtn = document.getElementById('backToThemeBtn');
-
-  function showWorkspaceStep(name){
-    stepTheme.style.display = name === 'theme' ? 'block' : 'none';
-    stepPlaceholder.style.display = name === 'placeholder' ? 'block' : 'none';
-  }
-
-  function openWorkspace(){
-    workspaceOverlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    showWorkspaceStep('theme');
-    loadTemplates();
-  }
-  function closeWorkspace(){
-    workspaceOverlay.classList.remove('open');
-    if (!overlay.classList.contains('open')) {
-      document.body.style.overflow = '';
-    }
-  }
-
-  function renderTemplateCard(t){
-    var card = document.createElement('article');
-    card.className = 'tpl-pick-card';
-
-    var preview = document.createElement('div');
-    preview.className = 'tpl-preview';
-    var previewSpan = document.createElement('span');
-    previewSpan.textContent = t.name;
-    preview.appendChild(previewSpan);
-
-    var body = document.createElement('div');
-    body.className = 'tpl-pick-body';
-    var cat = document.createElement('span');
-    cat.className = 'cat'; cat.textContent = t.category || '';
-    var name = document.createElement('span');
-    name.className = 'name'; name.textContent = t.name;
-    var btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'btn btn-primary btn-block pick-theme-btn';
-    btn.dataset.id = t.id; btn.textContent = 'Pakai Tema Ini';
-
-    body.append(cat, name, btn);
-    card.append(preview, body);
-    templateGrid.appendChild(card);
-  }
-
-  async function loadTemplates(){
-    templateGrid.innerHTML = '';
-    workspaceMsg.textContent = 'Memuat tema...';
-    var res = await KU.sb.from('templates').select('id,name,category').order('name');
-    if (res.error) { workspaceMsg.textContent = 'Gagal memuat tema. Coba lagi nanti.'; return; }
-    if (!res.data.length) { workspaceMsg.textContent = 'Belum ada tema tersedia saat ini.'; return; }
-    workspaceMsg.textContent = '';
-    res.data.forEach(renderTemplateCard);
-  }
-
-  templateGrid.addEventListener('click', async function(e){
-    var btn = e.target.closest('.pick-theme-btn');
-    var session = KU.getSession();
-    if (!btn || !session) return;
-    btn.disabled = true;
-    workspaceMsg.textContent = 'Menyimpan pilihan tema...';
-    var res = await KU.sb.from('invitations').insert({
-      user_id: session.user.id,
-      template_id: btn.dataset.id,
-      status: 'draft'
-    }).select().single();
-    btn.disabled = false;
-    if (res.error) { workspaceMsg.textContent = 'Gagal menyimpan tema: ' + res.error.message; return; }
-    workspaceMsg.textContent = '';
-    showWorkspaceStep('placeholder');
-  });
-
-  workspaceClose.addEventListener('click', closeWorkspace);
-  backToThemeBtn.addEventListener('click', function(){ showWorkspaceStep('theme'); });
-
   function makeBadge(text){
     var span = document.createElement('span');
     span.className = 'badge';
@@ -248,7 +167,6 @@
 
   closeBtn.addEventListener('click', closeModal);
   KU.registerEscapeHandler(function(){
-    if (workspaceOverlay.classList.contains('open')) { closeWorkspace(); return true; }
     if (overlay.classList.contains('open')) closeModal();
     return false;
   });
@@ -407,7 +325,7 @@
     if (a) {
       e.preventDefault();
       if (a.dataset.mode === 'signout') { if (await KU.confirmLogout()) KU.sb.auth.signOut(); return; }
-      if (a.getAttribute('href') === '#daftar' && KU.getSession()) { openWorkspace(); return; }
+      if (a.getAttribute('href') === '#daftar' && KU.getSession()) { window.location.href = 'app.html?view=tema'; return; }
       openModal(a.getAttribute('href') === '#masuk' ? 'login' : 'signup');
       return;
     }
@@ -462,6 +380,14 @@
     KU.sb.auth.signOut();
   });
 
+  // #masuk (dipakai guard redirect app.html -- lihat assets/dashboard.js
+  // dan PENDING_TEMPLATE_KEY di bawah untuk pola balik-setelah-masuk
+  // yang sama) -- buka modal Masuk otomatis begitu halaman ini dibuka.
+  if (window.location.hash === '#masuk') {
+    openModal('login');
+    window.history.replaceState(null, '', window.location.pathname);
+  }
+
   function hasRecoveryParams(){
     var hash = window.location.hash || '';
     var search = window.location.search || '';
@@ -485,6 +411,11 @@
   // & menyambungkan Preview/Gunakan ke jalur yang sama dipakai dashboard.
   var landingThemeGrid = document.getElementById('landingThemeGrid');
   var PENDING_TEMPLATE_KEY = 'ku-pending-template';
+  // Sama polanya dengan PENDING_TEMPLATE_KEY di atas, tapi diisi oleh
+  // guard redirect app.html (assets/dashboard.js) saat pengunjung
+  // anonim membuka dashboard langsung -- ke situ juga tempatnya balik
+  // begitu berhasil masuk (lihat listener 'ku:session' di bawah).
+  var PENDING_RETURN_KEY = 'ku-pending-return';
 
   function renderLandingThemeCard(t){
     var card = document.createElement('article');
@@ -545,6 +476,35 @@
   }
   renderLandingThemeGrid();
 
+  // ---------------- Harga ----------------
+  // Katalog paket dipusatkan di assets/pricing-plans.js (dipakai juga
+  // oleh tab Harga di dashboard) — lihat file itu untuk mengubah harga
+  // atau daftar fitur. Tombol "Pilih Paket" Standar pakai href="#daftar"
+  // biasa supaya lewat jalur modal masuk/daftar yang sama seperti tombol
+  // CTA lain di halaman ini (lihat listener document 'click' di bawah).
+  function renderPilihStandarBtn(){
+    var a = document.createElement('a');
+    a.className = 'btn btn-primary btn-block';
+    a.href = '#daftar';
+    a.textContent = 'Pilih Paket';
+    return a;
+  }
+
+  function renderPricingSection(){
+    var satuanGrid = document.getElementById('planSatuanGrid');
+    var subsGrid = document.getElementById('planSubsGrid');
+    if (!satuanGrid || !subsGrid || !window.PRICING_PLANS) return;
+    satuanGrid.innerHTML = '';
+    window.PRICING_PLANS.satuan.forEach(function(p){
+      satuanGrid.appendChild(window.renderPriceCard(p, p.tersedia ? renderPilihStandarBtn : null));
+    });
+    subsGrid.innerHTML = '';
+    window.PRICING_PLANS.berlangganan.forEach(function(p){
+      subsGrid.appendChild(window.renderPriceCard(p));
+    });
+  }
+  renderPricingSection();
+
   // Login butuh keluar dari index.html ke app.html (workspace editor
   // ada di sana) — kalau belum masuk, tema pilihan disimpan dulu di
   // sessionStorage supaya begitu modal login berhasil, kita lanjutkan
@@ -564,6 +524,15 @@
 
   document.addEventListener('ku:session', function(e){
     if (!e.detail.session) return;
+
+    var returnTo;
+    try { returnTo = sessionStorage.getItem(PENDING_RETURN_KEY); } catch (e3) { returnTo = null; }
+    if (returnTo) {
+      try { sessionStorage.removeItem(PENDING_RETURN_KEY); } catch (e3) {}
+      window.location.href = returnTo;
+      return;
+    }
+
     var pendingId;
     try { pendingId = sessionStorage.getItem(PENDING_TEMPLATE_KEY); } catch (e2) { pendingId = null; }
     if (!pendingId) return;

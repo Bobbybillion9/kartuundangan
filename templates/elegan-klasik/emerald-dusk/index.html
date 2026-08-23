@@ -222,7 +222,7 @@
       </div>
       <p class="eyebrow" data-rv="text" style="--d:1">Menuju Hari Bahagia</p>
       <h2 class="section-title shimmer-gold" data-rv="text" style="--d:2">Hitung Mundur</h2>
-      <div class="countdown-row" data-rv="text" style="--d:3" data-slot="tanggal_hitung_mundur" data-countdown-target="2026-03-14T08:00:00+07:00">
+      <div class="countdown-row" data-rv="text" style="--d:3" data-slot="tanggal_hitung_mundur" data-countdown-target="2027-06-12T08:00:00+07:00">
         <div class="countdown-box">
           <div class="countdown-num" id="cdDays">00</div>
           <div class="countdown-label">Hari</div>
@@ -240,6 +240,7 @@
           <div class="countdown-label">Detik</div>
         </div>
       </div>
+      <p class="countdown-msg" id="countdownMsg" hidden></p>
     </section>
 
     <!-- 6a. GALERI MOMEN -->
@@ -425,23 +426,41 @@
 
       <p class="form-msg" id="giftMsg" aria-live="polite"></p>
 
-      <!-- Unggah bukti transfer: pratinjau di sisi klien saja
-           (URL.createObjectURL), belum terhubung ke server. -->
-      <div class="upload-bukti" data-rv="text" style="--d:6">
-        <label class="field-label-block">Unggah Bukti Transfer</label>
-        <input type="file" id="buktiTransferInput" name="bukti_transfer" accept="image/*" class="upload-input-hidden">
-        <label for="buktiTransferInput" class="upload-dropzone" id="uploadDropzone">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-5 5M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-          <span>Ketuk untuk unggah bukti transfer</span>
-        </label>
-        <div class="upload-preview" id="uploadPreview" hidden>
-          <img id="uploadPreviewImg" alt="Pratinjau bukti transfer">
-          <div class="upload-preview-info">
-            <span class="upload-filename" id="uploadFilename"></span>
-            <button type="button" class="upload-remove" id="uploadRemoveBtn">Hapus</button>
+      <!-- Form ini di-clone & disambungkan ke tabel hadiah oleh
+           assets/render-undangan.js (setupHadiahForm), sama seperti
+           rsvpForm/ucapanForm -- lihat komentar di file itu. Perilaku
+           di <script> bawah halaman ini cuma demo lokal untuk
+           pratinjau/tampilan tema berdiri sendiri. -->
+      <form class="form-card" id="hadiahForm" data-rv="text" style="--d:6">
+        <div class="field">
+          <label for="hadiahNama">Nama Pengirim</label>
+          <input type="text" id="hadiahNama" name="nama_pengirim" placeholder="Nama Anda" required>
+        </div>
+        <div class="field">
+          <label for="hadiahPesan">Pesan (opsional)</label>
+          <textarea id="hadiahPesan" name="pesan" rows="2" placeholder="Tulis pesan singkat untuk mempelai"></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label-block">Unggah Bukti Transfer</label>
+          <div class="upload-bukti">
+            <input type="file" id="buktiTransferInput" name="bukti_transfer" accept="image/jpeg,image/png,image/webp" class="upload-input-hidden">
+            <label for="buktiTransferInput" class="upload-dropzone" id="uploadDropzone">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-5 5M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+              <span>Ketuk untuk unggah bukti transfer</span>
+            </label>
+            <div class="upload-preview" id="uploadPreview" hidden>
+              <img id="uploadPreviewImg" alt="Pratinjau bukti transfer">
+              <div class="upload-preview-info">
+                <span class="upload-filename" id="uploadFilename"></span>
+                <button type="button" class="upload-remove" id="uploadRemoveBtn">Hapus</button>
+              </div>
+            </div>
+            <p class="upload-hint">JPG, PNG, atau WEBP &middot; maks 5 MB</p>
           </div>
         </div>
-      </div>
+        <button type="submit" class="btn-primary-full">Kirim Bukti Transfer</button>
+        <p class="form-msg" id="hadiahMsg" aria-live="polite"></p>
+      </form>
     </section>
 
     <!-- 7. PENUTUP -->
@@ -653,11 +672,21 @@
     }
   })();
 
-  var target = new Date('2026-03-14T08:00:00+07:00').getTime();
+  // ---------------- Hitung Mundur ----------------
+  // Target awal diambil dari atribut data-countdown-target pada elemen
+  // data-slot="tanggal_hitung_mundur" (nilai contoh kalau dibuka berdiri
+  // sendiri, atau tanggal_akad + waktu_akad milik user kalau dibuka lewat
+  // tab Pratinjau workspace — lihat templates/pratinjau.html). Tab
+  // Pratinjau memuat data user SETELAH skrip ini jalan pertama kali,
+  // makanya ia memanggil ulang window.mulaiHitungMundur(iso) begitu data
+  // asli selesai diambil, bukan cuma menimpa atributnya saja.
+  var countdownRow = document.querySelector('[data-slot="tanggal_hitung_mundur"]');
+  var countdownMsgEl = document.getElementById('countdownMsg');
   var elDays = document.getElementById('cdDays');
   var elHours = document.getElementById('cdHours');
   var elMinutes = document.getElementById('cdMinutes');
   var elSeconds = document.getElementById('cdSeconds');
+  var countdownTimer = null;
 
   function pad(n){ return String(n).padStart(2, '0'); }
 
@@ -671,21 +700,52 @@
     el.classList.add('tick');
   }
 
-  function tick(){
-    var diff = target - Date.now();
-    if (diff < 0) diff = 0;
-    var days = Math.floor(diff / 86400000);
-    var hours = Math.floor(diff % 86400000 / 3600000);
-    var minutes = Math.floor(diff % 3600000 / 60000);
-    var seconds = Math.floor(diff % 60000 / 1000);
-    setNum(elDays, pad(days));
-    setNum(elHours, pad(hours));
-    setNum(elMinutes, pad(minutes));
-    setNum(elSeconds, pad(seconds));
-    if (diff <= 0) clearInterval(timer);
+  function tampilkanKotakCountdown(tampil){
+    if (countdownRow) countdownRow.style.display = tampil ? '' : 'none';
   }
-  tick();
-  var timer = setInterval(tick, 1000);
+
+  function tampilkanPesanCountdown(teks){
+    if (!countdownMsgEl) return;
+    countdownMsgEl.hidden = !teks;
+    countdownMsgEl.textContent = teks || '';
+  }
+
+  function mulaiHitungMundur(iso){
+    if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+    var target = iso ? new Date(iso).getTime() : NaN;
+    if (!iso || isNaN(target)) {
+      tampilkanKotakCountdown(false);
+      tampilkanPesanCountdown('Tanggal acara belum diisi.');
+      return;
+    }
+    function tick(){
+      var diff = target - Date.now();
+      if (diff <= 0) {
+        tampilkanKotakCountdown(false);
+        tampilkanPesanCountdown('Hari bahagia telah tiba!');
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+        return;
+      }
+      tampilkanKotakCountdown(true);
+      tampilkanPesanCountdown('');
+      var days = Math.floor(diff / 86400000);
+      var hours = Math.floor(diff % 86400000 / 3600000);
+      var minutes = Math.floor(diff % 3600000 / 60000);
+      var seconds = Math.floor(diff % 60000 / 1000);
+      setNum(elDays, pad(days));
+      setNum(elHours, pad(hours));
+      setNum(elMinutes, pad(minutes));
+      setNum(elSeconds, pad(seconds));
+    }
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+  }
+  mulaiHitungMundur(countdownRow && countdownRow.getAttribute('data-countdown-target'));
+  // Diekspos ke window supaya tab Pratinjau workspace bisa memanggil
+  // ulang dengan tanggal_akad + waktu_akad asli user setelah data
+  // diambil dari Supabase (pola sama seperti window.buatMonogram).
+  window.mulaiHitungMundur = mulaiHitungMundur;
 
   // ---------------- Galeri + lightbox ----------------
   var galeriItems = Array.prototype.slice.call(document.querySelectorAll('.galeri-item'));
@@ -879,6 +939,19 @@
     if (buktiObjectUrl) { URL.revokeObjectURL(buktiObjectUrl); buktiObjectUrl = null; }
     uploadPreview.hidden = true;
     uploadDropzone.hidden = false;
+  });
+
+  var hadiahForm = document.getElementById('hadiahForm');
+  var hadiahMsg = document.getElementById('hadiahMsg');
+  hadiahForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    console.log('Bukti transfer terkirim (demo):', Object.fromEntries(new FormData(hadiahForm).entries()));
+    hadiahMsg.textContent = 'Terima kasih, bukti transfermu sudah kami terima!';
+    hadiahMsg.className = 'form-msg ok';
+    hadiahForm.reset();
+    uploadPreview.hidden = true;
+    uploadDropzone.hidden = false;
+    if (buktiObjectUrl) { URL.revokeObjectURL(buktiObjectUrl); buktiObjectUrl = null; }
   });
 })();
 </script>

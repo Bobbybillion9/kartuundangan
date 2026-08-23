@@ -6,6 +6,15 @@
   });
 
   var currentSession = null;
+  // sb.auth.getSession() sering kali sudah selesai (dan sudah men-
+  // dispatch 'ku:session' sekali) SEBELUM <script> halaman berikutnya
+  // (mis. assets/dashboard.js) sempat memasang listadapternya sendiri --
+  // dispatch pertama itu jadi tidak pernah tertangkap. Flag ini
+  // membedakan "belum diketahui" dari "sudah dicek, memang tidak ada
+  // sesi", supaya kode yang datang belakangan bisa mengecek sinkron
+  // lewat KU.isSessionResolved()+KU.getSession() alih-alih cuma
+  // mengandalkan event yang bisa saja sudah lewat.
+  var sessionResolved = false;
 
   function getInitial(session){
     var name = (session.user.user_metadata && session.user.user_metadata.full_name || '').trim();
@@ -64,6 +73,7 @@
 
   function applySessionCore(session){
     currentSession = session;
+    sessionResolved = true;
     var loggedIn = !!session;
     var label = loggedIn ? (session.user.email || session.user.user_metadata.full_name || 'Akun') : null;
 
@@ -116,6 +126,7 @@
     confirmLogout: confirmLogout,
     confirmAction: confirmAction,
     getSession: function(){ return currentSession; },
+    isSessionResolved: function(){ return sessionResolved; },
     registerEscapeHandler: registerEscapeHandler
   };
 })();

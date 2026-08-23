@@ -71,6 +71,34 @@
     KU.sb.auth.signOut();
   });
 
+  // Guard: app.html adalah dashboard privat, bukan halaman yang boleh
+  // ditampilkan ke pengunjung anonim (lihat laporan bug "menu Masuk
+  // tidak berfungsi"). Begitu status sesi diketahui pasti, belum pernah
+  // masuk -> lempar ke index.html, buka modal Masuk di sana, lalu balik
+  // ke app.html (lewat sessionStorage, pola sama seperti
+  // PENDING_TEMPLATE_KEY di assets/app.js) setelah berhasil.
+  // authGuardDone mencegah redirectToLogin() dan jalur SIGNED_OUT di
+  // bawah berebut menentukan tujuan -- auth-core.js selalu memicu
+  // 'ku:authevent' SIGNED_OUT lebih dulu secara sinkron sebelum
+  // 'ku:session', jadi jalur logout selalu menang duluan untuk kasus
+  // itu.
+  var authGuardDone = false;
+  function redirectToLogin(){
+    if (authGuardDone) return;
+    authGuardDone = true;
+    try { sessionStorage.setItem('ku-pending-return', window.location.pathname + window.location.search); } catch (e2) {}
+    window.location.href = 'index.html#masuk';
+  }
+
+  // baru saja keluar (event SIGNED_OUT) -> lempar ke halaman depan biasa
+  // TANPA modal Masuk, karena user memang baru sengaja keluar.
+  document.addEventListener('ku:authevent', function(e){
+    if (e.detail.event === 'SIGNED_OUT' && !authGuardDone) {
+      authGuardDone = true;
+      window.location.href = 'index.html';
+    }
+  });
+
   var navEntries = [
     [document.getElementById('sideProfilIcon'), document.getElementById('sideAvatarBadge'), document.getElementById('sideProfilLabel')],
     [document.getElementById('tabProfilIcon'), document.getElementById('tabAvatarBadge'), document.getElementById('tabProfilLabel')]
@@ -170,11 +198,23 @@
   });
 
   document.addEventListener('ku:session', function(e){
+    if (!e.detail.session) { redirectToLogin(); return; }
     renderProfileNav(e.detail.session);
     if (document.getElementById('view-desain').classList.contains('active')) renderDesainView();
     if (document.getElementById('view-home').classList.contains('active')) renderHomeView();
     handlePendingGunakan();
   });
+  // Sesi bisa saja sudah selesai di-resolve SEBELUM baris ini jalan
+  // (jeda pemuatan antar <script> memberi waktu promise getSession() di
+  // auth-core.js selesai lebih dulu -- lihat komentar senada di
+  // handlePendingGunakan() di bawah), jadi 'ku:session' di atas bisa
+  // saja sudah lewat dan tidak pernah tertangkap DI SINI juga. Beda
+  // dengan handlePendingGunakan() yang aman diam saja kalau kelewat,
+  // guard ini harus tetap jalan -- makanya dicek juga sinkron di sini,
+  // tapi HANYA kalau resolusinya sudah pasti selesai
+  // (KU.isSessionResolved()) supaya user yang sebetulnya sudah login
+  // tapi sesinya belum sempat di-resolve tidak ikut kelempar.
+  if (KU.isSessionResolved() && !KU.getSession()) redirectToLogin();
   renderProfileNav(KU.getSession());
 
   // ---------------- Template Tema (grid) ----------------
@@ -188,8 +228,10 @@
   // draft untuk template itu lalu langsung buka workspace-nya — persis
   // jalur yang dipakai tombol Gunakan pada grid Template Tema di bawah.
   // Kalau ternyata belum login (akses langsung tanpa lewat index.html),
-  // parameter ini didiamkan saja — halaman ini memang tidak punya form
-  // masuk sendiri.
+  // guard di atas sudah keburu melempar ke index.html#masuk duluan
+  // (dengan app.html?gunakan=... ini persis tersimpan sebagai tujuan
+  // balik), jadi baris ini praktis tidak pernah jalan dalam keadaan
+  // belum login -- dibiarkan sebagai jaga-jaga saja.
   var pendingGunakanId = new URLSearchParams(window.location.search).get('gunakan');
 
   async function handlePendingGunakan(){
@@ -205,6 +247,7 @@
     showTemaMsg('Menyiapkan workspace...');
     var res = await ensureDraftForTemplate(t);
     if (res.error) { showTemaMsg('Gagal menyiapkan undangan: ' + friendlyErrorMessage(res.error), 'err'); return; }
+    if (res.limitReached) { showTemaMsg('Kamu sudah punya ' + MAKS_DRAFT + ' undangan berstatus Draf. Hapus salah satu draft dulu, atau aktifkan salah satunya, sebelum membuat yang baru.', 'err'); return; }
     showTemaMsg('');
     openWorkspace(res.data, t);
   }
@@ -353,26 +396,77 @@
     return pub.data.publicUrl + '?v=' + Date.now();
   }
 
+  // Dipakai saat undangan dihapus: cari semua file foto miliknya di
+  // Storage lewat listing folder (bukan lewat kolom foto_*_url/
+  // foto_galeri di DB) supaya file yatim — mis. foto lama yang gagal
+  // dibersihkan saat "Ganti" — ikut kebersih, bukan cuma yang sedang
+  // tercatat aktif dipakai.
+  async function daftarPathFotoInvitation(uid, invId){
+    var basePrefix = uid + '/' + invId;
+    var errors = [];
+    var paths = [];
+
+    var top = await KU.sb.storage.from(FOTO_BUCKET).list(basePrefix, { limit: 1000 });
+    if (top.error) errors.push(top.error);
+    else (top.data || []).forEach(function(item){
+      if (item.name !== 'galeri') paths.push(basePrefix + '/' + item.name);
+    });
+
+    var sub = await KU.sb.storage.from(FOTO_BUCKET).list(basePrefix + '/galeri', { limit: 1000 });
+    if (sub.error) errors.push(sub.error);
+    else (sub.data || []).forEach(function(item){ paths.push(basePrefix + '/galeri/' + item.name); });
+
+    return { paths: paths, errors: errors };
+  }
+
+  async function hapusSemuaFotoInvitation(uid, invId){
+    var listed = await daftarPathFotoInvitation(uid, invId);
+    var errors = listed.errors.slice();
+    if (!listed.paths.length) return { errors: errors };
+    var rem = await KU.sb.storage.from(FOTO_BUCKET).remove(listed.paths);
+    if (rem.error) errors.push(rem.error);
+    return { errors: errors };
+  }
+
+  // ---------------- Hadiah / bukti transfer (bucket Storage privat
+  // "bukti-transfer") ---------------- Beda dari FOTO_BUCKET: path-nya
+  // cuma [invitation_id]/[nama-file] (tanpa prefix user_id) karena tamu
+  // anonim yang mengunggah tidak tahu/tidak boleh tahu user_id pemilik
+  // -- lihat scratch_migration_hadiah.sql untuk RLS-nya.
+  var BUKTI_TRANSFER_BUCKET = 'bukti-transfer';
+
+  async function hapusSemuaBuktiTransferInvitation(invId){
+    var list = await KU.sb.storage.from(BUKTI_TRANSFER_BUCKET).list(invId, { limit: 1000 });
+    if (list.error) return { errors: [list.error] };
+    var paths = (list.data || []).map(function(item){ return invId + '/' + item.name; });
+    if (!paths.length) return { errors: [] };
+    var rem = await KU.sb.storage.from(BUKTI_TRANSFER_BUCKET).remove(paths);
+    return { errors: rem.error ? [rem.error] : [] };
+  }
+
+  // Undangan 'aktif' tidak dihitung — cuma draft yang dibatasi, supaya
+  // orang tidak numpuk draft coba-coba tanpa pernah menyelesaikannya.
+  var MAKS_DRAFT = 3;
+
   async function ensureDraftForTemplate(t){
     var session = KU.getSession();
     var uid = session.user.id;
 
     var existing = await KU.sb.from('invitations').select('*')
       .eq('user_id', uid).eq('status', 'draft')
-      .order('created_at', { ascending: false }).limit(1);
+      .order('created_at', { ascending: false });
     if (existing.error) return { error: existing.error };
+    var drafts = existing.data || [];
 
-    if (existing.data && existing.data.length) {
-      var row = existing.data[0];
-      if (row.kategori_desain !== t.kategori || row.nama_desain !== t.name) {
-        var upd = await KU.sb.from('invitations')
-          .update({ kategori_desain: t.kategori, nama_desain: t.name })
-          .eq('id', row.id).select().single();
-        if (upd.error) return { error: upd.error };
-        return { data: upd.data };
-      }
-      return { data: row };
-    }
+    // Kalau template ini sudah punya draft berjalan, pakai lagi yang
+    // itu (ganti-ganti template pada draft yang sama), bukan bikin
+    // duplikat draft untuk template yang identik.
+    var sameTemplate = drafts.filter(function(row){
+      return row.kategori_desain === t.kategori && row.nama_desain === t.name;
+    })[0];
+    if (sameTemplate) return { data: sameTemplate };
+
+    if (drafts.length >= MAKS_DRAFT) return { limitReached: true };
 
     var ins = await KU.sb.from('invitations').insert({
       user_id: uid,
@@ -540,6 +634,9 @@
   var rsvpEmptyMsg = document.getElementById('rsvpEmptyMsg');
   var ucapanAdminList = document.getElementById('ucapanAdminList');
   var ucapanEmptyMsg = document.getElementById('ucapanEmptyMsg');
+  var hadiahAdminList = document.getElementById('hadiahAdminList');
+  var hadiahEmptyMsg = document.getElementById('hadiahEmptyMsg');
+  var hadiahTotalBadge = document.getElementById('hadiahTotalBadge');
   var tamuMsg = document.getElementById('tamuMsg');
 
   // Domain publik tetap (bukan window.location.origin) karena halaman
@@ -1169,18 +1266,104 @@
     daftar.forEach(function(row){ ucapanAdminList.appendChild(buatUcapanAdminItem(row)); });
   }
 
+  // Bukti transfer disimpan sebagai PATH di bucket privat "bukti-
+  // transfer" (bukan URL publik -- bucket-nya memang tidak public),
+  // jadi dibuka lewat signed URL yang berlaku 5 menit, dibuat saat
+  // tombol "Lihat Bukti Transfer" diklik -- bukan didaftar ulang untuk
+  // semua baris sekaligus (boros & signed URL bisa kedaluwarsa sebelum
+  // sempat diklik).
+  function buatHadiahAdminItem(row){
+    var item = document.createElement('div');
+    item.className = 'ucapan-admin-item';
+
+    var body = document.createElement('div');
+    body.className = 'ucapan-admin-body';
+    var head = document.createElement('div');
+    head.className = 'ucapan-admin-head';
+    var nama = document.createElement('span');
+    nama.className = 'ucapan-admin-name';
+    nama.textContent = row.nama_pengirim;
+    var waktu = document.createElement('span');
+    waktu.className = 'ucapan-admin-time';
+    waktu.textContent = formatWaktuSingkat(row.created_at);
+    head.appendChild(nama);
+    head.appendChild(waktu);
+    body.appendChild(head);
+
+    if (row.pesan) {
+      var teks = document.createElement('p');
+      teks.className = 'ucapan-admin-text';
+      teks.textContent = row.pesan;
+      body.appendChild(teks);
+    }
+
+    if (row.bukti_url) {
+      var lihatBtn = document.createElement('button');
+      lihatBtn.type = 'button';
+      lihatBtn.className = 'btn btn-outline btn-sm hadiah-bukti-btn';
+      lihatBtn.textContent = 'Lihat Bukti Transfer';
+      lihatBtn.addEventListener('click', async function(){
+        lihatBtn.disabled = true;
+        var res = await KU.sb.storage.from(BUKTI_TRANSFER_BUCKET).createSignedUrl(row.bukti_url, 300);
+        lihatBtn.disabled = false;
+        if (res.error || !res.data) {
+          showTamuMsg('Gagal membuka bukti transfer: ' + friendlyErrorMessage(res.error), 'err');
+          return;
+        }
+        window.open(res.data.signedUrl, '_blank', 'noopener');
+      });
+      body.appendChild(lihatBtn);
+    }
+
+    var hapusBtn = document.createElement('button');
+    hapusBtn.type = 'button';
+    hapusBtn.className = 'ucapan-admin-delete';
+    hapusBtn.setAttribute('aria-label', 'Hapus catatan hadiah dari ' + row.nama_pengirim);
+    hapusBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>';
+    hapusBtn.addEventListener('click', async function(){
+      var ok = await KU.confirmAction({ title: 'Hapus Catatan Hadiah', text: 'Catatan hadiah dari "' + row.nama_pengirim + '" beserta bukti transfernya akan dihapus permanen.', okText: 'Ya, Hapus' });
+      if (!ok) return;
+      hapusBtn.disabled = true;
+      if (row.bukti_url) await KU.sb.storage.from(BUKTI_TRANSFER_BUCKET).remove([row.bukti_url]);
+      var res = await KU.sb.from('hadiah').delete().eq('id', row.id);
+      if (res.error) {
+        showTamuMsg('Gagal menghapus catatan hadiah: ' + friendlyErrorMessage(res.error), 'err');
+        hapusBtn.disabled = false;
+        return;
+      }
+      item.remove();
+      if (hadiahTotalBadge) hadiahTotalBadge.textContent = hadiahAdminList.children.length + ' pengirim';
+      if (hadiahAdminList && !hadiahAdminList.children.length && hadiahEmptyMsg) hadiahEmptyMsg.style.display = '';
+    });
+
+    item.appendChild(body);
+    item.appendChild(hapusBtn);
+    return item;
+  }
+
+  function renderHadiahAdminList(daftar){
+    if (!hadiahAdminList) return;
+    hadiahAdminList.innerHTML = '';
+    var kosong = daftar.length === 0;
+    if (hadiahEmptyMsg) hadiahEmptyMsg.style.display = kosong ? '' : 'none';
+    daftar.forEach(function(row){ hadiahAdminList.appendChild(buatHadiahAdminItem(row)); });
+    if (hadiahTotalBadge) hadiahTotalBadge.textContent = daftar.length + ' pengirim';
+  }
+
   async function loadTamuTab(){
     if (!currentInvitation) return;
     showTamuMsg('Memuat data tamu...');
     var rsvpRes = await KU.sb.from('rsvp').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
     var ucapanRes = await KU.sb.from('ucapan').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
+    var hadiahRes = await KU.sb.from('hadiah').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
 
-    if (rsvpRes.error || ucapanRes.error) {
-      showTamuMsg('Gagal memuat data tamu: ' + friendlyErrorMessage(rsvpRes.error || ucapanRes.error), 'err');
+    if (rsvpRes.error || ucapanRes.error || hadiahRes.error) {
+      showTamuMsg('Gagal memuat data tamu: ' + friendlyErrorMessage(rsvpRes.error || ucapanRes.error || hadiahRes.error), 'err');
       return;
     }
     renderRsvpSummaryDanTabel(rsvpRes.data || []);
     renderUcapanAdminList(ucapanRes.data || []);
+    renderHadiahAdminList(hadiahRes.data || []);
     showTamuMsg('');
   }
 
@@ -1330,6 +1513,7 @@
   var desainEmptyState = document.getElementById('desainEmptyState');
   var desainContinueBlock = document.getElementById('desainContinueBlock');
   var desainInvitationCard = document.getElementById('desainInvitationCard');
+  var desainDeleteMsg = document.getElementById('desainDeleteMsg');
   var createInvitationBtn = document.getElementById('createInvitationBtn');
 
   function findTemplateMetaForInvitation(inv){
@@ -1338,8 +1522,62 @@
     })[0] || null;
   }
 
+  function tampilkanPesanHapus(el, text, type){
+    if (!el) return;
+    el.textContent = text || '';
+    el.className = 'workspace-msg' + (type ? ' ' + type : '');
+  }
+
+  // Dipakai bareng oleh kartu undangan di Home dan di Desain Kamu —
+  // satu-satunya jalur hapus supaya konfirmasi, pembersihan foto
+  // Storage, dan pesan hasilnya konsisten di kedua tempat.
+  async function hapusUndanganDenganKonfirmasi(inv, msgEl, onDeleted){
+    var namaLabel = invitationDisplayName(inv);
+    var isAktif = inv.status === 'aktif';
+    var text = isAktif
+      ? 'Undangan "' + namaLabel + '" akan dihapus permanen. Link publiknya langsung mati, dan semua data RSVP serta ucapan yang sudah masuk ikut terhapus — tidak bisa dikembalikan.'
+      : 'Undangan "' + namaLabel + '" akan dihapus permanen dan tidak bisa dikembalikan.';
+    var ok = await KU.confirmAction({
+      title: 'Hapus Undangan "' + namaLabel + '"?',
+      text: text,
+      okText: 'Ya, Hapus Permanen'
+    });
+    if (!ok) return;
+
+    tampilkanPesanHapus(msgEl, 'Menghapus...', '');
+    var session = KU.getSession();
+    var uid = session.user.id;
+
+    var fotoRes = await hapusSemuaFotoInvitation(uid, inv.id);
+    var buktiRes = await hapusSemuaBuktiTransferInvitation(inv.id);
+    var res = await KU.sb.from('invitations').delete().eq('id', inv.id);
+    if (res.error) {
+      tampilkanPesanHapus(msgEl, 'Gagal menghapus undangan: ' + friendlyErrorMessage(res.error), 'err');
+      return;
+    }
+
+    var storageErrors = fotoRes.errors.concat(buktiRes.errors);
+    if (storageErrors.length) {
+      tampilkanPesanHapus(msgEl, 'Undangan "' + namaLabel + '" sudah dihapus, tapi ada file (foto/bukti transfer) yang gagal dibersihkan dari storage. Data undangan sudah aman terhapus; hubungi admin kalau storage perlu dibersihkan manual.', 'err');
+    } else {
+      tampilkanPesanHapus(msgEl, 'Undangan "' + namaLabel + '" berhasil dihapus.', 'ok');
+    }
+    if (onDeleted) onDeleted();
+  }
+
+  function buatTombolHapusUndangan(inv, msgEl, onDeleted){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ucapan-admin-delete';
+    btn.setAttribute('aria-label', 'Hapus undangan ' + invitationDisplayName(inv));
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>';
+    btn.addEventListener('click', function(){ hapusUndanganDenganKonfirmasi(inv, msgEl, onDeleted); });
+    return btn;
+  }
+
   function buildDesainInvitationCard(inv, tpl){
     desainInvitationCard.innerHTML = '';
+    desainInvitationCard.classList.add('invitation-card');
 
     var eyebrow = document.createElement('span');
     eyebrow.className = 'eyebrow';
@@ -1360,7 +1598,9 @@
     lanjutBtn.addEventListener('click', function(){ openWorkspace(inv, tpl); });
     row.append(badge, lanjutBtn);
 
-    desainInvitationCard.append(eyebrow, title, row);
+    var hapusBtn = buatTombolHapusUndangan(inv, desainDeleteMsg, function(){ renderDesainView(); });
+
+    desainInvitationCard.append(hapusBtn, eyebrow, title, row);
   }
 
   async function renderDesainView(){
@@ -1386,6 +1626,82 @@
 
   if (createInvitationBtn) createInvitationBtn.addEventListener('click', function(){ showView('tema'); });
 
+  // ---------------- Harga ----------------
+  // Katalog paket dipusatkan di assets/pricing-plans.js (dipakai juga
+  // oleh section Harga di index.html) — lihat file itu untuk mengubah
+  // harga atau daftar fitur.
+  var hargaSatuanGrid = document.getElementById('hargaSatuanGrid');
+  var hargaSubsGrid = document.getElementById('hargaSubsGrid');
+  var hargaMsg = document.getElementById('hargaMsg');
+  var hargaPlanSwitch = document.getElementById('hargaPlanSwitch');
+  var hargaPlanSatuan = document.getElementById('hargaPlanSatuan');
+  var hargaPlanSubs = document.getElementById('hargaPlanSubs');
+  var hargaLblSatuan = document.getElementById('hargaLblSatuan');
+  var hargaLblSubs = document.getElementById('hargaLblSubs');
+
+  function showHargaMsg(text, type){
+    if (!hargaMsg) return;
+    hargaMsg.textContent = text || '';
+    hargaMsg.className = 'workspace-msg' + (type ? ' ' + type : '');
+  }
+
+  // Belum ada gerbang pembayaran (Midtrans) — tombol "Pilih Paket" untuk
+  // sekarang membawa user ke tab Bagikan pada undangan yang sedang
+  // dikerjakan, tempat tombol "Aktifkan Undangan" berada (gratis untuk
+  // saat ini) dan tempat gerbang bayar akan dipasang nanti. Kalau user
+  // belum pernah membuat undangan sama sekali, arahkan dulu ke Template
+  // Tema supaya ada yang bisa diaktifkan.
+  async function pilihPaketStandar(){
+    var session = KU.getSession();
+    if (!session) { window.location.href = 'index.html'; return; }
+    showHargaMsg('Menyiapkan...');
+    var res = await KU.sb.from('invitations').select('*')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false }).limit(1);
+    var inv = (!res.error && res.data && res.data.length) ? res.data[0] : null;
+    var tpl = inv ? findTemplateMetaForInvitation(inv) : null;
+    showHargaMsg('');
+    if (!inv || !tpl) {
+      showView('tema');
+      showTemaMsg('Pilih tema dulu untuk mulai membuat undangan — paket Standar bisa diaktifkan dari tab Bagikan setelah itu.');
+      return;
+    }
+    openWorkspace(inv, tpl);
+    showWsTab('bagikan', true);
+  }
+
+  function renderHargaPilihBtn(){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-primary btn-block';
+    btn.textContent = 'Pilih Paket';
+    btn.addEventListener('click', pilihPaketStandar);
+    return btn;
+  }
+
+  function renderHargaSection(){
+    if (!hargaSatuanGrid || !hargaSubsGrid || !window.PRICING_PLANS) return;
+    hargaSatuanGrid.innerHTML = '';
+    window.PRICING_PLANS.satuan.forEach(function(p){
+      hargaSatuanGrid.appendChild(window.renderPriceCard(p, p.tersedia ? renderHargaPilihBtn : null));
+    });
+    hargaSubsGrid.innerHTML = '';
+    window.PRICING_PLANS.berlangganan.forEach(function(p){
+      hargaSubsGrid.appendChild(window.renderPriceCard(p));
+    });
+  }
+  renderHargaSection();
+
+  if (hargaPlanSwitch) {
+    hargaPlanSwitch.addEventListener('click', function(){
+      var on = hargaPlanSwitch.classList.toggle('on');
+      hargaPlanSatuan.style.display = on ? 'none' : 'block';
+      hargaPlanSubs.style.display = on ? 'block' : 'none';
+      hargaLblSatuan.classList.toggle('active', !on);
+      hargaLblSubs.classList.toggle('active', on);
+    });
+  }
+
   // ---------------- Home (beranda) ----------------
   // Beranda cuma ringkasan cepat (sapaan, daftar undangan, angka RSVP/
   // ucapan) — pengelolaan penuh satu undangan tetap di "Desain Kamu" +
@@ -1395,6 +1711,7 @@
   var homeEmptyState = document.getElementById('homeEmptyState');
   var homeEmptyCreateBtn = document.getElementById('homeEmptyCreateBtn');
   var homeInvitationList = document.getElementById('homeInvitationList');
+  var homeMsg = document.getElementById('homeMsg');
 
   function greetingName(session){
     var name = (session.user.user_metadata && session.user.user_metadata.full_name || '').trim();
@@ -1423,7 +1740,8 @@
   async function buildHomeInvitationCard(inv){
     var tpl = findTemplateMetaForInvitation(inv) || { kategori: inv.kategori_desain || '', name: inv.nama_desain || '' };
     var card = document.createElement('div');
-    card.className = 'profile-block';
+    card.className = 'profile-block invitation-card';
+    card.appendChild(buatTombolHapusUndangan(inv, homeMsg, function(){ renderHomeView(); }));
 
     var eyebrow = document.createElement('span');
     eyebrow.className = 'eyebrow';
@@ -1514,6 +1832,7 @@
       var res = await ensureDraftForTemplate(t);
       btn.disabled = false;
       if (res.error) { showTemaMsg('Gagal menyiapkan undangan: ' + friendlyErrorMessage(res.error), 'err'); return; }
+      if (res.limitReached) { showTemaMsg('Kamu sudah punya ' + MAKS_DRAFT + ' undangan berstatus Draf. Hapus salah satu draft dulu, atau aktifkan salah satunya, sebelum membuat yang baru.', 'err'); return; }
       showTemaMsg('');
       openWorkspace(res.data, t);
     });

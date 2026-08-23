@@ -25,7 +25,7 @@
   "@type":"FAQPage",
   "mainEntity":[
     {"@type":"Question","name":"Apa itu undangan digital?","acceptedAnswer":{"@type":"Answer","text":"Undangan digital adalah undangan pernikahan berbentuk halaman web pribadi yang dibagikan lewat link, menggantikan undangan kertas. Tamu cukup membuka link dari WhatsApp di HP mereka."}},
-    {"@type":"Question","name":"Berapa harga undangan digital?","acceptedAnswer":{"@type":"Answer","text":"Aktivasi mulai dari Rp49.000 untuk paket Standar. Tidak ada biaya bulanan dan tidak ada masa berlaku."}},
+    {"@type":"Question","name":"Berapa harga undangan digital?","acceptedAnswer":{"@type":"Answer","text":"Saat ini paket Standar seharga Rp49.000 sekali bayar per undangan, tanpa biaya bulanan dan tanpa masa berlaku. Paket Pro dan Premium dengan fitur lebih lengkap masih segera hadir."}},
     {"@type":"Question","name":"Apakah undangan bisa diedit setelah dibagikan?","acceptedAnswer":{"@type":"Answer","text":"Bisa kapan saja. Link yang sudah tersebar otomatis menampilkan versi terbaru, jadi tidak perlu kirim ulang link ke tamu."}},
     {"@type":"Question","name":"Bisa dibuatkan oleh admin?","acceptedAnswer":{"@type":"Answer","text":"Bisa, dengan harga yang sama seperti buat sendiri. Kirim detail acara lewat formulir atau WhatsApp, kami buatkan, dan kamu bayar setelah hasilnya cocok."}}
   ]
@@ -230,35 +230,6 @@
   </div>
 </div>
 
-<div class="workspace-overlay" id="workspaceOverlay">
-  <div class="workspace-shell">
-    <div class="workspace-head">
-      <span class="logo">Kartu <span class="script">Undangan</span></span>
-      <button class="icon-btn" id="workspaceClose" aria-label="Tutup">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-
-    <div class="workspace-step" id="stepTheme">
-      <div class="section-head">
-        <p class="eyebrow">Langkah 1</p>
-        <h2>Pilih Tema</h2>
-        <p>Pilih tema undangan yang paling cocok untuk acaramu. Bisa diganti lagi nanti.</p>
-      </div>
-      <div class="workspace-grid" id="templateGrid"></div>
-      <p class="workspace-msg" id="workspaceMsg"></p>
-    </div>
-
-    <div class="workspace-step" id="stepPlaceholder" style="display:none">
-      <div class="workspace-placeholder">
-        <h2>Lanjut ke isi data — segera hadir</h2>
-        <p>Tema kamu sudah tersimpan. Form isi data undangan sedang kami siapkan.</p>
-        <button type="button" class="btn btn-ghost" id="backToThemeBtn">Kembali pilih tema</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <section class="hero wrap">
   <div class="hero-intro">
     <p class="eyebrow">Undangan digital pernikahan</p>
@@ -444,8 +415,8 @@
   <div class="wrap">
     <div class="section-head center">
       <p class="eyebrow">Harga</p>
-      <h2>Tiga paket, tanpa bikin bingung.</h2>
-      <p>Kami sengaja tidak membuat banyak pilihan. Cukup tiga paket dengan perbedaan yang jelas, supaya kamu tidak perlu membandingkan puluhan baris fitur.</p>
+      <h2>Satu paket aktif, dua lagi menyusul.</h2>
+      <p>Bayar sekali per undangan — bukan langganan. Daftar, pilih tema, isi data, dan lihat pratinjau selalu gratis; kamu baru bayar saat undangan siap diaktifkan dan dibagikan ke tamu.</p>
     </div>
 
     <div class="toggle-wrap">
@@ -455,99 +426,12 @@
     </div>
 
     <div id="planSatuan">
-      <div class="price-rail">
-        <div class="price-card">
-          <div class="tier-name">Standar</div>
-          <p class="tier-desc">Semua yang dibutuhkan untuk satu acara</p>
-          <div class="price-amount"><span class="cur">Rp</span><span class="num">49.000</span></div>
-          <ul class="feat-list">
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Akses semua tema</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>RSVP, ucapan &amp; lokasi maps</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Nama tamu &amp; link tak terbatas</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Countdown &amp; simpan ke kalender</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Tanpa masa aktif</li>
-            <li class="no"><span class="ico-no"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span>Galeri foto &amp; musik latar</li>
-          </ul>
-          <a class="btn btn-ghost btn-block" href="#daftar">Pilih Standar</a>
-        </div>
-
-        <div class="price-card popular">
-          <span class="pop-badge">Paling dipilih</span>
-          <div class="tier-name">Pro</div>
-          <p class="tier-desc">Untuk yang ingin galeri foto dan edit sendiri</p>
-          <div class="price-amount"><span class="cur">Rp</span><span class="num">89.000</span></div>
-          <ul class="feat-list">
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Standar</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Galeri foto (10 foto)</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Musik latar pilihan</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Panel edit sendiri &amp; revisi tak terbatas</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Rekening titip hadiah</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>QR code check-in tamu</li>
-          </ul>
-          <a class="btn btn-primary btn-block" href="#daftar">Pilih Pro</a>
-        </div>
-
-        <div class="price-card">
-          <div class="tier-name">Premium</div>
-          <p class="tier-desc">Semua fitur terbuka, tanpa batas</p>
-          <div class="price-amount"><span class="cur">Rp</span><span class="num">139.000</span></div>
-          <ul class="feat-list">
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Pro</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Galeri HD (20 foto)</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Love story &amp; balas ucapan tamu</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Custom font &amp; warna tema</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Upload musik sendiri</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Link streaming &amp; video</li>
-          </ul>
-          <a class="btn btn-ghost btn-block" href="#daftar">Pilih Premium</a>
-        </div>
-      </div>
+      <div class="price-rail" id="planSatuanGrid"></div>
     </div>
 
     <div id="planSubs" style="display:none;">
-      <div class="price-rail">
-        <div class="price-card">
-          <div class="tier-name">1 Bulan</div>
-          <p class="tier-desc">Bebas buat banyak undangan</p>
-          <div class="price-amount"><span class="cur">Rp</span><span class="num">150.000</span><span class="per">/bulan</span></div>
-          <ul class="feat-list">
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Premium</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Undangan tanpa batas jumlah</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Custom domain</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Export undangan cetak</li>
-          </ul>
-          <a class="btn btn-ghost btn-block" href="#daftar">Pilih 1 bulan</a>
-        </div>
-
-        <div class="price-card popular">
-          <span class="pop-badge">Terbaik untuk WO</span>
-          <div class="tier-name">6 Bulan</div>
-          <p class="tier-desc">Bebas buat banyak undangan</p>
-          <div class="price-amount"><span class="cur">Rp</span><span class="num">750.000</span><span class="per">/6 bulan</span></div>
-          <ul class="feat-list">
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Premium</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Undangan tanpa batas jumlah</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Custom domain</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Export undangan cetak</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Hemat dibanding bayar bulanan</li>
-          </ul>
-          <a class="btn btn-primary btn-block" href="#daftar">Pilih 6 bulan</a>
-        </div>
-
-        <div class="price-card">
-          <div class="tier-name">1 Tahun</div>
-          <p class="tier-desc">Bebas buat banyak undangan</p>
-          <div class="price-amount"><span class="cur">Rp</span><span class="num">1.450.000</span><span class="per">/tahun</span></div>
-          <ul class="feat-list">
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Semua fitur Premium</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Undangan tanpa batas jumlah</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Custom domain</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Export undangan cetak</li>
-            <li><span class="ico-yes"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Harga paling hemat per bulan</li>
-          </ul>
-          <a class="btn btn-ghost btn-block" href="#daftar">Pilih 1 tahun</a>
-        </div>
-      </div>
+      <p class="pricing-note">Untuk wedding organizer &amp; reseller yang rutin membuat banyak undangan untuk klien, bukan untuk pasangan yang menikah sendiri — lihat juga bagian <a href="#reseller">Wedding organizer &amp; reseller</a> di bawah.</p>
+      <div class="price-rail" id="planSubsGrid"></div>
     </div>
   </div>
 </section>
@@ -596,8 +480,8 @@
       <details class="faq-item">
         <summary><span>Berapa harga undangan digital?</span><span class="mark">+</span></summary>
         <div class="answer">
-          <p>Aktivasi mulai dari Rp49.000 untuk paket Standar, sampai Rp139.000 untuk Premium dengan semua fitur terbuka. Tidak ada biaya bulanan dan tidak ada masa berlaku.</p>
-          <p>Untuk yang perlu membuat banyak undangan — misalnya wedding organizer — tersedia paket berlangganan mulai Rp150.000 per bulan.</p>
+          <p>Saat ini paket Standar seharga Rp49.000 sekali bayar per undangan, tanpa biaya bulanan dan tanpa masa berlaku. Paket Pro (Rp89.000) dan Premium (Rp139.000) dengan fitur lebih lengkap masih segera hadir.</p>
+          <p>Untuk yang perlu membuat banyak undangan — misalnya wedding organizer — ada rencana paket berlangganan mulai Rp150.000 per bulan, tapi belum bisa didaftar sekarang.</p>
         </div>
       </details>
       <details class="faq-item">
@@ -700,6 +584,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/auth-core.js"></script>
 <script src="assets/theme-templates.js"></script>
+<script src="assets/pricing-plans.js"></script>
 <script src="assets/app.js"></script>
 
 </body>

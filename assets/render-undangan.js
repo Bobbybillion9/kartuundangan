@@ -436,11 +436,153 @@
     });
   }
 
+  // ============================================================
+  // Hadiah / bukti transfer: sambungkan form yang ada di tiap template
+  // ke bucket Storage privat "bukti-transfer" + tabel hadiah (lihat
+  // scratch_migration_hadiah.sql). Pola clone-form & kunci-setelah-
+  // kirim sama persis dengan setupRsvpForm di atas -- juga cuma
+  // dipanggil dari undangan.html, bukan dari pratinjau.html (di
+  // pratinjau, form ini sengaja dibiarkan pakai demo lokal bawaan tiap
+  // template).
+  // ============================================================
+
+  var FOTO_BUKTI_MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+  var FOTO_BUKTI_MIME_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+
+  function buatNamaFileBukti(file){
+    var ext = FOTO_BUKTI_MIME_EXT[file.type] || 'jpg';
+    var acak = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : (Date.now() + '-' + Math.random().toString(36).slice(2));
+    return acak + '.' + ext;
+  }
+
+  function setupHadiahForm(doc, inv, sb){
+    var formLama = doc.getElementById('hadiahForm');
+    if (!formLama) return;
+    var form = formLama.cloneNode(true);
+    formLama.parentNode.replaceChild(form, formLama);
+
+    var msgEl = form.querySelector('#hadiahMsg');
+    var namaInput = form.querySelector('#hadiahNama');
+    var pesanInput = form.querySelector('#hadiahPesan');
+    var buktiInput = form.querySelector('#buktiTransferInput');
+    var uploadDropzone = form.querySelector('#uploadDropzone');
+    var uploadPreview = form.querySelector('#uploadPreview');
+    var uploadPreviewImg = form.querySelector('#uploadPreviewImg');
+    var uploadFilename = form.querySelector('#uploadFilename');
+    var uploadRemoveBtn = form.querySelector('#uploadRemoveBtn');
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var buktiObjectUrl = null;
+
+    // Clone melepas listener pratinjau-file demo bawaan tiap template --
+    // dipasang ulang di sini supaya pratinjau file tetap jalan sebelum
+    // dikirim (perilakunya sama, cuma sekarang beneran diunggah saat submit).
+    buktiInput.addEventListener('change', function(){
+      var file = buktiInput.files[0];
+      if (!file) return;
+      if (buktiObjectUrl) URL.revokeObjectURL(buktiObjectUrl);
+      buktiObjectUrl = URL.createObjectURL(file);
+      uploadPreviewImg.src = buktiObjectUrl;
+      uploadFilename.textContent = file.name;
+      uploadDropzone.hidden = true;
+      uploadPreview.hidden = false;
+    });
+
+    uploadRemoveBtn.addEventListener('click', function(){
+      buktiInput.value = '';
+      if (buktiObjectUrl) { URL.revokeObjectURL(buktiObjectUrl); buktiObjectUrl = null; }
+      uploadPreview.hidden = true;
+      uploadDropzone.hidden = false;
+    });
+
+    var storageKey = 'ku-hadiah-sent:' + inv.id;
+    if (localStorage.getItem(storageKey)) {
+      kunciForm(form, msgEl, 'Terima kasih, bukti transfermu untuk undangan ini sudah kami terima sebelumnya.');
+      return;
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var nama = namaInput.value.trim();
+      var pesan = pesanInput.value.trim();
+      var file = buktiInput.files[0];
+
+      if (!nama) {
+        msgEl.textContent = 'Nama pengirim wajib diisi ya.';
+        msgEl.className = 'form-msg err';
+        return;
+      }
+      if (!file) {
+        msgEl.textContent = 'Pilih dulu file bukti transfernya ya.';
+        msgEl.className = 'form-msg err';
+        return;
+      }
+      if (!FOTO_BUKTI_MIME_EXT[file.type]) {
+        msgEl.textContent = 'File harus berupa gambar JPG, PNG, atau WEBP.';
+        msgEl.className = 'form-msg err';
+        return;
+      }
+      if (file.size > FOTO_BUKTI_MAX_SIZE) {
+        msgEl.textContent = 'Ukuran file maksimal 5 MB ya.';
+        msgEl.className = 'form-msg err';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      msgEl.textContent = 'Mengunggah...';
+      msgEl.className = 'form-msg';
+
+      // Path [invitation_id]/[nama-acak] -- lihat kebijakan storage di
+      // scratch_migration_hadiah.sql. bukti_url menyimpan PATH-nya saja
+      // (bucket privat, tidak ada URL publik) -- dashboard pasangan
+      // membuat signed URL sendiri saat mau menampilkannya.
+      var path = inv.id + '/' + buatNamaFileBukti(file);
+
+      function bersihkanFileYatim(){
+        sb.storage.from('bukti-transfer').remove([path]).then(function(){}, function(){});
+      }
+
+      sb.storage.from('bukti-transfer').upload(path, file, { contentType: file.type }).then(function(uploadRes){
+        if (uploadRes.error) {
+          submitBtn.disabled = false;
+          msgEl.textContent = PESAN_ERROR_UMUM;
+          msgEl.className = 'form-msg err';
+          return;
+        }
+        sb.from('hadiah').insert({
+          invitation_id: inv.id,
+          nama_pengirim: nama,
+          pesan: pesan || null,
+          bukti_url: path
+        }).then(function(res){
+          if (res.error) {
+            bersihkanFileYatim();
+            submitBtn.disabled = false;
+            msgEl.textContent = PESAN_ERROR_UMUM;
+            msgEl.className = 'form-msg err';
+            return;
+          }
+          localStorage.setItem(storageKey, '1');
+          kunciForm(form, msgEl, 'Terima kasih, bukti transfermu sudah kami terima!');
+        }, function(){
+          bersihkanFileYatim();
+          submitBtn.disabled = false;
+          msgEl.textContent = PESAN_ERROR_UMUM;
+          msgEl.className = 'form-msg err';
+        });
+      }, function(){
+        submitBtn.disabled = false;
+        msgEl.textContent = PESAN_ERROR_UMUM;
+        msgEl.className = 'form-msg err';
+      });
+    });
+  }
+
   window.RenderUndangan = {
     applyPalette: applyPalette,
     populateSlots: populateSlots,
     terapkanKeFrame: terapkanKeFrame,
     setupRsvpForm: setupRsvpForm,
-    setupUcapanSection: setupUcapanSection
+    setupUcapanSection: setupUcapanSection,
+    setupHadiahForm: setupHadiahForm
   };
 })();

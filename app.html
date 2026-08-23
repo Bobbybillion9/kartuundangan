@@ -93,6 +93,7 @@
       <h2 id="homeGreeting">Halo!</h2>
       <button type="button" class="btn btn-primary btn-sm" id="homeCreateBtn">Buat Undangan Baru</button>
     </div>
+    <p class="workspace-msg" id="homeMsg" aria-live="polite"></p>
 
     <div class="dash-empty" id="homeEmptyState" style="display:none;">
       <div class="dash-empty-icon">
@@ -107,6 +108,7 @@
   </section>
 
   <section class="dash-view" id="view-desain">
+    <p class="workspace-msg" id="desainDeleteMsg" aria-live="polite"></p>
     <div class="dash-empty" id="desainEmptyState">
       <div class="dash-empty-icon">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
@@ -469,15 +471,42 @@
         <p class="workspace-msg" id="ucapanEmptyMsg" style="display:none;">Belum ada ucapan dari tamu.</p>
       </div>
 
+      <div class="profile-block">
+        <div class="profile-block-head">
+          <h3>Hadiah</h3>
+          <span class="badge" id="hadiahTotalBadge">0 pengirim</span>
+        </div>
+        <p class="hadiah-note">Ini bukan pencatatan transaksi sungguhan — uang tetap masuk langsung ke rekeningmu lewat info di atas. Daftar ini cuma catatan siapa yang mengaku sudah mengirim, berikut bukti yang mereka unggah sendiri.</p>
+        <div class="ucapan-admin-list" id="hadiahAdminList"></div>
+        <p class="workspace-msg" id="hadiahEmptyMsg" style="display:none;">Belum ada yang mengirim tanda kasih.</p>
+      </div>
+
       <p class="ws-save-msg" id="tamuMsg" aria-live="polite"></p>
     </div>
   </section>
 
   <section class="dash-view" id="view-harga">
-    <div class="workspace-placeholder">
-      <h2>Harga — segera hadir</h2>
-      <p>Detail paket dan aktivasi akan tampil di sini.</p>
+    <div class="section-head">
+      <h2>Harga</h2>
+      <p>Bayar sekali per undangan — bukan langganan. Membuat undangan dan melihat pratinjau selalu gratis; kamu baru bayar saat undangan siap diaktifkan dan dibagikan ke tamu.</p>
     </div>
+
+    <div class="toggle-wrap">
+      <span class="toggle-label active" id="hargaLblSatuan">Satuan</span>
+      <button type="button" class="switch" id="hargaPlanSwitch" aria-label="Ganti antara paket satuan dan berlangganan"><span class="knob"></span></button>
+      <span class="toggle-label" id="hargaLblSubs">Berlangganan</span>
+    </div>
+
+    <div id="hargaPlanSatuan">
+      <div class="price-rail" id="hargaSatuanGrid"></div>
+    </div>
+
+    <div id="hargaPlanSubs" style="display:none;">
+      <p class="pricing-note">Untuk wedding organizer &amp; reseller yang rutin membuat banyak undangan untuk klien. Belum bisa didaftar sekarang — hubungi admin lewat WhatsApp kalau kamu tertarik.</p>
+      <div class="price-rail" id="hargaSubsGrid"></div>
+    </div>
+
+    <p class="workspace-msg" id="hargaMsg" aria-live="polite"></p>
   </section>
 
   <section class="dash-view" id="view-profil">
@@ -537,6 +566,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/auth-core.js"></script>
 <script src="assets/theme-templates.js"></script>
+<script src="assets/pricing-plans.js"></script>
 <script src="assets/dashboard.js"></script>
 
 </body>

@@ -510,6 +510,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
   100%{opacity:1;transform:translateY(0);}
 }
 .countdown-label{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--sage);}
+.countdown-msg{margin-top:var(--s5);font-size:15px;color:var(--ink-mid);}
 
 /* ---------- galeri pasangan ---------- */
 .galeri-grid{display:grid;gap:8px;margin-top:var(--s5);}
@@ -638,6 +639,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
 .upload-preview-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
 .upload-filename{font-size:12.5px;color:var(--ink-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .upload-remove{align-self:flex-start;font-size:12px;color:var(--rose);text-decoration:underline;text-underline-offset:2px;}
+.upload-hint{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:8px;}
 
 /* ---------- tombol mengambang ---------- */
 .float-btn{
