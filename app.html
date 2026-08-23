@@ -15,7 +15,7 @@
 <body class="app-shell">
 
 <nav class="sidebar" id="sidebar" aria-label="Navigasi utama">
-  <a class="logo sidebar-logo" href="app.html">Kartu <span class="script">Undangan</span></a>
+  <a class="logo sidebar-logo" href="index.html">Kartu <span class="script">Undangan</span></a>
   <div class="side-nav" id="sideNav">
     <div class="nav-pill" id="sidePill" aria-hidden="true"></div>
     <button type="button" class="side-item" data-view="home" aria-label="Home">
@@ -89,10 +89,21 @@
 
 <main class="wrap">
   <section class="dash-view" id="view-home">
-    <div class="workspace-placeholder">
-      <h2>Home — segera hadir</h2>
-      <p>Ringkasan aktivitas undanganmu akan tampil di sini.</p>
+    <div class="home-head">
+      <h2 id="homeGreeting">Halo!</h2>
+      <button type="button" class="btn btn-primary btn-sm" id="homeCreateBtn">Buat Undangan Baru</button>
     </div>
+
+    <div class="dash-empty" id="homeEmptyState" style="display:none;">
+      <div class="dash-empty-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+      </div>
+      <h2>Belum ada undangan</h2>
+      <p>Mulai buat undangan pernikahan digital pertamamu. Pilih tema, isi data acara, lalu bagikan ke tamu.</p>
+      <button type="button" class="btn btn-primary" id="homeEmptyCreateBtn">Buat Undangan Baru</button>
+    </div>
+
+    <div id="homeInvitationList"></div>
   </section>
 
   <section class="dash-view" id="view-desain">

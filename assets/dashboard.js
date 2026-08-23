@@ -48,6 +48,7 @@
     });
     movePill(name);
     if (name === 'desain') renderDesainView();
+    if (name === 'home') renderHomeView();
   }
   showView('desain');
 
@@ -171,6 +172,7 @@
   document.addEventListener('ku:session', function(e){
     renderProfileNav(e.detail.session);
     if (document.getElementById('view-desain').classList.contains('active')) renderDesainView();
+    if (document.getElementById('view-home').classList.contains('active')) renderHomeView();
     handlePendingGunakan();
   });
   renderProfileNav(KU.getSession());
@@ -1383,6 +1385,121 @@
   }
 
   if (createInvitationBtn) createInvitationBtn.addEventListener('click', function(){ showView('tema'); });
+
+  // ---------------- Home (beranda) ----------------
+  // Beranda cuma ringkasan cepat (sapaan, daftar undangan, angka RSVP/
+  // ucapan) — pengelolaan penuh satu undangan tetap di "Desain Kamu" +
+  // workspace, supaya tidak ada dua tempat yang mengerjakan hal sama.
+  var homeGreeting = document.getElementById('homeGreeting');
+  var homeCreateBtn = document.getElementById('homeCreateBtn');
+  var homeEmptyState = document.getElementById('homeEmptyState');
+  var homeEmptyCreateBtn = document.getElementById('homeEmptyCreateBtn');
+  var homeInvitationList = document.getElementById('homeInvitationList');
+
+  function greetingName(session){
+    var name = (session.user.user_metadata && session.user.user_metadata.full_name || '').trim();
+    return name || session.user.email || 'Kamu';
+  }
+
+  function renderHomeGreeting(){
+    if (!homeGreeting) return;
+    var session = KU.getSession();
+    homeGreeting.textContent = session ? ('Halo, ' + greetingName(session)) : 'Halo!';
+  }
+
+  function buildHomeStatTile(num, label){
+    var tile = document.createElement('div');
+    tile.className = 'stat-tile';
+    var n = document.createElement('span');
+    n.className = 'stat-num';
+    n.textContent = String(num);
+    var l = document.createElement('span');
+    l.className = 'stat-label';
+    l.textContent = label;
+    tile.append(n, l);
+    return tile;
+  }
+
+  async function buildHomeInvitationCard(inv){
+    var tpl = findTemplateMetaForInvitation(inv) || { kategori: inv.kategori_desain || '', name: inv.nama_desain || '' };
+    var card = document.createElement('div');
+    card.className = 'profile-block';
+
+    var eyebrow = document.createElement('span');
+    eyebrow.className = 'eyebrow';
+    eyebrow.textContent = [tpl.kategori, tpl.name].filter(Boolean).join(' · ');
+
+    var title = document.createElement('h3');
+    title.textContent = invitationDisplayName(inv);
+
+    var statusRow = document.createElement('div');
+    statusRow.className = 'status-row';
+    var badge = document.createElement('span');
+    badge.className = 'badge' + (inv.status === 'aktif' ? ' badge-aktif' : '');
+    badge.textContent = inv.status === 'aktif' ? 'Aktif' : 'Draf';
+    var lanjutBtn = document.createElement('button');
+    lanjutBtn.type = 'button';
+    lanjutBtn.className = 'btn btn-primary btn-sm';
+    lanjutBtn.textContent = 'Lanjutkan Mengedit';
+    lanjutBtn.addEventListener('click', function(){ openWorkspace(inv, tpl); });
+    statusRow.append(badge, lanjutBtn);
+
+    card.append(eyebrow, title, statusRow);
+
+    if (inv.status === 'aktif' && inv.slug) {
+      var link = document.createElement('a');
+      link.href = PUBLIC_BASE_URL + '/u/' + inv.slug;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.className = 'home-public-link';
+      link.textContent = PUBLIC_BASE_URL.replace(/^https?:\/\//, '') + '/u/' + inv.slug;
+      card.appendChild(link);
+    }
+
+    if (inv.status === 'aktif') {
+      var rsvpRes = await KU.sb.from('rsvp').select('id', { count: 'exact', head: true })
+        .eq('invitation_id', inv.id).eq('kehadiran', 'hadir');
+      var ucapanRes = await KU.sb.from('ucapan').select('id', { count: 'exact', head: true })
+        .eq('invitation_id', inv.id);
+      var hadirCount = (!rsvpRes.error && rsvpRes.count != null) ? rsvpRes.count : 0;
+      var ucapanCount = (!ucapanRes.error && ucapanRes.count != null) ? ucapanRes.count : 0;
+
+      var statRow = document.createElement('div');
+      statRow.className = 'stat-row home-stat-row';
+      statRow.append(
+        buildHomeStatTile(hadirCount, 'Konfirmasi Hadir'),
+        buildHomeStatTile(ucapanCount, 'Ucapan Masuk')
+      );
+      card.appendChild(statRow);
+    }
+
+    return card;
+  }
+
+  async function renderHomeView(){
+    renderHomeGreeting();
+    if (!homeInvitationList) return;
+    homeInvitationList.innerHTML = '';
+    var session = KU.getSession();
+    if (!session) { if (homeEmptyState) homeEmptyState.style.display = 'none'; return; }
+
+    var res = await KU.sb.from('invitations').select('*')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false });
+    var list = (!res.error && res.data) ? res.data : [];
+
+    if (!list.length) {
+      if (homeEmptyState) homeEmptyState.style.display = '';
+      return;
+    }
+    if (homeEmptyState) homeEmptyState.style.display = 'none';
+    for (var i = 0; i < list.length; i++) {
+      homeInvitationList.appendChild(await buildHomeInvitationCard(list[i]));
+    }
+  }
+
+  if (homeCreateBtn) homeCreateBtn.addEventListener('click', function(){ showView('tema'); });
+  if (homeEmptyCreateBtn) homeEmptyCreateBtn.addEventListener('click', function(){ showView('tema'); });
 
   if (themeTemplateGrid) {
     themeTemplateGrid.addEventListener('click', async function(e){
