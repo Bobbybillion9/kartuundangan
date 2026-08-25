@@ -65,9 +65,13 @@
     return (jam < 10 ? '0' + jam : jam) + ':' + (menit < 10 ? '0' + menit : menit) + ':00';
   }
 
+  // Beberapa slot (mis. nama_pria_panggilan/nama_wanita_panggilan) muncul
+  // lebih dari sekali di satu template (sampul + baris penutup) -- pakai
+  // querySelectorAll supaya SEMUA kemunculannya terisi, bukan cuma yang
+  // pertama ditemukan di DOM.
   function setSlotText(doc, slot, value){
-    var el = doc.querySelector('[data-slot="' + slot + '"]');
-    if (el) el.textContent = value;
+    var els = doc.querySelectorAll('[data-slot="' + slot + '"]');
+    for (var i = 0; i < els.length; i++) els[i].textContent = value;
   }
 
   // Tiap slot foto (foto_utama, foto_pria, foto_wanita, foto_galeri_N)
@@ -78,7 +82,16 @@
     var container = doc.querySelector('[data-slot="' + slot + '"]');
     var img = container && container.querySelector('img');
     if (!img) return;
-    if (url) { img.src = url; } else { img.removeAttribute('src'); }
+    if (url) {
+      img.src = url;
+      img.style.display = '';
+    } else {
+      // Tanpa src, browser menampilkan ikon "gambar rusak" bawaan --
+      // sembunyikan <img>-nya supaya ikon placeholder desain di
+      // belakangnya (lihat komentar di atas) yang tampil sendirian.
+      img.removeAttribute('src');
+      img.style.display = 'none';
+    }
   }
 
   function populateSlots(doc, inv){
@@ -127,7 +140,20 @@
     setSlotText(doc, 'lokasi_nama', textOrPlaceholder(inv.lokasi_nama, 'Nama lokasi belum diisi'));
     setSlotText(doc, 'lokasi_alamat', textOrPlaceholder(inv.lokasi_alamat, 'Alamat belum diisi'));
     var mapsEl = doc.querySelector('[data-slot="lokasi_maps_url"]');
-    if (mapsEl) mapsEl.setAttribute('href', inv.lokasi_maps_url || '#');
+    if (mapsEl) {
+      if (inv.lokasi_maps_url) {
+        mapsEl.setAttribute('href', inv.lokasi_maps_url);
+        mapsEl.style.display = '';
+      } else {
+        // Tanpa link maps, tombolnya cuma jadi link mati (href="#") --
+        // sembunyikan saja daripada tamu menekan tombol yang tidak
+        // berfungsi.
+        mapsEl.style.display = 'none';
+      }
+    }
+
+    var musicBtn = doc.getElementById('musicBtn');
+    if (musicBtn) musicBtn.style.display = inv.musik_url ? '' : 'none';
 
     setSlotText(doc, 'kalimat_pembuka', textOrPlaceholder(inv.kalimat_pembuka, 'Kalimat pembuka belum diisi.'));
     setSlotText(doc, 'kalimat_penutup', textOrPlaceholder(inv.kalimat_penutup, 'Kalimat penutup belum diisi.'));
@@ -155,15 +181,21 @@
       card2.style.display = 'none';
     }
 
-    // Hitung mundur mengikuti tanggal_akad (bukan tanggal_resepsi) +
-    // jam yang berhasil ditangkap dari teks waktu_akad. Kalau jamnya
-    // tidak bisa dibaca, pakai awal hari (00:00) di tanggal itu supaya
-    // tetap menghitung mundur ke hari yang benar. WIB (+07:00) dipakai
+    // Hitung mundur mengikuti tanggal_resepsi -- itu acara yang tamu
+    // diundang hadir. Akad sering jauh lebih dulu (privat, keluarga),
+    // jadi kalau hitung mundur ikut tanggal akad, tamu bisa melihat
+    // "hari bahagia telah tiba" berbulan-bulan sebelum resepsi. Cuma
+    // pakai tanggal_akad sebagai cadangan kalau resepsi belum diisi.
+    // Jam dipakai dari pasangan tanggal yang sama (waktu_resepsi untuk
+    // tanggal_resepsi, waktu_akad untuk tanggal_akad); kalau jamnya
+    // tidak bisa dibaca, pakai awal hari (00:00). WIB (+07:00) dipakai
     // sebagai asumsi zona waktu acara.
     var cd = doc.querySelector('[data-slot="tanggal_hitung_mundur"]');
     var countdownIso = '';
-    if (inv.tanggal_akad) {
-      countdownIso = inv.tanggal_akad + 'T' + (parseJamDariTeks(inv.waktu_akad) || '00:00:00') + '+07:00';
+    var tglCountdown = inv.tanggal_resepsi || inv.tanggal_akad;
+    var waktuCountdown = inv.tanggal_resepsi ? inv.waktu_resepsi : inv.waktu_akad;
+    if (tglCountdown) {
+      countdownIso = tglCountdown + 'T' + (parseJamDariTeks(waktuCountdown) || '00:00:00') + '+07:00';
       if (cd) cd.setAttribute('data-countdown-target', countdownIso);
     } else if (cd) {
       cd.removeAttribute('data-countdown-target');
