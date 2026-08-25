@@ -536,6 +536,7 @@
     <div class="photo-placeholder lightbox-photo" id="lightboxPhoto">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
       <span id="lightboxLabel">Foto 1</span>
+      <img class="photo-placeholder-img" id="lightboxPhotoImg" alt="" style="display:none">
     </div>
   </div>
   <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Foto berikutnya">
@@ -767,11 +768,20 @@
   var lightboxClose = document.getElementById('lightboxClose');
   var lightboxPrev = document.getElementById('lightboxPrev');
   var lightboxNext = document.getElementById('lightboxNext');
+  var lightboxPhotoImg = document.getElementById('lightboxPhotoImg');
   var lightboxIndex = 0;
 
   function showLightbox(index){
     lightboxIndex = (index + galeriItems.length) % galeriItems.length;
     lightboxLabel.textContent = 'Foto ' + (lightboxIndex + 1);
+    var srcImg = galeriItems[lightboxIndex].querySelector('img');
+    if (srcImg && srcImg.style.display !== 'none' && srcImg.getAttribute('src')) {
+      lightboxPhotoImg.src = srcImg.getAttribute('src');
+      lightboxPhotoImg.style.display = '';
+    } else {
+      lightboxPhotoImg.removeAttribute('src');
+      lightboxPhotoImg.style.display = 'none';
+    }
     lightbox.classList.add('open');
     lightbox.setAttribute('aria-hidden', 'false');
     body.style.overflow = 'hidden';
