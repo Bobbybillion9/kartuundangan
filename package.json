@@ -2,6 +2,6 @@
   "name": "kartuundangan",
   "private": true,
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   }
 }
