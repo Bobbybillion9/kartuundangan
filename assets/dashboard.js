@@ -1228,6 +1228,20 @@
     bayarBtn.style.display = 'none';
     tampilkanNota('Memeriksa status pembayaran...');
 
+    // Pertanyaan pertama: apakah pembayaran memang sedang diwajibkan?
+    // Saklarnya ada di database (pembayaran_diwajibkan()), sama dengan yang
+    // dipakai trigger penjaga. Kalau UI memakai sumber kebenaran sendiri,
+    // akan ada keadaan di mana tombolnya menuntut bayar padahal database
+    // tidak mewajibkan — atau sebaliknya, menjanjikan aktivasi yang akan
+    // ditolak. Keduanya membingungkan dan keduanya bisa dihindari dengan
+    // bertanya ke tempat yang sama.
+    var wajib = await KU.sb.rpc('pembayaran_diwajibkan');
+    if (wajib.error || wajib.data !== true) {
+      activateBtn.style.display = 'inline-flex';
+      tampilkanNota('');
+      return;
+    }
+
     var res = await KU.sb.rpc('undangan_sudah_dibayar', { p_invitation_id: currentInvitation.id });
     sudahDibayar = !res.error && res.data === true;
 
@@ -1245,10 +1259,18 @@
     // Skrip Snap dimuat saat dibutuhkan, bukan di setiap kunjungan
     // dashboard: mayoritas sesi tidak pernah menyentuh pembayaran.
     if (window.snap) return Promise.resolve(true);
+    var clientKey = window.KU_MIDTRANS_CLIENT_KEY || '';
+    if (!clientKey) return Promise.resolve(false);
+    // Alamat skrip Snap harus sesuai lingkungan kuncinya. Sama seperti di
+    // sisi server, lingkungan diturunkan dari awalan kunci ("SB-" =
+    // Sandbox) supaya keduanya mustahil tidak sinkron.
+    var sandbox = /^SB-/i.test(clientKey);
     return new Promise(function(resolve){
       var s = document.createElement('script');
-      s.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
-      s.setAttribute('data-client-key', window.KU_MIDTRANS_CLIENT_KEY || '');
+      s.src = sandbox
+        ? 'https://app.sandbox.midtrans.com/snap/snap.js'
+        : 'https://app.midtrans.com/snap/snap.js';
+      s.setAttribute('data-client-key', clientKey);
       s.onload = function(){ resolve(!!window.snap); };
       s.onerror = function(){ resolve(false); };
       document.head.appendChild(s);

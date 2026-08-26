@@ -17,11 +17,14 @@ function serverKey() {
   return k;
 }
 
-// Sandbox vs produksi dibedakan lewat MIDTRANS_PRODUCTION=true. Default-nya
-// sandbox: kalau variabelnya lupa diisi, yang terjadi paling buruk adalah
-// transaksi uji, bukan tagihan sungguhan ke orang.
+// Lingkungan DITURUNKAN dari kuncinya sendiri, bukan dari saklar terpisah.
+// Midtrans memberi awalan "SB-" untuk seluruh kunci Sandbox dan tanpa
+// awalan untuk Production. Menurunkannya dari kunci berarti keduanya
+// mustahil tidak sinkron: memakai kunci Sandbox tapi menembak server
+// Production (atau sebaliknya) selalu berujung 401 yang membingungkan,
+// dan itu persis jenis salah setel yang paling mahal di alur pembayaran.
 function produksi() {
-  return String(process.env.MIDTRANS_PRODUCTION || '').toLowerCase() === 'true';
+  return !/^SB-/i.test(serverKey());
 }
 
 function baseSnap() {

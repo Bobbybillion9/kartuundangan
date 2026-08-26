@@ -14,6 +14,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/style.css">
+
+<script>
+  // Client Key Midtrans. Ini BUKAN rahasia — Snap memang memuatnya di
+  // browser setiap pelanggan, dan kunci ini sendiri tidak bisa dipakai
+  // membuat transaksi. Yang rahasia adalah Server Key, dan itu hanya hidup
+  // sebagai environment variable di Vercel.
+  //
+  // Awalan menentukan lingkungan: "SB-Mid-client-" = Sandbox (uang uji),
+  // "Mid-client-" = Production (uang sungguhan). assets/dashboard.js
+  // memilih alamat skrip Snap dari awalan ini, jadi cukup ganti nilai di
+  // bawah untuk berpindah lingkungan — tidak ada tempat lain yang perlu
+  // disentuh.
+  window.KU_MIDTRANS_CLIENT_KEY = 'Mid-client-jNS0ZcCEkSPXY_G8';
+</script>
 </head>
 <body class="app-shell">
 
