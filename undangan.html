@@ -10,8 +10,14 @@
 <meta property="og:description" content="Undangan pernikahan digital, dibuat dengan kartuundangan.link.">
 <meta name="robots" content="noindex, nofollow">
 
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
+<!-- Semua rujukan aset di berkas ini WAJIB absolut dari root ("/assets/..."),
+     bukan relatif. Halaman ini disajikan di dua alamat dengan kedalaman
+     berbeda: /undangan.html saat diuji langsung, dan /u/<slug> di produksi
+     lewat rewrite vercel.json. Path relatif akan diselesaikan browser
+     menjadi /u/assets/... di rute publiknya dan semuanya 404, sehingga
+     undangan tampil kosong tanpa pesan error apa pun. -->
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png">
 
 <!-- Catatan: tag og:* di atas cuma fallback generik untuk isi file
      statis ini. Judul/deskripsi/gambar yang SESUAI tiap undangan (buat
@@ -23,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&family=Inter:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="/assets/style.css">
 
 <style>
   html,body{height:100%;}
@@ -41,8 +47,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/theme-templates.js"></script>
-<script src="assets/render-undangan.js"></script>
+<script src="/assets/theme-templates.js"></script>
+<script src="/assets/render-undangan.js"></script>
 <script>
 (function(){
   // Slug normalnya diambil dari path URL /u/<slug> (lewat rewrite
@@ -142,7 +148,7 @@
           tampilkanHalaman('Undangan Tidak Bisa Ditampilkan', 'Terjadi kesalahan saat menampilkan undangan ini. Silakan muat ulang halaman.');
         }
       });
-      frame.src = 'templates/' + template.id + '/index.html';
+      frame.src = '/templates/' + template.id + '/index.html';
     });
   }, function(){
     tampilkanHalaman('Gagal Memuat Undangan', 'Gagal terhubung ke server. Periksa koneksi internetmu lalu coba lagi.');
