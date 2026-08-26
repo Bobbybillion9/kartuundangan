@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Undangan Digital Pernikahan — Kartu Undangan | kartuundangan.link</title>
+<title>Kartu Undangan Digital Pernikahan — Kartu Undangan | kartuundangan.link</title>
 <meta name="description" content="Buat undangan digital pernikahan dengan tema kurasi. Link personal untuk setiap tamu, RSVP, tanpa masa aktif. Coba gratis, aktivasi mulai Rp49.000.">
 <link rel="canonical" href="https://kartuundangan.link/">
 
@@ -91,6 +91,7 @@
 </script>
 
 <link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/hero-corridor.css">
 </head>
 <body>
 
@@ -105,10 +106,9 @@
       <a href="#faq">FAQ</a>
     </div>
     <div class="nav-right">
-      <button class="icon-btn" id="themeBtn" aria-label="Ganti tema terang atau gelap">
-        <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-        <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
-      </button>
+      <!-- Tombol tema dipindahkan ke dashboard: Profil > Tema Tampilan.
+           Halaman depan selalu tampil terang, dan pilihan tema jadi
+           pengaturan akun, bukan sakelar di etalase publik. -->
       <div class="nav-account" id="navAccount">
         <a class="nav-login" href="#masuk" id="navAccountBtn">
           <span id="navAccountText">Masuk</span>
@@ -288,63 +288,46 @@
   </div>
 </div>
 
-<section class="hero wrap">
-  <div class="hero-intro">
-    <p class="eyebrow">Undangan digital pernikahan</p>
-    <h1>Undangan yang terasa <span class="script">personal</span>, bukan template sejuta orang.</h1>
-    <p class="hero-lead">Pilih tema kurasi, isi data acara, lalu bagikan link personal ke setiap tamu lengkap dengan pesan otomatis. Buat sendiri atau biar admin kami yang kerjakan — harganya sama.</p>
+<!-- Hero koridor: kartu undangan & foto acara melaju ke arah pembaca.
+     Sengaja memakai aset produk sendiri (thumbnail tema + foto pernikahan)
+     supaya hero memperlihatkan yang dijual, bukan sekadar menghiasinya.
+     Geometri & alasannya ada di assets/hero-corridor.js. -->
+<section class="hero-koridor" data-koridor data-kartu="9" data-durasi="19" data-sumbu="50"
+  data-gambar='[
+    {"src":"templates/elegan-klasik/sage-rose/assets/thumbnail.jpg"},
+    {"src":"templates/elegan-klasik/sage-rose/assets/galeri-6.jpg"},
+    {"src":"templates/elegan-klasik/ivory-gold/assets/thumbnail.jpg"},
+    {"src":"templates/elegan-klasik/sage-rose/assets/galeri-3.jpg"},
+    {"src":"templates/elegan-klasik/emerald-dusk/assets/thumbnail.jpg"},
+    {"src":"templates/elegan-klasik/sage-rose/assets/galeri-1.jpg"}
+  ]'>
+
+  <!-- Judul di atas, koridor lewat pita tengah, sisanya di bawah. Bagian
+       tengah sengaja dibiarkan kosong: itulah jalur tempat kartu-kartu lewat,
+       dan satu-satunya cara teks tetap terbaca tanpa menutupi gerakannya. -->
+  <div class="koridor-atas">
+    <p class="eyebrow">Untuk hari yang cuma sekali</p>
+    <!-- Frasa "Kartu undangan digital" sengaja masuk ke dalam <h1> dan bukan
+         cuma di eyebrow: h1 adalah sinyal kata kunci terkuat di satu halaman,
+         dan itu target SEO utama situs ini. Kalimat pembedanya tetap
+         dipertahankan supaya tidak berubah jadi judul generik. -->
+    <h1><span class="script">Kartu undangan digital</span> yang terasa personal, bukan template sejuta orang.</h1>
   </div>
-  <div class="hero-cta">
-    <div class="hero-actions">
+
+  <div class="koridor-bawah">
+    <p class="koridor-lead">Pilih tema kurasi, isi data acara, lalu bagikan link personal ke setiap tamu lengkap dengan pesan otomatis.</p>
+    <div class="koridor-aksi">
       <a class="btn btn-primary" href="#daftar">Daftar &amp; coba gratis</a>
-      <a class="btn btn-outline" href="#dibuatin-admin">Minta dibuatin admin</a>
+      <a class="btn btn-outline" href="#tema">Lihat tema</a>
     </div>
-    <p class="hero-note">Gratis untuk mencoba dan melihat hasil. Bayar hanya saat kamu aktifkan undangan.</p>
-  </div>
-  <div class="hero-trust">
-    <div class="trust-item"><div class="n">3 menit</div><div class="l">Rata-rata sampai jadi</div></div>
-    <div class="trust-item"><div class="n">Tanpa</div><div class="l">Masa aktif &amp; kedaluwarsa</div></div>
-    <div class="trust-item"><div class="n">Tanpa batas</div><div class="l">Nama tamu &amp; penerima</div></div>
-  </div>
-  <div class="hero-slider" id="heroSlider">
-    <div class="slider-frame">
-      <div class="slider-viewport">
-        <div class="slider-track" id="sliderTrack">
-          <div class="slide-card">
-            <p class="ec">The wedding of</p>
-            <div class="names">Andi &amp; Sarah</div>
-            <div class="divider"></div>
-            <p class="date">14 . 11 . 2026</p>
-          </div>
-          <div class="slide-card">
-            <p class="ec">The wedding of</p>
-            <div class="names">Budi &amp; Wulan</div>
-            <div class="divider"></div>
-            <p class="date">22 . 08 . 2026</p>
-          </div>
-          <div class="slide-card">
-            <p class="ec">The wedding of</p>
-            <div class="names">Dimas &amp; Citra</div>
-            <div class="divider"></div>
-            <p class="date">05 . 12 . 2026</p>
-          </div>
-          <div class="slide-card">
-            <p class="ec">The wedding of</p>
-            <div class="names">Rian &amp; Putri</div>
-            <div class="divider"></div>
-            <p class="date">19 . 09 . 2026</p>
-          </div>
-        </div>
-      </div>
-      <button type="button" class="slider-arrow prev" id="sliderPrev" aria-label="Slide sebelumnya">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <button type="button" class="slider-arrow next" id="sliderNext" aria-label="Slide selanjutnya">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
+    <p class="koridor-nota">Gratis untuk mencoba. Bayar hanya saat kamu aktifkan undangan.</p>
+    <div class="koridor-trust">
+      <div><div class="n">3 menit</div><div class="l">Rata-rata sampai jadi</div></div>
+      <div><div class="n">Tanpa</div><div class="l">Masa aktif &amp; kedaluwarsa</div></div>
+      <div><div class="n">Tanpa batas</div><div class="l">Nama tamu &amp; penerima</div></div>
     </div>
-    <div class="slider-dots" id="sliderDots"></div>
   </div>
+
 </section>
 
 <section id="tema" class="band">
@@ -645,5 +628,6 @@
 <script src="assets/pricing-plans.js"></script>
 <script src="assets/app.js"></script>
 
+<script src="assets/hero-corridor.js"></script>
 </body>
 </html>
