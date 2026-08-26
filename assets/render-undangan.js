@@ -94,7 +94,20 @@
     }
   }
 
-  function populateSlots(doc, inv){
+  // Nama tamu tidak ikut di baris invitations — datangnya dari link
+  // personal yang dibuka tamu (lihat undangan.html), jadi dikirim
+  // terpisah lewat argumen ketiga populateSlots(). Kalau tidak ada
+  // (undangan dibagikan lewat link umum, atau saat pratinjau di
+  // dashboard), slot-nya dibiarkan memakai teks bawaan template
+  // ("Tamu Undangan") — sengaja tidak dikosongkan, karena sampul
+  // undangan tetap butuh sesuatu di baris "Kepada Yth".
+  function setSlotNamaTamu(doc, namaTamu){
+    if (!namaTamu) return;
+    setSlotText(doc, 'nama_tamu', namaTamu);
+  }
+
+  function populateSlots(doc, inv, namaTamu){
+    setSlotNamaTamu(doc, namaTamu);
     setSlotText(doc, 'nama_pria_panggilan', textOrPlaceholder(inv.nama_pria_panggilan, 'Nama Pria'));
     setSlotText(doc, 'nama_wanita_panggilan', textOrPlaceholder(inv.nama_wanita_panggilan, 'Nama Wanita'));
     setSlotText(doc, 'nama_pria_lengkap', textOrPlaceholder(inv.nama_pria_lengkap, 'Nama Lengkap Pria'));
@@ -290,7 +303,7 @@
     msgEl.className = 'form-msg ok';
   }
 
-  function setupRsvpForm(doc, inv, sb){
+  function setupRsvpForm(doc, inv, sb, namaTamu){
     var formLama = doc.getElementById('rsvpForm');
     if (!formLama) return;
     var form = formLama.cloneNode(true);
@@ -305,6 +318,12 @@
     var submitBtn = form.querySelector('button[type="submit"]');
 
     form.querySelectorAll('.pill-group').forEach(initPillGroupUmum);
+
+    // Tamu yang datang lewat link personal namanya sudah diketahui —
+    // isikan saja supaya tidak perlu mengetik ulang. Tetap bisa diubah:
+    // yang membuka link bisa saja mengisi atas nama orang lain, dan
+    // nama di daftar tamu belum tentu ejaan yang mereka mau.
+    if (namaTamu && namaInput && !namaInput.value) namaInput.value = namaTamu;
 
     kehadiranInput.addEventListener('change', function(){
       var tidakHadir = kehadiranInput.value === 'tidak_hadir';

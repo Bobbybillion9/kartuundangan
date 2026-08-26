@@ -361,6 +361,20 @@
   .stat-num{display:block;font-family:'Fraunces',serif;font-size:28px;font-weight:600;color:var(--ink);}
   .stat-label{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
 
+  /* Link personal per tamu */
+  .tamu-add-form{display:flex;gap:var(--s2);margin-bottom:var(--s2);flex-wrap:wrap;}
+  .tamu-add-form input{flex:1 1 220px;min-width:0;padding:11px 14px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--paper);color:var(--ink);font-family:inherit;font-size:14px;}
+  .tamu-add-form input:focus{outline:none;border-color:var(--accent);}
+  .tamu-add-form .btn{flex:0 0 auto;}
+  .tamu-list{display:flex;flex-direction:column;gap:var(--s1);}
+  .tamu-row{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);flex-wrap:wrap;padding:12px 14px;border:1px solid var(--line-soft);border-radius:var(--r-sm);background:var(--paper-2);}
+  .tamu-info{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 180px;}
+  .tamu-nama{font-weight:500;font-size:14.5px;overflow-wrap:anywhere;}
+  .tamu-status{font-size:12px;color:var(--ink-soft);}
+  .tamu-status.is-opened{color:var(--accent-dark);}
+  .tamu-aksi{display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0;}
+  .tamu-aksi .btn.is-disabled{opacity:.5;pointer-events:none;}
+
   .rsvp-table-wrap{overflow-x:auto;margin-top:var(--s3);}
   .rsvp-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px;}
   .rsvp-table th,.rsvp-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line-soft);white-space:nowrap;}

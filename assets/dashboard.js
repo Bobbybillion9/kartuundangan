@@ -197,8 +197,14 @@
     showProfileMsg('Link reset kata sandi sudah dikirim ke emailmu.', 'ok');
   });
 
+  // Ditandai true begitu 'ku:session' sempat tertangkap, supaya jaring
+  // pengaman di akhir file tahu render awalnya sudah dikerjakan dan
+  // tidak perlu mengulang query yang sama. Lihat komentar di sana.
+  var sesiSudahDirender = false;
+
   document.addEventListener('ku:session', function(e){
     if (!e.detail.session) { redirectToLogin(); return; }
+    sesiSudahDirender = true;
     renderProfileNav(e.detail.session);
     if (document.getElementById('view-desain').classList.contains('active')) renderDesainView();
     if (document.getElementById('view-home').classList.contains('active')) renderHomeView();
@@ -1489,12 +1495,182 @@
     if (hadiahTotalBadge) hadiahTotalBadge.textContent = daftar.length + ' pengirim';
   }
 
+  // ---------------- Link Personal per Tamu ----------------
+  var tamuAddForm = document.getElementById('tamuAddForm');
+  var tamuNamaInput = document.getElementById('tamuNamaInput');
+  var tamuAddBtn = document.getElementById('tamuAddBtn');
+  var tamuList = document.getElementById('tamuList');
+  var tamuListMsg = document.getElementById('tamuListMsg');
+  var tamuEmptyMsg = document.getElementById('tamuEmptyMsg');
+  var daftarTamu = [];
+
+  function showTamuListMsg(text, type){
+    if (!tamuListMsg) return;
+    tamuListMsg.textContent = text || '';
+    tamuListMsg.className = 'workspace-msg' + (type ? ' ' + type : '');
+  }
+
+  // Kode link personal. Huruf/angka acak dari crypto — bukan urutan
+  // tebakan, supaya tamu tidak bisa mengintip undangan tamu lain hanya
+  // dengan mengubah angka di URL. Karakter dibatasi ke [a-z0-9] agar
+  // aman disalin lewat WhatsApp tanpa perlu encoding.
+  function buatKodeTamu(){
+    var huruf = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    var acak = new Uint8Array(10);
+    (window.crypto || window.msCrypto).getRandomValues(acak);
+    var out = '';
+    for (var i = 0; i < acak.length; i++) out += huruf[acak[i] % huruf.length];
+    return out;
+  }
+
+  function linkTamu(kode){
+    if (!currentInvitation || !currentInvitation.slug) return null;
+    return PUBLIC_BASE_URL + '/u/' + currentInvitation.slug + '?tamu=' + kode;
+  }
+
+  function renderDaftarTamu(){
+    if (!tamuList) return;
+    tamuList.innerHTML = '';
+    if (tamuEmptyMsg) tamuEmptyMsg.style.display = daftarTamu.length ? 'none' : '';
+
+    daftarTamu.forEach(function(t){
+      var row = document.createElement('div');
+      row.className = 'tamu-row';
+      row.dataset.id = t.id;
+
+      var info = document.createElement('div');
+      info.className = 'tamu-info';
+
+      var nama = document.createElement('span');
+      nama.className = 'tamu-nama';
+      nama.textContent = t.name;
+
+      var status = document.createElement('span');
+      status.className = 'tamu-status';
+      if (t.opened_at) {
+        status.textContent = 'Sudah dibuka ' + formatWaktuSingkat(t.opened_at);
+        status.classList.add('is-opened');
+      } else {
+        status.textContent = 'Belum dibuka';
+      }
+      info.append(nama, status);
+
+      var aksi = document.createElement('div');
+      aksi.className = 'tamu-aksi';
+
+      var url = linkTamu(t.code);
+      var salinBtn = document.createElement('button');
+      salinBtn.type = 'button';
+      salinBtn.className = 'btn btn-ghost btn-sm';
+      salinBtn.textContent = 'Salin Link';
+      if (!url) {
+        // Slug baru ada setelah undangan diaktifkan, jadi sebelum itu
+        // link personalnya belum bisa dirakit sama sekali.
+        salinBtn.disabled = true;
+        salinBtn.title = 'Aktifkan undangan dulu supaya alamatnya terbentuk.';
+      } else {
+        salinBtn.addEventListener('click', function(){
+          navigator.clipboard.writeText(url).then(function(){
+            salinBtn.textContent = 'Tersalin!';
+            setTimeout(function(){ salinBtn.textContent = 'Salin Link'; }, 1600);
+            tandaiDibagikan(t);
+          }, function(){
+            showTamuListMsg('Gagal menyalin link. Salin manual: ' + url, 'err');
+          });
+        });
+      }
+
+      var waBtn = document.createElement('a');
+      waBtn.className = 'btn btn-ghost btn-sm';
+      waBtn.textContent = 'WhatsApp';
+      if (!url) {
+        waBtn.setAttribute('aria-disabled', 'true');
+        waBtn.classList.add('is-disabled');
+      } else {
+        var pesan = 'Kepada Yth. ' + t.name + ',\n\nDengan penuh sukacita kami mengundangmu ke pernikahan kami. Detail lengkapnya ada di undangan berikut:\n' + url;
+        waBtn.href = 'https://wa.me/?text=' + encodeURIComponent(pesan);
+        waBtn.target = '_blank';
+        waBtn.rel = 'noopener';
+        waBtn.addEventListener('click', function(){ tandaiDibagikan(t); });
+      }
+
+      var hapusBtn = document.createElement('button');
+      hapusBtn.type = 'button';
+      hapusBtn.className = 'btn btn-ghost btn-sm';
+      hapusBtn.textContent = 'Hapus';
+      hapusBtn.addEventListener('click', function(){ hapusTamu(t); });
+
+      aksi.append(salinBtn, waBtn, hapusBtn);
+      row.append(info, aksi);
+      tamuList.appendChild(row);
+    });
+  }
+
+  function formatWaktuSingkat(iso){
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+  }
+
+  // Dicatat diam-diam saat link disalin/dikirim — tidak perlu memberi
+  // umpan balik, karena yang penting bagi mempelai cuma "sudah pernah
+  // dibagikan atau belum". Kegagalannya sengaja diabaikan supaya tidak
+  // mengganggu aksi utama (menyalin link) yang sudah berhasil.
+  function tandaiDibagikan(t){
+    if (t.shared_at) return;
+    t.shared_at = new Date().toISOString();
+    KU.sb.from('guests').update({ shared_at: t.shared_at }).eq('id', t.id).then(function(){});
+  }
+
+  async function tambahTamu(nama){
+    if (!currentInvitation) return;
+    var kode = buatKodeTamu();
+    var res = await KU.sb.from('guests').insert({
+      invitation_id: currentInvitation.id,
+      name: nama,
+      code: kode
+    }).select().single();
+    if (res.error) { showTamuListMsg('Gagal menambah tamu: ' + friendlyErrorMessage(res.error), 'err'); return; }
+    daftarTamu.unshift(res.data);
+    renderDaftarTamu();
+    showTamuListMsg('');
+  }
+
+  async function hapusTamu(t){
+    var ok = await KU.confirmAction({
+      title: 'Hapus Tamu',
+      text: 'Hapus "' + t.name + '" dari daftar? Link personal yang sudah terlanjur dibagikan ke tamu ini akan berhenti berfungsi.',
+      okText: 'Ya, Hapus'
+    });
+    if (!ok) return;
+    var res = await KU.sb.from('guests').delete().eq('id', t.id);
+    if (res.error) { showTamuListMsg('Gagal menghapus tamu: ' + friendlyErrorMessage(res.error), 'err'); return; }
+    daftarTamu = daftarTamu.filter(function(x){ return x.id !== t.id; });
+    renderDaftarTamu();
+    showTamuListMsg('');
+  }
+
+  if (tamuAddForm) {
+    tamuAddForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      var nama = (tamuNamaInput.value || '').trim();
+      if (!nama) { showTamuListMsg('Nama tamu tidak boleh kosong.', 'err'); return; }
+      tamuAddBtn.disabled = true;
+      showTamuListMsg('Menambahkan...');
+      await tambahTamu(nama);
+      tamuAddBtn.disabled = false;
+      tamuNamaInput.value = '';
+      tamuNamaInput.focus();
+    });
+  }
+
   async function loadTamuTab(){
     if (!currentInvitation) return;
     showTamuMsg('Memuat data tamu...');
     var rsvpRes = await KU.sb.from('rsvp').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
     var ucapanRes = await KU.sb.from('ucapan').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
     var hadiahRes = await KU.sb.from('hadiah').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
+    var guestsRes = await KU.sb.from('guests').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
 
     if (rsvpRes.error || ucapanRes.error || hadiahRes.error) {
       showTamuMsg('Gagal memuat data tamu: ' + friendlyErrorMessage(rsvpRes.error || ucapanRes.error || hadiahRes.error), 'err');
@@ -1503,6 +1679,16 @@
     renderRsvpSummaryDanTabel(rsvpRes.data || []);
     renderUcapanAdminList(ucapanRes.data || []);
     renderHadiahAdminList(hadiahRes.data || []);
+
+    // Daftar tamu dipisahkan dari tiga di atas: kalau bagian ini gagal,
+    // RSVP/ucapan/hadiah yang sudah berhasil dimuat tetap ditampilkan.
+    if (guestsRes.error) {
+      showTamuListMsg('Gagal memuat daftar tamu: ' + friendlyErrorMessage(guestsRes.error), 'err');
+    } else {
+      daftarTamu = guestsRes.data || [];
+      renderDaftarTamu();
+      showTamuListMsg('');
+    }
     showTamuMsg('');
   }
 
@@ -2020,5 +2206,27 @@
       updateWsHeader();
       showWsSaveMsg('Tersimpan!', 'ok');
     });
+  }
+
+  // ---------------- Jaring pengaman render awal ----------------
+  // showView('desain') di awal file jalan SEBELUM sesi selesai
+  // di-resolve, jadi renderDesainView() waktu itu masuk cabang
+  // "belum login" dan memasang layar "Belum ada undangan". Biasanya
+  // event 'ku:session' menyusul dan merender ulang — tapi kalau sesi
+  // sudah selesai di-resolve sebelum listener di atas sempat terpasang
+  // (jeda pemuatan antar <script>; balapan yang sama sudah dicatat di
+  // komentar guard login), event itu tidak pernah tertangkap dan
+  // layarnya tidak pernah diperbaiki. Akibatnya user yang sebenarnya
+  // punya undangan melihat "Belum ada undangan" — seolah karyanya
+  // hilang — sampai dia pindah view lalu kembali.
+  //
+  // Ditaruh di akhir file, bukan di sebelah listener-nya, karena
+  // renderDesainView()/renderHomeView() memakai variabel elemen yang
+  // baru di-cache jauh di bawah; dipanggil lebih awal keduanya cuma
+  // akan langsung return tanpa melakukan apa-apa.
+  if (!sesiSudahDirender && KU.isSessionResolved() && KU.getSession()) {
+    if (document.getElementById('view-desain').classList.contains('active')) renderDesainView();
+    if (document.getElementById('view-home').classList.contains('active')) renderHomeView();
+    handlePendingGunakan();
   }
 })();

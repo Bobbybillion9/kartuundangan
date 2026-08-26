@@ -448,6 +448,20 @@
     </div>
     <div class="ws-panel" id="wsPanel-tamu">
       <div class="profile-block">
+        <div class="profile-block-head">
+          <h3>Link Personal per Tamu</h3>
+        </div>
+        <p>Tiap tamu dapat link sendiri. Saat dibuka, namanya langsung tersapa di sampul undangan dan kolom nama di formulir kehadiran sudah terisi.</p>
+        <form class="tamu-add-form" id="tamuAddForm">
+          <input type="text" id="tamuNamaInput" placeholder="mis. Bapak Andi Wijaya" maxlength="80" autocomplete="off" aria-label="Nama tamu">
+          <button type="submit" class="btn btn-primary btn-sm" id="tamuAddBtn">Tambah</button>
+        </form>
+        <p class="workspace-msg" id="tamuListMsg" aria-live="polite"></p>
+        <div class="tamu-list" id="tamuList"></div>
+        <p class="workspace-msg" id="tamuEmptyMsg" style="display:none;">Belum ada tamu. Tambahkan nama di atas untuk membuat link personalnya.</p>
+      </div>
+
+      <div class="profile-block">
         <h3>Ringkasan Kehadiran</h3>
         <div class="stat-row" id="rsvpStatRow">
           <div class="stat-tile">

@@ -50,6 +50,13 @@
   var dariPath = /\/u\/([a-z0-9-]+)\/?(?:[?#]|$)/i.exec(window.location.pathname + window.location.search);
   var slug = params.get('slug') || (dariPath && dariPath[1]) || '';
 
+  // Kode tamu dari link personal (?tamu=xxxx). Kalau tidak ada, undangan
+  // tetap tampil normal sebagai link umum — cuma tanpa sapaan nama.
+  // Dibatasi ke karakter yang memang dipakai saat membuat kode, supaya
+  // isi URL sembarangan tidak ikut dikirim ke server.
+  var kodeTamu = (params.get('tamu') || '').trim();
+  if (!/^[a-z0-9]{4,32}$/i.test(kodeTamu)) kodeTamu = '';
+
   var frame = document.getElementById('undanganFrame');
   var wrap = document.getElementById('frameWrap');
 
@@ -104,21 +111,36 @@
 
     document.title = (inv.nama_pria_panggilan || 'Mempelai Pria') + ' & ' + (inv.nama_wanita_panggilan || 'Mempelai Wanita') + ' — Undangan Pernikahan';
 
-    frame.addEventListener('load', function onLoad(){
-      var doc = frame.contentDocument;
-      if (!doc) return;
-      try {
-        var countdownIso = window.RenderUndangan.populateSlots(doc, inv);
-        if (inv.data && inv.data.palet) window.RenderUndangan.applyPalette(doc, inv.data.palet);
-        window.RenderUndangan.terapkanKeFrame(frame.contentWindow, countdownIso);
-        window.RenderUndangan.setupRsvpForm(doc, inv, sb);
-        window.RenderUndangan.setupUcapanSection(doc, inv, sb);
-        window.RenderUndangan.setupHadiahForm(doc, inv, sb);
-      } catch (err) {
-        tampilkanHalaman('Undangan Tidak Bisa Ditampilkan', 'Terjadi kesalahan saat menampilkan undangan ini. Silakan muat ulang halaman.');
-      }
+    // Nama tamu diambil lewat RPC buka_undangan_tamu (SECURITY DEFINER),
+    // bukan lewat select biasa ke tabel guests — guests sengaja tidak
+    // punya policy SELECT publik supaya daftar tamu tidak bisa diintip
+    // orang lain. Panggilan yang sama sekaligus mencatat opened_at.
+    // Kode salah/kedaluwarsa cukup dianggap "tidak ada nama": undangannya
+    // tetap tampil, hanya tanpa sapaan personal.
+    function ambilNamaTamu(){
+      if (!kodeTamu) return Promise.resolve(null);
+      return sb.rpc('buka_undangan_tamu', { p_slug: slug, p_kode: kodeTamu })
+        .then(function(r){ return (r && !r.error && r.data) ? r.data : null; },
+              function(){ return null; });
+    }
+
+    ambilNamaTamu().then(function(namaTamu){
+      frame.addEventListener('load', function onLoad(){
+        var doc = frame.contentDocument;
+        if (!doc) return;
+        try {
+          var countdownIso = window.RenderUndangan.populateSlots(doc, inv, namaTamu);
+          if (inv.data && inv.data.palet) window.RenderUndangan.applyPalette(doc, inv.data.palet);
+          window.RenderUndangan.terapkanKeFrame(frame.contentWindow, countdownIso);
+          window.RenderUndangan.setupRsvpForm(doc, inv, sb, namaTamu);
+          window.RenderUndangan.setupUcapanSection(doc, inv, sb);
+          window.RenderUndangan.setupHadiahForm(doc, inv, sb);
+        } catch (err) {
+          tampilkanHalaman('Undangan Tidak Bisa Ditampilkan', 'Terjadi kesalahan saat menampilkan undangan ini. Silakan muat ulang halaman.');
+        }
+      });
+      frame.src = 'templates/' + template.id + '/index.html';
     });
-    frame.src = 'templates/' + template.id + '/index.html';
   }, function(){
     tampilkanHalaman('Gagal Memuat Undangan', 'Gagal terhubung ke server. Periksa koneksi internetmu lalu coba lagi.');
   });
