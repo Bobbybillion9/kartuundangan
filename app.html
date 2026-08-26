@@ -321,6 +321,27 @@
         </div>
 
         <div class="profile-block">
+          <h3>Musik Latar</h3>
+          <p>Lagu ini tidak langsung berbunyi saat undangan dibuka &mdash; tamu menyalakannya sendiri lewat tombol musik di pojok undangan. Kalau kosong, tombol itu tidak ditampilkan.</p>
+          <div class="musik-upload" data-kolom="musik_url">
+            <input type="file" class="foto-upload-input" id="input_musik_url" accept="audio/mpeg,.mp3" hidden>
+            <div class="foto-upload-zone" id="zone_musik_url" tabindex="0" role="button" aria-label="Unggah musik latar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              <span>Klik atau seret berkas lagu ke sini</span>
+              <span class="foto-upload-hint">MP3 &middot; maks 8 MB</span>
+            </div>
+            <div class="musik-upload-preview" id="preview_musik_url" hidden>
+              <audio id="audio_musik_url" controls preload="none"></audio>
+              <div class="foto-upload-actions">
+                <button type="button" class="btn btn-ghost btn-sm" data-act="ganti">Ganti</button>
+                <button type="button" class="btn btn-ghost btn-sm" data-act="hapus">Hapus</button>
+              </div>
+            </div>
+            <p class="foto-upload-status" id="status_musik_url" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="profile-block">
           <h3>Tanda Kasih</h3>
           <h4 class="ws-subhead">Rekening 1</h4>
           <div class="field-grid">

@@ -758,6 +758,144 @@
     return { tampilkan: tampilkan };
   }
 
+  // ---------------- Unggah Musik Latar ----------------
+  // Menumpang bucket FOTO_BUCKET, bukan bucket sendiri: policy bucket itu
+  // mencocokkan segmen pertama path ke auth.uid() dan tidak membatasi tipe
+  // maupun ukuran berkas, jadi audio ikut tercakup tanpa policy baru.
+  // Bucket-nya juga sudah publik — memang harus, karena tamu perlu bisa
+  // memutar lagunya langsung dari undangan.
+  var TIPE_MUSIK_VALID = ['audio/mpeg', 'audio/mp3'];
+  var UKURAN_MUSIK_MAKS = 8 * 1024 * 1024;
+
+  function validasiFileMusik(file){
+    if (!file) return 'Berkas tidak valid.';
+    // Sebagian browser mengirim type kosong untuk .mp3 (mis. saat file
+    // diseret dari aplikasi tertentu), jadi ekstensi dipakai sebagai
+    // cadangan supaya berkas yang sah tidak ikut ditolak.
+    var tipeOk = TIPE_MUSIK_VALID.indexOf(file.type) !== -1 || /\.mp3$/i.test(file.name || '');
+    if (!tipeOk) return 'Format lagu harus MP3.';
+    if (file.size > UKURAN_MUSIK_MAKS) return 'Ukuran lagu maksimal 8 MB. Coba pakai berkas yang lebih kecil.';
+    return null;
+  }
+
+  function friendlyMusikError(err){
+    var msg = ((err && err.message) || '').toLowerCase();
+    if (msg.indexOf('failed to fetch') !== -1 || msg.indexOf('network') !== -1) {
+      return 'Gagal terhubung ke server. Periksa koneksi internetmu lalu coba lagi.';
+    }
+    if (msg.indexOf('exceed') !== -1 || msg.indexOf('too large') !== -1 || msg.indexOf('maximum allowed size') !== -1) {
+      return 'Ukuran lagu maksimal 8 MB. Coba pakai berkas yang lebih kecil.';
+    }
+    return 'Gagal mengunggah lagu. Silakan coba lagi.';
+  }
+
+  async function unggahMusik(file){
+    var pesan = validasiFileMusik(file);
+    if (pesan) return { error: pesan };
+    var session = KU.getSession();
+    if (!session || !currentInvitation) return { error: 'Sesi login sudah berakhir. Silakan muat ulang halaman.' };
+    var path = session.user.id + '/' + currentInvitation.id + '/musik.mp3';
+    var pathLama = pathDariPublicUrl(currentInvitation.musik_url);
+    var up = await KU.sb.storage.from(FOTO_BUCKET).upload(path, file, { upsert: true, contentType: 'audio/mpeg' });
+    if (up.error) return { error: friendlyMusikError(up.error) };
+    var urlBaru = publicUrlFoto(path);
+    var res = await KU.sb.from('invitations').update({ musik_url: urlBaru }).eq('id', currentInvitation.id).select().single();
+    if (res.error) {
+      await KU.sb.storage.from(FOTO_BUCKET).remove([path]);
+      return { error: friendlyErrorMessage(res.error) };
+    }
+    currentInvitation = res.data;
+    // Path lagu selalu sama (musik.mp3, upsert), jadi berkas lama praktis
+    // selalu tertimpa; pembersihan ini cuma jaga-jaga kalau URL lama
+    // ternyata menunjuk ke path berbeda.
+    if (pathLama && pathLama !== path) KU.sb.storage.from(FOTO_BUCKET).remove([pathLama]).then(function(){});
+    return { data: urlBaru };
+  }
+
+  async function hapusMusik(){
+    if (!currentInvitation) return { error: 'Sesi login sudah berakhir. Silakan muat ulang halaman.' };
+    var pathLama = pathDariPublicUrl(currentInvitation.musik_url);
+    var res = await KU.sb.from('invitations').update({ musik_url: null }).eq('id', currentInvitation.id).select().single();
+    if (res.error) return { error: friendlyErrorMessage(res.error) };
+    currentInvitation = res.data;
+    if (pathLama) KU.sb.storage.from(FOTO_BUCKET).remove([pathLama]).then(function(){});
+    return { data: true };
+  }
+
+  function setupMusik(){
+    var input = document.getElementById('input_musik_url');
+    var zone = document.getElementById('zone_musik_url');
+    var preview = document.getElementById('preview_musik_url');
+    var audio = document.getElementById('audio_musik_url');
+    var statusEl = document.getElementById('status_musik_url');
+    if (!input || !zone || !preview || !audio) return { tampilkan: function(){} };
+
+    function tampilkanStatus(text, type){
+      if (!statusEl) return;
+      statusEl.textContent = text || '';
+      statusEl.className = 'foto-upload-status' + (type ? ' ' + type : '');
+    }
+
+    function tampilkan(url){
+      if (url) {
+        audio.src = url;
+        preview.hidden = false;
+        zone.hidden = true;
+      } else {
+        audio.pause();
+        audio.removeAttribute('src');
+        audio.load();
+        preview.hidden = true;
+        zone.hidden = false;
+      }
+    }
+
+    async function prosesFile(file){
+      if (!file) return;
+      zone.classList.add('disabled');
+      tampilkanStatus('Mengunggah...');
+      var hasil = await unggahMusik(file);
+      zone.classList.remove('disabled');
+      if (hasil.error) { tampilkanStatus(hasil.error, 'err'); return; }
+      tampilkan(hasil.data);
+      tampilkanStatus('Tersimpan!', 'ok');
+    }
+
+    zone.addEventListener('click', function(){ input.click(); });
+    zone.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+    });
+    zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', function(){ zone.classList.remove('dragover'); });
+    zone.addEventListener('drop', function(e){
+      e.preventDefault();
+      zone.classList.remove('dragover');
+      prosesFile(e.dataTransfer.files && e.dataTransfer.files[0]);
+    });
+    input.addEventListener('change', function(){
+      prosesFile(input.files && input.files[0]);
+      input.value = '';
+    });
+    preview.addEventListener('click', async function(e){
+      var btn = e.target.closest('button[data-act]');
+      if (!btn) return;
+      if (btn.dataset.act === 'ganti') { input.click(); return; }
+      if (btn.dataset.act === 'hapus') {
+        var ok = await KU.confirmAction({ title: 'Hapus Musik', text: 'Yakin mau menghapus musik latar undangan ini?', okText: 'Ya, Hapus' });
+        if (!ok) return;
+        tampilkanStatus('Menghapus...');
+        var hasil = await hapusMusik();
+        if (hasil.error) { tampilkanStatus(hasil.error, 'err'); return; }
+        tampilkan(null);
+        tampilkanStatus('');
+      }
+    });
+
+    return { tampilkan: tampilkan };
+  }
+
+  var musikCtrl = setupMusik();
+
   var fotoUtamaCtrl = setupFotoTunggal({
     kolom: 'foto_utama_url', slotKey: 'utama',
     inputId: 'input_foto_utama_url', zoneId: 'zone_foto_utama_url',
@@ -899,6 +1037,7 @@
     fotoUtamaCtrl.tampilkan(inv ? inv.foto_utama_url : null);
     fotoPriaCtrl.tampilkan(inv ? inv.foto_pria_url : null);
     fotoWanitaCtrl.tampilkan(inv ? inv.foto_wanita_url : null);
+    musikCtrl.tampilkan(inv ? inv.musik_url : null);
     renderGaleriGrid();
   }
 

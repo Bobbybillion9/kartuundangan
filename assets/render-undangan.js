@@ -152,7 +152,26 @@
       }
     }
 
+    // Elemen <audio> di tiap template sengaja dikirim dengan <source src="">
+    // kosong supaya pratinjau statis tidak mengunduh apa pun. Sumbernya baru
+    // diisi di sini. Disetel lewat properti .src milik <audio> — atribut src
+    // pada elemen <audio> mengalahkan <source> di dalamnya, jadi <source>
+    // kosong itu tidak perlu disentuh. Tanpa baris ini tombol musik memang
+    // muncul, tapi play() selalu gagal tanpa suara karena tidak ada sumbernya.
     var musicBtn = doc.getElementById('musicBtn');
+    var bgMusic = doc.getElementById('bgMusic');
+    if (bgMusic) {
+      if (inv.musik_url) {
+        if (bgMusic.getAttribute('src') !== inv.musik_url) bgMusic.src = inv.musik_url;
+      } else {
+        // Pratinjau memakai iframe yang sama berulang kali — kalau musiknya
+        // dihapus, sumber lama harus benar-benar dilepas supaya tidak
+        // terus terputar dari render sebelumnya.
+        bgMusic.pause();
+        bgMusic.removeAttribute('src');
+        bgMusic.load();
+      }
+    }
     if (musicBtn) musicBtn.style.display = inv.musik_url ? '' : 'none';
 
     setSlotText(doc, 'kalimat_pembuka', textOrPlaceholder(inv.kalimat_pembuka, 'Kalimat pembuka belum diisi.'));
