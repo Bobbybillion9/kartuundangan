@@ -45,5 +45,5 @@ Storage buckets:
 ## Content notes
 
 - `index.html`'s FAQ section's visible `<details>` content is duplicated in the `FAQPage` JSON-LD block in its `<head>` for SEO. If you edit FAQ questions/answers, update both places to keep them in sync.
-- WhatsApp links (`https://wa.me/62xxxxxxxxxx`) are still placeholders across the site — treat them as content to fill in, not evidence of a wired-up number.
+- WhatsApp contact links across the site point at the real business number (`https://wa.me/628136372211`). If it ever changes, it is hardcoded in 6 places in `index.html` and 1 in `app.html` — there is no central constant for it.
 - Pricing/feature copy is centralized in `assets/pricing-plans.js` (`PRICING_PLANS`) — when changing prices or features, that's the one place to edit; check for any hardcoded restatements elsewhere (hero note, FAQ answers, meta description) that might drift out of sync.
