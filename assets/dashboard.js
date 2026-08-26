@@ -1448,14 +1448,33 @@
       lihatBtn.className = 'btn btn-outline btn-sm hadiah-bukti-btn';
       lihatBtn.textContent = 'Lihat Bukti Transfer';
       lihatBtn.addEventListener('click', async function(){
+        // Tab dibuka SEKARANG, selagi klik user masih dianggap "hangat"
+        // oleh browser. Kalau menunggu createSignedUrl() selesai dulu,
+        // izin dari klik itu bisa keburu kedaluwarsa (makin mungkin di
+        // koneksi lambat) dan popup-nya diblokir.
+        //
+        // Sengaja tanpa opsi 'noopener': dengan opsi itu window.open
+        // SELALU mengembalikan null, jadi mustahil membedakan "berhasil"
+        // dari "diblokir" — dan kode lama diam saja saat diblokir,
+        // menyisakan tombol yang seolah rusak. Keamanannya digantikan
+        // opener = null di bawah, yang efeknya sama.
+        var tab = window.open('', '_blank');
+        if (tab) tab.opener = null;
+
         lihatBtn.disabled = true;
         var res = await KU.sb.storage.from(BUKTI_TRANSFER_BUCKET).createSignedUrl(row.bukti_url, 300);
         lihatBtn.disabled = false;
+
         if (res.error || !res.data) {
+          if (tab) tab.close();
           showTamuMsg('Gagal membuka bukti transfer: ' + friendlyErrorMessage(res.error), 'err');
           return;
         }
-        window.open(res.data.signedUrl, '_blank', 'noopener');
+        if (tab) {
+          tab.location.replace(res.data.signedUrl);
+        } else {
+          showTamuMsg('Bukti transfer gagal dibuka karena popup diblokir browser. Izinkan popup untuk situs ini, lalu coba lagi.', 'err');
+        }
       });
       body.appendChild(lihatBtn);
     }
@@ -1709,7 +1728,16 @@
       var el = wsForm.elements[nama];
       if (el) el.addEventListener('blur', function(){ validasiField(nama); });
     });
-    wsForm.addEventListener('input', function(){ wsFormDirty = true; });
+    wsForm.addEventListener('input', function(e){
+      // Input file (foto utama/pria/wanita, galeri, musik latar) ikut
+      // memicu 'input' saat berkas dipilih, padahal semuanya menyimpan
+      // langsung ke DB begitu selesai diunggah — di luar tombol Simpan.
+      // Tanpa pengecualian ini, mengunggah foto membuat formulir
+      // dianggap "belum disimpan", lalu user diadang peringatan
+      // kehilangan perubahan padahal tidak ada yang tertinggal.
+      if (e.target && e.target.type === 'file') return;
+      wsFormDirty = true;
+    });
   }
 
   // Dipanggil sebelum navigasi apa pun yang meninggalkan workspace
