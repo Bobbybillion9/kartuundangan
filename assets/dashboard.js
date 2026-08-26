@@ -339,7 +339,14 @@
       return 'Gagal terhubung ke server. Periksa koneksi internetmu lalu coba lagi.';
     }
     if (err.code === '23505') return 'Data ini sudah dipakai. Silakan pakai nilai lain.';
-    if (err.code === '23514') return 'Ada data yang tidak sesuai format. Periksa kembali isian kamu.';
+    // Gerbang pembayaran di database (trigger jaga_aktivasi_berbayar) juga
+    // memakai kode 23514. Pesannya sudah ditulis ramah dan spesifik di sisi
+    // database, jadi diteruskan apa adanya alih-alih ditimpa pesan umum
+    // "format tidak sesuai" yang justru membingungkan.
+    if (err.code === '23514') {
+      if (msg.indexOf('belum dibayar') !== -1) return err.message;
+      return 'Ada data yang tidak sesuai format. Periksa kembali isian kamu.';
+    }
     return 'Gagal menyimpan data. Silakan coba lagi beberapa saat lagi.';
   }
 
@@ -1191,10 +1198,123 @@
       statusBadge.textContent = isAktif ? 'Aktif' : 'Draf';
       statusBadge.classList.toggle('badge-aktif', isAktif);
     }
-    if (activateBtn) activateBtn.style.display = isAktif ? 'none' : 'inline-flex';
     if (deactivateBtn) deactivateBtn.style.display = isAktif ? 'inline-flex' : 'none';
+    // Tombol aktifkan/bayar diputuskan terpisah karena bergantung status
+    // pembayaran, yang perlu ditanya ke server dulu.
+    if (activateBtn) activateBtn.style.display = isAktif ? 'none' : 'inline-flex';
+    if (!isAktif) segarkanStatusBayar();
 
     renderBagikanShare(currentInvitation);
+  }
+
+  // ---------------- Pembayaran (Midtrans Snap) ----------------
+  var bayarBtn = document.getElementById('bayarBtn');
+  var bayarNota = document.getElementById('bayarNota');
+  var sudahDibayar = false;
+
+  function tampilkanNota(teks){
+    if (!bayarNota) return;
+    bayarNota.textContent = teks || '';
+    bayarNota.style.display = teks ? '' : 'none';
+  }
+
+  // Menentukan tombol mana yang tampil untuk undangan berstatus draf.
+  // Sumber kebenarannya fungsi database undangan_sudah_dibayar(), sama
+  // dengan yang dipakai trigger penjaga — supaya tombol tidak pernah
+  // menjanjikan sesuatu yang akan ditolak database.
+  async function segarkanStatusBayar(){
+    if (!currentInvitation || !activateBtn || !bayarBtn) return;
+    activateBtn.style.display = 'none';
+    bayarBtn.style.display = 'none';
+    tampilkanNota('Memeriksa status pembayaran...');
+
+    var res = await KU.sb.rpc('undangan_sudah_dibayar', { p_invitation_id: currentInvitation.id });
+    sudahDibayar = !res.error && res.data === true;
+
+    if (sudahDibayar) {
+      activateBtn.style.display = 'inline-flex';
+      tampilkanNota('Pembayaran sudah lunas. Undangan siap diaktifkan.');
+    } else {
+      bayarBtn.style.display = 'inline-flex';
+      tampilkanNota('Undangan bisa dibuat dan dilihat gratis. Pembayaran Rp' +
+        window.formatRupiah(49000) + ' sekali bayar hanya diperlukan saat mengaktifkannya untuk tamu.');
+    }
+  }
+
+  function muatSnapSekali(){
+    // Skrip Snap dimuat saat dibutuhkan, bukan di setiap kunjungan
+    // dashboard: mayoritas sesi tidak pernah menyentuh pembayaran.
+    if (window.snap) return Promise.resolve(true);
+    return new Promise(function(resolve){
+      var s = document.createElement('script');
+      s.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+      s.setAttribute('data-client-key', window.KU_MIDTRANS_CLIENT_KEY || '');
+      s.onload = function(){ resolve(!!window.snap); };
+      s.onerror = function(){ resolve(false); };
+      document.head.appendChild(s);
+    });
+  }
+
+  if (bayarBtn) {
+    bayarBtn.addEventListener('click', async function(){
+      if (!currentInvitation) return;
+
+      // Kelengkapan data diperiksa SEBELUM menagih. Membiarkan orang
+      // membayar lalu baru diberi tahu datanya kurang adalah urutan yang
+      // paling menyebalkan dari sisi pengguna.
+      var missing = getMissingRequiredFields(currentInvitation);
+      if (missing.length) {
+        renderActivateChecklist(missing);
+        showStatusMsg('Lengkapi dulu data yang kurang di tab Isi Data sebelum membayar.', 'err');
+        return;
+      }
+      renderActivateChecklist([]);
+
+      bayarBtn.disabled = true;
+      showStatusMsg('Menyiapkan pembayaran...');
+
+      var sesi = KU.getSession();
+      if (!sesi) { bayarBtn.disabled = false; showStatusMsg('Sesi login sudah berakhir. Muat ulang halaman.', 'err'); return; }
+
+      var hasil;
+      try {
+        var r = await fetch('/api/bayar/buat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + sesi.access_token },
+          body: JSON.stringify({ invitation_id: currentInvitation.id, tier: 'standar' })
+        });
+        hasil = await r.json();
+        if (!r.ok) throw new Error(hasil && hasil.pesan ? hasil.pesan : 'Gagal menyiapkan pembayaran.');
+      } catch (e) {
+        bayarBtn.disabled = false;
+        showStatusMsg(e.message || 'Gagal menyiapkan pembayaran.', 'err');
+        return;
+      }
+
+      var siap = await muatSnapSekali();
+      bayarBtn.disabled = false;
+      if (!siap || !window.snap) {
+        showStatusMsg('Gagal memuat halaman pembayaran. Periksa koneksi internetmu lalu coba lagi.', 'err');
+        return;
+      }
+
+      showStatusMsg('');
+      window.snap.pay(hasil.token, {
+        onSuccess: function(){ selesaiBayar('Pembayaran berhasil! Sekarang undanganmu bisa diaktifkan.'); },
+        // Transfer bank/VA sering baru lunas beberapa menit kemudian, dan
+        // yang menandai lunas adalah webhook, bukan callback ini.
+        onPending: function(){ selesaiBayar('Pembayaran sedang diproses. Halaman ini akan memperbarui sendiri begitu dana masuk.'); },
+        onError: function(){ showStatusMsg('Pembayaran gagal. Silakan coba lagi.', 'err'); },
+        onClose: function(){ showStatusMsg('Pembayaran dibatalkan. Kamu bisa mencobanya lagi kapan saja.'); }
+      });
+    });
+  }
+
+  async function selesaiBayar(pesan){
+    showStatusMsg(pesan, 'ok');
+    // Jeda singkat memberi webhook waktu tiba sebelum kita bertanya.
+    await new Promise(function(r){ setTimeout(r, 2500); });
+    await segarkanStatusBayar();
   }
 
   if (slugSaveBtn) {
