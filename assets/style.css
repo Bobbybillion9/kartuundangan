@@ -4,7 +4,15 @@
   }
   html[data-theme="light"]{
     --paper:#FAF8F4; --paper-2:#F1ECE3; --card:#FFFFFF;
-    --ink:#2B2822; --ink-mid:#5C574C; --ink-soft:#8A8375;
+    /* --ink-soft dulu #8A8375, tapi itu cuma 3.55:1 di atas --paper —
+       di bawah ambang WCAG AA 4.5:1 untuk teks ukuran biasa, padahal
+       token ini dipakai untuk keterangan yang memang dibaca (catatan
+       hero, label statistik, deskripsi paket & tema). Digelapkan ke
+       nilai yang lolos di ketiga permukaan terang: 5.22 di --paper,
+       4.70 di --paper-2, 5.54 di --card, dan tetap lebih terang dari
+       --ink-mid sehingga hierarkinya utuh. Versi gelapnya sudah lolos,
+       jadi tidak diubah. */
+    --ink:#2B2822; --ink-mid:#5C574C; --ink-soft:#6F6857;
     --accent:#A9754C; --accent-dark:#845B39; --accent-tint:#F1E4D6;
     --line:#E6DFD1; --line-soft:#F0EAE0;
     --shadow:0 20px 44px -18px rgba(43,40,34,0.20);
