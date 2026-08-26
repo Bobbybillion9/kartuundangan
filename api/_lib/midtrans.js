@@ -17,14 +17,21 @@ function serverKey() {
   return k;
 }
 
-// Lingkungan DITURUNKAN dari kuncinya sendiri, bukan dari saklar terpisah.
-// Midtrans memberi awalan "SB-" untuk seluruh kunci Sandbox dan tanpa
-// awalan untuk Production. Menurunkannya dari kunci berarti keduanya
-// mustahil tidak sinkron: memakai kunci Sandbox tapi menembak server
-// Production (atau sebaliknya) selalu berujung 401 yang membingungkan,
-// dan itu persis jenis salah setel yang paling mahal di alur pembayaran.
+// Lingkungan ditentukan EKSPLISIT lewat MIDTRANS_PRODUCTION, dengan
+// sandbox sebagai bawaan.
+//
+// Sempat dicoba menurunkannya dari awalan kunci ("SB-" = sandbox) supaya
+// tidak ada variabel yang bisa salah setel. Itu KELIRU: dasbor Sandbox
+// Midtrans (dashboard.sandbox.midtrans.com) sekarang mengeluarkan kunci
+// TANPA awalan SB- — dipastikan langsung dari halaman Access Key sebuah
+// akun Sandbox sungguhan. Dokumentasi yang menyebut awalan SB- sudah
+// usang. Menebak lingkungan dari bentuk kunci berarti mengirim transaksi
+// sandbox ke server produksi, dan itu justru kesalahan yang paling mahal.
+//
+// Bawaannya sandbox: kalau variabel ini lupa diisi, yang terjadi paling
+// buruk adalah transaksi uji, bukan tagihan sungguhan ke orang.
 function produksi() {
-  return !/^SB-/i.test(serverKey());
+  return String(process.env.MIDTRANS_PRODUCTION || '').toLowerCase() === 'true';
 }
 
 function baseSnap() {

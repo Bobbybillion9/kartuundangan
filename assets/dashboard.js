@@ -1261,15 +1261,16 @@
     if (window.snap) return Promise.resolve(true);
     var clientKey = window.KU_MIDTRANS_CLIENT_KEY || '';
     if (!clientKey) return Promise.resolve(false);
-    // Alamat skrip Snap harus sesuai lingkungan kuncinya. Sama seperti di
-    // sisi server, lingkungan diturunkan dari awalan kunci ("SB-" =
-    // Sandbox) supaya keduanya mustahil tidak sinkron.
-    var sandbox = /^SB-/i.test(clientKey);
+    // Lingkungan ditentukan eksplisit, TIDAK ditebak dari bentuk kunci:
+    // dasbor Sandbox Midtrans mengeluarkan kunci tanpa awalan SB-, jadi
+    // bentuk kunci sandbox dan produksi tidak bisa dibedakan. Lihat
+    // catatan lengkapnya di api/_lib/midtrans.js.
+    var produksi = window.KU_MIDTRANS_PRODUCTION === true;
     return new Promise(function(resolve){
       var s = document.createElement('script');
-      s.src = sandbox
-        ? 'https://app.sandbox.midtrans.com/snap/snap.js'
-        : 'https://app.midtrans.com/snap/snap.js';
+      s.src = produksi
+        ? 'https://app.midtrans.com/snap/snap.js'
+        : 'https://app.sandbox.midtrans.com/snap/snap.js';
       s.setAttribute('data-client-key', clientKey);
       s.onload = function(){ resolve(!!window.snap); };
       s.onerror = function(){ resolve(false); };

@@ -21,12 +21,13 @@
   // membuat transaksi. Yang rahasia adalah Server Key, dan itu hanya hidup
   // sebagai environment variable di Vercel.
   //
-  // Awalan menentukan lingkungan: "SB-Mid-client-" = Sandbox (uang uji),
-  // "Mid-client-" = Production (uang sungguhan). assets/dashboard.js
-  // memilih alamat skrip Snap dari awalan ini, jadi cukup ganti nilai di
-  // bawah untuk berpindah lingkungan — tidak ada tempat lain yang perlu
-  // disentuh.
+  // Lingkungan TIDAK bisa ditebak dari bentuk kunci: dasbor Sandbox
+  // Midtrans mengeluarkan kunci tanpa awalan "SB-", persis seperti kunci
+  // produksi. Karena itu lingkungan ditulis eksplisit di bawah, dan harus
+  // diubah bersamaan dengan MIDTRANS_PRODUCTION di environment Vercel —
+  // keduanya menunjuk lingkungan yang sama.
   window.KU_MIDTRANS_CLIENT_KEY = 'Mid-client-jNS0ZcCEkSPXY_G8';
+  window.KU_MIDTRANS_PRODUCTION = false;
 </script>
 </head>
 <body class="app-shell">
