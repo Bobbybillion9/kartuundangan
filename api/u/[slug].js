@@ -28,6 +28,13 @@ const path = require('path');
 const SUPABASE_URL = 'https://ebjwjnxunedjftgzzbch.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_qUFa64f8yhx_3dYYwaP3Aw_kHD6JvuA';
 
+// Gambar cadangan untuk pratinjau link. Dipakai kalau pasangan belum
+// mengunggah foto utama — tanpa ini, tautan yang mereka sebar ke
+// WhatsApp muncul sebagai kartu polos tanpa gambar sama sekali, yang
+// terbaca seperti link rusak justru di saat tamu memutuskan mau
+// membukanya atau tidak.
+const OG_IMAGE_CADANGAN = 'https://kartuundangan.link/assets/og-image.jpg';
+
 // Daftar bot pratinjau link yang diketahui TIDAK menjalankan JavaScript
 // saat mengambil tautan (dicocokkan sebagai substring User-Agent, huruf
 // kecil). Googlebot sengaja tidak dimasukkan karena Googlebot modern
@@ -99,7 +106,7 @@ module.exports = async function handler(req, res) {
       res.status(200).send(metaShell({
         title: 'Undangan Tidak Ditemukan — Kartu Undangan',
         description: 'Alamat undangan ini tidak valid atau sudah tidak tersedia.',
-        image: null,
+        image: OG_IMAGE_CADANGAN,
         url: publicUrl
       }));
       return;
@@ -114,7 +121,7 @@ module.exports = async function handler(req, res) {
     res.status(200).send(metaShell({
       title: namaPria + ' & ' + namaWanita + ' — Undangan Pernikahan',
       description: deskripsi,
-      image: inv.foto_utama_url || null,
+      image: inv.foto_utama_url || OG_IMAGE_CADANGAN,
       url: publicUrl
     }));
   } catch (err) {
@@ -122,7 +129,7 @@ module.exports = async function handler(req, res) {
     res.status(200).send(metaShell({
       title: 'Kartu Undangan',
       description: 'Undangan pernikahan digital.',
-      image: null,
+      image: OG_IMAGE_CADANGAN,
       url: publicUrl
     }));
   }
