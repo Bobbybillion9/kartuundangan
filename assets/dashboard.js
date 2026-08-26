@@ -1208,6 +1208,18 @@
   }
 
   // ---------------- Pembayaran (Midtrans Snap) ----------------
+  // Harga paket yang bisa dibeli, dari katalog assets/pricing-plans.js.
+  // Ini hanya untuk DITAMPILKAN — nominal yang benar-benar ditagih
+  // ditentukan ulang di server (api/_lib/harga.js) dan tidak pernah
+  // diambil dari browser.
+  function hargaPaketStandar(){
+    var daftar = (window.PRICING_PLANS && window.PRICING_PLANS.satuan) || [];
+    for (var i = 0; i < daftar.length; i++) {
+      if (daftar[i].tersedia) return daftar[i].harga;
+    }
+    return 0;
+  }
+
   var bayarBtn = document.getElementById('bayarBtn');
   var bayarNota = document.getElementById('bayarNota');
   var sudahDibayar = false;
@@ -1250,8 +1262,12 @@
       tampilkanNota('Pembayaran sudah lunas. Undangan siap diaktifkan.');
     } else {
       bayarBtn.style.display = 'inline-flex';
+      // Harga dibaca dari katalog PRICING_PLANS, tidak ditulis ulang di
+      // sini. Angka yang di-hardcode akan diam-diam berbeda dari tab Harga
+      // begitu harganya berubah — dan yang membacanya adalah orang yang
+      // sedang memutuskan mau membayar atau tidak.
       tampilkanNota('Undangan bisa dibuat dan dilihat gratis. Pembayaran Rp' +
-        window.formatRupiah(49000) + ' sekali bayar hanya diperlukan saat mengaktifkannya untuk tamu.');
+        window.formatRupiah(hargaPaketStandar()) + ' sekali bayar hanya diperlukan saat mengaktifkannya untuk tamu.');
     }
   }
 

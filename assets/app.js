@@ -417,6 +417,17 @@
   // begitu berhasil masuk (lihat listener 'ku:session' di bawah).
   var PENDING_RETURN_KEY = 'ku-pending-return';
 
+  // Harga paket yang benar-benar bisa dibeli, diambil dari katalog
+  // assets/pricing-plans.js. Dipakai kartu tema supaya angkanya tidak
+  // pernah berbeda dari section Harga di halaman yang sama.
+  function hargaPaketStandar(){
+    var daftar = (window.PRICING_PLANS && window.PRICING_PLANS.satuan) || [];
+    for (var i = 0; i < daftar.length; i++) {
+      if (daftar[i].tersedia) return daftar[i].harga;
+    }
+    return 0;
+  }
+
   function renderLandingThemeCard(t){
     var card = document.createElement('article');
     card.className = 'tpl-card';
@@ -440,7 +451,11 @@
     name.textContent = t.name;
     var price = document.createElement('span');
     price.className = 'price';
-    price.textContent = 'Rp49.000';
+    // Dibaca dari katalog, bukan ditulis ulang: harga yang di-hardcode di
+    // sini pernah membuat kartu tema menampilkan angka lama setelah harga
+    // di PRICING_PLANS diubah, dan bedanya baru ketahuan saat pelanggan
+    // sudah melihat dua angka berbeda di satu halaman.
+    price.textContent = 'Rp' + window.formatRupiah(hargaPaketStandar());
     row.append(name, price);
 
     var desc = document.createElement('p');
