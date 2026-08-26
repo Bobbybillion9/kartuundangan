@@ -92,11 +92,18 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const fields = 'nama_pria_panggilan,nama_wanita_panggilan,tanggal_akad,tanggal_resepsi,lokasi_nama,foto_utama_url';
-    const apiUrl = SUPABASE_URL + '/rest/v1/invitations?slug=eq.' + encodeURIComponent(slug || '') +
-      '&status=eq.aktif&select=' + fields;
-    const r = await fetch(apiUrl, {
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }
+    // Lewat RPC, bukan select langsung: tabel invitations tidak lagi punya
+    // policy SELECT publik, karena policy semacam itu memungkinkan siapa
+    // pun menarik seluruh undangan aktif sekaligus tanpa tahu slug-nya
+    // (lihat komentar di undangan.html dan migrasi terkait).
+    const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/ambil_undangan_publik', {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: 'Bearer ' + SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ p_slug: slug || '' })
     });
     const rows = await r.json();
     const inv = Array.isArray(rows) ? rows[0] : null;

@@ -108,10 +108,18 @@
     });
   }
 
-  sb.from('invitations').select('*').eq('slug', slug).eq('status', 'aktif').single().then(function(res){
-    if (res.error || !res.data) { tampilkanTidakDitemukanAtauDraft(); return; }
+  // Diambil lewat RPC ambil_undangan_publik, BUKAN select langsung ke
+  // tabel. Tabel invitations sengaja tidak lagi punya policy SELECT publik:
+  // policy semacam itu (using status='aktif') tidak bisa mensyaratkan
+  // permintaannya difilter slug, sehingga siapa pun tanpa login bisa
+  // menarik seluruh undangan aktif sekaligus — termasuk nomor rekening
+  // tiap pasangan. Fungsi ini hanya menerima satu slug dan hanya
+  // mengembalikan satu baris.
+  sb.rpc('ambil_undangan_publik', { p_slug: slug }).then(function(res){
+    var baris = res && !res.error && Array.isArray(res.data) ? res.data[0] : null;
+    if (!baris) { tampilkanTidakDitemukanAtauDraft(); return; }
 
-    var inv = res.data;
+    var inv = baris;
     var template = cariTemplateMeta(inv);
     if (!template) {
       tampilkanHalaman('Undangan Tidak Bisa Ditampilkan', 'Tema undangan ini tidak dikenali. Silakan hubungi pasangan yang mengundangmu.');
