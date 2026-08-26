@@ -1,67 +1,93 @@
 (function(){
+  // Halaman depan sekarang selalu memakai tema terang sebagai bawaan.
+  // Preferensi gelap milik sistem operasi SENGAJA tidak lagi diikuti di
+  // sini: tema adalah pengaturan akun (Profil > Tema Tampilan di app.html),
+  // bukan sesuatu yang diputuskan diam-diam oleh perangkat. Pilihan yang
+  // pernah disimpan user tetap dihormati supaya tampilannya tidak berubah
+  // sendiri saat ia berpindah antara dashboard dan halaman depan.
+  try {
+    var saved = localStorage.getItem('ku-theme');
+    document.documentElement.setAttribute('data-theme', saved === 'dark' ? 'dark' : 'light');
+  } catch(e){
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+
+  // Tombol tema sudah dicabut dari header halaman depan dan pindah ke
+  // Profil di dashboard. Blok ini dibiarkan tapi dijaga null, supaya
+  // halaman lama yang masih memuatnya tetap berfungsi.
   var themeBtn = document.getElementById('themeBtn');
   var sun = document.getElementById('iconSun');
   var moon = document.getElementById('iconMoon');
-  try {
-    var saved = localStorage.getItem('ku-theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
-    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.setAttribute('data-theme','dark');
-    }
-  } catch(e){}
-  function syncIcon(){
-    var t = document.documentElement.getAttribute('data-theme');
-    sun.style.display = t === 'dark' ? 'none' : 'block';
-    moon.style.display = t === 'dark' ? 'block' : 'none';
-  }
-  syncIcon();
-  themeBtn.addEventListener('click', function(){
-    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('ku-theme', next); } catch(e){}
+  if (themeBtn && sun && moon) {
+    var syncIcon = function(){
+      var t = document.documentElement.getAttribute('data-theme');
+      sun.style.display = t === 'dark' ? 'none' : 'block';
+      moon.style.display = t === 'dark' ? 'block' : 'none';
+    };
     syncIcon();
-  });
+    themeBtn.addEventListener('click', function(){
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('ku-theme', next); } catch(e){}
+      syncIcon();
+    });
+  }
 
   var drawer = document.getElementById('drawer');
-  document.getElementById('burgerBtn').addEventListener('click', function(){
-    drawer.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  });
+  var burger = document.getElementById('burgerBtn');
+  var closeDrawerBtn = document.getElementById('closeDrawer');
   function closeIt(){
+    if (!drawer) return;
     drawer.classList.remove('open');
     document.body.style.overflow = '';
   }
-  document.getElementById('closeDrawer').addEventListener('click', closeIt);
-  Array.prototype.forEach.call(drawer.querySelectorAll('a'), function(a){
-    a.addEventListener('click', closeIt);
-  });
+  if (drawer && burger) {
+    burger.addEventListener('click', function(){
+      drawer.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+    if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeIt);
+    Array.prototype.forEach.call(drawer.querySelectorAll('a'), function(a){
+      a.addEventListener('click', closeIt);
+    });
+  }
 
   var sw = document.getElementById('planSwitch');
   var satuan = document.getElementById('planSatuan');
   var subs = document.getElementById('planSubs');
   var lblS = document.getElementById('lblSatuan');
   var lblB = document.getElementById('lblSubs');
-  sw.addEventListener('click', function(){
-    var on = sw.classList.toggle('on');
-    satuan.style.display = on ? 'none' : 'block';
-    subs.style.display = on ? 'block' : 'none';
-    lblS.classList.toggle('active', !on);
-    lblB.classList.toggle('active', on);
-  });
+  if (sw && satuan && subs) {
+    sw.addEventListener('click', function(){
+      var on = sw.classList.toggle('on');
+      satuan.style.display = on ? 'none' : 'block';
+      subs.style.display = on ? 'block' : 'none';
+      if (lblS) lblS.classList.toggle('active', !on);
+      if (lblB) lblB.classList.toggle('active', on);
+    });
+  }
 
-  var hero = document.querySelector('.hero');
+  // Hero-nya bisa berupa hero lama (.hero) atau hero koridor yang baru,
+  // jadi dicari lewat keduanya. Tanpa ini, halaman dengan hero baru
+  // melempar error di setiap kejadian scroll.
+  var hero = document.querySelector('.hero, .hero-koridor');
   var sticky = document.getElementById('stickyCta');
-  window.addEventListener('scroll', function(){
-    var b = hero.getBoundingClientRect().bottom;
-    if (b < 0 && window.innerWidth <= 960) sticky.classList.add('show');
-    else sticky.classList.remove('show');
-  }, {passive:true});
+  if (hero && sticky) {
+    window.addEventListener('scroll', function(){
+      var b = hero.getBoundingClientRect().bottom;
+      if (b < 0 && window.innerWidth <= 960) sticky.classList.add('show');
+      else sticky.classList.remove('show');
+    }, {passive:true});
+  }
 
   var track = document.getElementById('sliderTrack');
   var viewport = document.querySelector('.slider-viewport');
   var dotsWrap = document.getElementById('sliderDots');
   var prevBtn = document.getElementById('sliderPrev');
   var nextBtn = document.getElementById('sliderNext');
+  // Hero koridor tidak memakai slider sama sekali. Tanpa penjagaan ini,
+  // seluruh sisa berkas berhenti dieksekusi di halaman yang tidak punya.
+  if (!track || !viewport || !dotsWrap) return;
   var slides = Array.prototype.slice.call(track.children);
   var slideCount = slides.length;
   var activeSlide = 0;

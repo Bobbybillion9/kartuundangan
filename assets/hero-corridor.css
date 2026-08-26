@@ -124,21 +124,59 @@ html[data-theme="dark"] .koridor-kartu::after{box-shadow:inset 0 0 0 1px rgba(24
 .hero-koridor:not(.koridor-siap) .koridor-panggung{display:none;}
 
 @media (max-width:720px){
-  .hero-koridor{min-height:78vh;padding:var(--s5) var(--s2) var(--s4);gap:var(--s2);}
-  .koridor-trust{gap:var(--s2) var(--s3);}
-  .koridor-trust .n{font-size:17px;}
-
-  /* Di layar sempit tidak ada cukup tinggi untuk memberi koridor pita
-     bersihnya sendiri — teks dan kartu pasti bertumpuk, dan tombol jadi
-     tidak terbaca. Jadi di sini koridor sengaja mundur jadi latar redup:
-     satu lapis kertas semi-transparan di atas seluruh panggung.
-     Diterapkan sebagai overlay terpisah, BUKAN opacity pada .koridor-lapis,
-     karena opacity membuat stacking context baru yang meratakan
-     preserve-3d dan merusak kedalaman koridornya. */
-  .hero-koridor::after{
-    content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:var(--paper);opacity:.62;
+  /* Di HP, koridor BERHENTI jadi latar di belakang teks dan diberi pita
+     sendiri. Menumpuknya seperti di desktop tidak pernah bisa rapi di sini:
+     tinggi layarnya tidak cukup untuk menyediakan jalur bersih, sehingga
+     judul, tombol, dan kartu selalu berebut ruang yang sama.
+     Urutannya jadi: judul -> pita kartu -> ajakan & angka penopang. */
+  /* Anggaran ruang di layar 390x844 ketat: header, judul, pita, dan tombol
+     harus muat sebelum lipatan. Jarak & ukuran di bawah dipilih supaya
+     ajakan utama masih terlihat tanpa menggulir. */
+  .hero-koridor{
+    min-height:auto;
+    padding:var(--s4) var(--s2) var(--s4);
+    gap:var(--s3);
+    justify-content:flex-start;
   }
+  /* Kabut & wash tidak dipakai lagi: tidak ada lagi teks yang perlu
+     dilindungi dari kartu. */
+  .hero-koridor::before,.hero-koridor::after{display:none;}
+
+  .koridor-atas{order:1;}
+  .koridor-panggung{
+    order:2;
+    position:relative;
+    inset:auto;
+    /* Wajib: hero memakai align-items:center, dan seluruh isi panggung
+       diposisikan absolut. Tanpa stretch, lebarnya menyusut ke nol karena
+       tidak ada konten alir yang menahannya, dan pitanya hilang sama sekali. */
+    align-self:stretch;
+    /* Menembus padding hero supaya pitanya menyentuh kedua tepi layar —
+       kartu terluar terpotong tepi, bukan berhenti di tengah jalan. */
+    margin-inline:calc(var(--s2) * -1);
+    height:min(46vw,176px);
+    /* Ujung kiri-kanan dilarutkan supaya pita terasa mengalir keluar
+       bingkai, bukan terputus rata. */
+    -webkit-mask-image:linear-gradient(to right,transparent 0,#000 13%,#000 87%,transparent 100%);
+    mask-image:linear-gradient(to right,transparent 0,#000 13%,#000 87%,transparent 100%);
+  }
+  .koridor-bawah{order:3;gap:var(--s3);}
+
+  .koridor-atas .eyebrow{margin-bottom:10px;font-size:10.5px;}
+  .koridor-atas h1{font-size:clamp(24px,6.4vw,30px);line-height:1.2;}
+  .koridor-lead{font-size:14.5px;max-width:34ch;}
+  /* Tombol jadi selebar layar dan bertumpuk: di HP, dua tombol berdampingan
+     menyisakan target sentuh yang sempit dan teksnya ikut terpotong. */
+  .koridor-aksi{width:100%;flex-direction:column;gap:10px;}
+  .koridor-aksi .btn{width:100%;}
+
+  /* Tiga kolom tetap, bukan flex yang membungkus jadi 2+1 timpang. */
+  .koridor-trust{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:var(--s2) 10px;margin-top:var(--s1);
+  }
+  .koridor-trust .n{font-size:15.5px;}
+  .koridor-trust .l{font-size:11px;line-height:1.35;}
 }
 
 @media (prefers-reduced-motion:reduce){
