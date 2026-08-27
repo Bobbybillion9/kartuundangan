@@ -45,6 +45,46 @@ function authHeader() {
   return 'Basic ' + Buffer.from(serverKey() + ':').toString('base64');
 }
 
+// Kanal pembayaran yang boleh muncul di popup Snap, BERURUTAN — Snap
+// menampilkannya persis dalam urutan daftar ini, jadi yang paling murah
+// buat kita ditaruh paling atas.
+//
+// Kenapa dibatasi, bukan dibiarkan menampilkan semuanya:
+//
+// 1. Biaya. Harga jual satu undangan Rp49.000, dan sebagian kanal
+//    memotong nominal TETAP, bukan persentase — di harga segini itu
+//    menggigit paling dalam:
+//      QRIS       ±0,7%              -> sisa ±Rp48.650
+//      e-wallet   ±2%                -> sisa ±Rp48.000
+//      VA/transfer ±Rp4.000 flat     -> sisa ±Rp45.000
+//      kartu      ±2,9% + Rp2.000    -> sisa ±Rp45.600   (dimatikan)
+//      minimarket ±Rp5.000 flat      -> sisa ±Rp44.000   (dimatikan)
+//    Angka di atas kisaran; yang mengikat tetap halaman Pricing Midtrans.
+// 2. Paylater (akulaku/kredivo) tidak masuk akal untuk barang Rp49.000.
+// 3. Makin panjang daftar pilihan, makin banyak orang berhenti di layar
+//    pembayaran tanpa memilih apa pun.
+//
+// Kode kanalnya ditentukan Midtrans dan TIDAK boleh ditebak — 'qris'
+// (nama yang dipakai Core API) bukan nilai yang sah di sini, yang benar
+// 'other_qris'. Salah satu huruf saja membuat kanalnya diam-diam tidak
+// muncul. Daftar resminya: docs.midtrans.com -> Request Body JSON
+// Parameter -> enabled_payments.
+//
+// 'bank_transfer' adalah alias yang mencakup seluruh VA bank sekaligus,
+// jadi kalau nanti ada bank baru diaktifkan di dasbor Midtrans, ia ikut
+// tanpa perlu mengubah berkas ini. 'echannel' (Mandiri Bill Payment)
+// jenisnya terpisah dari alias itu, jadi harus disebut sendiri.
+//
+// Mau menambah OVO/DANA? Keduanya sah ('ovo', 'dana') tapi baru muncul
+// kalau kanalnya memang sudah diaktifkan di akun Midtrans.
+const KANAL_AKTIF = [
+  'other_qris',   // QRIS — bisa dipindai SEMUA e-wallet & m-banking
+  'gopay',
+  'shopeepay',
+  'bank_transfer', // seluruh VA bank (BCA, BNI, BRI, Permata, CIMB, dll)
+  'echannel'       // Mandiri Bill Payment
+];
+
 /**
  * Minta Snap token untuk satu transaksi.
  * Nominal dan order_id WAJIB sudah ditentukan pemanggil di sisi server.
@@ -61,6 +101,11 @@ async function buatSnapToken({ orderId, amount, item, pelanggan }) {
       transaction_details: { order_id: orderId, gross_amount: amount },
       item_details: [{ id: item.id, price: amount, quantity: 1, name: item.nama }],
       customer_details: pelanggan,
+      // Batasi kanal yang ditampilkan — lihat KANAL_AKTIF di atas untuk
+      // alasannya. Ditentukan di sini, bukan lewat Snap Preferences di
+      // dasbor Midtrans, supaya pilihannya ikut terbaca di kode dan tidak
+      // diam-diam berubah kalau ada yang mengutak-atik setelan dasbor.
+      enabled_payments: KANAL_AKTIF,
       // Kedaluwarsa supaya order menggantung tidak menumpuk selamanya.
       expiry: { unit: 'hours', duration: 24 }
     })
