@@ -8,6 +8,11 @@
 
 const crypto = require('crypto');
 
+// Umur satu tagihan Snap. Dipakai DUA kali: dikirim ke Midtrans sebagai
+// expiry, dan dipakai api/bayar/buat.js menghitung kolom expired_at.
+// Satu tempat saja supaya keduanya tidak pernah berbeda.
+const JAM_KEDALUWARSA = 24;
+
 // MIDTRANS_SERVER_KEY adalah RAHASIA. Hanya boleh hidup sebagai environment
 // variable di Vercel, tidak pernah di berkas yang terkirim ke browser dan
 // tidak pernah masuk git.
@@ -38,6 +43,13 @@ function baseSnap() {
   return produksi()
     ? 'https://app.midtrans.com/snap/v1/transactions'
     : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+}
+
+// Core API — beda host dari Snap. Dipakai untuk membatalkan tagihan.
+function baseCore() {
+  return produksi()
+    ? 'https://api.midtrans.com/v2'
+    : 'https://api.sandbox.midtrans.com/v2';
 }
 
 function authHeader() {
@@ -107,7 +119,11 @@ async function buatSnapToken({ orderId, amount, item, pelanggan }) {
       // diam-diam berubah kalau ada yang mengutak-atik setelan dasbor.
       enabled_payments: KANAL_AKTIF,
       // Kedaluwarsa supaya order menggantung tidak menumpuk selamanya.
-      expiry: { unit: 'hours', duration: 24 }
+      // Angkanya diekspor sebagai JAM_KEDALUWARSA supaya api/bayar/buat.js
+      // menghitung expired_at dengan angka yang SAMA — kalau keduanya
+      // berbeda, akan ada tagihan yang menurut database masih hidup tapi
+      // sudah ditolak Midtrans, atau sebaliknya.
+      expiry: { unit: 'hours', duration: JAM_KEDALUWARSA }
     })
   });
 
@@ -117,7 +133,10 @@ async function buatSnapToken({ orderId, amount, item, pelanggan }) {
                    data.status_message || ('HTTP ' + res.status);
     throw new Error('Midtrans menolak permintaan: ' + detail);
   }
-  return data.token;
+  // redirect_url ikut dikembalikan, bukan cuma token: itu halaman
+  // pembayaran versi tab penuh, dan jadi satu-satunya jalan masuk kalau
+  // skrip popup Snap gagal dimuat (pemblokir iklan, koneksi buruk).
+  return { token: data.token, redirectUrl: data.redirect_url || null };
 }
 
 /**
@@ -166,4 +185,40 @@ function statusInternal(body) {
   return 'pending';
 }
 
-module.exports = { buatSnapToken, tandaTanganSah, statusInternal, produksi };
+/**
+ * Batalkan satu tagihan yang belum dibayar.
+ *
+ * Dipakai setelah sebuah undangan LUNAS: tagihan lain yang masih
+ * menggantung untuk undangan yang sama harus dimatikan, bukan dibiarkan.
+ * Nomor Virtual Account dan QR yang sudah terlanjur terbit tetap bisa
+ * dibayar sampai 24 jam ke depan — dan kalau ada yang membayarnya, itu
+ * pembayaran KEDUA untuk satu undangan yang sama. Uang masuk, tidak ada
+ * yang didapat.
+ *
+ * Midtrans hanya punya endpoint 'cancel' (tidak ada 'expire' terpisah),
+ * dan ia memang berlaku untuk transaksi pending yang belum kedaluwarsa —
+ * termasuk transfer bank dan QRIS.
+ *
+ * Sengaja tidak melempar error: ini pembersihan, bukan jalur utama.
+ * Kegagalan membatalkan tidak boleh membuat webhook membalas gagal lalu
+ * membuat Midtrans mengirim ulang notifikasi pembayaran yang sudah sah.
+ */
+async function batalkanTagihan(orderId) {
+  try {
+    const res = await fetch(baseCore() + '/' + encodeURIComponent(orderId) + '/cancel', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Authorization': authHeader() }
+    });
+    const data = await res.json().catch(() => ({}));
+    // 412 = statusnya sudah tidak bisa dibatalkan (sudah kedaluwarsa atau
+    // sudah dibayar). Itu hasil yang wajar, bukan kegagalan.
+    const sukses = res.ok || String(data.status_code) === '412';
+    if (!sukses) console.warn('[midtrans] gagal membatalkan', orderId, data.status_message || res.status);
+    return sukses;
+  } catch (e) {
+    console.warn('[midtrans] gagal membatalkan', orderId, e && e.message);
+    return false;
+  }
+}
+
+module.exports = { buatSnapToken, tandaTanganSah, statusInternal, produksi, batalkanTagihan, JAM_KEDALUWARSA };

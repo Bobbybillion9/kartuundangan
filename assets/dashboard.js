@@ -1287,8 +1287,22 @@
   var LABEL_STATUS_BAYAR = {
     paid:    { teks: 'Lunas',    kelas: 'ok' },
     pending: { teks: 'Menunggu', kelas: 'warn' },
-    failed:  { teks: 'Gagal',    kelas: 'err' }
+    failed:  { teks: 'Gagal',    kelas: 'err' },
+    expired: { teks: 'Kedaluwarsa', kelas: '' }
   };
+
+  // Tagihan "menunggu" yang sudah lewat expired_at sebenarnya sudah mati —
+  // tokennya ditolak Midtrans. Dihitung di sini, bukan menunggu webhook
+  // 'expire' datang: untuk tagihan yang metodenya tidak pernah dipilih,
+  // Midtrans belum tentu mengirim kabar apa pun, dan barisnya akan
+  // menggantung sebagai "Menunggu" selamanya.
+  function masihHidup(r){
+    return r.status === 'pending' && r.expired_at && new Date(r.expired_at).getTime() > Date.now();
+  }
+  function statusTampil(r){
+    if (r.status === 'pending' && r.expired_at && !masihHidup(r)) return 'expired';
+    return r.status;
+  }
 
   // Midtrans mengirim nama teknis di payment_type ("bank_transfer",
   // "echannel", "qris"). Itu bahasa mesin — yang membaca riwayat ini
@@ -1320,7 +1334,7 @@
   async function muatRiwayatBayar(){
     if (!riwayatBayarBlock || !bayarRiwayat || !currentInvitation) return;
     var res = await KU.sb.from('payments')
-      .select('order_id,amount,status,method,paid_at,created_at')
+      .select('order_id,amount,status,method,paid_at,created_at,snap_token,snap_redirect_url,expired_at')
       .eq('invitation_id', currentInvitation.id)
       .order('created_at', { ascending: false });
 
@@ -1330,12 +1344,21 @@
     // menampilkannya sebagai "pembayaran" ke user cuma membingungkan.
     baris = baris.filter(function(r){ return Number(r.amount) > 0; });
 
+    // Kalau masih ada tagihan hidup, tombol besar di kartu pembayaran
+    // TIDAK boleh lagi berbunyi "Bayar & Aktifkan" — server memang akan
+    // memakai ulang tagihan yang sama, tapi user tidak bisa tahu itu dari
+    // tombol yang berbunyi seolah membuat tagihan baru. Kata yang keliru
+    // di sini persis yang membuat orang menekan berkali-kali.
+    var hidup = baris.filter(masihHidup).length > 0;
+    if (bayarBtn) bayarBtn.textContent = hidup ? 'Lanjutkan Pembayaran' : 'Bayar & Aktifkan';
+
     if (!baris.length) { riwayatBayarBlock.style.display = 'none'; return; }
     riwayatBayarBlock.style.display = 'block';
     bayarRiwayat.innerHTML = '';
 
     baris.forEach(function(r){
-      var label = LABEL_STATUS_BAYAR[r.status] || { teks: r.status || '-', kelas: '' };
+      var st = statusTampil(r);
+      var label = LABEL_STATUS_BAYAR[st] || { teks: st || '-', kelas: '' };
       var item = document.createElement('div');
       item.className = 'bayar-riwayat-item';
 
@@ -1351,11 +1374,30 @@
       order.textContent = r.order_id || '';
       kiri.append(jumlah, meta, order);
 
+      var kanan = document.createElement('div');
+      kanan.className = 'bayar-riwayat-kanan';
+
       var badge = document.createElement('span');
       badge.className = 'bayar-riwayat-badge ' + label.kelas;
       badge.textContent = label.teks;
+      kanan.appendChild(badge);
 
-      item.append(kiri, badge);
+      // Inilah perbaikan intinya: tagihan yang belum dibayar dan belum
+      // kedaluwarsa bisa DIBUKA LAGI. Tanpa tombol ini, user yang menutup
+      // popup kehilangan nomor VA / QR-nya dan satu-satunya jalan adalah
+      // membuat tagihan baru — persis yang membuat lima tagihan
+      // menggantung untuk satu undangan.
+      if (masihHidup(r) && r.snap_token) {
+        var lanjut = document.createElement('button');
+        lanjut.type = 'button';
+        lanjut.className = 'btn btn-outline btn-sm';
+        lanjut.dataset.lanjut = r.snap_token;
+        if (r.snap_redirect_url) lanjut.dataset.redirect = r.snap_redirect_url;
+        lanjut.textContent = 'Lanjutkan';
+        kanan.appendChild(lanjut);
+      }
+
+      item.append(kiri, kanan);
       bayarRiwayat.appendChild(item);
     });
   }
@@ -1445,51 +1487,29 @@
     });
   }
 
-  if (bayarBtn) {
-    bayarBtn.addEventListener('click', async function(){
-      if (!currentInvitation) return;
-
-      // Kelengkapan data diperiksa SEBELUM menagih. Membiarkan orang
-      // membayar lalu baru diberi tahu datanya kurang adalah urutan yang
-      // paling menyebalkan dari sisi pengguna.
-      var missing = getMissingRequiredFields(currentInvitation);
-      if (missing.length) {
-        renderActivateChecklist(missing);
-        showStatusMsg('Lengkapi dulu data yang kurang di tab Isi Data sebelum membayar.', 'err');
+  // Membuka popup Snap untuk satu token. Dipisah jadi fungsi sendiri
+  // karena sekarang ada DUA jalan masuk: tombol besar di kartu
+  // pembayaran, dan tombol "Lanjutkan" di tiap baris Riwayat Pembayaran.
+  // Keduanya harus berperilaku persis sama — termasuk pemantauan setelah
+  // popup ditutup.
+  async function bukaPopupSnap(hasil){
+    var siap = await muatSnapSekali();
+    if (!siap || !window.snap) {
+      // Skrip Snap bisa gagal dimuat karena pemblokir iklan atau koneksi
+      // yang putus-putus. redirect_url adalah halaman pembayaran yang
+      // sama dalam bentuk tab penuh — jauh lebih baik daripada menyuruh
+      // user "coba lagi" tanpa memberi jalan lain.
+      if (hasil.redirect_url) {
+        showStatusMsg('Popup pembayaran tidak bisa dimuat, jadi kami buka di tab baru.', 'ok');
+        window.open(hasil.redirect_url, '_blank', 'noopener');
         return;
       }
-      renderActivateChecklist([]);
+      showStatusMsg('Gagal memuat halaman pembayaran. Periksa koneksi internetmu lalu coba lagi.', 'err');
+      return;
+    }
 
-      bayarBtn.disabled = true;
-      showStatusMsg('Menyiapkan pembayaran...');
-
-      var sesi = KU.getSession();
-      if (!sesi) { bayarBtn.disabled = false; showStatusMsg('Sesi login sudah berakhir. Muat ulang halaman.', 'err'); return; }
-
-      var hasil;
-      try {
-        var r = await fetch('/api/bayar/buat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + sesi.access_token },
-          body: JSON.stringify({ invitation_id: currentInvitation.id, tier: 'standar' })
-        });
-        hasil = await r.json();
-        if (!r.ok) throw new Error(hasil && hasil.pesan ? hasil.pesan : 'Gagal menyiapkan pembayaran.');
-      } catch (e) {
-        bayarBtn.disabled = false;
-        showStatusMsg(e.message || 'Gagal menyiapkan pembayaran.', 'err');
-        return;
-      }
-
-      var siap = await muatSnapSekali();
-      bayarBtn.disabled = false;
-      if (!siap || !window.snap) {
-        showStatusMsg('Gagal memuat halaman pembayaran. Periksa koneksi internetmu lalu coba lagi.', 'err');
-        return;
-      }
-
-      showStatusMsg('');
-      window.snap.pay(hasil.token, {
+    showStatusMsg('');
+    window.snap.pay(hasil.token, {
         // Bahkan 'onSuccess' pun ikut dipantau: yang menandai lunas di
         // sisi kita adalah webhook, dan webhook bisa datang sepersekian
         // detik setelah callback ini. Tanpa pemantauan, ada jendela
@@ -1500,8 +1520,90 @@
         // yang menandai lunas adalah webhook, bukan callback ini.
         onPending: function(){ selesaiBayar('Pembayaran sedang diproses. Halaman ini memantau sendiri dan akan berubah begitu dananya masuk — tidak perlu ditutup.', true); },
         onError: function(){ hentikanPantauBayar(); showStatusMsg('Pembayaran gagal. Silakan coba lagi.', 'err'); muatRiwayatBayar(); },
-        onClose: function(){ hentikanPantauBayar(); showStatusMsg('Pembayaran dibatalkan. Kamu bisa mencobanya lagi kapan saja.'); muatRiwayatBayar(); }
+        // Ditutup TANPA membayar bukan berarti tagihannya hangus. Nomor
+        // VA / QR-nya masih hidup 24 jam dan bisa dibuka lagi lewat
+        // tombol Lanjutkan di Riwayat Pembayaran — itu yang perlu
+        // diberitahukan, bukan menyuruh "coba lagi" yang dulu membuat
+        // orang menumpuk tagihan baru.
+        onClose: function(){
+          hentikanPantauBayar();
+          showStatusMsg('Pembayaran belum selesai. Tagihannya masih tersimpan — buka lagi lewat tombol Lanjutkan di Riwayat Pembayaran di bawah.');
+          muatRiwayatBayar();
+        }
       });
+  }
+
+  // Meminta tagihan ke server, lalu membuka popupnya.
+  // Server yang memutuskan ini tagihan BARU atau melanjutkan yang lama
+  // (lihat api/bayar/buat.js) — browser tidak perlu tahu bedanya, dan
+  // memang tidak boleh: keputusan itu menyangkut nominal.
+  async function mintaLaluBukaPembayaran(){
+    if (!currentInvitation) return;
+
+    // Kelengkapan data diperiksa SEBELUM menagih. Membiarkan orang
+    // membayar lalu baru diberi tahu datanya kurang adalah urutan yang
+    // paling menyebalkan dari sisi pengguna.
+    var missing = getMissingRequiredFields(currentInvitation);
+    if (missing.length) {
+      renderActivateChecklist(missing);
+      showStatusMsg('Lengkapi dulu data yang kurang di tab Isi Data sebelum membayar.', 'err');
+      return;
+    }
+    renderActivateChecklist([]);
+
+    if (bayarBtn) bayarBtn.disabled = true;
+    showStatusMsg('Menyiapkan pembayaran...');
+
+    var sesi = KU.getSession();
+    if (!sesi) { if (bayarBtn) bayarBtn.disabled = false; showStatusMsg('Sesi login sudah berakhir. Muat ulang halaman.', 'err'); return; }
+
+    var hasil;
+    try {
+      var r = await fetch('/api/bayar/buat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + sesi.access_token },
+        body: JSON.stringify({ invitation_id: currentInvitation.id, tier: 'standar' })
+      });
+      hasil = await r.json();
+      // Server menolak karena undangannya ternyata sudah lunas — itu
+      // bukan kegagalan yang perlu dikeluhkan, itu kabar baik. Segarkan
+      // layarnya supaya tombolnya berubah jadi Aktifkan.
+      if (r.status === 409 && hasil && hasil.sudah_dibayar) {
+        if (bayarBtn) bayarBtn.disabled = false;
+        showStatusMsg('Undangan ini sudah lunas.', 'ok');
+        await segarkanStatusBayar();
+        return;
+      }
+      if (!r.ok) throw new Error(hasil && hasil.pesan ? hasil.pesan : 'Gagal menyiapkan pembayaran.');
+    } catch (e) {
+      if (bayarBtn) bayarBtn.disabled = false;
+      showStatusMsg(e.message || 'Gagal menyiapkan pembayaran.', 'err');
+      return;
+    }
+
+    if (bayarBtn) bayarBtn.disabled = false;
+    await bukaPopupSnap(hasil);
+  }
+
+  if (bayarBtn) bayarBtn.addEventListener('click', mintaLaluBukaPembayaran);
+
+  // Tombol "Lanjutkan" per baris riwayat: membuka lagi tagihan yang itu
+  // juga, dengan token yang sudah tersimpan — tanpa menyentuh server dan
+  // tanpa membuat order baru.
+  if (bayarRiwayat) {
+    bayarRiwayat.addEventListener('click', function(e){
+      var btn = e.target.closest('[data-lanjut]');
+      if (!btn) return;
+      // Penjaga terakhir sebelum popup terbuka: kalau undangannya sudah
+      // lunas (mis. tagihan lain baru saja dibayar di perangkat lain),
+      // tagihan ini sudah dibatalkan dan membukanya cuma akan membuat
+      // orang membayar dua kali untuk barang yang sama.
+      if (sudahDibayar) {
+        showStatusMsg('Undangan ini sudah lunas — tagihan ini tidak perlu dibayar lagi.', 'ok');
+        segarkanStatusBayar();
+        return;
+      }
+      bukaPopupSnap({ token: btn.dataset.lanjut, redirect_url: btn.dataset.redirect || null });
     });
   }
 

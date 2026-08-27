@@ -12,7 +12,7 @@
 // membayar Rp1 untuk undangan milik orang lain.
 
 const { ambilPaket } = require('../_lib/harga');
-const { buatSnapToken } = require('../_lib/midtrans');
+const { buatSnapToken, JAM_KEDALUWARSA } = require('../_lib/midtrans');
 const { userDariToken, db } = require('../_lib/supabase');
 
 function json(res, status, isi) {
@@ -57,9 +57,44 @@ module.exports = async function handler(req, res) {
     const paket = ambilPaket(tierId);
     if (!paket) return json(res, 400, { pesan: 'Paket ini belum tersedia untuk dibeli.' });
 
+    // 4b. SUDAH PUNYA TAGIHAN YANG MASIH HIDUP? Pakai lagi, jangan buat baru.
+    //
+    //     Ini yang mencegah pembayaran ganda. Sebelumnya tiap klik tombol
+    //     Bayar selalu membuat order baru, sehingga user yang membuka
+    //     popup lalu menutupnya — tanpa jalan untuk kembali melihat nomor
+    //     VA / QR-nya — terpaksa menekan Bayar lagi dan menumpuk tagihan
+    //     menggantung. Lima baris pending untuk undangan yang sama pernah
+    //     terjadi dalam sehari, dan risikonya bukan cuma berantakan: user
+    //     bisa membayar DUA order berbeda untuk satu undangan.
+    //
+    //     Syarat memakai ulang sengaja ketat — nominal dan paketnya harus
+    //     sama persis. Kalau harga berubah, tagihan lama tidak boleh
+    //     dipakai lagi: yang ditagih harus yang berlaku sekarang.
+    const hidup = await db(
+      'payments?invitation_id=eq.' + invitationId +
+      '&status=eq.pending' +
+      '&amount=eq.' + paket.harga +
+      '&tier=eq.' + encodeURIComponent(paket.id) +
+      '&snap_token=not.is.null' +
+      '&expired_at=gt.' + encodeURIComponent(new Date().toISOString()) +
+      '&select=order_id,amount,snap_token,snap_redirect_url,expired_at' +
+      '&order=created_at.desc&limit=1'
+    );
+    const lama = Array.isArray(hidup) ? hidup[0] : null;
+    if (lama) {
+      return json(res, 200, {
+        token: lama.snap_token,
+        redirect_url: lama.snap_redirect_url,
+        order_id: lama.order_id,
+        jumlah: lama.amount,
+        dilanjutkan: true
+      });
+    }
+
     // 5. order_id unik per percobaan. Midtrans menolak order_id yang
-    //    berulang, jadi percobaan bayar kedua harus memakai id baru.
+    //    berulang, jadi tagihan yang benar-benar baru harus memakai id baru.
     const orderId = 'KU-' + invitationId.slice(0, 8) + '-' + Date.now().toString(36).toUpperCase();
+    const kedaluwarsa = new Date(Date.now() + JAM_KEDALUWARSA * 3600 * 1000).toISOString();
 
     // 6. Catat dulu sebagai pending SEBELUM memanggil Midtrans. Kalau
     //    urutannya dibalik, ada celah waktu di mana user sudah membayar
@@ -72,20 +107,43 @@ module.exports = async function handler(req, res) {
         amount: paket.harga,
         status: 'pending',
         tier: paket.id,
-        order_id: orderId
+        order_id: orderId,
+        expired_at: kedaluwarsa
       },
       prefer: 'return=minimal'
     });
 
     const nama = [inv.nama_pria_panggilan, inv.nama_wanita_panggilan].filter(Boolean).join(' & ') || 'Undangan';
-    const token = await buatSnapToken({
+    const snap = await buatSnapToken({
       orderId: orderId,
       amount: paket.harga,
       item: { id: paket.id, nama: 'Undangan ' + paket.nama + ' — ' + nama },
       pelanggan: { email: user.email || undefined }
     });
 
-    return json(res, 200, { token: token, order_id: orderId, jumlah: paket.harga });
+    // 7. Simpan tokennya. Inilah yang membuat tagihan ini bisa DIBUKA LAGI
+    //    nanti — tanpa langkah ini, user yang menutup popup kehilangan
+    //    nomor VA / QR-nya selamanya dan terpaksa membuat tagihan baru.
+    //    Kegagalan menyimpan di sini sengaja TIDAK membatalkan permintaan:
+    //    tagihannya sudah sah di Midtrans dan user berhak membayarnya
+    //    sekarang. Yang hilang cuma kemampuan melanjutkan nanti.
+    try {
+      await db('payments?order_id=eq.' + encodeURIComponent(orderId), {
+        method: 'PATCH',
+        body: { snap_token: snap.token, snap_redirect_url: snap.redirectUrl },
+        prefer: 'return=minimal'
+      });
+    } catch (e) {
+      console.error('[bayar/buat] gagal menyimpan snap_token untuk', orderId, e && e.message);
+    }
+
+    return json(res, 200, {
+      token: snap.token,
+      redirect_url: snap.redirectUrl,
+      order_id: orderId,
+      jumlah: paket.harga,
+      dilanjutkan: false
+    });
   } catch (err) {
     // Pesan asli disimpan di log server saja; yang dikirim ke browser
     // sengaja umum supaya detail konfigurasi tidak ikut bocor.

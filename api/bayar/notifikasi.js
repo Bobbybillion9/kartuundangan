@@ -16,7 +16,7 @@
 // kelengkapan data acara lebih dulu. Kalau pembayaran langsung
 // mengaktifkan, undangan setengah terisi bisa tayang ke tamu.
 
-const { tandaTanganSah, statusInternal } = require('../_lib/midtrans');
+const { tandaTanganSah, statusInternal, batalkanTagihan } = require('../_lib/midtrans');
 const { db } = require('../_lib/supabase');
 
 module.exports = async function handler(req, res) {
@@ -43,7 +43,7 @@ module.exports = async function handler(req, res) {
     const orderId = String(body.order_id || '');
     if (!orderId) { res.status(400).send('order_id kosong.'); return; }
 
-    const rows = await db('payments?order_id=eq.' + encodeURIComponent(orderId) + '&select=id,status,amount');
+    const rows = await db('payments?order_id=eq.' + encodeURIComponent(orderId) + '&select=id,status,amount,invitation_id');
     const bayar = Array.isArray(rows) ? rows[0] : null;
     if (!bayar) {
       // Balas 200: kalau kita balas error, Midtrans akan mengulang terus
@@ -83,6 +83,39 @@ module.exports = async function handler(req, res) {
       },
       prefer: 'return=minimal'
     });
+
+    // Sudah lunas? Matikan tagihan lain yang masih menggantung untuk
+    // undangan yang SAMA.
+    //
+    // Tanpa ini, nomor VA dan QR yang terlanjur terbit tetap bisa dibayar
+    // sampai 24 jam ke depan. Sudah terbukti terjadi di pengujian: satu
+    // undangan punya 1 tagihan lunas DAN 4 tagihan menggantung sekaligus.
+    // Kalau salah satunya ikut dibayar, itu pembayaran kedua untuk barang
+    // yang sama — uang masuk, tidak ada yang didapat, dan kita yang harus
+    // mengembalikan.
+    //
+    // Pembersihan ini sengaja tidak boleh menggagalkan balasan webhook:
+    // membalas error membuat Midtrans mengirim ulang notifikasi
+    // pembayaran yang sudah sah, dan itu jauh lebih merepotkan.
+    if (statusBaru === 'paid' && bayar.invitation_id) {
+      try {
+        const menggantung = await db(
+          'payments?invitation_id=eq.' + bayar.invitation_id +
+          '&status=eq.pending&order_id=neq.' + encodeURIComponent(orderId) +
+          '&select=id,order_id'
+        );
+        for (const t of (Array.isArray(menggantung) ? menggantung : [])) {
+          await batalkanTagihan(t.order_id);
+          await db('payments?id=eq.' + t.id, {
+            method: 'PATCH',
+            body: { status: 'failed', updated_at: new Date().toISOString() },
+            prefer: 'return=minimal'
+          });
+        }
+      } catch (e) {
+        console.error('[bayar/notifikasi] gagal membersihkan tagihan menggantung', orderId, e && e.message);
+      }
+    }
 
     res.status(200).send('OK');
   } catch (err) {
