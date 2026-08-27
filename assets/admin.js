@@ -1,27 +1,150 @@
-// Panel Admin (admin.html).
+// Panel Admin — view "admin" di dalam app.html.
 //
-// Halaman ini TIDAK menjaga dirinya sendiri. Yang menjaga data adalah
-// pemeriksaan is_admin(auth.uid()) di dalam tiap fungsi database yang
-// dipanggil di bawah — sudah diuji: dipanggil sebagai anonim lewat REST
-// publik, ketiganya membalas 42501 "Akses ditolak", bukan data.
-// Pengalihan di sini hanya kenyamanan.
-(function () {
+// Dulu ini halaman terpisah (admin.html). Digabung ke dashboard atas
+// permintaan pemilik: dua halaman berarti dua kerangka, dua navigasi, dan
+// dua tempat yang harus diperbarui setiap kali ada perubahan.
+//
+// DUA LAPIS YANG BERBEDA SIFATNYA — jangan tertukar:
+//
+//   1. KUNCI KATA SANDI di bawah ini adalah kunci TAMPILAN. Gunanya satu:
+//      sesi yang sudah masuk saja tidak cukup untuk membuka data seluruh
+//      pelanggan, jadi laptop yang ditinggal terbuka tidak langsung
+//      membocorkan semuanya. Kuncinya disimpan di sessionStorage — hilang
+//      begitu tab ditutup.
+//
+//   2. YANG BENAR-BENAR MENJAGA DATA adalah pemeriksaan is_admin(auth.uid())
+//      di dalam tiap fungsi database (admin_ringkasan, admin_daftar_undangan,
+//      admin_daftar_pembayaran). Sudah diuji sebagai anonim lewat REST
+//      publik: ketiganya membalas 42501, bukan data.
+//
+// Kunci nomor 1 TIDAK menggantikan nomor 2. Orang yang memegang token sesi
+// admin tetap bisa memanggil RPC-nya langsung tanpa lewat layar ini —
+// yang dicegah kunci ini adalah orang yang duduk di depan layarmu.
+window.KU_ADMIN = (function () {
 
-  var adminMsg = document.getElementById('adminMsg');
-  var adminIsi = document.getElementById('adminIsi');
-  var adminSub = document.getElementById('adminSub');
-  var adminTiles = document.getElementById('adminTiles');
-  var barisUndangan = document.getElementById('barisUndangan');
-  var barisBayar = document.getElementById('barisBayar');
-  var hitungUndangan = document.getElementById('hitungUndangan');
-  var hitungBayar = document.getElementById('hitungBayar');
-  var muatUlangBtn = document.getElementById('muatUlangBtn');
+  var KUNCI_SESSION = 'ku-admin-terbuka';
+  // Umur kunci. Cukup panjang untuk sekali kerja, cukup pendek supaya tab
+  // yang ditinggal seharian tidak tetap terbuka.
+  var UMUR_MS = 30 * 60 * 1000;
 
-  function pesan(teks, tipe) {
-    if (!adminMsg) return;
-    adminMsg.textContent = teks || '';
-    adminMsg.className = 'workspace-msg' + (tipe ? ' ' + tipe : '');
+  var el = {};
+  function ambil(id) { return document.getElementById(id); }
+
+  function siapkan() {
+    if (el.siap) return;
+    el = {
+      siap: true,
+      kunci: ambil('adminKunci'),
+      form: ambil('adminKunciForm'),
+      email: ambil('adminKunciEmail'),
+      sandi: ambil('adminKunciSandi'),
+      lihat: ambil('adminKunciLihat'),
+      tombol: ambil('adminKunciBtn'),
+      kunciMsg: ambil('adminKunciMsg'),
+      isi: ambil('adminIsi'),
+      msg: ambil('adminMsg'),
+      sub: ambil('adminSub'),
+      tiles: ambil('adminTiles'),
+      barisUndangan: ambil('barisUndangan'),
+      barisBayar: ambil('barisBayar'),
+      hitungUndangan: ambil('hitungUndangan'),
+      hitungBayar: ambil('hitungBayar'),
+      muatUlang: ambil('muatUlangBtn'),
+      kunciLagi: ambil('adminKunciLagiBtn')
+    };
+
+    if (el.form) el.form.addEventListener('submit', bukaKunci);
+    if (el.muatUlang) el.muatUlang.addEventListener('click', muat);
+    if (el.kunciLagi) el.kunciLagi.addEventListener('click', kunciLagi);
+    // Pola tombol mata yang sama dengan modal masuk di index.html —
+    // termasuk class .is-visible yang menukar ikon mata/mata-dicoret.
+    // (Penangan .pw-toggle di assets/app.js hanya hidup di index.html,
+    // jadi tidak ada yang bentrok di sini.)
+    if (el.lihat) el.lihat.addEventListener('click', function () {
+      var buka = el.sandi.type === 'password';
+      el.sandi.type = buka ? 'text' : 'password';
+      el.lihat.classList.toggle('is-visible', buka);
+      el.lihat.setAttribute('aria-pressed', buka ? 'true' : 'false');
+      el.lihat.setAttribute('aria-label', buka ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+    });
   }
+
+  function pesan(target, teks, tipe) {
+    if (!target) return;
+    target.textContent = teks || '';
+    target.className = 'workspace-msg' + (tipe ? ' ' + tipe : '');
+  }
+
+  function terbuka() {
+    try {
+      var v = sessionStorage.getItem(KUNCI_SESSION);
+      if (!v) return false;
+      var data = JSON.parse(v);
+      // Kunci diikat ke email yang membukanya. Kalau akunnya berganti di
+      // tab yang sama, kunci lama tidak boleh ikut berlaku.
+      var sesi = KU.getSession();
+      var emailSekarang = sesi && sesi.user && sesi.user.email;
+      if (!emailSekarang || data.email !== emailSekarang) return false;
+      return Date.now() - data.pada < UMUR_MS;
+    } catch (e) { return false; }
+  }
+
+  function tandaiTerbuka(email) {
+    try {
+      sessionStorage.setItem(KUNCI_SESSION, JSON.stringify({ email: email, pada: Date.now() }));
+    } catch (e) {}
+  }
+
+  function kunciLagi() {
+    try { sessionStorage.removeItem(KUNCI_SESSION); } catch (e) {}
+    if (el.isi) el.isi.hidden = true;
+    if (el.kunci) el.kunci.hidden = false;
+    if (el.sandi) el.sandi.value = '';
+    pesan(el.msg, '');
+    pesan(el.kunciMsg, 'Panel dikunci lagi.');
+  }
+
+  async function bukaKunci(e) {
+    e.preventDefault();
+    var sesi = KU.getSession();
+    if (!sesi) { pesan(el.kunciMsg, 'Sesi login sudah berakhir. Muat ulang halaman.', 'err'); return; }
+
+    var emailDiisi = (el.email.value || '').trim().toLowerCase();
+    var emailSesi = String((sesi.user && sesi.user.email) || '').toLowerCase();
+
+    // Emailnya WAJIB email akun yang sedang masuk. Tanpa pemeriksaan ini,
+    // mengisi email lain akan membuat signInWithPassword di bawah berpindah
+    // akun diam-diam — bukan mengonfirmasi, melainkan login sebagai orang
+    // lain di tab yang sedang dipakai.
+    if (!emailDiisi || emailDiisi !== emailSesi) {
+      pesan(el.kunciMsg, 'Email itu bukan email akun yang sedang masuk.', 'err');
+      return;
+    }
+
+    el.tombol.disabled = true;
+    pesan(el.kunciMsg, 'Memeriksa...');
+
+    var res = await KU.sb.auth.signInWithPassword({ email: emailSesi, password: el.sandi.value });
+    el.tombol.disabled = false;
+
+    if (res.error) {
+      pesan(el.kunciMsg, 'Kata sandi salah.', 'err');
+      el.sandi.value = '';
+      el.sandi.focus();
+      return;
+    }
+
+    // Kata sandi terbukti benar. Kolomnya dikosongkan segera — tidak ada
+    // alasan membiarkannya tertinggal di DOM setelah dipakai.
+    el.sandi.value = '';
+    tandaiTerbuka(emailSesi);
+    pesan(el.kunciMsg, '');
+    el.kunci.hidden = true;
+    el.isi.hidden = false;
+    muat();
+  }
+
+  // ---------------- perender ----------------
 
   function tanggal(iso) {
     if (!iso) return '—';
@@ -38,10 +161,25 @@
     credit_card: 'Kartu', cstore: 'Minimarket'
   };
 
+  var LABEL_BAYAR = {
+    paid: { teks: 'Lunas', kelas: 'ok' },
+    pending: { teks: 'Menunggu', kelas: 'warn' },
+    failed: { teks: 'Gagal', kelas: 'err' },
+    expired: { teks: 'Kedaluwarsa', kelas: '' }
+  };
+
+  // Tagihan "menunggu" yang sudah lewat kedaluwarsa sebenarnya sudah mati.
+  // Kalau ditampilkan apa adanya, panel ini menghitung tagihan mati sebagai
+  // pesanan yang masih berjalan. Aturannya sama dengan di dashboard.
+  function statusBayarTampil(r) {
+    if (r.status === 'pending' && r.kedaluwarsa && new Date(r.kedaluwarsa).getTime() <= Date.now()) return 'expired';
+    return r.status;
+  }
+
   function sel(teks, kelas) {
     var td = document.createElement('td');
     if (kelas) td.className = kelas;
-    td.textContent = teks == null || teks === '' ? '—' : String(teks);
+    td.textContent = (teks == null || teks === '') ? '—' : String(teks);
     return td;
   }
 
@@ -53,22 +191,6 @@
     td.appendChild(s);
     return td;
   }
-
-  // Baris pembayaran "menunggu" yang sudah lewat kedaluwarsa sebenarnya
-  // sudah mati. Dihitung di sini, sama seperti di dashboard — kalau
-  // ditampilkan apa adanya, panel ini akan menghitung tagihan mati
-  // sebagai pesanan yang masih berjalan.
-  function statusBayarTampil(r) {
-    if (r.status === 'pending' && r.kedaluwarsa && new Date(r.kedaluwarsa).getTime() <= Date.now()) return 'expired';
-    return r.status;
-  }
-
-  var LABEL_BAYAR = {
-    paid: { teks: 'Lunas', kelas: 'ok' },
-    pending: { teks: 'Menunggu', kelas: 'warn' },
-    failed: { teks: 'Gagal', kelas: 'err' },
-    expired: { teks: 'Kedaluwarsa', kelas: '' }
-  };
 
   function renderTiles(r) {
     var kartu = [
@@ -83,7 +205,7 @@
       { label: 'Ucapan', nilai: r.ucapan },
       { label: 'Tanda kasih', nilai: r.hadiah }
     ];
-    adminTiles.innerHTML = '';
+    el.tiles.innerHTML = '';
     kartu.forEach(function (k) {
       var d = document.createElement('div');
       d.className = 'admin-tile' + (k.utama ? ' utama' : '');
@@ -94,13 +216,13 @@
       l.className = 'admin-tile-label';
       l.textContent = k.label;
       d.append(n, l);
-      adminTiles.appendChild(d);
+      el.tiles.appendChild(d);
     });
   }
 
   function renderUndangan(daftar) {
-    barisUndangan.innerHTML = '';
-    hitungUndangan.textContent = daftar.length + ' baris';
+    el.barisUndangan.innerHTML = '';
+    el.hitungUndangan.textContent = daftar.length + ' baris';
     daftar.forEach(function (u) {
       var tr = document.createElement('tr');
       tr.append(
@@ -112,7 +234,6 @@
         sel(u.pemilik, 'admin-lirih'),
         sel(tanggal(u.dibuat), 'admin-lirih')
       );
-
       var aksi = document.createElement('td');
       if (u.status === 'aktif' && u.slug) {
         var a = document.createElement('a');
@@ -124,13 +245,13 @@
         aksi.appendChild(a);
       }
       tr.appendChild(aksi);
-      barisUndangan.appendChild(tr);
+      el.barisUndangan.appendChild(tr);
     });
   }
 
   function renderBayar(daftar) {
-    barisBayar.innerHTML = '';
-    hitungBayar.textContent = daftar.length + ' baris';
+    el.barisBayar.innerHTML = '';
+    el.hitungBayar.textContent = daftar.length + ' baris';
     daftar.forEach(function (p) {
       var st = statusBayarTampil(p);
       var label = LABEL_BAYAR[st] || { teks: st, kelas: '' };
@@ -145,12 +266,12 @@
         sel(tanggal(p.dibuat), 'admin-lirih'),
         sel(tanggal(p.lunas_pada), 'admin-lirih')
       );
-      barisBayar.appendChild(tr);
+      el.barisBayar.appendChild(tr);
     });
   }
 
   async function muat() {
-    pesan('Memuat data…');
+    pesan(el.msg, 'Memuat data...');
     var hasil = await Promise.all([
       KU.sb.rpc('admin_ringkasan'),
       KU.sb.rpc('admin_daftar_undangan'),
@@ -159,15 +280,15 @@
 
     var gagal = hasil.filter(function (h) { return h.error; })[0];
     if (gagal) {
-      // 42501 = ditolak database karena bukan admin. Dibedakan dari
+      // 42501 = database menolak karena bukan admin. Dibedakan dari
       // gangguan biasa: yang satu berarti "kamu memang tidak berhak",
       // yang lain berarti "coba lagi".
       if (gagal.error.code === '42501') {
-        pesan('Akun ini bukan admin, jadi panel ini tidak bisa dibuka.', 'err');
-        setTimeout(function () { window.location.replace('app.html'); }, 1800);
+        pesan(el.msg, 'Akun ini bukan admin, jadi panel ini tidak bisa dibuka.', 'err');
+        el.isi.hidden = true;
         return;
       }
-      pesan('Gagal memuat data: ' + gagal.error.message, 'err');
+      pesan(el.msg, 'Gagal memuat data: ' + gagal.error.message, 'err');
       return;
     }
 
@@ -176,29 +297,29 @@
     renderBayar(hasil[2].data || []);
 
     var sesi = KU.getSession();
-    adminSub.textContent = 'Masuk sebagai ' + ((sesi && sesi.user && sesi.user.email) || 'admin') +
-      ' · diperbarui ' + tanggal(new Date().toISOString());
-    adminIsi.hidden = false;
-    pesan('');
+    el.sub.textContent = 'Masuk sebagai ' + ((sesi && sesi.user && sesi.user.email) || 'admin') +
+      ' - diperbarui ' + tanggal(new Date().toISOString());
+    pesan(el.msg, '');
   }
 
-  function mulai(session) {
-    if (!session) {
-      // Pola yang sama dengan app.html: simpan tujuannya supaya setelah
-      // masuk user kembali ke sini, bukan terdampar di beranda.
-      try { sessionStorage.setItem('ku-pending-return', 'admin.html'); } catch (e) {}
-      window.location.replace('index.html#masuk');
-      return;
+  // Dipanggil dashboard.js tiap kali view "admin" ditampilkan.
+  function buka() {
+    siapkan();
+    if (terbuka()) {
+      el.kunci.hidden = true;
+      el.isi.hidden = false;
+      muat();
+    } else {
+      el.isi.hidden = true;
+      el.kunci.hidden = false;
+      pesan(el.kunciMsg, '');
+      // Email diisikan otomatis; yang harus diingat orangnya cuma kata
+      // sandinya. Tetap wajib cocok dengan sesi yang sedang berjalan.
+      var sesi = KU.getSession();
+      if (el.email && sesi && sesi.user) el.email.value = sesi.user.email || '';
+      if (el.sandi) el.sandi.value = '';
     }
-    muat();
   }
 
-  document.addEventListener('ku:session', function (e) { mulai(e.detail.session); });
-  // Sesi bisa sudah selesai di-resolve sebelum listener di atas terpasang
-  // (jeda pemuatan antar <script>), jadi keadaan sekarang ikut diperiksa —
-  // tapi hanya kalau resolusinya memang sudah pasti selesai.
-  if (KU.isSessionResolved()) mulai(KU.getSession());
-
-  if (muatUlangBtn) muatUlangBtn.addEventListener('click', muat);
-
+  return { buka: buka, kunciLagi: kunciLagi };
 })();

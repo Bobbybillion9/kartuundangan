@@ -25,20 +25,93 @@
     syncThemeSwitch();
   });
 
-  var views = ['home', 'desain', 'tema', 'harga', 'profil'];
+  // 'admin' ada di daftar tapi menunya disembunyikan sampai akunnya
+  // terbukti admin (lihat setNavAdmin di bawah). Ditaruh PALING AKHIR
+  // supaya indeks menu lain — yang dipakai menggeser pil penanda — tidak
+  // bergeser sama sekali untuk pengguna biasa.
+  var views = ['home', 'desain', 'tema', 'harga', 'profil', 'admin'];
   var viewLinks = document.querySelectorAll('[data-view]');
   var sideNav = document.getElementById('sideNav');
   var tabbar = document.getElementById('tabbar');
+  var sideAdminItem = document.getElementById('sideAdminItem');
+  var tabAdminItem = document.getElementById('tabAdminItem');
 
-  function movePill(name){
-    var idx = views.indexOf(name);
-    if (idx === -1) return;
-    if (sideNav) sideNav.style.setProperty('--active-index', idx);
-    if (tabbar) tabbar.style.setProperty('--active-index', idx);
+  // Menu yang benar-benar terlihat. Pil penanda di tabbar HP membagi lebar
+  // rata sebanyak menu yang ada, jadi angka ini harus jumlah yang tampil —
+  // bukan panjang array views. Kalau tidak, pil-nya melenceng begitu menu
+  // Admin muncul.
+  function viewTampil(){
+    return views.filter(function(v){ return v !== 'admin' || akunAdmin; });
   }
+
+  function setNavAdmin(){
+    if (sideAdminItem) sideAdminItem.hidden = !akunAdmin;
+    if (tabAdminItem) tabAdminItem.hidden = !akunAdmin;
+    var n = viewTampil().length;
+    if (sideNav) sideNav.style.setProperty('--nav-count', n);
+    if (tabbar) tabbar.style.setProperty('--nav-count', n);
+  }
+
+  // Pil penanda diposisikan dari UKURAN MENUNYA SENDIRI, bukan dari
+  // indeks dikali persentase.
+  //
+  // Cara lama menghitung lebar tiap menu sebagai 100%/jumlah. Itu meleset:
+  // menu di tabbar HP ternyata tidak menempel rapat — ada jarak antar item,
+  // jadi lebar aslinya lebih kecil daripada 100%/jumlah. Diukur: dengan 6
+  // menu, tiap menu ~52px sementara rumusnya mengira 65px, dan pil-nya
+  // berhenti sekitar 7px dari tengah. Ini SUDAH meleset sejak sebelum menu
+  // Admin ada (dengan 5 menu, rumusnya mengira 78px untuk menu selebar
+  // ~65px) — cuma tidak pernah kelihatan karena pil dan menunya sama-sama
+  // bergeser searah.
+  //
+  // Mengukur elemennya langsung membuat ini kebal terhadap jarak, padding,
+  // jumlah menu, maupun panjang label.
+  function movePill(name){
+    if (viewTampil().indexOf(name) === -1) return;
+
+    if (sideNav) {
+      var sItem = sideNav.querySelector('.side-item[data-view="' + name + '"]');
+      var sPill = document.getElementById('sidePill');
+      if (sItem && sPill && sItem.offsetHeight) {
+        sPill.style.transform = 'translateY(' + sItem.offsetTop + 'px)';
+        sPill.style.height = sItem.offsetHeight + 'px';
+      }
+    }
+
+    if (tabbar) {
+      var tItem = tabbar.querySelector('.tab-item[data-view="' + name + '"]');
+      var tPill = document.getElementById('tabPill');
+      // offsetWidth 0 berarti tabbar sedang disembunyikan (tampilan
+      // desktop) — ukurannya belum berarti apa-apa, jadi jangan dipakai.
+      if (tItem && tPill && tItem.offsetWidth) {
+        tPill.style.left = (tItem.offsetLeft + 6) + 'px';
+        tPill.style.width = (tItem.offsetWidth - 12) + 'px';
+      }
+    }
+  }
+
+  // Berpindah antara lebar desktop dan HP mengganti navigasi yang dipakai,
+  // dan ukuran yang tadi diukur jadi tidak berlaku lagi. Tanpa ini, pil-nya
+  // tertinggal di tempat lamanya sampai user kebetulan berpindah menu.
+  var pilTimer = null;
+  window.addEventListener('resize', function(){
+    clearTimeout(pilTimer);
+    pilTimer = setTimeout(function(){
+      var aktif = views.filter(function(v){
+        var el = document.getElementById('view-' + v);
+        return el && el.classList.contains('active');
+      })[0];
+      if (aktif) movePill(aktif);
+    }, 120);
+  });
 
   function showView(name){
     if (views.indexOf(name) === -1) name = 'desain';
+    // Menu Admin bisa saja masih tersisa di URL atau di riwayat setelah
+    // akunnya berganti. Bukan lapisan keamanan — datanya dijaga
+    // is_admin() di database — tapi tidak ada gunanya menampilkan layar
+    // yang pasti kosong.
+    if (name === 'admin' && !akunAdmin) name = 'desain';
     views.forEach(function(v){
       document.getElementById('view-' + v).classList.toggle('active', v === name);
     });
@@ -49,6 +122,7 @@
     movePill(name);
     if (name === 'desain') renderDesainView();
     if (name === 'home') renderHomeView();
+    if (name === 'admin' && window.KU_ADMIN) window.KU_ADMIN.buka();
   }
   showView('desain');
 
@@ -448,6 +522,7 @@
     akunAdmin = !res.error && res.data === true;
     if (adminBadge) adminBadge.hidden = !akunAdmin;
     if (profilAdminBlok) profilAdminBlok.hidden = !akunAdmin;
+    setNavAdmin();
   }
 
   async function ensureDraftForTemplate(t){

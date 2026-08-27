@@ -540,10 +540,28 @@
   .bayar-lunas svg{flex-shrink:0;width:20px;height:20px;color:var(--accent-dark);}
   .bayar-lunas strong{color:var(--ink);}
 
-  /* ---------- panel admin (admin.html) ---------- */
-  .admin-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4);}
-  .admin-head h1{font-size:clamp(26px,5vw,34px);margin-bottom:6px;}
+  /* ---------- panel admin (view "admin" di app.html) ---------- */
+  /* .side-item dan .tab-item punya display sendiri, jadi aturan [hidden]
+     bawaan browser kalah dari keduanya — tanpa baris ini menu Admin tetap
+     tampil untuk semua orang. Pola yang sama pernah membuat zona unggah
+     tidak mau hilang. */
+  .side-item[hidden],.tab-item[hidden]{display:none;}
+  .admin-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4);}
+  .admin-head-aksi{display:flex;gap:8px;flex-wrap:wrap;}
   .admin-sub{font-size:13px;color:var(--ink-soft);}
+
+  /* Layar kunci */
+  .admin-kunci{display:flex;justify-content:center;padding:var(--s4) 0 var(--s6);}
+  .admin-kunci[hidden]{display:none;}
+  .admin-kunci-kartu{width:100%;max-width:420px;padding:var(--s5) var(--s4);border:1px solid var(--line-soft);border-radius:var(--r-lg);background:var(--card);text-align:center;}
+  .admin-kunci-ikon{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;background:var(--accent-tint);color:var(--accent-dark);margin-bottom:var(--s3);}
+  .admin-kunci-ikon svg{width:26px;height:26px;}
+  .admin-kunci-kartu h3{font-size:19px;margin-bottom:8px;}
+  .admin-kunci-kartu > p{font-size:13.5px;line-height:1.6;color:var(--ink-soft);margin-bottom:var(--s4);}
+  .admin-kunci-kartu form{text-align:left;}
+  .admin-kunci-kartu label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-mid);margin-bottom:6px;}
+  .admin-kunci-kartu input{margin-bottom:var(--s3);}
+  .admin-kunci-kartu .btn{margin-top:4px;}
   .admin-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2);margin-bottom:var(--s5);}
   .admin-tile{padding:var(--s3);border:1px solid var(--line-soft);border-radius:var(--r-md);background:var(--card);}
   .admin-tile.utama{border-color:var(--accent);background:var(--accent-tint);}
@@ -645,7 +663,11 @@
     .tab-item .nav-icon{display:flex;flex-shrink:0;}
     .tab-item .nav-label{font-size:10.5px;line-height:1.2;font-weight:600;text-align:center;white-space:nowrap;max-width:100%;}
     .tab-item.active{color:#fff;}
-    #tabPill{width:calc(20% - 12px);height:44px;top:10px;left:calc(var(--active-index,0) * 20% + 6px);transition:left .4s cubic-bezier(.34,1.56,.64,1),width .4s cubic-bezier(.34,1.56,.64,1);}
+    /* Lebar dibagi rata sebanyak menu yang TAMPIL, bukan angka tetap 20%.
+       Menu Admin muncul hanya untuk admin, jadi jumlahnya bisa 5 atau 6 —
+       dengan 20% yang di-hardcode, pil penandanya melenceng dari menunya
+       begitu yang keenam muncul. --nav-count disetel dashboard.js. */
+    #tabPill{width:calc(100% / var(--nav-count,5) - 12px);height:44px;top:10px;left:calc(var(--active-index,0) * 100% / var(--nav-count,5) + 6px);transition:left .4s cubic-bezier(.34,1.56,.64,1),width .4s cubic-bezier(.34,1.56,.64,1);}
     .field-grid{grid-template-columns:1fr;}
     .palette-grid{grid-template-columns:1fr;}
   }
@@ -658,8 +680,13 @@
   .modal-divider{display:flex;align-items:center;gap:10px;margin:var(--s3) 0;font-size:12px;letter-spacing:0.04em;color:var(--ink-soft);}
   .modal-divider::before,.modal-divider::after{content:"";flex:1;height:1px;background:var(--line);}
   .auth-form label{display:block;font-size:13px;color:var(--ink-mid);margin-bottom:6px;font-weight:500;}
-  .auth-form input{width:100%;padding:11px 14px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:inherit;margin-bottom:var(--s3);}
-  .auth-form input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
+  /* Formulir kunci panel admin ikut gaya formulir masuk — bentuk kolomnya
+     sama persis, jadi tidak ada alasan menulis gaya kedua. Tanpa ini
+     kolomnya tampil sebagai kotak bawaan browser dan tombol matanya
+     melayang di luar kolom, karena .pw-toggle diposisikan terhadap
+     .pw-field yang lebarnya mengikuti input. */
+  .auth-form input,.admin-kunci-kartu input{width:100%;padding:11px 14px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:inherit;margin-bottom:var(--s3);}
+  .auth-form input:focus-visible,.admin-kunci-kartu input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
   .auth-form input.code-input{letter-spacing:0.5em;text-align:center;font-family:'Fraunces',serif;font-size:20px;padding:11px 8px;}
   .pw-field{position:relative;margin-bottom:var(--s3);}
   .pw-field input{padding-right:42px;margin-bottom:0;}

@@ -59,6 +59,13 @@
       </span>
       <span class="nav-label" id="sideProfilLabel">Masuk</span>
     </button>
+    <!-- Menu admin ditaruh PALING AKHIR supaya urutan menu yang sudah
+         dihafal pengguna biasa tidak bergeser sama sekali saat item ini
+         muncul. Ditampilkan hanya untuk admin oleh dashboard.js. -->
+    <button type="button" class="side-item" data-view="admin" id="sideAdminItem" hidden aria-label="Panel Admin">
+      <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v6c0 4.6-3.2 8-7.5 9-4.3-1-7.5-4.4-7.5-9V6z"/><path d="M9.2 12.2l2 2 3.6-3.8"/></svg></span>
+      <span class="nav-label">Panel Admin</span>
+    </button>
   </div>
 </nav>
 
@@ -86,6 +93,10 @@
       <span class="nav-avatar-badge" id="tabAvatarBadge" style="display:none" aria-hidden="true"></span>
     </span>
     <span class="nav-label" id="tabProfilLabel">Masuk</span>
+  </button>
+  <button type="button" class="tab-item" data-view="admin" id="tabAdminItem" hidden aria-label="Panel Admin">
+    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v6c0 4.6-3.2 8-7.5 9-4.3-1-7.5-4.4-7.5-9V6z"/><path d="M9.2 12.2l2 2 3.6-3.8"/></svg></span>
+    <span class="nav-label">Admin</span>
   </button>
 </nav>
 
@@ -151,6 +162,103 @@
     </div>
     <div class="grid-3" id="themeTemplateGrid"></div>
     <p class="workspace-msg" id="temaMsg" aria-live="polite"></p>
+  </section>
+
+  <section class="dash-view" id="view-admin">
+    <div class="section-head">
+      <h2>Panel Admin</h2>
+      <p>Seluruh undangan, pembayaran, dan aktivitas tamu di satu tempat.</p>
+    </div>
+
+    <!-- LAYAR KUNCI.
+         Sesi yang sudah masuk saja tidak cukup untuk membuka halaman ini:
+         laptop yang ditinggal terbuka berarti siapa pun yang lewat bisa
+         membaca data seluruh pelanggan. Jadi email + kata sandi diminta
+         ulang, dan kuncinya hanya bertahan selama tab ini hidup.
+
+         Yang perlu jujur dicatat: ini kunci di sisi TAMPILAN. Yang
+         benar-benar menahan akses ke datanya tetap pemeriksaan
+         is_admin(auth.uid()) di dalam tiap fungsi database. -->
+    <div class="admin-kunci" id="adminKunci">
+      <div class="admin-kunci-kartu">
+        <span class="admin-kunci-ikon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><circle cx="12" cy="15.5" r="1.4" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <h3>Konfirmasi dulu, ya</h3>
+        <p>Panel ini menampilkan data seluruh pelanggan. Masukkan ulang email dan kata sandi akun adminmu untuk membukanya.</p>
+        <form id="adminKunciForm" autocomplete="off">
+          <label for="adminKunciEmail">Email admin</label>
+          <input type="email" id="adminKunciEmail" placeholder="email akun adminmu" autocomplete="username" required>
+
+          <label for="adminKunciSandi">Kata sandi</label>
+          <div class="pw-field">
+            <input type="password" id="adminKunciSandi" placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" id="adminKunciLihat" aria-label="Tampilkan kata sandi" aria-pressed="false">
+              <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="icon-eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A11 11 0 0 1 12 19c-7 0-11-7-11-7a19.6 19.6 0 0 1 5.1-5.9M9.9 4.2A10.4 10.4 0 0 1 12 4c7 0 11 7 11 7a19.6 19.6 0 0 1-2.2 3.1M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M1 1l22 22"/></svg>
+            </button>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="adminKunciBtn">Buka Panel Admin</button>
+        </form>
+        <p class="workspace-msg" id="adminKunciMsg" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div id="adminIsi" hidden>
+      <div class="admin-head">
+        <p class="admin-sub" id="adminSub"></p>
+        <div class="admin-head-aksi">
+          <button type="button" class="btn btn-outline btn-sm" id="muatUlangBtn">Muat ulang</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="adminKunciLagiBtn">Kunci lagi</button>
+        </div>
+      </div>
+
+      <div class="admin-tiles" id="adminTiles"></div>
+
+      <div class="profile-block">
+        <div class="admin-blok-head">
+          <h3>Semua Undangan</h3>
+          <span class="admin-hitung" id="hitungUndangan"></span>
+        </div>
+        <div class="admin-tabel-bungkus">
+          <table class="admin-tabel">
+            <thead>
+              <tr>
+                <th>Pasangan</th><th>Status</th><th>Tema</th><th>Bayar</th>
+                <th>Tamu</th><th>RSVP</th><th>Ucapan</th><th>Pemilik</th><th>Dibuat</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="barisUndangan"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="profile-block">
+        <div class="admin-blok-head">
+          <h3>Semua Pembayaran</h3>
+          <span class="admin-hitung" id="hitungBayar"></span>
+        </div>
+        <div class="admin-tabel-bungkus">
+          <table class="admin-tabel">
+            <thead>
+              <tr>
+                <th>Nomor pesanan</th><th>Jumlah</th><th>Status</th><th>Metode</th>
+                <th>Pasangan</th><th>Pemilik</th><th>Dibuat</th><th>Lunas</th>
+              </tr>
+            </thead>
+            <tbody id="barisBayar"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="admin-catatan">
+        Panel ini sengaja tidak menampilkan alamat lokasi, nomor rekening, nama orang tua, maupun isi kalimat undangan.
+        Yang tampil hanya yang dibutuhkan untuk menjalankan usaha.
+      </p>
+    </div>
+
+    <p class="workspace-msg" id="adminMsg" aria-live="polite"></p>
   </section>
 
   <section class="dash-view" id="view-workspace">
@@ -667,16 +775,15 @@
     </div>
 
     <!-- Hanya tampil untuk akun admin (muatStatusAdmin di dashboard.js).
-         Menyembunyikannya bukan pengamanan — admin.html dijaga oleh
-         pemeriksaan is_admin() di dalam fungsi databasenya, bukan oleh
-         tombol ini. Ini semata supaya pelanggan biasa tidak melihat
+         Menyembunyikannya bukan pengamanan — datanya dijaga pemeriksaan
+         is_admin() di dalam fungsi databasenya, bukan oleh menu yang
+         disembunyikan. Ini semata supaya pelanggan biasa tidak melihat
          pintu yang bukan untuknya. -->
     <div class="profile-block" id="profilAdminBlok" hidden>
       <div class="profile-block-head">
         <span class="badge badge-admin">Akun admin</span>
       </div>
-      <p>Akunmu bebas biaya aktivasi dan tanpa batas jumlah draf. Panel admin menampilkan seluruh undangan, pembayaran, dan aktivitas tamu di satu tempat.</p>
-      <a class="btn btn-primary" href="admin.html">Buka Panel Admin</a>
+      <p>Akunmu bebas biaya aktivasi dan tanpa batas jumlah draf. Panel Admin ada di menu paling bawah, dan meminta konfirmasi kata sandi sebelum dibuka.</p>
     </div>
 
     <div class="profile-block">
@@ -724,6 +831,7 @@
 <script src="assets/auth-core.js"></script>
 <script src="assets/theme-templates.js"></script>
 <script src="assets/pricing-plans.js"></script>
+<script src="assets/admin.js"></script>
 <script src="assets/dashboard.js"></script>
 
 </body>
