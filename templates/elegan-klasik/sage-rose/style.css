@@ -231,6 +231,47 @@ section{position:relative;padding:var(--s6) var(--s4);}
 #cover.is-opening .cover-door-left{transform:translateX(-100%);}
 #cover.is-opening .cover-door-right{transform:translateX(100%);}
 
+/* ---------- FOTO SAMPUL FULL-BLEED ----------
+   Foto Utama milik pasangan dipakai sebagai latar penuh sampul.
+   Fotonya TIDAK bisa ditaruh di belakang pintu: pintunya buram dan
+   justru menutupinya. Jadi tiap daun pintu memuat satu salinan foto
+   selebar 2x pintu (= selebar sampul), digeser ke tepi masing-masing.
+   Karena kedua salinan punya kotak yang persis sama besar dengan
+   #cover, background-size:cover memotongnya identik di kedua sisi —
+   hasilnya satu gambar utuh yang terbelah tepat di tengah saat pintu
+   membuka, bukan dua gambar berbeda skala.
+   Variabel --foto-sampul dan class .has-sampul dipasang oleh
+   assets/render-undangan.js; tanpa foto, sampul kembali ke latar
+   kertas aslinya dan tidak ada yang berubah. */
+/* Yang memotong fotonya adalah .door-foto (sebesar daun pintu), BUKAN
+   .cover-door. Kalau overflow:hidden dipasang di pintunya, ornamen sulur
+   di garis pertemuan (.ornament.seam, sengaja menonjol 14px keluar
+   pintu) ikut terpotong separuh. */
+.door-foto{position:absolute;inset:0;overflow:hidden;display:none;}
+.door-foto-in{
+  position:absolute;top:0;height:100%;width:200%;
+  background-image:var(--foto-sampul);
+  background-size:cover;
+  background-position:center;
+}
+.cover-door-left .door-foto-in{left:0;}
+.cover-door-right .door-foto-in{right:0;}
+/* Lapis gelap supaya tulisan di depannya tetap terbaca berapa pun
+   terangnya foto yang diunggah user. */
+.door-foto-in::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(26,20,18,.62) 0%,rgba(26,20,18,.34) 42%,rgba(26,20,18,.74) 100%);
+}
+#cover.has-sampul .cover-door{border-right-color:rgba(255,255,255,.28);}
+#cover.has-sampul .door-foto{display:block;}
+#cover.has-sampul .ornament{color:rgba(247,238,226,.9);opacity:.45;}
+#cover.has-sampul .cover-guest{color:rgba(255,255,255,.86);}
+#cover.has-sampul .cover-guest b{color:#fff;}
+#cover.has-sampul .cover-eyebrow{color:#E3D6BE;}
+#cover.has-sampul .cover-names{color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);}
+#cover.has-sampul .cover-names .amp{color:#F0C7B7;}
+#cover.has-sampul .cover-date{color:rgba(255,255,255,.9);}
+
 .cover-content{
   position:relative;
   z-index:2;

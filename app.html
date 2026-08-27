@@ -199,6 +199,27 @@
         </div>
 
         <div class="profile-block">
+          <h3>Sapaan di Sampul</h3>
+          <p>Baris "Kepada Yth. Bapak/Ibu/Saudara/i" di sampul undangan. Pilihan ini hanya terasa pada <strong>link personal per tamu</strong> (tab Tamu &amp; Ucapan) &mdash; link umum selalu menyapa "Tamu Undangan" karena memang tidak tahu siapa yang membukanya.</p>
+          <div class="opsi-radio">
+            <label class="opsi-radio-item">
+              <input type="radio" name="sapaan_tamu" value="personal">
+              <span class="opsi-radio-teks">
+                <b>Pakai nama tamu</b>
+                <em>Kepada Yth. Bapak/Ibu/Saudara/i<br>Budi Santoso</em>
+              </span>
+            </label>
+            <label class="opsi-radio-item">
+              <input type="radio" name="sapaan_tamu" value="umum">
+              <span class="opsi-radio-teks">
+                <b>Selalu "Tamu Undangan"</b>
+                <em>Kepada Yth. Bapak/Ibu/Saudara/i<br>Tamu Undangan</em>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="profile-block">
           <h3>Mempelai</h3>
           <div class="field-grid">
             <div class="field">
@@ -328,12 +349,16 @@
           <p>Unggah beberapa foto kenangan kalian, maksimal 6 foto. <span class="hint-autosave">Tersimpan otomatis begitu selesai diunggah.</span></p>
           <div class="foto-galeri-upload">
             <input type="file" class="foto-upload-input" id="galeriInput" accept="image/jpeg,image/png,image/webp" multiple hidden>
+            <!-- Grid foto sengaja di ATAS zona unggah: begitu ada foto,
+                 yang ingin dilihat lebih dulu adalah fotonya, dan zona
+                 unggah menyusut jadi satu baris "Tambah foto" di bawahnya
+                 (lihat .is-compact di dashboard.js/style.css). -->
+            <div class="foto-galeri-grid" id="galeriGridUpload"></div>
             <div class="foto-upload-zone" id="galeriZone" tabindex="0" role="button" aria-label="Unggah foto galeri">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-              <span>Klik atau seret beberapa foto ke sini</span>
+              <span id="galeriZoneLabel">Klik atau seret beberapa foto ke sini</span>
               <span class="foto-upload-hint" id="galeriHint">JPG, PNG, atau WEBP &middot; maks 5 MB per foto &middot; 0/6 foto</span>
             </div>
-            <div class="foto-galeri-grid" id="galeriGridUpload"></div>
             <p class="foto-upload-status" id="galeriStatus" aria-live="polite"></p>
           </div>
         </div>

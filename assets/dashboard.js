@@ -265,53 +265,17 @@
   // sama seperti renderProfileNav(KU.getSession()) di atas.
   handlePendingGunakan();
 
+  // Kartu tema dibangun perender bersama di assets/theme-templates.js —
+  // grid ini dan grid tema di halaman depan dulu punya salinan markup
+  // masing-masing dan sempat berbeda tanpa alasan. Bedanya di sini cuma
+  // dua: tanpa harga (dashboard punya tab Harga sendiri) dan path aset
+  // relatif dari root yang sama, karena app.html juga ada di root.
   function renderThemeTemplateCard(t){
-    var card = document.createElement('article');
-    card.className = 'tpl-card';
-
-    var preview = document.createElement('div');
-    preview.className = 'tpl-preview';
-    var img = document.createElement('img');
-    img.src = t.thumb;
-    img.alt = 'Pratinjau ' + t.name;
-    img.loading = 'lazy';
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-    preview.appendChild(img);
-
-    var body = document.createElement('div');
-    body.className = 'tpl-body';
-
-    var row = document.createElement('div');
-    row.className = 'tpl-row';
-    var name = document.createElement('span');
-    name.className = 'name';
-    name.textContent = t.name;
-    row.appendChild(name);
-
-    var desc = document.createElement('p');
-    desc.className = 'tpl-desc';
-    desc.textContent = t.desc;
-
-    var actions = document.createElement('div');
-    actions.className = 'tpl-actions';
-
-    var previewBtn = document.createElement('a');
-    previewBtn.className = 'btn btn-outline';
-    previewBtn.href = 'templates/pratinjau.html?tema=' + encodeURIComponent(t.id);
-    previewBtn.target = '_blank';
-    previewBtn.rel = 'noopener';
-    previewBtn.textContent = 'Pratinjau';
-
-    var useBtn = document.createElement('button');
-    useBtn.type = 'button';
-    useBtn.className = 'btn btn-ghost tpl-use-btn';
-    useBtn.dataset.id = t.id;
-    useBtn.textContent = 'Gunakan';
-
-    actions.append(previewBtn, useBtn);
-    body.append(row, desc, actions);
-    card.append(preview, body);
-    return card;
+    return window.renderThemeCard(t, {
+      harga: null,
+      tombolLihat: { className: 'btn btn-outline', teks: 'Pratinjau' },
+      tombolPakai: { className: 'btn btn-ghost tpl-use-btn', teks: 'Gunakan' }
+    });
   }
 
   function renderThemeTemplateGrid(){
@@ -319,6 +283,7 @@
     if (!grid) return;
     grid.innerHTML = '';
     THEME_TEMPLATES.forEach(function(t){ grid.appendChild(renderThemeTemplateCard(t)); });
+    window.isiPemakaiTema(grid);
   }
   renderThemeTemplateGrid();
 
@@ -498,7 +463,11 @@
     'lokasi_nama', 'lokasi_alamat', 'lokasi_maps_url',
     'kalimat_pembuka', 'kalimat_penutup',
     'nama_bank_1', 'no_rekening_1', 'pemilik_rekening_1',
-    'nama_bank_2', 'no_rekening_2', 'pemilik_rekening_2'
+    'nama_bank_2', 'no_rekening_2', 'pemilik_rekening_2',
+    // Grup radio: wsForm.elements['sapaan_tamu'] mengembalikan
+    // RadioNodeList, dan .value-nya membaca/menyetel radio yang terpilih —
+    // jadi pola baca-tulis FORM_FIELDS di bawah tetap berlaku apa adanya.
+    'sapaan_tamu'
   ];
 
   // Label dalam Bahasa Indonesia dipakai di ringkasan error saat Simpan
@@ -929,6 +898,7 @@
   var galeriInput = document.getElementById('galeriInput');
   var galeriZone = document.getElementById('galeriZone');
   var galeriHint = document.getElementById('galeriHint');
+  var galeriZoneLabel = document.getElementById('galeriZoneLabel');
   var galeriGridUpload = document.getElementById('galeriGridUpload');
   var galeriStatus = document.getElementById('galeriStatus');
   var GALERI_MAKS = 6;
@@ -959,7 +929,19 @@
       galeriGridUpload.appendChild(thumb);
     });
     var penuh = daftar.length >= GALERI_MAKS;
-    if (galeriZone) galeriZone.classList.toggle('disabled', penuh);
+    if (galeriZone) {
+      galeriZone.classList.toggle('disabled', penuh);
+      // Begitu ada foto, ajakan besar "seret ke sini" sudah tidak
+      // memberi tahu apa pun yang baru — grid di atasnya sudah bicara.
+      // Zonanya menyusut jadi satu baris supaya tidak memakan ruang
+      // sebesar keadaan kosong.
+      galeriZone.classList.toggle('is-compact', daftar.length > 0);
+    }
+    if (galeriZoneLabel) {
+      galeriZoneLabel.textContent = daftar.length
+        ? 'Tambah foto lagi'
+        : 'Klik atau seret beberapa foto ke sini';
+    }
     if (galeriHint) {
       galeriHint.textContent = penuh
         ? 'Galeri sudah penuh (' + GALERI_MAKS + '/' + GALERI_MAKS + ' foto). Hapus salah satu untuk menambah yang baru.'
@@ -1876,6 +1858,11 @@
       if (!el) return;
       el.value = (inv && inv[f] != null) ? inv[f] : '';
     });
+    // Baris lama bisa saja belum punya nilai sapaan_tamu. Membiarkan
+    // grup radio kosong berarti user melihat dua pilihan yang sama-sama
+    // tidak terpilih, padahal perilaku nyatanya "pakai nama tamu".
+    var sapaan = wsForm.elements['sapaan_tamu'];
+    if (sapaan && !sapaan.value) sapaan.value = 'personal';
     bersihkanSemuaFieldError();
     showWsSaveMsg('');
     hydrateFotoWorkspace(inv);

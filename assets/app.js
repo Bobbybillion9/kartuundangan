@@ -308,6 +308,20 @@
       a.dataset.mode = loggedIn ? 'signout' : 'signup';
       a.style.display = loggedIn ? 'none' : '';
     });
+
+    // CTA di badan halaman TIDAK disembunyikan seperti .nav-signup —
+    // menghilangkannya menyisakan bagian yang timpang (judul ajakan tanpa
+    // tombol, bilah sticky tanpa aksi). Yang salah cuma katanya: menyuruh
+    // "Daftar" orang yang jelas-jelas sudah masuk. Jadi labelnya ditukar,
+    // dan klik-nya sudah diarahkan ke app.html oleh listener di bawah.
+    Array.prototype.forEach.call(document.querySelectorAll('.cta-daftar'), function(a){
+      if (!a.dataset.labelTamu) a.dataset.labelTamu = a.textContent;
+      a.textContent = loggedIn ? (a.dataset.labelMasuk || a.dataset.labelTamu) : a.dataset.labelTamu;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.cta-daftar-teks'), function(p){
+      if (!p.dataset.teksTamu) p.dataset.teksTamu = p.textContent;
+      p.textContent = loggedIn ? (p.dataset.teksMasuk || p.dataset.teksTamu) : p.dataset.teksTamu;
+    });
   }
 
   document.addEventListener('click', async function(e){
@@ -325,7 +339,14 @@
     if (a) {
       e.preventDefault();
       if (a.dataset.mode === 'signout') { if (await KU.confirmLogout()) KU.sb.auth.signOut(); return; }
-      if (a.getAttribute('href') === '#daftar' && KU.getSession()) { window.location.href = 'app.html?view=tema'; return; }
+      if (a.getAttribute('href') === '#daftar' && KU.getSession()) {
+        // Sudah masuk: CTA di badan halaman ("Lanjut ke dashboard")
+        // membawanya ke beranda dashboard, tempat draf yang sudah ada
+        // terlihat. Yang masih menuju pemilih tema hanya tombol yang
+        // memang berjanji begitu — mis. "Pilih Paket" di bagian Harga.
+        window.location.href = a.classList.contains('cta-daftar') ? 'app.html' : 'app.html?view=tema';
+        return;
+      }
       openModal(a.getAttribute('href') === '#masuk' ? 'login' : 'signup');
       return;
     }
@@ -428,66 +449,22 @@
     return 0;
   }
 
+  // Kartu tema dibangun perender bersama di assets/theme-templates.js —
+  // halaman ini dan tab Template Tema di dashboard dulu punya salinan
+  // markup masing-masing dan sempat berbeda tanpa alasan.
   function renderLandingThemeCard(t){
-    var card = document.createElement('article');
-    card.className = 'tpl-card';
-
-    var preview = document.createElement('div');
-    preview.className = 'tpl-preview';
-    var img = document.createElement('img');
-    img.src = t.thumb;
-    img.alt = 'Pratinjau ' + t.name;
-    img.loading = 'lazy';
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-    preview.appendChild(img);
-
-    var body = document.createElement('div');
-    body.className = 'tpl-body';
-
-    var row = document.createElement('div');
-    row.className = 'tpl-row';
-    var name = document.createElement('span');
-    name.className = 'name';
-    name.textContent = t.name;
-    var price = document.createElement('span');
-    price.className = 'price';
-    // Dibaca dari katalog, bukan ditulis ulang: harga yang di-hardcode di
-    // sini pernah membuat kartu tema menampilkan angka lama setelah harga
-    // di PRICING_PLANS diubah, dan bedanya baru ketahuan saat pelanggan
-    // sudah melihat dua angka berbeda di satu halaman.
-    price.textContent = 'Rp' + window.formatRupiah(hargaPaketStandar());
-    row.append(name, price);
-
-    var desc = document.createElement('p');
-    desc.className = 'tpl-desc';
-    desc.textContent = t.desc;
-
-    var actions = document.createElement('div');
-    actions.className = 'tpl-actions';
-
-    var previewBtn = document.createElement('a');
-    previewBtn.className = 'btn btn-ghost';
-    previewBtn.href = 'templates/pratinjau.html?tema=' + encodeURIComponent(t.id);
-    previewBtn.target = '_blank';
-    previewBtn.rel = 'noopener';
-    previewBtn.textContent = 'Preview';
-
-    var useBtn = document.createElement('button');
-    useBtn.type = 'button';
-    useBtn.className = 'btn btn-primary landing-tpl-use-btn';
-    useBtn.dataset.id = t.id;
-    useBtn.textContent = 'Gunakan';
-
-    actions.append(previewBtn, useBtn);
-    body.append(row, desc, actions);
-    card.append(preview, body);
-    return card;
+    return window.renderThemeCard(t, {
+      harga: hargaPaketStandar(),
+      tombolLihat: { className: 'btn btn-ghost', teks: 'Pratinjau' },
+      tombolPakai: { className: 'btn btn-primary landing-tpl-use-btn', teks: 'Gunakan' }
+    });
   }
 
   function renderLandingThemeGrid(){
     if (!landingThemeGrid || !window.THEME_TEMPLATES) return;
     landingThemeGrid.innerHTML = '';
     window.THEME_TEMPLATES.forEach(function(t){ landingThemeGrid.appendChild(renderLandingThemeCard(t)); });
+    window.isiPemakaiTema(landingThemeGrid);
   }
   renderLandingThemeGrid();
 

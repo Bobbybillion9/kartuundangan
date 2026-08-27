@@ -226,6 +226,39 @@ section{position:relative;padding:var(--s6) var(--s4);}
 #cover.is-opening .cover-curtain-top{transform:translateY(-100%);}
 #cover.is-opening .cover-curtain-bottom{transform:translateY(-200%);}
 
+/* ---------- FOTO SAMPUL FULL-BLEED ----------
+   Sama polanya dengan tema lain, hanya sumbunya vertikal: tiap panel
+   tirai memuat satu salinan foto setinggi 2x panel (= setinggi
+   sampul), ditempel ke tepi atas/bawah masing-masing. Karena kedua
+   salinan berkotak sama besar dengan #cover, background-size:cover
+   memotongnya identik — satu gambar utuh yang terbelah di garis
+   pertemuan tirai, bukan dua gambar berbeda skala.
+   --foto-sampul dan .has-sampul dipasang assets/render-undangan.js;
+   tanpa foto, tirai kembali ke warna kertas aslinya. */
+.curtain-foto{
+  position:absolute;left:0;width:100%;height:200%;
+  background-image:var(--foto-sampul);
+  background-size:cover;
+  background-position:center;
+  display:none;
+}
+.cover-curtain-top .curtain-foto{top:0;}
+.cover-curtain-bottom .curtain-foto{bottom:0;}
+/* Lapis gelap supaya tulisan di depannya tetap terbaca berapa pun
+   terangnya foto yang diunggah user. */
+.curtain-foto::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(24,20,14,.62) 0%,rgba(24,20,14,.34) 42%,rgba(24,20,14,.74) 100%);
+}
+#cover.has-sampul .curtain-foto{display:block;}
+#cover.has-sampul .curtain-seam{color:rgba(240,225,196,.95);}
+#cover.has-sampul .cover-guest{color:rgba(255,255,255,.86);}
+#cover.has-sampul .cover-guest b{color:#fff;}
+#cover.has-sampul .cover-eyebrow{color:#EBD9AE;}
+#cover.has-sampul .cover-names{color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);}
+#cover.has-sampul .cover-names .amp{color:#E7C77E;}
+#cover.has-sampul .cover-date{color:rgba(255,255,255,.9);}
+
 .curtain-seam{
   position:absolute;left:50%;width:min(220px,60%);height:22px;
   transform:translateX(-50%);

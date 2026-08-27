@@ -94,6 +94,39 @@
     }
   }
 
+  // Foto sampul full-bleed.
+  //
+  // Berbeda dari slot foto biasa di atas, foto ini TIDAK dipasang lewat
+  // <img>: di dua dari tiga tema, sampulnya terbelah jadi dua panel yang
+  // beranimasi (pintu di Sage Rose, tirai di Ivory Gold), dan satu <img>
+  // tidak bisa ikut terbelah. Yang dilakukan: fotonya dikirim sebagai
+  // custom property CSS --foto-sampul, lalu tiap tema sendiri yang
+  // memutuskan cara memakainya (lihat blok "FOTO SAMPUL FULL-BLEED" di
+  // style.css masing-masing). Class .has-sampul yang menyalakannya —
+  // tanpa foto, sampul kembali ke latar aslinya dan tak ada yang berubah.
+  //
+  // Sumbernya foto_utama_url, kolom yang di dashboard memang dilabeli
+  // "Foto Utama ... tampil sebagai foto sampul besar". Tidak ada kolom
+  // baru: menambah kolom kedua untuk foto yang sama hanya membuat user
+  // mengunggah dua kali.
+  function setFotoSampul(doc, url){
+    var cover = doc.getElementById('cover');
+    if (!cover) return;
+    if (url) {
+      // Kutip, tanda kurung, dan backslash di dalam url() akan mematahkan
+      // deklarasinya — satu nama berkas yang mengandungnya sudah cukup
+      // untuk membuat seluruh sampul jadi kosong tanpa pesan error apa
+      // pun. Dipersen-encode, bukan dibuang: membuang karakternya berarti
+      // menunjuk ke berkas yang tidak ada.
+      var aman = String(url).replace(/[\r\n"'()\\]/g, encodeURIComponent);
+      cover.style.setProperty('--foto-sampul', 'url("' + aman + '")');
+      cover.classList.add('has-sampul');
+    } else {
+      cover.style.removeProperty('--foto-sampul');
+      cover.classList.remove('has-sampul');
+    }
+  }
+
   // Nama tamu tidak ikut di baris invitations — datangnya dari link
   // personal yang dibuka tamu (lihat undangan.html), jadi dikirim
   // terpisah lewat argumen ketiga populateSlots(). Kalau tidak ada
@@ -101,13 +134,22 @@
   // dashboard), slot-nya dibiarkan memakai teks bawaan template
   // ("Tamu Undangan") — sengaja tidak dikosongkan, karena sampul
   // undangan tetap butuh sesuatu di baris "Kepada Yth".
-  function setSlotNamaTamu(doc, namaTamu){
+  //
+  // Kolom sapaan_tamu memutuskan apakah nama itu benar-benar dipakai:
+  //   'umum'     -> sampul tetap berbunyi "Tamu Undangan" untuk semua
+  //                 orang, sekalipun yang dibuka link personal. Nama tamu
+  //                 tetap dipakai di tempat lain (mis. mengisi otomatis
+  //                 formulir kehadiran) — yang diminta cuma sampulnya
+  //                 seragam.
+  //   selain itu -> nama tamu tampil di sampul (bawaan).
+  function setSlotNamaTamu(doc, namaTamu, sapaan){
+    if (sapaan === 'umum') return;
     if (!namaTamu) return;
     setSlotText(doc, 'nama_tamu', namaTamu);
   }
 
   function populateSlots(doc, inv, namaTamu){
-    setSlotNamaTamu(doc, namaTamu);
+    setSlotNamaTamu(doc, namaTamu, inv.sapaan_tamu);
     setSlotText(doc, 'nama_pria_panggilan', textOrPlaceholder(inv.nama_pria_panggilan, 'Nama Pria'));
     setSlotText(doc, 'nama_wanita_panggilan', textOrPlaceholder(inv.nama_wanita_panggilan, 'Nama Wanita'));
     setSlotText(doc, 'nama_pria_lengkap', textOrPlaceholder(inv.nama_pria_lengkap, 'Nama Lengkap Pria'));
@@ -116,6 +158,7 @@
     setSlotText(doc, 'orangtua_wanita', textOrPlaceholder(inv.orangtua_wanita, 'Putri dari Bapak ... dan Ibu ...'));
 
     setSlotFoto(doc, 'foto_utama', inv.foto_utama_url);
+    setFotoSampul(doc, inv.foto_utama_url);
     setSlotFoto(doc, 'foto_pria', inv.foto_pria_url);
     setSlotFoto(doc, 'foto_wanita', inv.foto_wanita_url);
     var galeri = Array.isArray(inv.foto_galeri) ? inv.foto_galeri : [];
