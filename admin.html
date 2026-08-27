@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Admin — Kartu Undangan</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+
+<script>
+  // Tema dibaca sebelum halaman digambar supaya tidak ada kedip putih.
+  try {
+    document.documentElement.setAttribute('data-theme',
+      localStorage.getItem('ku-theme') === 'dark' ? 'dark' : 'light');
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<!-- PENTING — halaman ini TIDAK dilindungi oleh keberadaannya sendiri.
+     Siapa pun bisa mengetik /admin.html. Yang benar-benar menjaga data
+     adalah pemeriksaan is_admin(auth.uid()) DI DALAM tiap fungsi database
+     (admin_ringkasan, admin_daftar_undangan, admin_daftar_pembayaran).
+     Pengalihan di assets/admin.js hanya kenyamanan supaya orang yang
+     salah alamat tidak melihat layar kosong — bukan lapisan keamanan.
+     Jangan pernah memindahkan pemeriksaan itu ke sisi browser. -->
+
+<header>
+  <nav class="wrap nav">
+    <a class="logo" href="app.html">Kartu <span class="script">Undangan</span></a>
+    <div class="nav-right">
+      <span class="badge badge-admin">Panel Admin</span>
+      <a class="btn btn-ghost btn-sm" href="app.html">Dashboard</a>
+    </div>
+  </nav>
+</header>
+
+<section class="legal">
+  <div class="wrap">
+
+    <div class="admin-head">
+      <div>
+        <p class="eyebrow">Internal</p>
+        <h1>Panel Admin</h1>
+        <p class="admin-sub" id="adminSub">Memuat…</p>
+      </div>
+      <button type="button" class="btn btn-outline btn-sm" id="muatUlangBtn">Muat ulang</button>
+    </div>
+
+    <p class="workspace-msg" id="adminMsg" aria-live="polite"></p>
+
+    <div id="adminIsi" hidden>
+      <div class="admin-tiles" id="adminTiles"></div>
+
+      <div class="profile-block">
+        <div class="admin-blok-head">
+          <h3>Semua Undangan</h3>
+          <span class="admin-hitung" id="hitungUndangan"></span>
+        </div>
+        <div class="admin-tabel-bungkus">
+          <table class="admin-tabel">
+            <thead>
+              <tr>
+                <th>Pasangan</th><th>Status</th><th>Tema</th><th>Bayar</th>
+                <th>Tamu</th><th>RSVP</th><th>Ucapan</th><th>Pemilik</th><th>Dibuat</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="barisUndangan"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="profile-block">
+        <div class="admin-blok-head">
+          <h3>Semua Pembayaran</h3>
+          <span class="admin-hitung" id="hitungBayar"></span>
+        </div>
+        <div class="admin-tabel-bungkus">
+          <table class="admin-tabel">
+            <thead>
+              <tr>
+                <th>Nomor pesanan</th><th>Jumlah</th><th>Status</th><th>Metode</th>
+                <th>Pasangan</th><th>Pemilik</th><th>Dibuat</th><th>Lunas</th>
+              </tr>
+            </thead>
+            <tbody id="barisBayar"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="admin-catatan">
+        Panel ini sengaja tidak menampilkan alamat lokasi, nomor rekening, nama orang tua, maupun isi kalimat undangan.
+        Yang tampil hanya yang dibutuhkan untuk menjalankan usaha.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/auth-core.js"></script>
+<script src="assets/pricing-plans.js"></script>
+<script src="assets/admin.js"></script>
+</body>
+</html>

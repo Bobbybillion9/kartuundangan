@@ -357,6 +357,11 @@
   .tabbar{display:none;}
 
   .profile-block{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-lg);padding:var(--s4);margin-bottom:var(--s3);}
+  /* .profile-block tidak menyetel display, jadi [hidden] bawaan browser
+     sebenarnya sudah bekerja di sini. Ditulis eksplisit supaya tetap
+     benar kalau suatu saat ada yang menambahkan display ke aturan di
+     atas — pola itu sudah pernah membuat zona unggah tidak mau hilang. */
+  .profile-block[hidden]{display:none;}
   .profile-block-head{display:flex;align-items:center;gap:var(--s3);}
   .profile-block h3{margin-bottom:6px;}
   .profile-block p{margin-bottom:var(--s2);}
@@ -534,6 +539,38 @@
   .bayar-lunas[hidden]{display:none;}
   .bayar-lunas svg{flex-shrink:0;width:20px;height:20px;color:var(--accent-dark);}
   .bayar-lunas strong{color:var(--ink);}
+
+  /* ---------- panel admin (admin.html) ---------- */
+  .admin-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4);}
+  .admin-head h1{font-size:clamp(26px,5vw,34px);margin-bottom:6px;}
+  .admin-sub{font-size:13px;color:var(--ink-soft);}
+  .admin-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2);margin-bottom:var(--s5);}
+  .admin-tile{padding:var(--s3);border:1px solid var(--line-soft);border-radius:var(--r-md);background:var(--card);}
+  .admin-tile.utama{border-color:var(--accent);background:var(--accent-tint);}
+  .admin-tile-nilai{font-family:'Fraunces',serif;font-size:24px;font-weight:600;line-height:1.15;color:var(--ink);}
+  .admin-tile.utama .admin-tile-nilai{color:var(--accent-dark);}
+  .admin-tile-label{font-size:11.5px;color:var(--ink-soft);margin-top:4px;line-height:1.4;}
+
+  .admin-blok-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);margin-bottom:var(--s3);}
+  .admin-hitung{font-size:12px;color:var(--ink-soft);white-space:nowrap;}
+  /* Tabel lebar wajib bisa digulir DI DALAM wadahnya sendiri — kalau
+     tidak, seluruh halaman ikut bisa digeser ke samping di HP. */
+  .admin-tabel-bungkus{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 calc(-1 * var(--s3));padding:0 var(--s3);}
+  .admin-tabel{width:100%;border-collapse:collapse;font-size:13px;min-width:760px;}
+  .admin-tabel th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;padding:0 10px 8px;white-space:nowrap;}
+  .admin-tabel td{padding:10px;border-top:1px solid var(--line-soft);vertical-align:middle;color:var(--ink-mid);}
+  .admin-tabel tbody tr:hover{background:var(--paper-2);}
+  .admin-kuat{color:var(--ink);font-weight:600;white-space:nowrap;}
+  .admin-lirih{color:var(--ink-soft);font-size:12px;white-space:nowrap;}
+  .admin-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;white-space:nowrap;}
+  .admin-pil{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap;background:var(--line-soft);color:var(--ink-mid);}
+  .admin-pil.ok{background:var(--accent-tint);color:var(--accent-dark);}
+  .admin-pil.warn{background:#F6E7CE;color:#8A6216;}
+  .admin-pil.err{background:#F6DDD7;color:#A2402F;}
+  html[data-theme="dark"] .admin-pil.warn{background:rgba(214,166,74,.18);color:#E3BE72;}
+  html[data-theme="dark"] .admin-pil.err{background:rgba(192,80,61,.18);color:#E08A78;}
+  .admin-catatan{font-size:12px;line-height:1.6;color:var(--ink-soft);margin-top:var(--s4);}
+  .admin-tabel .btn{padding:5px 11px;font-size:12px;}
 
   /* Riwayat pembayaran. Nomor pesanan sengaja monospace dan bisa
      diseleksi — itu satu-satunya pegangan user kalau harus menghubungi

@@ -666,6 +666,19 @@
       </div>
     </div>
 
+    <!-- Hanya tampil untuk akun admin (muatStatusAdmin di dashboard.js).
+         Menyembunyikannya bukan pengamanan — admin.html dijaga oleh
+         pemeriksaan is_admin() di dalam fungsi databasenya, bukan oleh
+         tombol ini. Ini semata supaya pelanggan biasa tidak melihat
+         pintu yang bukan untuknya. -->
+    <div class="profile-block" id="profilAdminBlok" hidden>
+      <div class="profile-block-head">
+        <span class="badge badge-admin">Akun admin</span>
+      </div>
+      <p>Akunmu bebas biaya aktivasi dan tanpa batas jumlah draf. Panel admin menampilkan seluruh undangan, pembayaran, dan aktivitas tamu di satu tempat.</p>
+      <a class="btn btn-primary" href="admin.html">Buka Panel Admin</a>
+    </div>
+
     <div class="profile-block">
       <label for="profileNameInput">Nama tampilan</label>
       <div class="profile-name-row">

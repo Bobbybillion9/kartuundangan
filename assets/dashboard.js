@@ -440,12 +440,14 @@
   // kalau memang bukan admin.
   var akunAdmin = false;
   var adminBadge = document.getElementById('adminBadge');
+  var profilAdminBlok = document.getElementById('profilAdminBlok');
 
   async function muatStatusAdmin(){
     if (!KU.getSession()) { akunAdmin = false; return; }
     var res = await KU.sb.rpc('saya_admin');
     akunAdmin = !res.error && res.data === true;
     if (adminBadge) adminBadge.hidden = !akunAdmin;
+    if (profilAdminBlok) profilAdminBlok.hidden = !akunAdmin;
   }
 
   async function ensureDraftForTemplate(t){
