@@ -351,8 +351,9 @@
   function renderThemeTemplateCard(t){
     return window.renderThemeCard(t, {
       harga: null,
-      tombolLihat: { className: 'btn btn-outline', teks: 'Pratinjau' },
-      tombolPakai: { className: 'btn btn-ghost tpl-use-btn', teks: 'Gunakan' }
+      tombolLihat: { teks: 'Pratinjau' },
+      tombolPakai: { teks: 'Gunakan Tema' },
+      kelasPakai: 'tpl-use-btn'
     });
   }
 

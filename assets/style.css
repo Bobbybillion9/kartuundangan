@@ -134,54 +134,71 @@
   .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s3);}
 
   /* ---------- kartu tema ----------
-     Bentuknya kartu potret utuh: fotonya berasio 2:3 persis sama dengan
-     thumbnail yang dihasilkan (780x1170), jadi object-fit:cover praktis
-     tidak memotong apa pun. Versi sebelumnya memakai jendela setinggi
-     200px untuk gambar setinggi 844px — yang tampil cuma sepenggal
-     tengahnya, dan tidak ada satu tema pun yang benar-benar terlihat.
-     Keterangan ditulis di atas foto dalam panel kaca buram; panelnya
-     sengaja GELAP, bukan putih, karena dua dari tiga tema bersampul
-     terang dan teks putih di atas kaca putih tidak akan terbaca. */
-  .tpl-card{background:var(--card);border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--line-soft);display:flex;flex-direction:column;}
-  .tpl-shot{position:relative;aspect-ratio:2/3;background:var(--accent-tint);}
-  .tpl-shot img{width:100%;height:100%;object-fit:cover;display:block;}
-  .tpl-kaca{
-    position:absolute;left:10px;right:10px;bottom:10px;
-    padding:11px 13px;
-    border-radius:var(--r-md);
-    background:rgba(22,19,17,.66);
-    border:1px solid rgba(255,255,255,.18);
-    box-shadow:0 12px 30px -14px rgba(0,0,0,.6);
-    color:#fff;
+     Kartu potret penuh gambar: foto mengisi seluruh kartu, keterangan
+     duduk di atasnya, dipisahkan gradasi gelap yang menebal ke bawah.
+
+     Gradasinya bukan hiasan. Dua dari tiga sampul tema berlatar TERANG
+     (Ivory Gold dan Sage Rose), jadi tanpa lapisan gelap ini tulisan
+     putihnya lenyap. Pekat di kaki kartu, bening di kepala, supaya
+     desain temanya tetap terlihat utuh di bagian atas. */
+  .tpl-card{
+    position:relative;
+    aspect-ratio:3/4.35;
+    border-radius:22px;
+    overflow:hidden;
+    background:var(--paper-2);
+    box-shadow:0 18px 38px -22px rgba(60,40,25,.45);
+    isolation:isolate;
+  }
+  .tpl-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+  .tpl-scrim{
+    position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(to bottom,
+      rgba(20,15,11,0) 0%,
+      rgba(20,15,11,.12) 32%,
+      rgba(20,15,11,.62) 58%,
+      rgba(20,15,11,.92) 100%);
+  }
+  .tpl-isi{position:absolute;left:0;right:0;bottom:0;padding:var(--s3) var(--s3) calc(var(--s3) + 2px);color:#fff;}
+  .tpl-baris{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:5px;}
+  .tpl-nama{font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:#fff;line-height:1.2;margin:0;}
+  .tpl-harga{flex-shrink:0;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);font-size:12px;font-weight:600;color:#fff;white-space:nowrap;}
+  @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    .tpl-harga{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+  }
+  .tpl-ringkas{font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.9);margin:0 0 10px;}
+  .tpl-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+  .tpl-tag{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 10px;border-radius:999px;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);
+    font-size:11px;font-weight:600;color:#fff;white-space:nowrap;
   }
   @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-    /* Blur baru dinyalakan kalau browsernya memang bisa — tanpa blur,
-       lapisan setipis .38 membuat teksnya tidak terbaca di atas foto
-       yang ramai, jadi yang tanpa dukungan tetap dapat lapisan pekat. */
-    .tpl-kaca{background:rgba(22,19,17,.55);-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);}
+    .tpl-tag{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
   }
-  .tpl-kaca-baris{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
-  .tpl-nama{font-family:'Fraunces',serif;font-size:17px;font-weight:600;}
-  .tpl-harga{font-size:12.5px;color:rgba(255,255,255,.82);white-space:nowrap;}
-  .tpl-ringkas{margin-top:3px;font-size:12.5px;line-height:1.45;color:rgba(255,255,255,.88);}
-  /* Penanda pemakai: angkanya dari RPC hitung_pemakai_tema(), dan kalau
-     sebuah tema belum dipakai siapa pun penandanya tidak ditampilkan
-     sama sekali (lihat window.isiPemakaiTema). */
-  .tpl-pakai{
-    position:absolute;top:10px;left:10px;
-    display:inline-flex;align-items:center;gap:6px;
-    padding:5px 10px;border-radius:999px;
-    font-size:11.5px;font-weight:600;letter-spacing:.01em;
-    color:#fff;background:rgba(22,19,17,.66);
-    border:1px solid rgba(255,255,255,.22);
+  .tpl-tag[hidden]{display:none;}
+  .tpl-pakai::before{content:'';width:6px;height:6px;border-radius:50%;background:#6FE39B;box-shadow:0 0 0 3px rgba(111,227,155,.25);}
+
+  .tpl-aksi{display:flex;gap:8px;}
+  .tpl-btn{
+    flex:1;min-width:0;
+    display:inline-flex;align-items:center;justify-content:center;
+    height:40px;padding:0 12px;border-radius:999px;
+    font-size:13px;font-weight:600;font-family:inherit;
+    cursor:pointer;text-align:center;white-space:nowrap;
+    transition:transform .18s ease,background .18s ease;
   }
+  .tpl-btn:hover{transform:translateY(-1px);}
+  /* Tombol utama putih pekat, seperti referensinya: di atas foto apa pun,
+     putih solid adalah satu-satunya yang pasti terbaca. */
+  .tpl-btn-utama{background:#fff;color:#231C14;border:0;}
+  .tpl-btn-utama:hover{background:#F3EDE4;}
+  .tpl-btn-kaca{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff;}
+  .tpl-btn-kaca:hover{background:rgba(255,255,255,.24);}
   @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-    .tpl-pakai{background:rgba(22,19,17,.55);-webkit-backdrop-filter:blur(12px) saturate(150%);backdrop-filter:blur(12px) saturate(150%);}
+    .tpl-btn-kaca{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
   }
-  .tpl-pakai::before{content:'';width:6px;height:6px;border-radius:50%;background:#5FD08A;box-shadow:0 0 0 3px rgba(95,208,138,.22);}
-  .tpl-pakai[hidden]{display:none;}
-  .tpl-actions{display:flex;gap:8px;padding:var(--s3);}
-  .tpl-actions .btn{flex:1;padding:9px 10px;font-size:13px;}
 
   .step-card{background:var(--card);border-radius:var(--r-md);padding:var(--s4);border:1px solid var(--line-soft);}
   .step-num{font-family:'Fraunces',serif;font-style:italic;font-size:14px;color:var(--accent);display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--accent-tint);margin-bottom:var(--s3);}
@@ -287,27 +304,19 @@
      memberi tahu bahwa itu bisa dipindai semua e-wallet. */
   .foot-pay{padding-top:var(--s4);padding-bottom:var(--s4);border-top:1px solid var(--line);}
   .foot-pay-judul{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:var(--s3);}
-  .pay-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:var(--s2);}
-  .pay-item{
-    /* flex-wrap wajib: .pay-ket memakai flex-basis:100% supaya turun ke
-       baris kedua. Tanpa wrap, ia tetap bertahan di baris yang sama dan
-       yang terdorong justru nama metodenya — "E-wallet" pecah jadi dua
-       baris di tengah kata. */
-    display:flex;align-items:center;flex-wrap:wrap;gap:2px 10px;
-    padding:10px var(--s3) 12px;
-    border:1px solid var(--line-soft);
-    border-radius:var(--r-md);
-    background:var(--card);
-    flex:1 1 210px;
-  }
-  .pay-logo{flex-shrink:0;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--accent-tint);color:var(--accent-dark);}
-  .pay-logo svg{width:19px;height:19px;}
-  .pay-logo img{width:100%;height:100%;object-fit:contain;}
-  .pay-nama{font-size:13.5px;font-weight:600;color:var(--ink);}
-  .pay-ket{font-size:11.5px;color:var(--ink-soft);flex-basis:100%;padding-left:44px;margin-top:-2px;}
-  .foot-pay-midtrans{display:flex;align-items:flex-start;gap:7px;margin-top:var(--s3);font-size:11.5px;line-height:1.6;color:var(--ink-soft);}
-  .foot-pay-midtrans svg{flex-shrink:0;width:14px;height:14px;margin-top:2px;color:var(--accent);}
-  .foot-pay-midtrans strong{color:var(--ink-mid);font-weight:600;}
+  /* Kisi metode pembayaran: kotak putih kecil berisi logo, mengikuti
+     pola yang lazim di footer toko online. Ukurannya seragam supaya logo
+     yang bentuknya berbeda-beda tetap terbaca sebagai satu deret. */
+  .pay-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;max-width:620px;}
+  .pay-chip{display:flex;align-items:center;justify-content:center;height:46px;padding:8px 10px;border:1px solid var(--line-soft);border-radius:10px;background:#fff;}
+  .pay-logo-img{max-width:100%;max-height:26px;width:auto;height:auto;object-fit:contain;display:block;}
+  /* Cadangan teks. Hanya tampil kalau logonya belum ada, jadi footer tidak
+     pernah terlihat rusak selama berkas logonya belum dilengkapi. */
+  .pay-teks{display:none;font-size:12px;font-weight:600;color:#4A4438;letter-spacing:.01em;text-align:center;line-height:1.2;}
+  .pay-teks.tampil{display:block;}
+  /* Chip-nya sengaja tetap putih di tema gelap: logo merek dirancang untuk
+     latar terang, dan menaruhnya di kotak gelap membuat sebagian hilang. */
+  html[data-theme="dark"] .pay-chip{border-color:rgba(255,255,255,.12);}
 
   .foot-bottom{padding-top:var(--s3);border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 
@@ -550,46 +559,6 @@
   .admin-head-aksi{display:flex;gap:8px;flex-wrap:wrap;}
   .admin-sub{font-size:13px;color:var(--ink-soft);}
 
-  /* Layar kunci */
-  .admin-kunci{display:flex;justify-content:center;padding:var(--s4) 0 var(--s6);}
-  .admin-kunci[hidden]{display:none;}
-  .admin-kunci-kartu{width:100%;max-width:420px;padding:var(--s5) var(--s4);border:1px solid var(--line-soft);border-radius:var(--r-lg);background:var(--card);text-align:center;}
-  .admin-kunci-ikon{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;background:var(--accent-tint);color:var(--accent-dark);margin-bottom:var(--s3);}
-  .admin-kunci-ikon svg{width:26px;height:26px;}
-  .admin-kunci-kartu h3{font-size:19px;margin-bottom:8px;}
-  .admin-kunci-kartu > p{font-size:13.5px;line-height:1.6;color:var(--ink-soft);margin-bottom:var(--s4);}
-  .admin-kunci-kartu form{text-align:left;}
-  .admin-kunci-kartu label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-mid);margin-bottom:6px;}
-  .admin-kunci-kartu input{margin-bottom:var(--s3);}
-  .admin-kunci-kartu .btn{margin-top:4px;}
-  /* Baris atas: kartu pendapatan + petak ringkasan */
-  .admin-atas{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:var(--s3);margin-bottom:var(--s3);align-items:start;}
-  /* Gradiennya WARNA TETAP, tidak memakai var(--accent). Di tema gelap
-     token aksen berbalik jadi lebih MUDA (--accent #C89968, --accent-dark
-     #DDB183), jadi kartu ini berubah jadi tan pucat dan tulisan putih di
-     atasnya cuma mencapai ~2:1 — gagal dibaca. Nilai tetap di bawah ini
-     menjaga putih tetap di kisaran 3.9:1 ke atas di kedua tema. */
-  .admin-hero{padding:var(--s4);border-radius:var(--r-lg);color:#fff;background:linear-gradient(150deg,#714E2E,#8E6240 55%,#A9754C);box-shadow:0 20px 40px -26px rgba(60,38,22,.75);}
-  .admin-hero-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s2);}
-  .admin-hero-label{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.92);}
-  .admin-hero-ikon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);color:#fff;flex-shrink:0;}
-  .admin-hero-ikon svg{width:18px;height:18px;}
-  .admin-hero-nilai{font-family:'Fraunces',serif;font-size:clamp(30px,4.2vw,40px);font-weight:600;line-height:1.1;margin:var(--s3) 0 0;color:#fff;}
-  .admin-hero-kaki{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:var(--s2);}
-  .admin-hero-ket{font-size:12.5px;color:rgba(255,255,255,.93);}
-  .admin-delta{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;background:rgba(255,255,255,.22);color:#fff;}
-  .admin-delta[hidden]{display:none;}
-
-  .admin-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:var(--s2);}
-  .admin-tile{padding:var(--s3);border:1px solid var(--line-soft);border-radius:var(--r-md);background:var(--card);}
-  .admin-tile-nilai{font-family:'Fraunces',serif;font-size:24px;font-weight:600;line-height:1.15;color:var(--ink);}
-  .admin-tile-label{font-size:11.5px;color:var(--ink-soft);margin-top:4px;line-height:1.4;}
-
-  .admin-kartu{margin-bottom:var(--s3);}
-  .admin-duo{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);}
-  .admin-duo > .admin-kartu{margin-bottom:var(--s3);}
-  .admin-blok-sub{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
-
   /* ---------- grafik ----------
      Satu rona aksen penuh untuk semua batang. Langkah yang lebih muda
      tidak dipakai karena kontrasnya di bawah 3:1 terhadap kartu putih
@@ -747,13 +716,8 @@
   .modal-divider{display:flex;align-items:center;gap:10px;margin:var(--s3) 0;font-size:12px;letter-spacing:0.04em;color:var(--ink-soft);}
   .modal-divider::before,.modal-divider::after{content:"";flex:1;height:1px;background:var(--line);}
   .auth-form label{display:block;font-size:13px;color:var(--ink-mid);margin-bottom:6px;font-weight:500;}
-  /* Formulir kunci panel admin ikut gaya formulir masuk — bentuk kolomnya
-     sama persis, jadi tidak ada alasan menulis gaya kedua. Tanpa ini
-     kolomnya tampil sebagai kotak bawaan browser dan tombol matanya
-     melayang di luar kolom, karena .pw-toggle diposisikan terhadap
-     .pw-field yang lebarnya mengikuti input. */
-  .auth-form input,.admin-kunci-kartu input{width:100%;padding:11px 14px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:inherit;margin-bottom:var(--s3);}
-  .auth-form input:focus-visible,.admin-kunci-kartu input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
+  .auth-form input{width:100%;padding:11px 14px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;font-family:inherit;margin-bottom:var(--s3);}
+  .auth-form input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
   .auth-form input.code-input{letter-spacing:0.5em;text-align:center;font-family:'Fraunces',serif;font-size:20px;padding:11px 8px;}
   .pw-field{position:relative;margin-bottom:var(--s3);}
   .pw-field input{padding-right:42px;margin-bottom:0;}
@@ -821,7 +785,33 @@
     .hero-actions{flex-direction:column;}
     .hero-actions .btn,.cta-actions .btn{width:100%;}
     .cta-actions{flex-direction:column;}
-    .tpl-actions{flex-direction:column;}
+    /* Grid tema di HP: DUA kolom, bukan satu. Satu kolom membuat tiap
+       kartu setinggi hampir satu layar penuh, jadi menelusuri tema terasa
+       seperti kerja berat — dan itu makin parah begitu temanya bertambah
+       banyak. Dua kolom membuat empat tema terlihat dalam satu layar. */
+    #landingThemeGrid,#themeTemplateGrid{grid-template-columns:1fr 1fr;gap:10px;}
+    .tpl-card{aspect-ratio:3/4.9;border-radius:18px;}
+    .tpl-isi{padding:9px 9px 10px;}
+    /* Nama dibiarkan melipat sampai dua baris, TIDAK dipotong ellipsis.
+       Percobaan memotongnya membuat "Emerald Dusk" tampil sebagai
+       "Emerald ..." — dan nama tema justru satu-satunya label yang tidak
+       boleh hilang di kartu ini. Ruang untuk baris keduanya sudah
+       disediakan lewat rasio kartu yang lebih tinggi. */
+    .tpl-nama{font-size:14.5px;line-height:1.15;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .tpl-harga{font-size:10px;padding:2px 7px;}
+    .tpl-ringkas{font-size:10.5px;line-height:1.4;margin-bottom:7px;
+      /* Dipangkas dua baris supaya tinggi isi seragam di kisi sempit */
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    /* Tag kategori disembunyikan di HP. Sekarang ketiga tema sama-sama
+       "Elegan Klasik", jadi barisnya tidak membedakan apa pun — sementara
+       ruang di kartu sesempit ini justru yang paling mahal. Muncul lagi
+       sendiri di layar lebar. */
+    .tpl-tag-kategori{display:none;}
+    .tpl-tags{gap:4px;margin-bottom:8px;}
+    .tpl-tag{font-size:9.5px;padding:3px 7px;}
+    .tpl-aksi{flex-direction:column;gap:5px;}
+    .tpl-btn{height:32px;font-size:11.5px;border-radius:999px;}
     .final-cta{padding:var(--s5) var(--s3);}
     .tier-desc{min-height:auto;}
     .foot-grid{grid-template-columns:1fr 1fr;gap:var(--s4) var(--s3);}
@@ -841,7 +831,7 @@
     .slide-card[data-pos="next"]{transform:translate(calc(-50% + 72px),-50%) scale(.82);}
     .slider-arrow{width:32px;height:32px;}
     .btn{padding:12px 18px;}
-    .step-card,.path-card,.price-card,.tpl-actions{padding:var(--s3);}
+    .step-card,.path-card,.price-card{padding:var(--s3);}
     /* Panel admin: dua kolom jadi satu, dan petak ringkasan mengecil
        supaya empat angka masih muat sebaris di layar HP. */
     .admin-atas{grid-template-columns:1fr;}

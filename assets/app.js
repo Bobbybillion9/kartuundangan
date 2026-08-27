@@ -426,6 +426,72 @@
     applySession(e.detail.session);
   });
 
+  // ---------------- Metode pembayaran di footer ----------------
+  // Tiap chip mencoba memuat logo dari assets/pembayaran/ — .svg dulu,
+  // lalu .png — dan kalau dua-duanya tidak ada, jatuh ke nama metodenya
+  // sebagai teks. Jadi footer tidak pernah terlihat rusak walaupun berkas
+  // logonya belum lengkap, dan begitu berkasnya ditaruh di folder itu,
+  // logonya langsung muncul tanpa mengubah kode apa pun.
+  //
+  // Daftarnya harus cocok dengan KANAL_AKTIF di api/_lib/midtrans.js —
+  // mengiklankan metode yang tidak muncul di popup adalah cara tercepat
+  // kehilangan kepercayaan tepat di detik orang mau bayar. Nama-nama bank
+  // di bawah semuanya tercakup oleh kanal 'bank_transfer' dan 'echannel'.
+  var METODE_BAYAR = [
+    { nama: 'QRIS', berkas: 'qris' },
+    { nama: 'GoPay', berkas: 'gopay' },
+    { nama: 'ShopeePay', berkas: 'shopeepay' },
+    { nama: 'BCA', berkas: 'bca' },
+    { nama: 'BNI', berkas: 'bni' },
+    { nama: 'BRI', berkas: 'bri' },
+    { nama: 'Mandiri', berkas: 'mandiri' },
+    { nama: 'Permata', berkas: 'permata' },
+    { nama: 'CIMB Niaga', berkas: 'cimb' },
+    { nama: 'BSI', berkas: 'bsi' }
+  ];
+
+  function renderMetodeBayar(){
+    var list = document.getElementById('payList');
+    if (!list) return;
+    list.innerHTML = '';
+
+    METODE_BAYAR.forEach(function(m){
+      var li = document.createElement('li');
+      li.className = 'pay-chip';
+
+      var teks = document.createElement('span');
+      teks.className = 'pay-teks';
+      teks.textContent = m.nama;
+
+      var img = document.createElement('img');
+      img.alt = m.nama;
+      img.loading = 'lazy';
+      img.className = 'pay-logo-img';
+      // Dicoba .svg dulu; sekali gagal, ganti ke .png; gagal lagi berarti
+      // berkasnya memang belum ada — gambarnya dibuang, teksnya bertahan.
+      var sudahCobaPng = false;
+      img.addEventListener('error', function(){
+        if (!sudahCobaPng) {
+          sudahCobaPng = true;
+          img.src = 'assets/pembayaran/' + m.berkas + '.png';
+          return;
+        }
+        img.remove();
+        teks.classList.add('tampil');
+      });
+      img.addEventListener('load', function(){ teks.classList.remove('tampil'); });
+      img.src = 'assets/pembayaran/' + m.berkas + '.svg';
+
+      // Teks dipasang lebih dulu dan baru disembunyikan kalau gambarnya
+      // benar-benar berhasil dimuat. Urutan ini disengaja: kalau gambarnya
+      // gagal, tidak ada satu momen pun chip-nya kosong.
+      teks.classList.add('tampil');
+      li.append(img, teks);
+      list.appendChild(li);
+    });
+  }
+  renderMetodeBayar();
+
   // ---------------- Tema (section landing) ----------------
   // Katalog & thumbnail dipusatkan di assets/theme-templates.js (satu-
   // satunya sumber, dipakai bareng app.html) — di sini cuma menata kartu
@@ -455,8 +521,9 @@
   function renderLandingThemeCard(t){
     return window.renderThemeCard(t, {
       harga: hargaPaketStandar(),
-      tombolLihat: { className: 'btn btn-ghost', teks: 'Pratinjau' },
-      tombolPakai: { className: 'btn btn-primary landing-tpl-use-btn', teks: 'Gunakan' }
+      tombolLihat: { teks: 'Pratinjau' },
+      tombolPakai: { teks: 'Gunakan Tema' },
+      kelasPakai: 'landing-tpl-use-btn'
     });
   }
 

@@ -57,38 +57,34 @@ window.renderThemeCard = function (t, opts) {
   opts = opts || {};
   var base = opts.basePath || '';
 
+  // Kartu potret penuh gambar: fotonya mengisi seluruh kartu, dan seluruh
+  // keterangan duduk DI ATAS foto di bagian bawah, dipisahkan dari
+  // gambarnya oleh gradasi gelap yang menebal ke bawah.
+  //
+  // Gradasi itu bukan hiasan — itu yang membuat teks putih tetap terbaca
+  // berapa pun terangnya sampul tema. Dua dari tiga tema bersampul terang,
+  // jadi tanpa gradasi ini keterangannya hilang di tema Ivory Gold dan
+  // Sage Rose. Sengaja pekat di kaki kartu (0.92) dan bening di kepala
+  // kartu supaya desain temanya tetap terlihat utuh di bagian atas.
   var card = document.createElement('article');
   card.className = 'tpl-card';
   card.title = t.desc || '';
 
-  // ---- foto tema: satu kartu potret utuh, tidak dipotong setengah ----
-  // Rasio 2:3 di sini sama persis dengan rasio thumbnail yang dihasilkan
-  // (780x1170), jadi object-fit:cover praktis tidak memotong apa pun —
-  // sampul tema terlihat penuh, bukan separuh.
-  var shot = document.createElement('div');
-  shot.className = 'tpl-shot';
-
   var img = document.createElement('img');
+  img.className = 'tpl-img';
   img.src = base + t.thumb;
   img.alt = 'Pratinjau tema ' + t.name;
   img.loading = 'lazy';
-  shot.appendChild(img);
 
-  // Penanda pemakai: diisi belakangan oleh window.isiPemakaiTema() setelah
-  // angkanya datang dari database. Disembunyikan sampai ada angkanya —
-  // lebih baik tidak ada penanda daripada penanda kosong yang berkedip.
-  var pakai = document.createElement('span');
-  pakai.className = 'tpl-pakai';
-  pakai.dataset.tema = t.name;
-  pakai.hidden = true;
-  shot.appendChild(pakai);
+  var scrim = document.createElement('div');
+  scrim.className = 'tpl-scrim';
 
-  var kaca = document.createElement('div');
-  kaca.className = 'tpl-kaca';
+  var isi = document.createElement('div');
+  isi.className = 'tpl-isi';
 
   var baris = document.createElement('div');
-  baris.className = 'tpl-kaca-baris';
-  var nama = document.createElement('span');
+  baris.className = 'tpl-baris';
+  var nama = document.createElement('h3');
   nama.className = 'tpl-nama';
   nama.textContent = t.name;
   baris.appendChild(nama);
@@ -103,15 +99,29 @@ window.renderThemeCard = function (t, opts) {
   ringkas.className = 'tpl-ringkas';
   ringkas.textContent = t.ringkas || t.desc || '';
 
-  kaca.append(baris, ringkas);
-  shot.appendChild(kaca);
+  // Baris penanda kecil. Penanda pemakai diisi belakangan oleh
+  // window.isiPemakaiTema() setelah angkanya datang dari database, dan
+  // tetap tersembunyi kalau temanya belum dipakai siapa pun — "0 dipakai"
+  // hanya mengiklankan bahwa temanya belum laku.
+  var tags = document.createElement('div');
+  tags.className = 'tpl-tags';
 
-  // ---- aksi di bawah foto ----
-  var actions = document.createElement('div');
-  actions.className = 'tpl-actions';
+  var tagKategori = document.createElement('span');
+  tagKategori.className = 'tpl-tag tpl-tag-kategori';
+  tagKategori.textContent = t.kategori;
+  tags.appendChild(tagKategori);
+
+  var pakai = document.createElement('span');
+  pakai.className = 'tpl-tag tpl-pakai';
+  pakai.dataset.tema = t.name;
+  pakai.hidden = true;
+  tags.appendChild(pakai);
+
+  var aksi = document.createElement('div');
+  aksi.className = 'tpl-aksi';
 
   var lihat = document.createElement('a');
-  lihat.className = (opts.tombolLihat && opts.tombolLihat.className) || 'btn btn-ghost';
+  lihat.className = 'tpl-btn tpl-btn-kaca';
   lihat.href = base + 'templates/pratinjau.html?tema=' + encodeURIComponent(t.id);
   lihat.target = '_blank';
   lihat.rel = 'noopener';
@@ -119,12 +129,20 @@ window.renderThemeCard = function (t, opts) {
 
   var pakaiBtn = document.createElement('button');
   pakaiBtn.type = 'button';
-  pakaiBtn.className = (opts.tombolPakai && opts.tombolPakai.className) || 'btn btn-primary';
+  // opts.kelasPakai HANYA kelas fungsional (mis. landing-tpl-use-btn) —
+  // kelas itulah yang dicari penangan klik di halaman masing-masing.
+  // Gayanya ditentukan di sini, bukan dikirim dari pemanggil, supaya
+  // kedua halaman mustahil tampil beda. Jangan menyaring kelas kiriman
+  // dengan regex: percobaan pertama memakai \bbtn\b, dan itu ikut
+  // memotong "btn" di dalam "landing-tpl-use-btn" sehingga tombolnya
+  // berhenti berfungsi tanpa error apa pun.
+  pakaiBtn.className = 'tpl-btn tpl-btn-utama ' + (opts.kelasPakai || '');
   pakaiBtn.dataset.id = t.id;
   pakaiBtn.textContent = (opts.tombolPakai && opts.tombolPakai.teks) || 'Gunakan';
 
-  actions.append(lihat, pakaiBtn);
-  card.append(shot, actions);
+  aksi.append(lihat, pakaiBtn);
+  isi.append(baris, ringkas, tags, aksi);
+  card.append(img, scrim, isi);
   return card;
 };
 

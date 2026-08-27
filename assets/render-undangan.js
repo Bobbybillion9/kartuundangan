@@ -149,6 +149,13 @@
   }
 
   function populateSlots(doc, inv, namaTamu){
+    // Penanda untuk assets/demo-template.js: isi contoh di halaman
+    // pratinjau harus berhenti menimpa apa pun begitu ada data asli.
+    // Dipasang PALING AWAL — gambar contoh dimuat secara asinkron, dan
+    // tanpa penanda ini sebuah gambar contoh yang baru selesai dimuat
+    // bisa menimpa undangan sungguhan yang memang tidak punya foto.
+    try { doc.defaultView.__KU_DATA_ASLI = true; } catch (e) {}
+
     setSlotNamaTamu(doc, namaTamu, inv.sapaan_tamu);
     setSlotText(doc, 'nama_pria_panggilan', textOrPlaceholder(inv.nama_pria_panggilan, 'Nama Pria'));
     setSlotText(doc, 'nama_wanita_panggilan', textOrPlaceholder(inv.nama_wanita_panggilan, 'Nama Wanita'));
