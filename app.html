@@ -463,6 +463,11 @@
         <h3>Status Undangan</h3>
         <div class="status-row">
           <span class="badge" id="statusBadge">Draf</span>
+          <!-- Ditampilkan hanya untuk akun admin (lihat muatStatusAdmin di
+               dashboard.js). Letaknya di sini, bukan di Profil, karena
+               inilah tempat orang bertanya "kenapa undangan ini tidak
+               diminta bayar?" — jawabannya pantas ada di sebelahnya. -->
+          <span class="badge badge-admin" id="adminBadge" hidden>Akun admin</span>
           <button type="button" class="btn btn-primary btn-sm" id="activateBtn">Aktifkan Undangan</button>
           <button type="button" class="btn btn-ghost btn-sm" id="deactivateBtn" style="display:none;">Nonaktifkan Undangan</button>
         </div>

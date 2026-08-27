@@ -206,6 +206,7 @@
     if (!e.detail.session) { redirectToLogin(); return; }
     sesiSudahDirender = true;
     renderProfileNav(e.detail.session);
+    muatStatusAdmin();
     if (document.getElementById('view-desain').classList.contains('active')) renderDesainView();
     if (document.getElementById('view-home').classList.contains('active')) renderHomeView();
     handlePendingGunakan();
@@ -222,6 +223,9 @@
   // tapi sesinya belum sempat di-resolve tidak ikut kelempar.
   if (KU.isSessionResolved() && !KU.getSession()) redirectToLogin();
   renderProfileNav(KU.getSession());
+  // Alasan yang sama dengan renderProfileNav di atas: sesinya bisa saja
+  // sudah resolve sebelum listener 'ku:session' terpasang.
+  if (KU.getSession()) muatStatusAdmin();
 
   // ---------------- Template Tema (grid) ----------------
   // Katalog template dipusatkan di assets/theme-templates.js (dipakai
@@ -426,6 +430,24 @@
   // orang tidak numpuk draft coba-coba tanpa pernah menyelesaikannya.
   var MAKS_DRAFT = 3;
 
+  // ---------------- Akun admin ----------------
+  // Admin memakai semua fitur tanpa membayar dan tanpa batas draf.
+  //
+  // Nilai ini HANYA untuk tampilan. Penegakannya ada di database:
+  // trigger jaga_aktivasi_berbayar bertanya ke undangan_wajib_dibayar(),
+  // yang juga memeriksa is_admin(). Jadi memalsukan variabel ini di
+  // konsol browser tidak memberi apa pun — aktivasinya tetap ditolak
+  // kalau memang bukan admin.
+  var akunAdmin = false;
+  var adminBadge = document.getElementById('adminBadge');
+
+  async function muatStatusAdmin(){
+    if (!KU.getSession()) { akunAdmin = false; return; }
+    var res = await KU.sb.rpc('saya_admin');
+    akunAdmin = !res.error && res.data === true;
+    if (adminBadge) adminBadge.hidden = !akunAdmin;
+  }
+
   async function ensureDraftForTemplate(t){
     var session = KU.getSession();
     var uid = session.user.id;
@@ -444,7 +466,9 @@
     })[0];
     if (sameTemplate) return { data: sameTemplate };
 
-    if (drafts.length >= MAKS_DRAFT) return { limitReached: true };
+    // Batas draf itu rambu kenyamanan, bukan paywall — dan admin memang
+    // perlu mengerjakan banyak undangan klien sekaligus.
+    if (!akunAdmin && drafts.length >= MAKS_DRAFT) return { limitReached: true };
 
     var ins = await KU.sb.from('invitations').insert({
       user_id: uid,
@@ -1426,42 +1450,52 @@
     sembunyikanPerangkatBayar();
     tampilkanNota('Memeriksa status pembayaran...');
 
-    // Pertanyaan pertama: apakah pembayaran memang sedang diwajibkan?
-    // Saklarnya ada di database (pembayaran_diwajibkan()), sama dengan yang
-    // dipakai trigger penjaga. Kalau UI memakai sumber kebenaran sendiri,
-    // akan ada keadaan di mana tombolnya menuntut bayar padahal database
-    // tidak mewajibkan — atau sebaliknya, menjanjikan aktivasi yang akan
-    // ditolak. Keduanya membingungkan dan keduanya bisa dihindari dengan
-    // bertanya ke tempat yang sama.
-    var wajib = await KU.sb.rpc('pembayaran_diwajibkan');
-    if (wajib.error || wajib.data !== true) {
-      activateBtn.style.display = 'inline-flex';
-      tampilkanNota('');
-      return;
-    }
+    // Satu pertanyaan saja: undangan INI masih perlu dibayar atau tidak?
+    //
+    // undangan_wajib_dibayar() menggabungkan tiga hal sekaligus — saklar
+    // pembayaran global, status admin pemiliknya, dan apakah sudah ada
+    // pembayaran lunas — dan fungsi yang SAMA itulah yang dipakai trigger
+    // penjaga di database. Dulu dashboard menghitungnya sendiri dari dua
+    // RPC terpisah, dan setiap penghitungan kedua adalah kesempatan untuk
+    // berbeda pendapat dengan penjaganya: tombol yang menuntut bayar
+    // padahal database mengizinkan, atau menjanjikan aktivasi yang akan
+    // ditolak. Keduanya membingungkan, dan keduanya hilang kalau yang
+    // ditanya cuma satu tempat.
+    var wajib = await KU.sb.rpc('undangan_wajib_dibayar', { p_invitation_id: currentInvitation.id });
+    var perluBayar = !wajib.error && wajib.data === true;
 
     var res = await KU.sb.rpc('undangan_sudah_dibayar', { p_invitation_id: currentInvitation.id });
     sudahDibayar = !res.error && res.data === true;
 
     muatRiwayatBayar();
 
-    if (sudahDibayar) {
+    if (!perluBayar) {
       activateBtn.style.display = 'inline-flex';
-      if (bayarLunas) bayarLunas.hidden = false;
-      tampilkanNota('');
-    } else {
-      // Harga dibaca dari katalog PRICING_PLANS, tidak ditulis ulang di
-      // sini maupun di app.html. Angka yang di-hardcode akan diam-diam
-      // berbeda dari tab Harga begitu harganya berubah — dan yang
-      // membacanya adalah orang yang sedang memutuskan mau membayar atau
-      // tidak. Sudah dua kali terjadi di project ini.
-      if (bayarKartuHarga) bayarKartuHarga.textContent = 'Rp' + window.formatRupiah(hargaPaketStandar());
-      if (bayarKartu) bayarKartu.hidden = false;
-      // Notanya sekarang kosong: keterangan "gratis sampai diaktifkan"
-      // sudah jadi bagian kartu itu sendiri, jadi mengulanginya di bawah
-      // cuma menambah teks yang tidak dibaca siapa pun.
-      tampilkanNota('');
+      // Kenapa tidak perlu bayar itu tiga kemungkinan berbeda, dan
+      // masing-masing pantas dijelaskan berbeda pula.
+      if (sudahDibayar) {
+        if (bayarLunas) bayarLunas.hidden = false;
+        tampilkanNota('');
+      } else if (akunAdmin) {
+        tampilkanNota('Akun admin — undangan ini bisa diaktifkan tanpa pembayaran.');
+      } else {
+        tampilkanNota('');
+      }
+      return;
     }
+
+    // Sampai di sini berarti undangan ini memang masih harus dibayar.
+    // Harga dibaca dari katalog PRICING_PLANS, tidak ditulis ulang di sini
+    // maupun di app.html. Angka yang di-hardcode akan diam-diam berbeda
+    // dari tab Harga begitu harganya berubah — dan yang membacanya adalah
+    // orang yang sedang memutuskan mau membayar atau tidak. Sudah dua kali
+    // terjadi di project ini.
+    if (bayarKartuHarga) bayarKartuHarga.textContent = 'Rp' + window.formatRupiah(hargaPaketStandar());
+    if (bayarKartu) bayarKartu.hidden = false;
+    // Notanya kosong: keterangan "gratis sampai diaktifkan" sudah jadi
+    // bagian kartu itu sendiri, jadi mengulanginya di bawah cuma menambah
+    // teks yang tidak dibaca siapa pun.
+    tampilkanNota('');
   }
 
   function muatSnapSekali(){

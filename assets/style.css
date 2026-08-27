@@ -469,6 +469,11 @@
   .slug-input-row .btn{margin:4px 4px 4px 0;flex-shrink:0;}
 
   .status-row{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s2);}
+  /* [hidden] harus disebut eksplisit: .badge punya display sendiri, dan
+     aturan [hidden] bawaan browser kalah dari itu. Pola yang sama pernah
+     membuat zona unggah tetap tampil padahal sudah di-hidden. */
+  .badge-admin{background:var(--accent-tint);color:var(--accent-dark);border-color:var(--accent);}
+  .badge[hidden]{display:none;}
   .badge-aktif{background:var(--accent-tint);border-color:var(--accent);color:var(--accent-dark);font-weight:600;}
   .activate-checklist{margin:var(--s3) 0 0;padding-left:20px;color:#C0503D;font-size:13.5px;}
   .activate-checklist li{margin-bottom:4px;}
