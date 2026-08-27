@@ -214,7 +214,83 @@
         </div>
       </div>
 
-      <div class="admin-tiles" id="adminTiles"></div>
+      <!-- Baris atas: satu angka pahlawan + ringkasan cepat.
+           Angka pendapatan sengaja paling besar dan berwarna: dari seluruh
+           layar ini, itu satu-satunya angka yang menjawab "usahanya jalan
+           atau tidak". -->
+      <div class="admin-atas">
+        <div class="admin-hero">
+          <div class="admin-hero-head">
+            <span class="admin-hero-label">Total pendapatan</span>
+            <span class="admin-hero-ikon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+            </span>
+          </div>
+          <p class="admin-hero-nilai" id="heroNilai">—</p>
+          <div class="admin-hero-kaki">
+            <span id="heroPerubahan" class="admin-delta" hidden></span>
+            <span class="admin-hero-ket" id="heroKet"></span>
+          </div>
+        </div>
+        <div class="admin-tiles" id="adminTiles"></div>
+      </div>
+
+      <!-- Pendapatan per bulan. Bentuknya batang karena yang ditanya
+           besaran per periode, dan enam bulan cukup pendek untuk dibaca
+           satu per satu. Bulan tanpa pemasukan tetap diberi tempat supaya
+           sumbu waktunya tidak memampat dan trennya tidak salah baca. -->
+      <div class="profile-block admin-kartu">
+        <div class="admin-blok-head">
+          <div>
+            <h3>Pendapatan 6 bulan terakhir</h3>
+            <p class="admin-blok-sub">Dari pembayaran yang sudah lunas</p>
+          </div>
+          <span class="admin-hitung" id="bulananTotal"></span>
+        </div>
+        <div class="chart-wrap" id="chartBulanan"></div>
+      </div>
+
+      <div class="admin-duo">
+        <div class="profile-block admin-kartu">
+          <div class="admin-blok-head">
+            <div>
+              <h3>Tema paling dipakai</h3>
+              <p class="admin-blok-sub">Jumlah undangan per tema</p>
+            </div>
+          </div>
+          <div id="chartTema"></div>
+        </div>
+        <div class="profile-block admin-kartu">
+          <div class="admin-blok-head">
+            <div>
+              <h3>Metode pembayaran</h3>
+              <p class="admin-blok-sub">Dari transaksi yang lunas</p>
+            </div>
+          </div>
+          <div id="chartMetode"></div>
+        </div>
+      </div>
+
+      <div class="admin-duo">
+        <div class="profile-block admin-kartu">
+          <div class="admin-blok-head">
+            <div>
+              <h3>Konversi</h3>
+              <p class="admin-blok-sub">Undangan pelanggan yang berujung dibayar</p>
+            </div>
+          </div>
+          <div id="chartKonversi"></div>
+        </div>
+        <div class="profile-block admin-kartu">
+          <div class="admin-blok-head">
+            <div>
+              <h3>Aktivitas terbaru</h3>
+              <p class="admin-blok-sub">Pembayaran, kehadiran, dan ucapan</p>
+            </div>
+          </div>
+          <div class="admin-aktivitas" id="adminAktivitas"></div>
+        </div>
+      </div>
 
       <div class="profile-block">
         <div class="admin-blok-head">

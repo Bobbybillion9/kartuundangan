@@ -562,12 +562,79 @@
   .admin-kunci-kartu label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-mid);margin-bottom:6px;}
   .admin-kunci-kartu input{margin-bottom:var(--s3);}
   .admin-kunci-kartu .btn{margin-top:4px;}
-  .admin-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2);margin-bottom:var(--s5);}
+  /* Baris atas: kartu pendapatan + petak ringkasan */
+  .admin-atas{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:var(--s3);margin-bottom:var(--s3);align-items:start;}
+  /* Gradiennya WARNA TETAP, tidak memakai var(--accent). Di tema gelap
+     token aksen berbalik jadi lebih MUDA (--accent #C89968, --accent-dark
+     #DDB183), jadi kartu ini berubah jadi tan pucat dan tulisan putih di
+     atasnya cuma mencapai ~2:1 — gagal dibaca. Nilai tetap di bawah ini
+     menjaga putih tetap di kisaran 3.9:1 ke atas di kedua tema. */
+  .admin-hero{padding:var(--s4);border-radius:var(--r-lg);color:#fff;background:linear-gradient(150deg,#714E2E,#8E6240 55%,#A9754C);box-shadow:0 20px 40px -26px rgba(60,38,22,.75);}
+  .admin-hero-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s2);}
+  .admin-hero-label{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.92);}
+  .admin-hero-ikon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);color:#fff;flex-shrink:0;}
+  .admin-hero-ikon svg{width:18px;height:18px;}
+  .admin-hero-nilai{font-family:'Fraunces',serif;font-size:clamp(30px,4.2vw,40px);font-weight:600;line-height:1.1;margin:var(--s3) 0 0;color:#fff;}
+  .admin-hero-kaki{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:var(--s2);}
+  .admin-hero-ket{font-size:12.5px;color:rgba(255,255,255,.93);}
+  .admin-delta{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;background:rgba(255,255,255,.22);color:#fff;}
+  .admin-delta[hidden]{display:none;}
+
+  .admin-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:var(--s2);}
   .admin-tile{padding:var(--s3);border:1px solid var(--line-soft);border-radius:var(--r-md);background:var(--card);}
-  .admin-tile.utama{border-color:var(--accent);background:var(--accent-tint);}
   .admin-tile-nilai{font-family:'Fraunces',serif;font-size:24px;font-weight:600;line-height:1.15;color:var(--ink);}
-  .admin-tile.utama .admin-tile-nilai{color:var(--accent-dark);}
   .admin-tile-label{font-size:11.5px;color:var(--ink-soft);margin-top:4px;line-height:1.4;}
+
+  .admin-kartu{margin-bottom:var(--s3);}
+  .admin-duo{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);}
+  .admin-duo > .admin-kartu{margin-bottom:var(--s3);}
+  .admin-blok-sub{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+
+  /* ---------- grafik ----------
+     Satu rona aksen penuh untuk semua batang. Langkah yang lebih muda
+     tidak dipakai karena kontrasnya di bawah 3:1 terhadap kartu putih
+     (diukur: 1.63:1 dan 2.52:1) — batangnya nyaris lenyap. */
+  .chart-wrap{position:relative;margin-top:var(--s3);}
+  .chart-svg{width:100%;height:auto;display:block;overflow:visible;}
+  .chart-bar{fill:var(--accent);}
+  .chart-bar-nol{fill:var(--line);}
+  .chart-grid{stroke:var(--line-soft);stroke-width:1;}
+  .chart-tick{font-size:11px;fill:var(--ink-soft);font-family:'Inter',sans-serif;}
+  .chart-label-langsung{font-size:12px;font-weight:600;fill:var(--ink);font-family:'Inter',sans-serif;}
+  .chart-hit{fill:transparent;cursor:default;}
+  .chart-hit:hover{fill:var(--accent);fill-opacity:.07;}
+  .chart-kosong{font-size:13px;color:var(--ink-soft);padding:var(--s4) 0;text-align:center;line-height:1.6;}
+  /* Latar tooltip juga warna tetap. var(--ink) di tema gelap adalah warna
+     TERANG (#F2EFE8) — tulisan putih di atasnya jadi tidak terlihat sama
+     sekali. Garis tepi tipis menahannya tetap terpisah dari latar gelap. */
+  .chart-tip{position:absolute;z-index:5;pointer-events:none;display:flex;flex-direction:column;gap:2px;padding:8px 11px;border-radius:var(--r-sm);background:#2B2822;border:1px solid rgba(255,255,255,.14);color:#fff;font-size:12px;line-height:1.4;box-shadow:0 10px 24px -12px rgba(0,0,0,.6);white-space:nowrap;}
+  .chart-tip[hidden]{display:none;}
+  .chart-tip strong{font-size:12.5px;font-weight:600;}
+  .chart-tip span{color:rgba(255,255,255,.8);}
+
+  /* Batang mendatar: nilainya selalu tertulis, jadi tidak bergantung warna */
+  .bar-list{list-style:none;margin:var(--s3) 0 0;padding:0;display:flex;flex-direction:column;gap:var(--s3);}
+  .bar-baris{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:7px;}
+  .bar-nama{font-size:13.5px;font-weight:500;color:var(--ink);}
+  .bar-nilai{font-size:12.5px;color:var(--ink-mid);white-space:nowrap;font-weight:600;}
+  .bar-rel{height:8px;border-radius:999px;background:var(--paper-2);overflow:hidden;}
+  .bar-rel-tebal{height:12px;}
+  .bar-isi{height:100%;border-radius:999px;background:var(--accent);transition:width .5s cubic-bezier(.34,1.2,.64,1);}
+  .bar-ket{display:block;font-size:11.5px;color:var(--ink-soft);margin-top:5px;}
+
+  .konversi{padding-top:var(--s2);}
+  .konversi-angka{font-family:'Fraunces',serif;font-size:38px;font-weight:600;line-height:1;color:var(--ink);margin-bottom:var(--s3);}
+  .konversi-ket{font-size:13px;color:var(--ink-mid);margin-top:10px;}
+  .konversi-catatan{font-size:11.5px;color:var(--ink-soft);margin-top:8px;line-height:1.5;}
+
+  .admin-aktivitas{display:flex;flex-direction:column;gap:2px;margin-top:var(--s3);}
+  .aktivitas-item{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px solid var(--line-soft);}
+  .aktivitas-item:last-child{border-bottom:0;}
+  .aktivitas-ikon{flex-shrink:0;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--accent-tint);color:var(--accent-dark);}
+  .aktivitas-ikon svg{width:15px;height:15px;}
+  .aktivitas-teks{display:flex;flex-direction:column;min-width:0;}
+  .aktivitas-judul{font-size:13px;font-weight:500;color:var(--ink);}
+  .aktivitas-sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
 
   .admin-blok-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s2);margin-bottom:var(--s3);}
   .admin-hitung{font-size:12px;color:var(--ink-soft);white-space:nowrap;}
@@ -775,6 +842,12 @@
     .slider-arrow{width:32px;height:32px;}
     .btn{padding:12px 18px;}
     .step-card,.path-card,.price-card,.tpl-actions{padding:var(--s3);}
+    /* Panel admin: dua kolom jadi satu, dan petak ringkasan mengecil
+       supaya empat angka masih muat sebaris di layar HP. */
+    .admin-atas{grid-template-columns:1fr;}
+    .admin-duo{grid-template-columns:1fr;}
+    .admin-tiles{grid-template-columns:repeat(auto-fill,minmax(108px,1fr));}
+    .admin-tile-nilai{font-size:21px;}
     .reseller{padding:var(--s3);}
     .final-cta{padding:var(--s4) var(--s2);}
     .modal-overlay{padding:var(--s2);}
