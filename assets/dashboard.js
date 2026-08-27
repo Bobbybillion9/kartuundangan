@@ -1188,8 +1188,17 @@
     // lagi, tapi riwayatnya tetap harus tampil — justru di situlah
     // kuitansi pembelian yang sudah lunas berada. Tanpa cabang else ini,
     // blok riwayat masih memegang isi undangan yang dibuka sebelumnya.
-    if (!isAktif) segarkanStatusBayar();
-    else muatRiwayatBayar();
+    if (!isAktif) {
+      segarkanStatusBayar();
+    } else {
+      // Undangan aktif tidak menampilkan perangkat pembayaran sama sekali.
+      // Tanpa baris ini, kartu harga milik draf yang dibuka SEBELUMNYA
+      // masih tertinggal di layar — segarkanStatusBayar() (satu-satunya
+      // yang menyembunyikannya) memang tidak dipanggil di cabang ini.
+      sembunyikanPerangkatBayar();
+      tampilkanNota('');
+      muatRiwayatBayar();
+    }
 
     renderBagikanShare(currentInvitation);
   }
@@ -1208,6 +1217,9 @@
   }
 
   var bayarBtn = document.getElementById('bayarBtn');
+  var bayarKartu = document.getElementById('bayarKartu');
+  var bayarKartuHarga = document.getElementById('bayarKartuHarga');
+  var bayarLunas = document.getElementById('bayarLunas');
   var bayarNota = document.getElementById('bayarNota');
   var riwayatBayarBlock = document.getElementById('riwayatBayarBlock');
   var bayarRiwayat = document.getElementById('bayarRiwayat');
@@ -1358,10 +1370,18 @@
   // Sumber kebenarannya fungsi database undangan_sudah_dibayar(), sama
   // dengan yang dipakai trigger penjaga — supaya tombol tidak pernah
   // menjanjikan sesuatu yang akan ditolak database.
+  // Menyembunyikan seluruh perangkat pembayaran sekaligus. Dipakai di awal
+  // segarkanStatusBayar supaya tidak ada keadaan setengah jadi yang sempat
+  // terlihat — mis. kartu harga dan tanda lunas tampil bersamaan.
+  function sembunyikanPerangkatBayar(){
+    if (bayarKartu) bayarKartu.hidden = true;
+    if (bayarLunas) bayarLunas.hidden = true;
+  }
+
   async function segarkanStatusBayar(){
     if (!currentInvitation || !activateBtn || !bayarBtn) return;
     activateBtn.style.display = 'none';
-    bayarBtn.style.display = 'none';
+    sembunyikanPerangkatBayar();
     tampilkanNota('Memeriksa status pembayaran...');
 
     // Pertanyaan pertama: apakah pembayaran memang sedang diwajibkan?
@@ -1385,15 +1405,20 @@
 
     if (sudahDibayar) {
       activateBtn.style.display = 'inline-flex';
-      tampilkanNota('Pembayaran sudah lunas. Undangan siap diaktifkan.');
+      if (bayarLunas) bayarLunas.hidden = false;
+      tampilkanNota('');
     } else {
-      bayarBtn.style.display = 'inline-flex';
       // Harga dibaca dari katalog PRICING_PLANS, tidak ditulis ulang di
-      // sini. Angka yang di-hardcode akan diam-diam berbeda dari tab Harga
-      // begitu harganya berubah — dan yang membacanya adalah orang yang
-      // sedang memutuskan mau membayar atau tidak.
-      tampilkanNota('Undangan bisa dibuat dan dilihat gratis. Pembayaran Rp' +
-        window.formatRupiah(hargaPaketStandar()) + ' sekali bayar hanya diperlukan saat mengaktifkannya untuk tamu.');
+      // sini maupun di app.html. Angka yang di-hardcode akan diam-diam
+      // berbeda dari tab Harga begitu harganya berubah — dan yang
+      // membacanya adalah orang yang sedang memutuskan mau membayar atau
+      // tidak. Sudah dua kali terjadi di project ini.
+      if (bayarKartuHarga) bayarKartuHarga.textContent = 'Rp' + window.formatRupiah(hargaPaketStandar());
+      if (bayarKartu) bayarKartu.hidden = false;
+      // Notanya sekarang kosong: keterangan "gratis sampai diaktifkan"
+      // sudah jadi bagian kartu itu sendiri, jadi mengulanginya di bawah
+      // cuma menambah teks yang tidak dibaca siapa pun.
+      tampilkanNota('');
     }
   }
 

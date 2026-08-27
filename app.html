@@ -463,11 +463,58 @@
         <h3>Status Undangan</h3>
         <div class="status-row">
           <span class="badge" id="statusBadge">Draf</span>
-          <button type="button" class="btn btn-primary btn-sm" id="bayarBtn" style="display:none;">Bayar &amp; Aktifkan</button>
           <button type="button" class="btn btn-primary btn-sm" id="activateBtn">Aktifkan Undangan</button>
           <button type="button" class="btn btn-ghost btn-sm" id="deactivateBtn" style="display:none;">Nonaktifkan Undangan</button>
         </div>
         <ul class="activate-checklist" id="activateChecklist" style="display:none;"></ul>
+
+        <!-- Kartu pembayaran. Sebelumnya tombol "Bayar & Aktifkan" cuma
+             tombol kecil yang berdiri di samping badge status, dengan satu
+             paragraf abu-abu di bawahnya — tidak ada nominal yang terbaca
+             jelas, tidak ada keterangan apa yang didapat, dan tidak ada
+             petunjuk cara bayarnya. Itu layar tempat orang memutuskan
+             mengeluarkan uang; layar itu pantas dikerjakan sebaik halaman
+             harga.
+             Nominalnya diisi dari PRICING_PLANS oleh dashboard.js, TIDAK
+             ditulis di sini — angka yang di-hardcode sudah dua kali diam-
+             diam menampilkan harga lama ke orang yang sedang memutuskan. -->
+        <div class="bayar-kartu" id="bayarKartu" hidden>
+          <div class="bayar-kartu-head">
+            <div class="bayar-kartu-teks">
+              <p class="bayar-kartu-label">Aktivasi undangan</p>
+              <p class="bayar-kartu-harga" id="bayarKartuHarga"></p>
+              <p class="bayar-kartu-sekali">sekali bayar &middot; tanpa masa aktif</p>
+            </div>
+            <span class="bayar-kartu-ikon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+            </span>
+          </div>
+
+          <ul class="bayar-kartu-fitur">
+            <li>Link undangan aktif dan bisa dibagikan ke tamu</li>
+            <li>Berlaku selamanya &mdash; tidak ada perpanjangan</li>
+            <li>Konfirmasi kehadiran, ucapan, dan tanda kasih menyala</li>
+          </ul>
+
+          <button type="button" class="btn btn-primary btn-block" id="bayarBtn">Bayar &amp; Aktifkan</button>
+
+          <p class="bayar-kanal">Bisa dibayar lewat
+            <span class="bayar-kanal-tag">QRIS</span>
+            <span class="bayar-kanal-tag">GoPay</span>
+            <span class="bayar-kanal-tag">ShopeePay</span>
+            <span class="bayar-kanal-tag">Transfer bank</span>
+          </p>
+          <p class="bayar-aman">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            Pembayaran diproses Midtrans. Nomor kartu dan datamu tidak melewati situs ini.
+          </p>
+        </div>
+
+        <div class="bayar-lunas" id="bayarLunas" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+          <span><strong>Pembayaran lunas.</strong> Undanganmu siap diaktifkan.</span>
+        </div>
+
         <p class="bayar-nota" id="bayarNota" style="display:none;"></p>
         <p class="ws-save-msg" id="statusMsg" aria-live="polite"></p>
       </div>

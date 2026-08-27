@@ -445,6 +445,62 @@
   .activate-checklist li{margin-bottom:4px;}
   html[data-theme="dark"] .activate-checklist{color:#E08A78;}
 
+  /* ---------- kartu pembayaran ----------
+     Memakai token yang sama dengan kartu harga di halaman depan supaya
+     layar bayar tidak terasa seperti bagian lain dari situs yang berbeda.
+     Nominalnya pakai Fraunces, huruf yang sama dengan judul — di layar
+     tempat orang memutuskan mengeluarkan uang, angkanya yang harus
+     paling dulu terbaca. */
+  .bayar-kartu{
+    margin-top:var(--s4);
+    padding:var(--s4);
+    border:1px solid var(--accent-tint);
+    border-radius:var(--r-lg);
+    background:
+      radial-gradient(circle at 100% 0%,var(--accent-tint),transparent 62%),
+      var(--card);
+    box-shadow:0 18px 40px -28px rgba(90,60,40,.5);
+  }
+  .bayar-kartu[hidden]{display:none;}
+  .bayar-kartu-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);}
+  .bayar-kartu-label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-dark);font-weight:600;margin-bottom:6px;}
+  .bayar-kartu-harga{font-family:'Fraunces',serif;font-size:34px;line-height:1.1;font-weight:600;color:var(--ink);margin:0;}
+  .bayar-kartu-sekali{font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
+  .bayar-kartu-ikon{flex-shrink:0;width:42px;height:42px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;background:var(--accent-tint);color:var(--accent-dark);}
+  .bayar-kartu-ikon svg{width:21px;height:21px;}
+  .bayar-kartu-fitur{list-style:none;margin:var(--s4) 0;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .bayar-kartu-fitur li{position:relative;padding-left:24px;font-size:13.5px;line-height:1.5;color:var(--ink-mid);}
+  .bayar-kartu-fitur li::before{
+    content:'';position:absolute;left:0;top:4px;width:15px;height:15px;border-radius:50%;
+    background:var(--accent-tint);
+    /* Centang digambar sebagai mask supaya warnanya ikut token aksen dan
+       tetap benar di tema gelap — SVG dengan warna tetap tidak akan. */
+    box-shadow:inset 0 0 0 1px var(--accent);
+  }
+  .bayar-kartu-fitur li::after{
+    content:'';position:absolute;left:4.5px;top:8px;width:5px;height:2.5px;
+    border-left:1.6px solid var(--accent-dark);border-bottom:1.6px solid var(--accent-dark);
+    transform:rotate(-45deg);
+  }
+  .bayar-kanal{margin-top:var(--s3);font-size:12px;color:var(--ink-soft);line-height:2;}
+  .bayar-kanal-tag{display:inline-block;padding:2px 8px;margin:0 2px;border-radius:999px;background:var(--paper-2);border:1px solid var(--line-soft);color:var(--ink-mid);font-size:11.5px;font-weight:500;white-space:nowrap;}
+  .bayar-aman{display:flex;align-items:flex-start;gap:7px;margin-top:var(--s2);font-size:11.5px;line-height:1.55;color:var(--ink-soft);}
+  .bayar-aman svg{flex-shrink:0;width:14px;height:14px;margin-top:1px;color:var(--accent);}
+
+  /* Tanda lunas. Sengaja bukan sekadar teks abu-abu: ini satu-satunya
+     konfirmasi visual bahwa uang yang sudah keluar benar-benar tercatat. */
+  .bayar-lunas{
+    display:flex;align-items:center;gap:10px;
+    margin-top:var(--s4);padding:var(--s3);
+    border:1px solid var(--accent);
+    border-radius:var(--r-md);
+    background:var(--accent-tint);
+    font-size:13.5px;color:var(--ink-mid);
+  }
+  .bayar-lunas[hidden]{display:none;}
+  .bayar-lunas svg{flex-shrink:0;width:20px;height:20px;color:var(--accent-dark);}
+  .bayar-lunas strong{color:var(--ink);}
+
   /* Riwayat pembayaran. Nomor pesanan sengaja monospace dan bisa
      diseleksi — itu satu-satunya pegangan user kalau harus menghubungi
      admin soal pembayarannya. */
