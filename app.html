@@ -472,6 +472,18 @@
         <p class="ws-save-msg" id="statusMsg" aria-live="polite"></p>
       </div>
 
+      <!-- Riwayat pembayaran. Sebelum ini, satu-satunya jejak bahwa
+           seseorang sudah membayar adalah tombol yang berubah — tidak ada
+           nomor pesanan, tidak ada tanggal, tidak ada apa pun yang bisa
+           ditunjukkan kalau pembayarannya dipertanyakan. Datanya sudah
+           bisa dibaca pemiliknya tanpa perubahan database apa pun
+           (policy payments_select_own). -->
+      <div class="profile-block" id="riwayatBayarBlock" style="display:none;">
+        <h3>Riwayat Pembayaran</h3>
+        <p>Catatan setiap percobaan pembayaran untuk undangan ini. Simpan nomor pesanannya kalau kamu perlu menghubungi admin.</p>
+        <div class="bayar-riwayat" id="bayarRiwayat"></div>
+      </div>
+
       <div class="profile-block" id="shareLockedBlock">
         <h3>Bagikan ke Tamu</h3>
         <p>Undangan masih berstatus Draf. Aktifkan undangan dulu supaya link-nya bisa dibagikan ke tamu.</p>

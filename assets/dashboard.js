@@ -1184,7 +1184,12 @@
     // Tombol aktifkan/bayar diputuskan terpisah karena bergantung status
     // pembayaran, yang perlu ditanya ke server dulu.
     if (activateBtn) activateBtn.style.display = isAktif ? 'none' : 'inline-flex';
+    // Undangan yang sudah aktif tidak perlu ditanyakan status bayarnya
+    // lagi, tapi riwayatnya tetap harus tampil — justru di situlah
+    // kuitansi pembelian yang sudah lunas berada. Tanpa cabang else ini,
+    // blok riwayat masih memegang isi undangan yang dibuka sebelumnya.
     if (!isAktif) segarkanStatusBayar();
+    else muatRiwayatBayar();
 
     renderBagikanShare(currentInvitation);
   }
@@ -1204,7 +1209,144 @@
 
   var bayarBtn = document.getElementById('bayarBtn');
   var bayarNota = document.getElementById('bayarNota');
+  var riwayatBayarBlock = document.getElementById('riwayatBayarBlock');
+  var bayarRiwayat = document.getElementById('bayarRiwayat');
   var sudahDibayar = false;
+
+  // ---- Pemantauan pembayaran yang lunasnya belakangan ----
+  //
+  // QRIS dan e-wallet biasanya lunas seketika, tapi VA/transfer bank
+  // sering baru masuk beberapa menit sampai berjam-jam kemudian — dan
+  // yang menandai lunas adalah webhook Midtrans, bukan popup Snap yang
+  // ditutup user.
+  //
+  // Sebelum ini, popup yang berstatus "pending" menampilkan kalimat
+  // "Halaman ini akan memperbarui sendiri begitu dana masuk" padahal
+  // tidak ada satu pun yang memantau: cuma ada SATU kali cek ulang 2,5
+  // detik setelah popup ditutup. Kalimatnya adalah janji yang tidak
+  // ditepati kode, dan yang membacanya adalah orang yang uangnya sudah
+  // keluar. Sekarang benar-benar dipantau.
+  //
+  // Berhenti sendiri setelah PANTAU_MAKS_MS supaya tidak ada timer yang
+  // hidup selamanya di tab yang ditinggal terbuka. Kalau melewati batas
+  // itu, notanya berubah jadi mengarahkan ke tombol muat ulang — bukan
+  // diam-diam menyerah.
+  var PANTAU_JEDA_MS = 5000;
+  var PANTAU_MAKS_MS = 10 * 60 * 1000;
+  var pantauTimer = null;
+  var pantauSampai = 0;
+
+  function hentikanPantauBayar(){
+    if (pantauTimer) { clearTimeout(pantauTimer); pantauTimer = null; }
+  }
+
+  function mulaiPantauBayar(){
+    hentikanPantauBayar();
+    if (!currentInvitation) return;
+    pantauSampai = Date.now() + PANTAU_MAKS_MS;
+    var idDipantau = currentInvitation.id;
+
+    (function detak(){
+      pantauTimer = setTimeout(async function(){
+        // Undangan yang dibuka sudah ganti (atau workspace ditutup) —
+        // hasil pantauan ini sudah tidak relevan untuk layar sekarang.
+        if (!currentInvitation || currentInvitation.id !== idDipantau) { hentikanPantauBayar(); return; }
+
+        var res = await KU.sb.rpc('undangan_sudah_dibayar', { p_invitation_id: idDipantau });
+        if (!res.error && res.data === true) {
+          hentikanPantauBayar();
+          await segarkanStatusBayar();
+          showStatusMsg('Pembayaran diterima! Undanganmu sekarang bisa diaktifkan.', 'ok');
+          return;
+        }
+
+        if (Date.now() >= pantauSampai) {
+          hentikanPantauBayar();
+          muatRiwayatBayar();
+          tampilkanNota('Pembayaran belum tercatat lunas. Kalau kamu sudah mentransfer, dananya bisa perlu waktu beberapa saat — muat ulang halaman ini nanti, atau hubungi admin dengan menyebut nomor pesanan di Riwayat Pembayaran di bawah.');
+          return;
+        }
+        detak();
+      }, PANTAU_JEDA_MS);
+    })();
+  }
+
+  // ---- Riwayat pembayaran ----
+  var LABEL_STATUS_BAYAR = {
+    paid:    { teks: 'Lunas',    kelas: 'ok' },
+    pending: { teks: 'Menunggu', kelas: 'warn' },
+    failed:  { teks: 'Gagal',    kelas: 'err' }
+  };
+
+  // Midtrans mengirim nama teknis di payment_type ("bank_transfer",
+  // "echannel", "qris"). Itu bahasa mesin — yang membaca riwayat ini
+  // pengantin, bukan programmer.
+  var LABEL_METODE = {
+    qris: 'QRIS',
+    gopay: 'GoPay',
+    shopeepay: 'ShopeePay',
+    bank_transfer: 'Transfer bank (VA)',
+    echannel: 'Mandiri Bill',
+    credit_card: 'Kartu',
+    cstore: 'Minimarket'
+  };
+
+  function labelMetode(m){
+    if (!m) return '';
+    return LABEL_METODE[m] || m;
+  }
+
+  function formatWaktuIndo(iso){
+    if (!iso) return '';
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    var bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][d.getMonth()];
+    var jam = ('0' + d.getHours()).slice(-2) + '.' + ('0' + d.getMinutes()).slice(-2);
+    return d.getDate() + ' ' + bulan + ' ' + d.getFullYear() + ', ' + jam;
+  }
+
+  async function muatRiwayatBayar(){
+    if (!riwayatBayarBlock || !bayarRiwayat || !currentInvitation) return;
+    var res = await KU.sb.from('payments')
+      .select('order_id,amount,status,method,paid_at,created_at')
+      .eq('invitation_id', currentInvitation.id)
+      .order('created_at', { ascending: false });
+
+    var baris = (!res.error && Array.isArray(res.data)) ? res.data : [];
+    // Baris GRANDFATHER senilai Rp0 dibuat saat migrasi untuk undangan
+    // yang sudah aktif sebelum pembayaran ada. Itu catatan internal, dan
+    // menampilkannya sebagai "pembayaran" ke user cuma membingungkan.
+    baris = baris.filter(function(r){ return Number(r.amount) > 0; });
+
+    if (!baris.length) { riwayatBayarBlock.style.display = 'none'; return; }
+    riwayatBayarBlock.style.display = 'block';
+    bayarRiwayat.innerHTML = '';
+
+    baris.forEach(function(r){
+      var label = LABEL_STATUS_BAYAR[r.status] || { teks: r.status || '-', kelas: '' };
+      var item = document.createElement('div');
+      item.className = 'bayar-riwayat-item';
+
+      var kiri = document.createElement('div');
+      var jumlah = document.createElement('div');
+      jumlah.className = 'bayar-riwayat-jumlah';
+      jumlah.textContent = 'Rp' + window.formatRupiah(r.amount);
+      var meta = document.createElement('div');
+      meta.className = 'bayar-riwayat-meta';
+      meta.textContent = formatWaktuIndo(r.paid_at || r.created_at) + (r.method ? ' · ' + labelMetode(r.method) : '');
+      var order = document.createElement('div');
+      order.className = 'bayar-riwayat-order';
+      order.textContent = r.order_id || '';
+      kiri.append(jumlah, meta, order);
+
+      var badge = document.createElement('span');
+      badge.className = 'bayar-riwayat-badge ' + label.kelas;
+      badge.textContent = label.teks;
+
+      item.append(kiri, badge);
+      bayarRiwayat.appendChild(item);
+    });
+  }
 
   function tampilkanNota(teks){
     if (!bayarNota) return;
@@ -1238,6 +1380,8 @@
 
     var res = await KU.sb.rpc('undangan_sudah_dibayar', { p_invitation_id: currentInvitation.id });
     sudahDibayar = !res.error && res.data === true;
+
+    muatRiwayatBayar();
 
     if (sudahDibayar) {
       activateBtn.style.display = 'inline-flex';
@@ -1321,21 +1465,29 @@
 
       showStatusMsg('');
       window.snap.pay(hasil.token, {
-        onSuccess: function(){ selesaiBayar('Pembayaran berhasil! Sekarang undanganmu bisa diaktifkan.'); },
+        // Bahkan 'onSuccess' pun ikut dipantau: yang menandai lunas di
+        // sisi kita adalah webhook, dan webhook bisa datang sepersekian
+        // detik setelah callback ini. Tanpa pemantauan, ada jendela
+        // sempit di mana Snap bilang berhasil tapi tombolnya masih
+        // menuntut bayar.
+        onSuccess: function(){ selesaiBayar('Pembayaran berhasil! Sedang kami cocokkan...', true); },
         // Transfer bank/VA sering baru lunas beberapa menit kemudian, dan
         // yang menandai lunas adalah webhook, bukan callback ini.
-        onPending: function(){ selesaiBayar('Pembayaran sedang diproses. Halaman ini akan memperbarui sendiri begitu dana masuk.'); },
-        onError: function(){ showStatusMsg('Pembayaran gagal. Silakan coba lagi.', 'err'); },
-        onClose: function(){ showStatusMsg('Pembayaran dibatalkan. Kamu bisa mencobanya lagi kapan saja.'); }
+        onPending: function(){ selesaiBayar('Pembayaran sedang diproses. Halaman ini memantau sendiri dan akan berubah begitu dananya masuk — tidak perlu ditutup.', true); },
+        onError: function(){ hentikanPantauBayar(); showStatusMsg('Pembayaran gagal. Silakan coba lagi.', 'err'); muatRiwayatBayar(); },
+        onClose: function(){ hentikanPantauBayar(); showStatusMsg('Pembayaran dibatalkan. Kamu bisa mencobanya lagi kapan saja.'); muatRiwayatBayar(); }
       });
     });
   }
 
-  async function selesaiBayar(pesan){
+  async function selesaiBayar(pesan, pantau){
     showStatusMsg(pesan, 'ok');
     // Jeda singkat memberi webhook waktu tiba sebelum kita bertanya.
     await new Promise(function(r){ setTimeout(r, 2500); });
     await segarkanStatusBayar();
+    // Belum tercatat lunas setelah cek pertama? Pantau terus — inilah
+    // yang membuat kalimat "akan berubah sendiri" jadi benar.
+    if (pantau && !sudahDibayar) mulaiPantauBayar();
   }
 
   if (slugSaveBtn) {
@@ -1997,6 +2149,10 @@
   }
 
   function openWorkspace(invitation, template){
+    // Pemantauan pembayaran milik undangan sebelumnya harus dimatikan di
+    // sini, bukan dibiarkan mati sendiri saat detak berikutnya menyadari
+    // id-nya sudah berganti.
+    hentikanPantauBayar();
     currentInvitation = invitation;
     currentTemplateMeta = template;
     updateWsHeader();
@@ -2339,6 +2495,7 @@
 
   if (wsBackBtn) wsBackBtn.addEventListener('click', async function(){
     if (!(await confirmLeaveWorkspace())) return;
+    hentikanPantauBayar();
     wsFormDirty = false;
     showView('tema');
   });

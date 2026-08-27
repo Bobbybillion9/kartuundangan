@@ -425,6 +425,22 @@
   .activate-checklist li{margin-bottom:4px;}
   html[data-theme="dark"] .activate-checklist{color:#E08A78;}
 
+  /* Riwayat pembayaran. Nomor pesanan sengaja monospace dan bisa
+     diseleksi — itu satu-satunya pegangan user kalau harus menghubungi
+     admin soal pembayarannya. */
+  .bayar-riwayat{display:flex;flex-direction:column;gap:var(--s2);margin-top:var(--s3);}
+  .bayar-riwayat-item{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);padding:var(--s3);border:1px solid var(--line-soft);border-radius:var(--r-md);background:var(--paper-2);}
+  .bayar-riwayat-jumlah{font-size:15px;font-weight:600;}
+  .bayar-riwayat-meta{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+  .bayar-riwayat-order{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11.5px;color:var(--ink-soft);margin-top:5px;word-break:break-all;user-select:all;}
+  .bayar-riwayat-badge{flex-shrink:0;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600;background:var(--line-soft);color:var(--ink-mid);}
+  .bayar-riwayat-badge.ok{background:var(--accent-tint);color:var(--accent-dark);}
+  .bayar-riwayat-badge.warn{background:#F6E7CE;color:#8A6216;}
+  .bayar-riwayat-badge.err{background:#F6DDD7;color:#A2402F;}
+  html[data-theme="dark"] .bayar-riwayat-badge.warn{background:rgba(214,166,74,.18);color:#E3BE72;}
+  html[data-theme="dark"] .bayar-riwayat-badge.err{background:rgba(192,80,61,.18);color:#E08A78;}
+  .bayar-nota{margin-top:var(--s3);font-size:13px;line-height:1.6;color:var(--ink-soft);}
+
   .share-link-row{display:flex;gap:var(--s2);margin:var(--s3) 0;flex-wrap:wrap;}
   .share-link-row input{flex:1 1 220px;min-width:0;padding:11px 14px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--paper-2);color:var(--ink-mid);font-size:14px;font-family:inherit;}
 
