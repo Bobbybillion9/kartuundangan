@@ -280,6 +280,35 @@
   .foot-col li{padding:5px 0;font-size:13.5px;color:var(--ink-mid);}
   .foot-col li a:hover{color:var(--accent-dark);}
   .foot-about p{font-size:13.5px;margin-top:var(--s2);max-width:290px;}
+  /* ---------- metode pembayaran di footer ----------
+     Tujuannya kepercayaan, bukan hiasan: orang perlu tahu bisa bayar
+     pakai apa SEBELUM mendaftar, bukan baru saat popup terbuka. Karena
+     itu tiap metode diberi keterangan singkat — "QRIS" saja tidak
+     memberi tahu bahwa itu bisa dipindai semua e-wallet. */
+  .foot-pay{padding-top:var(--s4);padding-bottom:var(--s4);border-top:1px solid var(--line);}
+  .foot-pay-judul{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:var(--s3);}
+  .pay-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:var(--s2);}
+  .pay-item{
+    /* flex-wrap wajib: .pay-ket memakai flex-basis:100% supaya turun ke
+       baris kedua. Tanpa wrap, ia tetap bertahan di baris yang sama dan
+       yang terdorong justru nama metodenya — "E-wallet" pecah jadi dua
+       baris di tengah kata. */
+    display:flex;align-items:center;flex-wrap:wrap;gap:2px 10px;
+    padding:10px var(--s3) 12px;
+    border:1px solid var(--line-soft);
+    border-radius:var(--r-md);
+    background:var(--card);
+    flex:1 1 210px;
+  }
+  .pay-logo{flex-shrink:0;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--accent-tint);color:var(--accent-dark);}
+  .pay-logo svg{width:19px;height:19px;}
+  .pay-logo img{width:100%;height:100%;object-fit:contain;}
+  .pay-nama{font-size:13.5px;font-weight:600;color:var(--ink);}
+  .pay-ket{font-size:11.5px;color:var(--ink-soft);flex-basis:100%;padding-left:44px;margin-top:-2px;}
+  .foot-pay-midtrans{display:flex;align-items:flex-start;gap:7px;margin-top:var(--s3);font-size:11.5px;line-height:1.6;color:var(--ink-soft);}
+  .foot-pay-midtrans svg{flex-shrink:0;width:14px;height:14px;margin-top:2px;color:var(--accent);}
+  .foot-pay-midtrans strong{color:var(--ink-mid);font-weight:600;}
+
   .foot-bottom{padding-top:var(--s3);border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
 
   .modal-overlay{position:fixed;inset:0;background:rgba(43,40,34,0.55);backdrop-filter:blur(2px);z-index:120;display:none;align-items:center;justify-content:center;padding:var(--s3);}
@@ -619,7 +648,14 @@
   .auth-switch{font-size:13.5px;text-align:center;color:var(--ink-mid);margin-top:var(--s3);}
   .auth-switch a{color:var(--accent-dark);font-weight:600;}
 
-  .wa-float{position:fixed;bottom:20px;right:20px;background:#25D366;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,0.25);z-index:75;}
+  .wa-float{position:fixed;bottom:20px;right:20px;background:#25D366;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,0.25);z-index:75;transition:bottom .2s ease;}
+  /* Bilah sticky muncul di HP tepat di sudut yang sama dengan tombol
+     WhatsApp, dan z-index-nya lebih rendah (74 vs 75). Akibatnya tombol
+     WhatsApp menindih tombol "Daftar" di bilah itu: klik di tengah
+     tombolnya mengenai ikon WhatsApp, bukan CTA-nya — tombol pendaftaran
+     utama di HP praktis tidak bisa ditekan. Jadi begitu bilahnya tampil,
+     tombol WhatsApp naik ke atasnya. */
+  body:has(.sticky-cta.show) .wa-float{bottom:84px;}
   .sticky-cta{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:10px var(--s2);display:none;align-items:center;gap:10px;z-index:74;}
   .sticky-cta.show{display:flex;}
   .sticky-cta .info{flex:1;min-width:0;}

@@ -6,8 +6,9 @@
 // harga atau daftar fitur di sini saja, jangan tulis ulang di kedua
 // halaman.
 //
-// "tersedia: true" cuma untuk paket yang benar-benar bisa diaktifkan
-// sekarang (belum ada integrasi pembayaran/Midtrans sama sekali).
+// "tersedia: true" cuma untuk paket yang benar-benar bisa dibeli sekarang.
+// Midtrans sudah tersambung dan gerbang pembayarannya menyala, jadi paket
+// bertanda tersedia benar-benar akan menagih.
 // Paket lain ditandai "Segera Hadir" dan tombolnya nonaktif supaya
 // tidak menjual sesuatu yang belum benar-benar ada.
 window.PRICING_PLANS = {
