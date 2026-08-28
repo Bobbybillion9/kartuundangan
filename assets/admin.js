@@ -33,10 +33,12 @@ window.KU_ADMIN = (function () {
       hitungUndangan: ambil('hitungUndangan'),
       hitungBayar: ambil('hitungBayar'),
       muatUlang: ambil('muatUlangBtn'),
-      ujiEmail: ambil('ujiEmailBtn')
+      ujiEmail: ambil('ujiEmailBtn'),
+      ujiKuitansi: ambil('ujiKuitansiBtn')
     };
     if (el.muatUlang) el.muatUlang.addEventListener('click', muat);
-    if (el.ujiEmail) el.ujiEmail.addEventListener('click', ujiKirimEmail);
+    if (el.ujiEmail) el.ujiEmail.addEventListener('click', function(){ ujiKirimEmail(null); });
+    if (el.ujiKuitansi) el.ujiKuitansi.addEventListener('click', function(){ ujiKirimEmail('kuitansi'); });
   }
 
   // Mengirim satu email uji ke alamat admin yang sedang masuk.
@@ -47,8 +49,8 @@ window.KU_ADMIN = (function () {
   // seperti "domain is not verified" atau "API key is invalid" jauh
   // lebih berguna daripada "gagal mengirim", dan itu persis yang
   // dibutuhkan untuk tahu harus memperbaiki apa.
-  async function ujiKirimEmail(){
-    var tombol = el.ujiEmail;
+  async function ujiKirimEmail(jenis){
+    var tombol = jenis === 'kuitansi' ? el.ujiKuitansi : el.ujiEmail;
     var sesi = KU.getSession();
     if (!sesi) { pesan(el.msg, 'Sesi tidak ditemukan. Muat ulang halaman.', 'err'); return; }
 
@@ -60,12 +62,18 @@ window.KU_ADMIN = (function () {
     try {
       var r = await fetch('/api/diagnostik/email', {
         method: 'POST',
-        headers: { Authorization: 'Bearer ' + sesi.access_token }
+        headers: {
+          Authorization: 'Bearer ' + sesi.access_token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(jenis ? { jenis: jenis } : {})
       });
       var d = await r.json().catch(function(){ return {}; });
 
       if (r.ok && d.hasil && d.hasil.terkirim) {
-        pesan(el.msg, 'Email uji terkirim ke ' + d.tujuan +
+        pesan(el.msg, (jenis === 'kuitansi'
+          ? 'Contoh kuitansi untuk "' + (d.undangan || '') + '" terkirim ke '
+          : 'Email uji terkirim ke ') + d.tujuan +
           '. Cek kotak masuk — kalau masuk Spam, itu tetap perlu diperbaiki.', 'ok');
       } else if (d.setelan && !d.setelan.RESEND_API_KEY) {
         pesan(el.msg, 'RESEND_API_KEY belum terbaca di server. Pastikan sudah diisi di Vercel ' +

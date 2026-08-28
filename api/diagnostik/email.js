@@ -22,8 +22,8 @@
 // TIDAK PERNAH mengembalikan nilai kuncinya, hanya ada/tidaknya. Kunci
 // API yang bocor lewat endpoint diagnostik tetap kunci yang bocor.
 
-const { userDariToken, URL_SUPABASE } = require('../_lib/supabase');
-const { kirimEmail } = require('../_lib/email');
+const { userDariToken, URL_SUPABASE, db, emailPengguna } = require('../_lib/supabase');
+const { kirimEmail, suratKuitansi } = require('../_lib/email');
 
 async function apakahAdmin(accessToken) {
   try {
@@ -63,6 +63,61 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method !== 'POST') { res.status(405).json({ pesan: 'Metode tidak didukung.' }); return; }
+
+  let badan = {};
+  try { badan = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {}); } catch (e) { badan = {}; }
+
+  // ---- Contoh KUITANSI, memakai data undangan sungguhan ----
+  //
+  // Kuitansi asli hanya terkirim saat webhook Midtrans menandai sebuah
+  // pembayaran lunas. Sampai ada penjualan pertama, seluruh jalur itu
+  // belum pernah dilalui satu kali pun — padahal yang bisa salah di
+  // dalamnya banyak: undangan tidak terbaca, email pemilik tidak
+  // ketemu, atau surat gagal disusun.
+  //
+  // Mode ini menjalankan JALUR YANG SAMA PERSIS dengan webhook (baca
+  // undangan -> cari email pemilik -> susun kuitansi -> kirim), hanya
+  // pemicunya diganti. Yang tersisa belum teruji tinggal satu hal:
+  // apakah webhook memanggilnya — dan itu terbukti sendiri pada
+  // penjualan pertama.
+  if (badan.jenis === 'kuitansi') {
+    const inv = await db('invitations?user_id=eq.' + user.id +
+      '&select=id,user_id,nama_pria_panggilan,nama_wanita_panggilan&order=created_at.desc&limit=1');
+    const u = Array.isArray(inv) ? inv[0] : null;
+    if (!u) { res.status(404).json({ pesan: 'Belum ada undangan di akun ini untuk dijadikan contoh.' }); return; }
+
+    // Email pemilik dicari lewat jalur yang sama dengan webhook, bukan
+    // dipakai langsung dari sesi — supaya kalau emailPengguna() yang
+    // bermasalah, ketahuan DI SINI, bukan nanti saat ada uang masuk.
+    const tujuan = await emailPengguna(u.user_id);
+    if (!tujuan) {
+      res.status(500).json({ pesan: 'Email pemilik undangan tidak terbaca (emailPengguna gagal).' });
+      return;
+    }
+
+    const pasangan = [u.nama_pria_panggilan, u.nama_wanita_panggilan].filter(Boolean).join(' & ') || 'undanganmu';
+    const surat = suratKuitansi({
+      pasangan: pasangan,
+      orderId: 'CONTOH-' + new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+      jumlah: 49000,
+      metode: 'qris',
+      waktuLunas: new Date().toISOString()
+    });
+
+    const hasil = await kirimEmail({
+      ke: tujuan,
+      // Ditandai CONTOH di subjek supaya tidak pernah tertukar dengan
+      // kuitansi sungguhan di kotak masuk.
+      subjek: '[CONTOH] ' + surat.subjek,
+      html: surat.html,
+      teks: surat.teks
+    });
+    res.status(hasil.terkirim ? 200 : 500).json({
+      setelan: setelan, hasil: hasil, tujuan: tujuan,
+      undangan: pasangan, catatan: 'Ini contoh — memakai data undangan sungguhan, tapi nomor pesanannya karangan.'
+    });
+    return;
+  }
 
   // Email uji sengaja dikirim ke alamat PEMANGGILNYA sendiri, bukan ke
   // alamat yang dikirim lewat body. Kalau tujuannya bisa ditentukan
