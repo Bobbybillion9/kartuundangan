@@ -1,0 +1,232 @@
+/* ==========================================================================
+   Hero "mockup HP" — pengganti hero koridor.
+   --------------------------------------------------------------------------
+   Kenapa diganti: koridor menampilkan sembilan kartu melaju sekaligus. Di
+   layar lebar itu memang megah, tapi mayoritas pengunjung situs ini datang
+   dari HP, dan di lebar 390px kesembilan kartu itu menyusut jadi kepingan
+   kecil yang ramai — pengunjung melihat gerakan, bukan produknya.
+
+   Yang menggantikan: SATU layar HP di tengah, sebesar mungkin, memutar
+   sampul tema yang sebenarnya. Ini mengembalikan gagasan kartu bergeser
+   yang dulu dipakai (kartu tengah + dua kartu samping yang mengintip),
+   hanya saja kartu tengahnya sekarang berupa HP — karena begitulah tamu
+   benar-benar membuka undangan ini.
+
+   Gambarnya BUKAN thumbnail 2:3 yang dipaksa masuk bingkai. Sampulnya
+   dipotret ulang pada 390x844 (rasio HP sungguhan) ke assets/hero/, jadi
+   tidak ada bagian yang terpotong dan yang dilihat orang persis seperti
+   yang akan dilihat tamunya nanti.
+   ========================================================================== */
+
+.hero-hp{
+  --hp-lebar:270px;
+  --hp-warna:#9CAE96;               /* diganti JS mengikuti tema yang tampil */
+  --hp-radius:38px;
+  position:relative;
+  display:grid;
+  /* Teksnya dipecah dua (kepala = eyebrow + h1, kaki = lead + tombol +
+     angka) supaya di HP layar HP-nya bisa DISELIPKAN di antara keduanya.
+     Sebagai satu blok utuh, teks itu setinggi hampir satu layar penuh dan
+     mendorong HP-nya keluar dari pandangan pertama — persis kesalahan yang
+     membuat hero sebelumnya diganti. */
+  grid-template-columns:1.02fr 0.98fr;
+  grid-template-areas:
+    "kepala panggung"
+    "kaki   panggung";
+  grid-template-rows:auto auto;
+  align-items:center;
+  column-gap:var(--s6);
+  row-gap:var(--s4);
+  max-width:1120px;
+  margin:0 auto;
+  padding:var(--s5) var(--s4) var(--s6);
+}
+
+/* Judul hero dibatasi sendiri, tidak memakai ukuran h1 bawaan. Pada
+   clamp bawaan (sampai 46px) judul ini jadi empat baris di kolom selebar
+   ini, dan tinggi itu mendorong baris angka di bawahnya keluar layar. */
+.hero-hp-kepala h1{font-size:clamp(30px,3.5vw,42px);}
+
+.hero-hp-kepala{grid-area:kepala;align-self:end;}
+.hero-hp-kaki{grid-area:kaki;align-self:start;}
+.hero-hp-panggung{grid-area:panggung;}
+
+/* ---------- kolom teks ---------- */
+.hero-hp-kepala,.hero-hp-kaki{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s3);}
+.hero-hp-kepala h1{margin:0;}
+.hero-hp-lead{font-size:17px;line-height:1.7;color:var(--ink-mid);max-width:46ch;margin:0;}
+.hero-hp-aksi{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s2);}
+.hero-hp-nota{font-size:13px;color:var(--ink-soft);margin:0;}
+/* Kisi tiga kolom, bukan flex-wrap. Dengan flex-wrap, "Tanpa batas /
+   Nama tamu & penerima" yang paling panjang turun sendirian ke baris
+   kedua dan barisnya terbaca seperti dua kelompok berbeda. */
+.hero-hp-trust{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);
+  margin-top:var(--s2);padding-top:var(--s4);
+  border-top:1px solid var(--line);width:100%;
+}
+.hero-hp-trust .n{font-family:'Fraunces',serif;font-size:19px;color:var(--ink);line-height:1.2;}
+.hero-hp-trust .l{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+
+/* ---------- panggung ---------- */
+.hero-hp-panggung{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:var(--s4);
+  min-height:calc(var(--hp-lebar) * 2.16 + 60px);
+  justify-content:center;
+}
+
+/* Cahaya di belakang HP mengambil warna tema yang sedang tampil. Itu satu-
+   satunya tempat warna tema bocor ke luar layar, dan bikin pergantiannya
+   terasa sebagai perpindahan suasana, bukan sekadar ganti gambar. */
+.hp-cahaya{
+  position:absolute;top:50%;left:50%;
+  width:calc(var(--hp-lebar) * 2.1);height:calc(var(--hp-lebar) * 2.1);
+  transform:translate(-50%,-54%);
+  border-radius:50%;
+  background:radial-gradient(circle, var(--hp-warna) 0%, transparent 66%);
+  opacity:.22;filter:blur(46px);
+  transition:background .9s ease;
+  pointer-events:none;z-index:0;
+}
+
+/* Dua kartu samping: gagasan lama (kartu tetangga yang mengintip) dibawa
+   ke sini, tapi dibuat sangat lirih — kabur dan tipis. Tugasnya cuma
+   memberi tahu bahwa masih ada tema lain, bukan ikut dibaca. */
+.hp-samping{
+  position:absolute;top:50%;
+  width:calc(var(--hp-lebar) * .62);aspect-ratio:9/19.5;
+  border-radius:22px;overflow:hidden;
+  box-shadow:0 24px 50px -30px rgba(60,40,25,.55);
+  opacity:.26;filter:blur(2.5px);
+  z-index:1;pointer-events:none;
+  transition:opacity .6s ease,transform .6s ease;
+}
+.hp-samping img{width:100%;height:100%;object-fit:cover;display:block;}
+.hp-samping-kiri{left:50%;transform:translate(calc(-50% - var(--hp-lebar) * .82),-50%) rotate(-7deg);}
+.hp-samping-kanan{left:50%;transform:translate(calc(-50% + var(--hp-lebar) * .82),-50%) rotate(7deg);}
+
+/* ---------- bingkai HP ---------- */
+.hp-bingkai{
+  position:relative;z-index:2;
+  width:var(--hp-lebar);aspect-ratio:9/19.5;
+  border-radius:var(--hp-radius);
+  padding:9px;
+  background:linear-gradient(158deg,#3A342C 0%,#211D18 46%,#3A342C 100%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.10) inset,
+    0 2px 3px rgba(255,255,255,.16) inset,
+    0 40px 70px -34px rgba(45,30,18,.72),
+    0 10px 26px -18px rgba(45,30,18,.5);
+  transition:transform .7s cubic-bezier(.22,.61,.36,1);
+  transform-style:preserve-3d;
+}
+/* Sentakan kecil tiap kali layarnya berganti — HP-nya seperti ikut
+   bergerak mengikuti geseran, bukan cuma jadi bingkai diam. */
+.hp-bingkai.geser-kiri{transform:perspective(1200px) rotateY(6deg) scale(.985);}
+.hp-bingkai.geser-kanan{transform:perspective(1200px) rotateY(-6deg) scale(.985);}
+
+.hp-layar{
+  position:relative;width:100%;height:100%;
+  border-radius:calc(var(--hp-radius) - 9px);
+  overflow:hidden;background:#15120E;
+}
+.hp-slide{
+  position:absolute;inset:0;margin:0;
+  transform:translateX(100%);
+  opacity:0;
+  transition:transform .72s cubic-bezier(.22,.61,.36,1),opacity .72s ease;
+  will-change:transform;
+}
+.hp-slide img{width:100%;height:100%;object-fit:cover;display:block;}
+.hp-slide[data-pos="aktif"]{transform:translateX(0);opacity:1;z-index:2;}
+.hp-slide[data-pos="sebelum"]{transform:translateX(-100%);opacity:0;z-index:1;}
+.hp-slide[data-pos="sesudah"]{transform:translateX(100%);opacity:0;z-index:1;}
+
+/* Poni. Kecil dan gelap saja — ini penanda "ini HP", bukan tiruan merek
+   tertentu. */
+.hp-poni{
+  position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:34%;height:20px;
+  background:#211D18;
+  border-radius:0 0 12px 12px;
+  z-index:3;pointer-events:none;
+}
+
+/* Pantulan kaca tipis melintang layar. Tanpa ini bingkainya terbaca
+   sebagai kotak berisi gambar, bukan sebagai layar. */
+.hp-kaca{
+  position:absolute;inset:0;z-index:4;pointer-events:none;
+  border-radius:calc(var(--hp-radius) - 9px);
+  background:linear-gradient(118deg,
+    rgba(255,255,255,.16) 0%,
+    rgba(255,255,255,.05) 26%,
+    rgba(255,255,255,0) 48%);
+}
+
+/* ---------- nama tema & titik ---------- */
+.hp-kendali{
+  position:relative;z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.hp-nama{
+  margin:0;font-family:'Fraunces',serif;font-size:16px;color:var(--ink);
+  transition:opacity .3s ease;min-height:1.4em;
+}
+.hp-nama.tukar{opacity:0;}
+.hp-titik{display:flex;gap:7px;}
+.hp-titik button{
+  width:7px;height:7px;padding:0;border:0;border-radius:50%;
+  background:var(--line);cursor:pointer;
+  transition:width .35s cubic-bezier(.22,.61,.36,1),background .35s ease;
+}
+.hp-titik button[aria-current="true"]{width:22px;border-radius:999px;background:var(--accent);}
+.hp-titik button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+
+/* ---------- layar sedang & HP ---------- */
+@media (max-width:960px){
+  .hero-hp{
+    grid-template-columns:1fr;
+    /* Urutannya: judul, LALU layar HP, baru ajakannya. Produknya terlihat
+       sebelum orang perlu menggulir, dan tombolnya datang tepat setelah
+       orang melihat apa yang dibeli. */
+    grid-template-areas:"kepala" "panggung" "kaki";
+    grid-template-rows:auto auto auto;
+    row-gap:var(--s4);
+    padding:var(--s4) var(--s3) var(--s6);
+    text-align:center;
+  }
+  .hero-hp-kepala,.hero-hp-kaki{align-items:center;}
+  /* Judul dipendekkan di HP. Pada ukuran bawaan, empat baris judul saja
+     sudah memakan lebih dari sepertiga layar. */
+  .hero-hp-kepala h1{font-size:clamp(26px,7.2vw,34px);line-height:1.2;}
+  .hero-hp-lead{font-size:15.5px;line-height:1.6;}
+  .hero-hp-aksi{width:100%;flex-direction:column;}
+  .hero-hp-aksi .btn{width:100%;}
+  /* Kartu samping DIBUANG di HP. Di lebar 390px ia cuma menyisakan dua
+     potongan sempit di tepi layar yang tidak terbaca sebagai apa pun,
+     sementara ruangnya lebih berguna untuk memperbesar HP-nya sendiri —
+     itu justru keluhan yang membuat hero lama diganti. */
+  .hp-samping{display:none;}
+  .hero-hp{--hp-lebar:236px;}
+  .hero-hp-trust{
+    gap:var(--s2);
+    padding-top:var(--s3);margin-top:0;
+  }
+  .hero-hp-trust .n{font-size:16px;}
+  .hero-hp-trust .l{font-size:11.5px;}
+}
+
+@media (max-width:380px){
+  .hero-hp{--hp-lebar:206px;}
+}
+
+/* Gerakan dimatikan untuk yang memintanya lewat setelan sistem. Pergantian
+   temanya TIDAK ikut dimatikan — hanya animasinya; JS juga berhenti
+   memutar sendiri, jadi tampilannya diam sampai titiknya ditekan. */
+@media (prefers-reduced-motion:reduce){
+  .hp-slide,.hp-bingkai,.hp-samping,.hp-cahaya,.hp-nama,.hp-titik button{
+    transition-duration:.001ms !important;
+  }
+  .hp-bingkai.geser-kiri,.hp-bingkai.geser-kanan{transform:none;}
+}

@@ -67,10 +67,10 @@
     });
   }
 
-  // Hero-nya bisa berupa hero lama (.hero) atau hero koridor yang baru,
-  // jadi dicari lewat keduanya. Tanpa ini, halaman dengan hero baru
-  // melempar error di setiap kejadian scroll.
-  var hero = document.querySelector('.hero, .hero-koridor');
+  // Nama kelas hero sudah dua kali berganti (.hero -> .hero-koridor ->
+  // .hero-hp), jadi ketiganya dicari sekaligus. Tanpa ini, halaman dengan
+  // hero yang tidak dikenali melempar error di setiap kejadian scroll.
+  var hero = document.querySelector('.hero, .hero-koridor, .hero-hp');
   var sticky = document.getElementById('stickyCta');
   if (hero && sticky) {
     window.addEventListener('scroll', function(){
@@ -85,8 +85,10 @@
   var dotsWrap = document.getElementById('sliderDots');
   var prevBtn = document.getElementById('sliderPrev');
   var nextBtn = document.getElementById('sliderNext');
-  // Hero koridor tidak memakai slider sama sekali. Tanpa penjagaan ini,
-  // seluruh sisa berkas berhenti dieksekusi di halaman yang tidak punya.
+  // Hero yang sekarang (mockup HP) punya pemutarnya sendiri di
+  // assets/hero-hp.js dan tidak memakai slider ini sama sekali. Tanpa
+  // penjagaan ini, seluruh sisa berkas berhenti dieksekusi di halaman
+  // yang tidak punya slider.
   if (!track || !viewport || !dotsWrap) return;
   var slides = Array.prototype.slice.call(track.children);
   var slideCount = slides.length;

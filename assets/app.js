@@ -508,6 +508,9 @@
       img.alt = m.nama;
       img.loading = 'lazy';
       img.className = 'pay-logo-img';
+      // Dipakai style.css untuk menyetel tinggi per logo — lihat catatan
+      // di sana; ukurannya hasil pengukuran, bukan tebakan.
+      img.dataset.metode = m.berkas;
       // Dicoba .svg dulu; sekali gagal, ganti ke .png; gagal lagi berarti
       // berkasnya memang belum ada — gambarnya dibuang, teksnya bertahan.
       var sudahCobaPng = false;
@@ -520,16 +523,7 @@
         img.remove();
         teks.classList.add('tampil');
       });
-      img.addEventListener('load', function(){
-        teks.classList.remove('tampil');
-        // Logo yang bentuknya mendekati kotak (GoPay, BSI) tampil jauh
-        // lebih kecil daripada logo memanjang kalau dibatasi TINGGI yang
-        // sama: yang memanjang mentok di lebar chip, yang kotak mentok di
-        // tinggi dan menyisakan ruang kosong di kiri-kanannya. Diberi
-        // jatah tinggi lebih supaya besarnya terbaca setara.
-        var w = img.naturalWidth, h = img.naturalHeight;
-        if (w && h && (w / h) < 1.9) img.classList.add('pay-logo-kotak');
-      });
+      img.addEventListener('load', function(){ teks.classList.remove('tampil'); });
       img.src = 'assets/pembayaran/' + m.berkas + '.svg';
 
       // Teks dipasang lebih dulu dan baru disembunyikan kalau gambarnya

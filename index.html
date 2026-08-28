@@ -91,7 +91,7 @@
 </script>
 
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/hero-corridor.css">
+<link rel="stylesheet" href="assets/hero-hp.css">
 </head>
 <body>
 
@@ -291,43 +291,76 @@
   </div>
 </div>
 
-<!-- Hero koridor: kartu undangan & foto acara melaju ke arah pembaca.
-     Sengaja memakai aset produk sendiri (thumbnail tema + foto pernikahan)
-     supaya hero memperlihatkan yang dijual, bukan sekadar menghiasinya.
-     Geometri & alasannya ada di assets/hero-corridor.js. -->
-<section class="hero-koridor" data-koridor data-kartu="9" data-durasi="19" data-sumbu="50"
-  data-gambar='[
-    {"src":"templates/elegan-klasik/sage-rose/assets/thumbnail.jpg"},
-    {"src":"templates/elegan-klasik/sage-rose/assets/galeri-6.jpg"},
-    {"src":"templates/elegan-klasik/ivory-gold/assets/thumbnail.jpg"},
-    {"src":"templates/elegan-klasik/sage-rose/assets/galeri-3.jpg"},
-    {"src":"templates/elegan-klasik/emerald-dusk/assets/thumbnail.jpg"},
-    {"src":"templates/elegan-klasik/sage-rose/assets/galeri-1.jpg"}
-  ]'>
+<!-- Hero mockup HP: satu layar HP di tengah yang memutar sampul tema.
+     Menggantikan hero koridor (9 kartu melaju) — di lebar HP kartu-kartu
+     itu menyusut jadi kepingan ramai, dan mayoritas pengunjung situs ini
+     datang dari HP. Alasan lengkap & geometrinya ada di assets/hero-hp.css.
 
-  <!-- Judul di atas, koridor lewat pita tengah, sisanya di bawah. Bagian
-       tengah sengaja dibiarkan kosong: itulah jalur tempat kartu-kartu lewat,
-       dan satu-satunya cara teks tetap terbaca tanpa menutupi gerakannya. -->
-  <div class="koridor-atas">
+     Gambarnya potret sampul tema pada 390x844, rasio HP sungguhan, jadi
+     tidak ada yang terpotong. Markupnya sengaja lengkap di sini (bukan
+     dibangun assets/hero-hp.js) supaya sampul pertama bisa mulai dimuat
+     browser sebelum JS jalan, dan supaya tanpa JS pun hero tetap utuh. -->
+<section class="hero-hp" data-hero-hp>
+
+  <div class="hero-hp-kepala">
     <p class="eyebrow">Untuk hari yang cuma sekali</p>
     <!-- Frasa "Kartu undangan digital" sengaja masuk ke dalam <h1> dan bukan
          cuma di eyebrow: h1 adalah sinyal kata kunci terkuat di satu halaman,
-         dan itu target SEO utama situs ini. Kalimat pembedanya tetap
-         dipertahankan supaya tidak berubah jadi judul generik. -->
+         dan itu target SEO utama situs ini. -->
     <h1><span class="script">Kartu undangan digital</span> yang terasa personal, bukan template sejuta orang.</h1>
   </div>
 
-  <div class="koridor-bawah">
-    <p class="koridor-lead">Pilih tema kurasi, isi data acara, lalu bagikan link personal ke setiap tamu lengkap dengan pesan otomatis.</p>
-    <div class="koridor-aksi">
+  <div class="hero-hp-kaki">
+    <p class="hero-hp-lead">Pilih tema kurasi, isi data acara, lalu bagikan link personal ke setiap tamu lengkap dengan pesan otomatis.</p>
+    <div class="hero-hp-aksi">
       <a class="btn btn-primary cta-daftar" href="#daftar" data-label-masuk="Lanjut ke dashboard">Daftar &amp; coba gratis</a>
       <a class="btn btn-outline" href="#tema">Lihat tema</a>
     </div>
-    <p class="koridor-nota">Gratis untuk mencoba. Bayar hanya saat kamu aktifkan undangan.</p>
-    <div class="koridor-trust">
+    <p class="hero-hp-nota">Gratis untuk mencoba. Bayar hanya saat kamu aktifkan undangan.</p>
+    <div class="hero-hp-trust">
       <div><div class="n">3 menit</div><div class="l">Rata-rata sampai jadi</div></div>
       <div><div class="n">Tanpa</div><div class="l">Masa aktif &amp; kedaluwarsa</div></div>
       <div><div class="n">Tanpa batas</div><div class="l">Nama tamu &amp; penerima</div></div>
+    </div>
+  </div>
+
+  <div class="hero-hp-panggung">
+    <div class="hp-cahaya" aria-hidden="true"></div>
+
+    <!-- Kartu tetangga yang mengintip di kiri-kanan. src-nya diisi ulang
+         assets/hero-hp.js mengikuti tema yang sedang tampil. Disembunyikan
+         di layar HP. -->
+    <div class="hp-samping hp-samping-kiri" aria-hidden="true">
+      <img src="assets/hero/emerald-dusk.jpg" alt="" loading="lazy" decoding="async">
+    </div>
+    <div class="hp-samping hp-samping-kanan" aria-hidden="true">
+      <img src="assets/hero/ivory-gold.jpg" alt="" loading="lazy" decoding="async">
+    </div>
+
+    <div class="hp-bingkai">
+      <div class="hp-poni" aria-hidden="true"></div>
+      <div class="hp-layar" aria-live="polite">
+        <!-- data-warna dipakai untuk cahaya di belakang HP: warna itu
+             diambil dari palet tiap tema, bukan dari token situs. -->
+        <figure class="hp-slide" data-nama="Sage Rose" data-warna="#9CAE96">
+          <img src="assets/hero/sage-rose.jpg" width="640" height="1385"
+               alt="Sampul undangan tema Sage Rose di layar HP" fetchpriority="high" decoding="async">
+        </figure>
+        <figure class="hp-slide" data-nama="Ivory Gold" data-warna="#C9A227">
+          <img src="assets/hero/ivory-gold.jpg" width="640" height="1385"
+               alt="Sampul undangan tema Ivory Gold di layar HP" loading="lazy" decoding="async">
+        </figure>
+        <figure class="hp-slide" data-nama="Emerald Dusk" data-warna="#1F5F4B">
+          <img src="assets/hero/emerald-dusk.jpg" width="640" height="1385"
+               alt="Sampul undangan tema Emerald Dusk di layar HP" loading="lazy" decoding="async">
+        </figure>
+      </div>
+      <div class="hp-kaca" aria-hidden="true"></div>
+    </div>
+
+    <div class="hp-kendali">
+      <p class="hp-nama">Sage Rose</p>
+      <div class="hp-titik" role="group" aria-label="Pilih tema yang ditampilkan"></div>
     </div>
   </div>
 
@@ -648,6 +681,6 @@
 <script src="assets/pricing-plans.js"></script>
 <script src="assets/app.js"></script>
 
-<script src="assets/hero-corridor.js"></script>
+<script src="assets/hero-hp.js"></script>
 </body>
 </html>
