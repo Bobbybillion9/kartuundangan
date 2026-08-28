@@ -17,7 +17,8 @@
 // mengaktifkan, undangan setengah terisi bisa tayang ke tamu.
 
 const { tandaTanganSah, statusInternal, batalkanTagihan } = require('../_lib/midtrans');
-const { db } = require('../_lib/supabase');
+const { db, emailPengguna } = require('../_lib/supabase');
+const { kirimEmail, suratKuitansi } = require('../_lib/email');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -43,7 +44,7 @@ module.exports = async function handler(req, res) {
     const orderId = String(body.order_id || '');
     if (!orderId) { res.status(400).send('order_id kosong.'); return; }
 
-    const rows = await db('payments?order_id=eq.' + encodeURIComponent(orderId) + '&select=id,status,amount,invitation_id');
+    const rows = await db('payments?order_id=eq.' + encodeURIComponent(orderId) + '&select=id,status,amount,invitation_id,method,paid_at');
     const bayar = Array.isArray(rows) ? rows[0] : null;
     if (!bayar) {
       // Balas 200: kalau kita balas error, Midtrans akan mengulang terus
@@ -114,6 +115,49 @@ module.exports = async function handler(req, res) {
         }
       } catch (e) {
         console.error('[bayar/notifikasi] gagal membersihkan tagihan menggantung', orderId, e && e.message);
+      }
+    }
+
+    // Kuitansi ke pembeli.
+    //
+    // Dijalankan PALING AKHIR dan dibungkus try/catch sendiri, dengan
+    // alasan yang sama seperti pembersihan tagihan di atas: kegagalan
+    // mengirim email tidak boleh membuat webhook membalas error. Kalau
+    // membalas error, Midtrans mengirim ulang notifikasinya dan
+    // pembayaran yang SUDAH tercatat lunas ikut diproses berulang — jauh
+    // lebih merepotkan daripada satu kuitansi yang tidak sampai.
+    //
+    // Selama RESEND_API_KEY belum diset, kirimEmail() diam saja dan
+    // mengembalikan alasannya. Jadi kode ini aman tayang lebih dulu
+    // sebelum akun emailnya siap.
+    if (statusBaru === 'paid' && bayar.invitation_id) {
+      try {
+        const inv = await db('invitations?id=eq.' + bayar.invitation_id +
+          '&select=user_id,nama_pria_panggilan,nama_wanita_panggilan');
+        const u = Array.isArray(inv) ? inv[0] : null;
+        if (u) {
+          const tujuan = await emailPengguna(u.user_id);
+          const pasangan = [u.nama_pria_panggilan, u.nama_wanita_panggilan]
+            .filter(Boolean).join(' & ') || 'undanganmu';
+          const surat = suratKuitansi({
+            pasangan: pasangan,
+            orderId: orderId,
+            jumlah: bayar.amount,
+            metode: String(body.payment_type || '') || null,
+            waktuLunas: new Date().toISOString()
+          });
+          const hasil = await kirimEmail({
+            ke: tujuan,
+            subjek: surat.subjek,
+            html: surat.html,
+            teks: surat.teks
+          });
+          if (!hasil.terkirim) {
+            console.warn('[bayar/notifikasi] kuitansi tidak terkirim', orderId, hasil.alasan);
+          }
+        }
+      } catch (e) {
+        console.error('[bayar/notifikasi] gagal mengirim kuitansi', orderId, e && e.message);
       }
     }
 

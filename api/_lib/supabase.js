@@ -62,4 +62,32 @@ async function db(path, opsi) {
   return data;
 }
 
-module.exports = { URL_SUPABASE, userDariToken, db };
+/**
+ * Alamat email pemilik sebuah akun, dibaca lewat Admin API.
+ *
+ * Dipakai webhook Midtrans untuk mengirim kuitansi. Di webhook TIDAK ADA
+ * token user — yang memanggil adalah server Midtrans — jadi emailnya tidak
+ * bisa diambil dari sesi seperti di api/bayar/buat.js, dan harus dibaca
+ * dengan service role.
+ *
+ * TIDAK PERNAH melempar: kegagalan membaca email tidak boleh menggagalkan
+ * pencatatan pembayaran. Yang gagal cukup mengembalikan null.
+ */
+async function emailPengguna(userId) {
+  if (!userId) return null;
+  try {
+    const r = await fetch(URL_SUPABASE + '/auth/v1/admin/users/' + encodeURIComponent(userId), {
+      headers: {
+        apikey: serviceKey(),
+        Authorization: 'Bearer ' + serviceKey()
+      }
+    });
+    if (!r.ok) return null;
+    const u = await r.json().catch(() => null);
+    return (u && u.email) || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+module.exports = { URL_SUPABASE, userDariToken, db, emailPengguna };
