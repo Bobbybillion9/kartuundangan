@@ -81,7 +81,13 @@
    terasa sebagai perpindahan suasana, bukan sekadar ganti gambar. */
 .hp-cahaya{
   position:absolute;top:50%;left:50%;
-  width:calc(var(--hp-lebar) * 2.1);height:calc(var(--hp-lebar) * 2.1);
+  /* Dibatasi lebar panggungnya. Tanpa min(), di layar 360px cahaya ini
+     melebar sampai 432px dan MEMBUAT HALAMAN BISA DIGESER KE SAMPING —
+     36px guliran datar yang tidak muncul sebagai error apa pun, cuma
+     sebagai halaman yang terasa goyang saat digulir. */
+  width:min(calc(var(--hp-lebar) * 2.1), 100%);
+  height:min(calc(var(--hp-lebar) * 2.1), 100%);
+  aspect-ratio:1;
   transform:translate(-50%,-54%);
   border-radius:50%;
   background:radial-gradient(circle, var(--hp-warna) 0%, transparent 66%);
