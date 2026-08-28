@@ -390,6 +390,12 @@
   .tabbar{display:none;}
 
   .profile-block{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-lg);padding:var(--s4);margin-bottom:var(--s3);}
+  /* Blok yang di-toggle lewat atribut hidden (mis. gerbang link personal
+     per tamu). Aturan [hidden] bawaan browser kalah dari display milik
+     class, dan pola itu sudah berkali-kali menggigit di project ini —
+     dipasang eksplisit supaya tetap aman kalau .profile-block suatu saat
+     diberi display sendiri. */
+  .profile-block[hidden]{display:none;}
   /* .profile-block tidak menyetel display, jadi [hidden] bawaan browser
      sebenarnya sudah bekerja di sini. Ditulis eksplisit supaya tetap
      benar kalau suatu saat ada yang menambahkan display ke aturan di
@@ -746,8 +752,37 @@
   .tamu-nama{font-weight:500;font-size:14.5px;overflow-wrap:anywhere;}
   .tamu-status{font-size:12px;color:var(--ink-soft);}
   .tamu-status.is-opened{color:var(--accent-dark);}
-  .tamu-aksi{display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0;}
+  /* Aksi per tamu: satu tombol berteks (Kirim) diapit dua tombol ikon.
+     Sebelumnya tiga tombol berteks penuh berjejer di TIAP baris — dengan
+     lima puluh tamu itu seratus lima puluh tombol berteks di satu halaman,
+     dan tidak ada satu pun yang terbaca lebih penting dari yang lain.
+     Padahal urutan pemakaiannya jelas: mengirim lewat WhatsApp hampir
+     selalu, menyalin link sesekali, menghapus jarang sekali. */
+  .tamu-aksi{display:flex;align-items:center;gap:4px;flex-shrink:0;}
   .tamu-aksi .btn.is-disabled{opacity:.5;pointer-events:none;}
+  .tamu-kirim-btn{padding:6px 14px;font-size:13px;}
+  .tamu-ikon-btn{
+    width:32px;height:32px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    border:0;border-radius:8px;background:transparent;
+    color:var(--ink-soft);cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .tamu-ikon-btn svg{width:16px;height:16px;}
+  .tamu-ikon-btn:hover{background:var(--card);color:var(--ink);}
+  .tamu-ikon-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .tamu-ikon-btn:disabled:hover{background:transparent;color:var(--ink-soft);}
+  .tamu-ikon-btn.is-ok{color:var(--accent-dark);}
+  .tamu-hapus-btn:hover{color:#C0503D;}
+  html[data-theme="dark"] .tamu-hapus-btn:hover{color:#E08A78;}
+
+  /* Kepala tab Rekap. Panel ini dulu bernama "Tamu & Ucapan" dan berisi
+     dua hal yang berbeda tugas: alat MEMBAGIKAN link dan tampilan HASIL
+     yang masuk. Alatnya sudah pindah ke tab Bagikan; kepala ini yang
+     menegaskan bahwa yang tersisa cuma hasil. */
+  .ws-rekap-head{margin-bottom:var(--s4);}
+  .ws-rekap-head h3{font-size:19px;margin-bottom:6px;}
+  .ws-rekap-head p{font-size:13.5px;color:var(--ink-soft);line-height:1.6;max-width:62ch;}
 
   .rsvp-table-wrap{overflow-x:auto;margin-top:var(--s3);}
   .rsvp-table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px;}

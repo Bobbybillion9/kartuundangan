@@ -317,7 +317,7 @@
       <button type="button" class="ws-tab" data-tab="desain">Desain</button>
       <button type="button" class="ws-tab" data-tab="pratinjau">Pratinjau</button>
       <button type="button" class="ws-tab" data-tab="bagikan">Bagikan</button>
-      <button type="button" class="ws-tab" data-tab="tamu">Tamu &amp; Ucapan</button>
+      <button type="button" class="ws-tab" data-tab="tamu">Rekap</button>
     </div>
 
     <div class="ws-panel" id="wsPanel-isi-data">
@@ -350,7 +350,7 @@
 
         <div class="profile-block">
           <h3>Sapaan di Sampul</h3>
-          <p>Baris "Kepada Yth. Bapak/Ibu/Saudara/i" di sampul undangan. Pilihan ini hanya terasa pada <strong>link personal per tamu</strong> (tab Tamu &amp; Ucapan) &mdash; link umum selalu menyapa "Tamu Undangan" karena memang tidak tahu siapa yang membukanya.</p>
+          <p>Baris "Kepada Yth. Bapak/Ibu/Saudara/i" di sampul undangan. Pilihan ini sekaligus menyalakan atau mematikan <strong>link personal per tamu</strong> di tab Bagikan. Link umum selalu menyapa "Tamu Undangan" karena memang tidak tahu siapa yang membukanya.</p>
           <div class="opsi-radio">
             <label class="opsi-radio-item">
               <input type="radio" name="sapaan_tamu" value="personal">
@@ -704,11 +704,25 @@
           Bagikan ke WhatsApp
         </a>
       </div>
-    </div>
-    <div class="ws-panel" id="wsPanel-tamu">
-      <div class="profile-block">
+
+      <!-- Link personal per tamu. Tempatnya di sini, bukan di tab rekap:
+           ini cara membagikan undangan, jadi ia berdiri sebaris dengan
+           link umum di atasnya.
+           Seluruh blok bergantung pada pilihan "Sapaan di Sampul" di tab
+           Isi Data — kalau sapaannya "Selalu Tamu Undangan", fitur ini
+           tidak menyala sama sekali (lihat setGerbangTamu di
+           assets/dashboard.js). -->
+      <div class="profile-block" id="tamuKunciBlock" hidden>
+        <h3>Link Personal per Tamu</h3>
+        <p>Fitur ini mati karena sapaan di sampul disetel ke <strong>"Selalu Tamu Undangan"</strong>. Ubah ke <strong>"Pakai nama tamu"</strong> di tab Isi Data kalau kamu mau tiap tamu punya link sendiri yang menyapa namanya.</p>
+        <p class="workspace-msg" id="tamuKunciCatatan" style="display:none;"></p>
+        <button type="button" class="btn btn-outline btn-sm" id="tamuKeSapaanBtn">Buka pengaturan sapaan</button>
+      </div>
+
+      <div class="profile-block" id="tamuBlock" hidden>
         <div class="profile-block-head">
           <h3>Link Personal per Tamu</h3>
+          <span class="badge" id="tamuHitungBadge">0 tamu</span>
         </div>
         <p>Tiap tamu dapat link sendiri. Saat dibuka, namanya langsung tersapa di sampul undangan dan kolom nama di formulir kehadiran sudah terisi.</p>
         <form class="tamu-add-form" id="tamuAddForm">
@@ -719,6 +733,16 @@
         <div class="tamu-list" id="tamuList"></div>
         <p class="workspace-msg" id="tamuEmptyMsg" style="display:none;">Belum ada tamu. Tambahkan nama di atas untuk membuat link personalnya.</p>
       </div>
+    </div>
+    <div class="ws-panel" id="wsPanel-tamu">
+      <!-- Sejak link personal pindah ke tab Bagikan, panel ini punya satu
+           tugas saja: memperlihatkan apa yang MASUK dari tamu. Jangan
+           tambahkan alat pembagi link di sini lagi. -->
+      <div class="ws-rekap-head">
+        <h3>Hasil Undangan</h3>
+        <p>Semua yang masuk dari tamu undangan ini &mdash; konfirmasi kehadiran, ucapan, dan tanda kasih. Untuk membagikan link, buka tab Bagikan.</p>
+      </div>
+
 
       <div class="profile-block">
         <h3>Ringkasan Kehadiran</h3>

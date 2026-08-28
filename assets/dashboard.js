@@ -1151,7 +1151,9 @@
       if (panel) panel.classList.toggle('active', name === tab);
     });
     if (tab === 'pratinjau') loadPratinjauFrame();
-    if (tab === 'bagikan') renderBagikanTab();
+    // Daftar tamu ikut pindah ke tab Bagikan bersama markup-nya, jadi
+    // pemuatannya juga di sini — bukan lagi menumpang loadTamuTab().
+    if (tab === 'bagikan') { renderBagikanTab(); loadDaftarTamu(); }
     if (tab === 'tamu') loadTamuTab();
     if (persist && currentInvitation && currentInvitation.last_active_tab !== tab) {
       currentInvitation.last_active_tab = tab;
@@ -2052,7 +2054,54 @@
   var tamuList = document.getElementById('tamuList');
   var tamuListMsg = document.getElementById('tamuListMsg');
   var tamuEmptyMsg = document.getElementById('tamuEmptyMsg');
+  var tamuBlock = document.getElementById('tamuBlock');
+  var tamuKunciBlock = document.getElementById('tamuKunciBlock');
+  var tamuKunciCatatan = document.getElementById('tamuKunciCatatan');
+  var tamuHitungBadge = document.getElementById('tamuHitungBadge');
+  var tamuKeSapaanBtn = document.getElementById('tamuKeSapaanBtn');
   var daftarTamu = [];
+
+  // Gerbang fitur link personal.
+  //
+  // Aturannya diminta user dan masuk akal: kalau sapaan di sampul disetel
+  // "Selalu Tamu Undangan", undangannya memang tidak dirancang menyapa
+  // siapa pun, jadi menawarkan pembuat link per tamu di situ cuma
+  // menawarkan alat yang hasilnya tidak akan terlihat.
+  //
+  // Yang TIDAK dilakukan: menghapus baris guests yang sudah ada. Link yang
+  // terlanjur dibagikan ke tamu harus tetap hidup — mematikan tampilannya
+  // di dashboard tidak boleh berarti mematikan link di HP orang. Kalau
+  // masih ada tamu tersimpan, jumlahnya tetap disebut supaya tidak ada
+  // data yang hilang diam-diam dari pandangan pemiliknya.
+  function setGerbangTamu(){
+    if (!tamuBlock || !tamuKunciBlock) return;
+    var sapaan = (currentInvitation && currentInvitation.sapaan_tamu) || 'personal';
+    var nyala = sapaan !== 'umum';
+
+    tamuBlock.hidden = !nyala;
+    tamuKunciBlock.hidden = nyala;
+
+    if (!nyala && tamuKunciCatatan) {
+      if (daftarTamu.length) {
+        tamuKunciCatatan.textContent = 'Catatan: ' + daftarTamu.length +
+          ' link tamu yang sudah kamu buat TIDAK dihapus dan tetap berfungsi. ' +
+          'Daftarnya muncul lagi begitu sapaan diubah kembali.';
+        tamuKunciCatatan.style.display = '';
+      } else {
+        tamuKunciCatatan.style.display = 'none';
+      }
+    }
+  }
+
+  if (tamuKeSapaanBtn) {
+    tamuKeSapaanBtn.addEventListener('click', function(){
+      showWsTab('isi-data', true);
+      var radio = document.querySelector('input[name="sapaan_tamu"]');
+      if (radio && radio.closest('.profile-block')) {
+        radio.closest('.profile-block').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }
 
   function showTamuListMsg(text, type){
     if (!tamuListMsg) return;
@@ -2105,14 +2154,25 @@
       }
       info.append(nama, status);
 
+      // Aksi per tamu: SATU tombol bertuliskan teks (Kirim), sisanya ikon.
+      //
+      // Sebelumnya tiga tombol berteks penuh — "Salin Link", "WhatsApp",
+      // "Hapus" — berjejer di tiap baris. Dengan lima puluh tamu, itu
+      // seratus lima puluh tombol berteks di satu halaman, dan tidak ada
+      // satu pun yang terbaca lebih penting dari yang lain. Padahal
+      // urutannya jelas: mengirim lewat WhatsApp adalah yang hampir selalu
+      // dipakai, menyalin link sesekali, menghapus jarang sekali.
       var aksi = document.createElement('div');
       aksi.className = 'tamu-aksi';
 
       var url = linkTamu(t.code);
+
       var salinBtn = document.createElement('button');
       salinBtn.type = 'button';
-      salinBtn.className = 'btn btn-ghost btn-sm';
-      salinBtn.textContent = 'Salin Link';
+      salinBtn.className = 'tamu-ikon-btn';
+      salinBtn.title = 'Salin link';
+      salinBtn.setAttribute('aria-label', 'Salin link untuk ' + t.name);
+      salinBtn.innerHTML = IKON_SALIN;
       if (!url) {
         // Slug baru ada setelah undangan diaktifkan, jadi sebelum itu
         // link personalnya belum bisa dirakit sama sekali.
@@ -2121,8 +2181,12 @@
       } else {
         salinBtn.addEventListener('click', function(){
           navigator.clipboard.writeText(url).then(function(){
-            salinBtn.textContent = 'Tersalin!';
-            setTimeout(function(){ salinBtn.textContent = 'Salin Link'; }, 1600);
+            salinBtn.innerHTML = IKON_CENTANG;
+            salinBtn.classList.add('is-ok');
+            setTimeout(function(){
+              salinBtn.innerHTML = IKON_SALIN;
+              salinBtn.classList.remove('is-ok');
+            }, 1600);
             tandaiDibagikan(t);
           }, function(){
             showTamuListMsg('Gagal menyalin link. Salin manual: ' + url, 'err');
@@ -2131,8 +2195,8 @@
       }
 
       var waBtn = document.createElement('a');
-      waBtn.className = 'btn btn-ghost btn-sm';
-      waBtn.textContent = 'WhatsApp';
+      waBtn.className = 'btn btn-outline btn-sm tamu-kirim-btn';
+      waBtn.textContent = 'Kirim';
       if (!url) {
         waBtn.setAttribute('aria-disabled', 'true');
         waBtn.classList.add('is-disabled');
@@ -2141,20 +2205,34 @@
         waBtn.href = 'https://wa.me/?text=' + encodeURIComponent(pesan);
         waBtn.target = '_blank';
         waBtn.rel = 'noopener';
+        waBtn.setAttribute('aria-label', 'Kirim undangan ke ' + t.name + ' lewat WhatsApp');
         waBtn.addEventListener('click', function(){ tandaiDibagikan(t); });
       }
 
       var hapusBtn = document.createElement('button');
       hapusBtn.type = 'button';
-      hapusBtn.className = 'btn btn-ghost btn-sm';
-      hapusBtn.textContent = 'Hapus';
+      hapusBtn.className = 'tamu-ikon-btn tamu-hapus-btn';
+      hapusBtn.title = 'Hapus tamu';
+      hapusBtn.setAttribute('aria-label', 'Hapus ' + t.name);
+      hapusBtn.innerHTML = IKON_HAPUS;
       hapusBtn.addEventListener('click', function(){ hapusTamu(t); });
 
       aksi.append(salinBtn, waBtn, hapusBtn);
       row.append(info, aksi);
       tamuList.appendChild(row);
     });
+
+    if (tamuHitungBadge) {
+      tamuHitungBadge.textContent = daftarTamu.length + ' tamu';
+    }
   }
+
+  var IKON_SALIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+  var IKON_CENTANG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M20 6L9 17l-5-5"/></svg>';
+  var IKON_HAPUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg>';
 
   function formatWaktuSingkat(iso){
     var d = new Date(iso);
@@ -2220,7 +2298,6 @@
     var rsvpRes = await KU.sb.from('rsvp').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
     var ucapanRes = await KU.sb.from('ucapan').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
     var hadiahRes = await KU.sb.from('hadiah').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
-    var guestsRes = await KU.sb.from('guests').select('*').eq('invitation_id', currentInvitation.id).order('created_at', { ascending: false });
 
     if (rsvpRes.error || ucapanRes.error || hadiahRes.error) {
       showTamuMsg('Gagal memuat data tamu: ' + friendlyErrorMessage(rsvpRes.error || ucapanRes.error || hadiahRes.error), 'err');
@@ -2229,17 +2306,29 @@
     renderRsvpSummaryDanTabel(rsvpRes.data || []);
     renderUcapanAdminList(ucapanRes.data || []);
     renderHadiahAdminList(hadiahRes.data || []);
-
-    // Daftar tamu dipisahkan dari tiga di atas: kalau bagian ini gagal,
-    // RSVP/ucapan/hadiah yang sudah berhasil dimuat tetap ditampilkan.
-    if (guestsRes.error) {
-      showTamuListMsg('Gagal memuat daftar tamu: ' + friendlyErrorMessage(guestsRes.error), 'err');
-    } else {
-      daftarTamu = guestsRes.data || [];
-      renderDaftarTamu();
-      showTamuListMsg('');
-    }
     showTamuMsg('');
+  }
+
+  // Dipisah dari loadTamuTab karena daftar tamu sekarang tinggal di tab
+  // Bagikan. Dijaga terhadap kegagalannya sendiri: kalau ini gagal, sisa
+  // tab Bagikan (slug, status, link umum) tetap utuh.
+  async function loadDaftarTamu(){
+    if (!currentInvitation) return;
+    // Gerbangnya disetel LEBIH DULU, sebelum permintaan dikirim. Kalau
+    // fiturnya memang mati, user tidak perlu melihat blok kosong berkedip
+    // sebentar sebelum menghilang.
+    setGerbangTamu();
+    var res = await KU.sb.from('guests').select('*')
+      .eq('invitation_id', currentInvitation.id)
+      .order('created_at', { ascending: false });
+    if (res.error) {
+      showTamuListMsg('Gagal memuat daftar tamu: ' + friendlyErrorMessage(res.error), 'err');
+      return;
+    }
+    daftarTamu = res.data || [];
+    renderDaftarTamu();
+    setGerbangTamu();
+    showTamuListMsg('');
   }
 
   function populateForm(inv){
@@ -2273,6 +2362,18 @@
       // kehilangan perubahan padahal tidak ada yang tertinggal.
       if (e.target && e.target.type === 'file') return;
       wsFormDirty = true;
+    });
+
+    // Gerbang link personal ikut berubah SEKETIKA saat radio sapaan
+    // diklik, tanpa menunggu tombol Simpan. Kalau menunggu, user mengklik
+    // "Pakai nama tamu", pindah ke tab Bagikan, dan mendapati fiturnya
+    // masih mati — lalu menyimpulkan pilihannya tidak berfungsi.
+    // currentInvitation ikut diperbarui supaya setGerbangTamu() membaca
+    // nilai yang sama dengan yang terlihat di layar.
+    wsForm.addEventListener('change', function(e){
+      if (!e.target || e.target.name !== 'sapaan_tamu') return;
+      if (currentInvitation) currentInvitation.sapaan_tamu = e.target.value;
+      setGerbangTamu();
     });
   }
 
