@@ -32,9 +32,53 @@ window.KU_ADMIN = (function () {
       barisBayar: ambil('barisBayar'),
       hitungUndangan: ambil('hitungUndangan'),
       hitungBayar: ambil('hitungBayar'),
-      muatUlang: ambil('muatUlangBtn')
+      muatUlang: ambil('muatUlangBtn'),
+      ujiEmail: ambil('ujiEmailBtn')
     };
     if (el.muatUlang) el.muatUlang.addEventListener('click', muat);
+    if (el.ujiEmail) el.ujiEmail.addEventListener('click', ujiKirimEmail);
+  }
+
+  // Mengirim satu email uji ke alamat admin yang sedang masuk.
+  //
+  // Ada supaya pertanyaan "apakah emailnya sudah jalan?" bisa dijawab
+  // dalam sepuluh detik, bukan dengan membayar sungguhan lalu menunggu.
+  // Kalau gagal, alasan dari Resend ditampilkan APA ADANYA — pesan
+  // seperti "domain is not verified" atau "API key is invalid" jauh
+  // lebih berguna daripada "gagal mengirim", dan itu persis yang
+  // dibutuhkan untuk tahu harus memperbaiki apa.
+  async function ujiKirimEmail(){
+    var tombol = el.ujiEmail;
+    var sesi = KU.getSession();
+    if (!sesi) { pesan(el.msg, 'Sesi tidak ditemukan. Muat ulang halaman.', 'err'); return; }
+
+    var teksAsli = tombol.textContent;
+    tombol.disabled = true;
+    tombol.textContent = 'Mengirim...';
+    pesan(el.msg, '');
+
+    try {
+      var r = await fetch('/api/diagnostik/email', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + sesi.access_token }
+      });
+      var d = await r.json().catch(function(){ return {}; });
+
+      if (r.ok && d.hasil && d.hasil.terkirim) {
+        pesan(el.msg, 'Email uji terkirim ke ' + d.tujuan +
+          '. Cek kotak masuk — kalau masuk Spam, itu tetap perlu diperbaiki.', 'ok');
+      } else if (d.setelan && !d.setelan.RESEND_API_KEY) {
+        pesan(el.msg, 'RESEND_API_KEY belum terbaca di server. Pastikan sudah diisi di Vercel ' +
+          'DAN sudah ada deploy baru sesudahnya — variabel baru tidak berlaku tanpa deploy.', 'err');
+      } else {
+        pesan(el.msg, 'Gagal mengirim: ' + ((d.hasil && d.hasil.alasan) || d.pesan || 'sebab tidak diketahui'), 'err');
+      }
+    } catch (e) {
+      pesan(el.msg, 'Gagal menghubungi server: ' + (e && e.message), 'err');
+    }
+
+    tombol.disabled = false;
+    tombol.textContent = teksAsli;
   }
 
   function pesan(target, teks, tipe) {
