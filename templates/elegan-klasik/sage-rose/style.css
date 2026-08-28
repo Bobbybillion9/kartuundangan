@@ -217,7 +217,38 @@ section{position:relative;padding:var(--s6) var(--s4);}
     radial-gradient(circle at 100% 0%,rgba(192,136,119,0.14),transparent 55%),
     radial-gradient(circle at 100% 100%,rgba(140,152,120,0.14),transparent 55%),
     var(--paper);
-  border-right:1px solid var(--line-soft);
+}
+
+/* Garis pertemuan kedua daun pintu digambar sebagai LAPISAN, bukan
+   border-right.
+   Dulu ia border, dan itu merusak dua hal sekaligus:
+   1. Di atas foto sampul ia terlihat sebagai garis putih tegas membelah
+      wajah pengantin dari atas ke bawah — keluhan yang membuat ini
+      diperbaiki.
+   2. Yang tidak kelihatan tapi lebih parah: border ikut MENGECILKAN kotak
+      isi daun kiri (195,5px jadi 194,5px), sedangkan salinan fotonya
+      selebar 200% dari kotak itu. Jadi salinan kiri 389px dan salinan
+      kanan 391px — dua skala berbeda untuk satu foto yang sama, sehingga
+      gambarnya benar-benar tidak nyambung di garis tengah. Diukur, bukan
+      dikira-kira.
+   Sebagai lapisan, ia tidak menyentuh kotak isi sama sekali. */
+.cover-door-left::after{
+  content:'';
+  position:absolute;top:0;bottom:0;right:0;width:1px;
+  background:var(--line-soft);
+  z-index:3;pointer-events:none;
+}
+/* Di atas foto, garis tegasnya diganti lipatan yang sangat lirih: gelap
+   tipis di sisi kiri, terang tipis di sisi kanan, keduanya melebur ke
+   nol dalam 8px. Terbaca sebagai lipatan kertas, bukan sebagai garis —
+   dan animasi pintunya tetap utuh. */
+#cover.has-sampul .cover-door-left::after{
+  width:16px;right:-8px;
+  background:linear-gradient(90deg,
+    rgba(20,14,10,0) 0%,
+    rgba(20,14,10,.13) 46%,
+    rgba(255,255,255,.05) 56%,
+    rgba(255,255,255,0) 100%);
 }
 .cover-door-right{
   right:0;
@@ -262,7 +293,6 @@ section{position:relative;padding:var(--s6) var(--s4);}
   content:'';position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(26,20,18,.62) 0%,rgba(26,20,18,.34) 42%,rgba(26,20,18,.74) 100%);
 }
-#cover.has-sampul .cover-door{border-right-color:rgba(255,255,255,.28);}
 #cover.has-sampul .door-foto{display:block;}
 #cover.has-sampul .ornament{color:rgba(247,238,226,.9);opacity:.45;}
 #cover.has-sampul .cover-guest{color:rgba(255,255,255,.86);}
@@ -403,27 +433,45 @@ section{position:relative;padding:var(--s6) var(--s4);}
 #fotoUtama.in-view .hero-monogram-ring .ring-leaf{transition:stroke-dashoffset .6s ease .55s;stroke-dashoffset:0;}
 #fotoUtama.in-view .hero-monogram-ring ellipse{opacity:1;}
 
+/* MONOGRAM — dua inisial dipisah ampersand kecil.
+   Sebelumnya kedua huruf ditarik saling menindih (margin -10px) lalu
+   dimiringkan berlawanan arah. Itu jalan untuk "A" dan "S", tapi
+   inisialnya datang dari nama pelanggan: begitu dapat huruf berlengan
+   lebar seperti W atau M, keduanya bertabrakan dan menonjol keluar
+   cincin. Ampersand di tengah menyelesaikannya di akarnya — ia memberi
+   jarak yang tidak bisa dilanggar, dan sekaligus mengulang ampersand
+   yang sudah dipakai di nama mempelai pada sampul.
+
+   --mono-skala diisi buatMonogram() di index.html kalau pasangan
+   hurufnya ternyata tetap terlalu lebar; bawaannya 1. --mono-geser
+   mengangkat blok huruf sedikit karena Great Vibes duduk rendah di
+   dalam kotak em-nya, jadi rata-tengah menurut kotak tidak sama dengan
+   rata-tengah menurut mata. */
 .hero-monogram-letters{
   position:relative;
   font-family:'Great Vibes',cursive;
-  font-size:40px;
+  font-size:30px;
   line-height:1;
   color:var(--rose-dark);
-  display:flex;align-items:center;
+  display:flex;align-items:baseline;justify-content:center;gap:3px;
+  white-space:nowrap;
   opacity:0;
-  transform:scale(.7);
+  transform:translateY(var(--mono-geser,-2px)) scale(calc(var(--mono-skala,1) * .7));
   transition:opacity .55s ease .95s,transform .55s ease .95s;
 }
 #fotoUtama.in-view .hero-monogram-letters{
-  opacity:1;transform:scale(1);
+  opacity:1;
+  transform:translateY(var(--mono-geser,-2px)) scale(var(--mono-skala,1));
   animation:monogramPulse 4.5s ease-in-out 1.5s infinite;
 }
-.hero-monogram-letters .mono-a{margin-right:-10px;transform:translateY(-3px) rotate(-6deg);}
-.hero-monogram-letters .mono-b{margin-left:-10px;transform:translateY(4px) rotate(6deg);}
+.hero-monogram-letters .mono-sep{font-size:.6em;color:var(--rose);}
 
+/* Denyutnya ikut membawa --mono-geser dan --mono-skala. Kalau tidak,
+   animasi ini menimpa transform di atas dan blok hurufnya melompat
+   kembali ke posisi/ukuran semula begitu denyutnya mulai. */
 @keyframes monogramPulse{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.045);}
+  0%,100%{transform:translateY(var(--mono-geser,-2px)) scale(var(--mono-skala,1));}
+  50%{transform:translateY(var(--mono-geser,-2px)) scale(calc(var(--mono-skala,1) * 1.045));}
 }
 
 /* ---------- pembuka ---------- */
@@ -464,6 +512,48 @@ section{position:relative;padding:var(--s6) var(--s4);}
   font-size:38px;
   color:var(--rose);
 }
+
+/* ---------- mempelai bersebelahan di HP ----------
+   Dua kartu berdampingan sejak layar paling sempit. Ukurannya diperkecil
+   secukupnya supaya muat berdua di 360px tanpa ada yang terpotong:
+   fotonya ikut lebar kartu (bukan lagi 168px tetap), dan ampersand di
+   tengah menyusut jadi pemisah, bukan elemen sebesar judul.
+   Semua diatur di sini dan hanya berlaku sampai 639px — di atas itu blok
+   @media(min-width:640px) yang lama tetap yang menentukan. */
+@media(max-width:639px){
+  .couple{
+    flex-direction:row;
+    align-items:flex-start;
+    justify-content:center;
+    gap:10px;
+    margin-top:var(--s4);
+  }
+  /* flex-basis:0 + min-width:0 supaya kedua kartu benar-benar sama lebar
+     berapa pun panjang namanya. Tanpa min-width:0, nama panjang membuat
+     satu kartu memaksa dirinya lebih lebar dari pasangannya. */
+  .couple-card{flex:1 1 0;min-width:0;}
+  .photo-placeholder{width:100%;max-width:none;margin-bottom:var(--s2);}
+  .photo-placeholder svg{width:26px;height:26px;}
+  .photo-placeholder span{font-size:10px;}
+  .couple-role{font-size:10px;letter-spacing:.1em;margin-bottom:4px;}
+  .couple-name{font-size:17px;line-height:1.25;margin-bottom:4px;}
+  .couple-parents{font-size:11.5px;line-height:1.55;max-width:none;}
+  /* Ampersand didudukkan sejajar baris label peran, tepat di bawah kedua
+     foto — di situ ia terbaca sebagai penghubung "Andi & Sarah".
+     margin-top persen dihitung terhadap LEBAR .couple, dan tinggi foto
+     juga mengikuti lebar (aspect-ratio 3/4), jadi keduanya menyusut
+     bersama dan posisinya tetap sama di lebar layar mana pun.
+     Tidak dipakai align-self:center: panjang nama orang tua berbeda-beda,
+     dan itu akan membuat ampersandnya naik-turun ikut tinggi teks. */
+  .couple-amp{
+    align-self:flex-start;
+    font-size:26px;
+    line-height:1;
+    margin-top:calc((100% / 3 * 4 / 2) - 14px);
+    flex-shrink:0;
+  }
+}
+
 
 /* ---------- acara ---------- */
 .event-list{display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s5);}

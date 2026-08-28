@@ -568,6 +568,35 @@
     var elB = document.getElementById('monoLetterB');
     if (elA) elA.textContent = hurufA;
     if (elB) elB.textContent = hurufB;
+    pasMonogram();
+  }
+
+  // Tiap huruf sudah dipusatkan di cincinnya sendiri lewat CSS, jadi lebar
+  // glyph tidak lagi menggeser apa pun. Yang masih bisa terjadi: huruf
+  // yang sangat lebar (W, M dalam Allura) melebihi garis tengah cincinnya
+  // sendiri. Itu yang dijaga di sini — dikecilkan hanya kalau perlu, tidak
+  // pernah dibesarkan, supaya monogram antar pasangan tetap seukuran.
+  function pasMonogram(){
+    var blok = document.querySelector('.hero-monogram-letters');
+    var wadah = document.getElementById('heroMonogram');
+    if (!blok || !wadah) return;
+    blok.style.setProperty('--mono-skala', '1');
+    requestAnimationFrame(function(){
+      // Diameter satu cincin = r 34 dari viewBox 120, dikali lebar kotak.
+      // Dikali 0,72 sebagai ruang aman: font skrip menjulurkan sapuan jauh
+      // melewati lebar-maju glyph-nya, jadi lebar yang terbaca SELALU
+      // lebih sempit daripada yang terlihat. 0,60 dipilih setelah menguji
+      // W dan M — pada 0,72 keduanya masih menyentuh garis cincin.
+      var lebarKotak = wadah.getBoundingClientRect().width;
+      var muat = (68 / 120) * lebarKotak * 0.48;
+      var terlebar = 0;
+      blok.querySelectorAll('.mono-a, .mono-b').forEach(function(el){
+        terlebar = Math.max(terlebar, el.scrollWidth);
+      });
+      if (terlebar > muat && terlebar > 0) {
+        blok.style.setProperty('--mono-skala', (muat / terlebar).toFixed(3));
+      }
+    });
   }
   buatMonogram();
   // Diekspos ke window supaya workspace editor bisa memanggil ulang

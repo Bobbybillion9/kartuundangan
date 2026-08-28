@@ -310,17 +310,28 @@ section{position:relative;padding:var(--s6) var(--s4);}
 .monogram-ring circle{fill:none;stroke:currentColor;stroke-width:1.1;}
 .monogram-ring path{fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:round;}
 .monogram-ring ellipse{fill:currentColor;}
+/* MONOGRAM — dua inisial dipisah ampersand kecil.
+   Sebelumnya kedua huruf ditarik saling menindih (margin negatif) lalu
+   dimiringkan berlawanan arah. Itu jalan untuk "A" dan "S", tapi
+   inisialnya datang dari nama pelanggan: begitu dapat huruf berlengan
+   lebar seperti W atau M, keduanya bertabrakan dan menonjol keluar
+   cincin. Ampersand di tengah memberi jarak yang tidak bisa dilanggar.
+   --mono-skala diisi pasMonogram() di index.html kalau pasangan hurufnya
+   ternyata tetap terlalu lebar; bawaannya 1. --mono-geser mengangkat blok
+   huruf sedikit karena font skrip duduk rendah di kotak em-nya, jadi
+   rata-tengah menurut kotak bukan rata-tengah menurut mata. */
 .monogram-letters{
   position:relative;
   font-family:'Pinyon Script',cursive;
-  font-size:44px;
+  font-size:32px;
   line-height:1;
   color:var(--champagne);
-  display:flex;align-items:center;
+  display:flex;align-items:baseline;justify-content:center;gap:3px;
+  white-space:nowrap;
   text-shadow:0 0 16px rgba(242,227,184,.55);
+  transform:translateY(var(--mono-geser,-2px)) scale(var(--mono-skala,1));
 }
-.monogram-letters .mono-a{margin-right:-8px;transform:translateY(-3px) rotate(-6deg);}
-.monogram-letters .mono-b{margin-left:-8px;transform:translateY(4px) rotate(6deg);}
+.monogram-letters .mono-sep{font-size:.6em;color:var(--gold);}
 
 /* ---------- sisa teks sampul: mulai redup, terang penuh saat dibuka ---------- */
 .cover-guest{position:relative;z-index:2;font-size:12.5px;color:var(--ink-soft);letter-spacing:.07em;margin-bottom:var(--s4);opacity:.35;transition:opacity 1s ease .05s;}
@@ -411,25 +422,28 @@ section{position:relative;padding:var(--s6) var(--s4);}
 .hero-monogram-letters{
   position:relative;
   font-family:'Pinyon Script',cursive;
-  font-size:42px;
+  font-size:31px;
   line-height:1;
   color:var(--champagne);
-  display:flex;align-items:center;
+  display:flex;align-items:baseline;justify-content:center;gap:3px;
+  white-space:nowrap;
   opacity:0;
-  transform:scale(.7);
+  transform:translateY(var(--mono-geser,-2px)) scale(calc(var(--mono-skala,1) * .7));
   text-shadow:0 0 14px rgba(242,227,184,.5);
   transition:opacity .55s ease .95s,transform .55s ease .95s;
 }
 #fotoUtama.in-view .hero-monogram-letters{
-  opacity:1;transform:scale(1);
+  opacity:1;transform:translateY(var(--mono-geser,-2px)) scale(var(--mono-skala,1));
   animation:monogramPulse 4.5s ease-in-out 1.5s infinite;
 }
-.hero-monogram-letters .mono-a{margin-right:-9px;transform:translateY(-3px) rotate(-6deg);}
-.hero-monogram-letters .mono-b{margin-left:-9px;transform:translateY(4px) rotate(6deg);}
+.hero-monogram-letters .mono-sep{font-size:.6em;color:var(--gold);}
 
+/* Denyutnya ikut membawa --mono-geser dan --mono-skala. Kalau tidak,
+   animasi ini menimpa transform blok huruf dan posisinya melompat
+   kembali ke semula begitu denyutnya mulai. */
 @keyframes monogramPulse{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.045);}
+  0%,100%{transform:translateY(var(--mono-geser,-2px)) scale(var(--mono-skala,1));}
+  50%{transform:translateY(var(--mono-geser,-2px)) scale(calc(var(--mono-skala,1) * 1.045));}
 }
 
 /* ---------- pembuka ---------- */
@@ -470,6 +484,48 @@ section{position:relative;padding:var(--s6) var(--s4);}
   font-size:40px;
   color:var(--rose);
 }
+
+/* ---------- mempelai bersebelahan di HP ----------
+   Dua kartu berdampingan sejak layar paling sempit. Ukurannya diperkecil
+   secukupnya supaya muat berdua di 360px tanpa ada yang terpotong:
+   fotonya ikut lebar kartu (bukan lagi 168px tetap), dan ampersand di
+   tengah menyusut jadi pemisah, bukan elemen sebesar judul.
+   Semua diatur di sini dan hanya berlaku sampai 639px — di atas itu blok
+   @media(min-width:640px) yang lama tetap yang menentukan. */
+@media(max-width:639px){
+  .couple{
+    flex-direction:row;
+    align-items:flex-start;
+    justify-content:center;
+    gap:10px;
+    margin-top:var(--s4);
+  }
+  /* flex-basis:0 + min-width:0 supaya kedua kartu benar-benar sama lebar
+     berapa pun panjang namanya. Tanpa min-width:0, nama panjang membuat
+     satu kartu memaksa dirinya lebih lebar dari pasangannya. */
+  .couple-card{flex:1 1 0;min-width:0;}
+  .photo-placeholder{width:100%;max-width:none;margin-bottom:var(--s2);}
+  .photo-placeholder svg{width:26px;height:26px;}
+  .photo-placeholder span{font-size:10px;}
+  .couple-role{font-size:10px;letter-spacing:.1em;margin-bottom:4px;}
+  .couple-name{font-size:17px;line-height:1.25;margin-bottom:4px;}
+  .couple-parents{font-size:11.5px;line-height:1.55;max-width:none;}
+  /* Ampersand didudukkan sejajar baris label peran, tepat di bawah kedua
+     foto — di situ ia terbaca sebagai penghubung "Andi & Sarah".
+     margin-top persen dihitung terhadap LEBAR .couple, dan tinggi foto
+     juga mengikuti lebar (aspect-ratio 3/4), jadi keduanya menyusut
+     bersama dan posisinya tetap sama di lebar layar mana pun.
+     Tidak dipakai align-self:center: panjang nama orang tua berbeda-beda,
+     dan itu akan membuat ampersandnya naik-turun ikut tinggi teks. */
+  .couple-amp{
+    align-self:flex-start;
+    font-size:26px;
+    line-height:1;
+    margin-top:calc((100% / 3 * 4 / 2) - 14px);
+    flex-shrink:0;
+  }
+}
+
 
 /* ---------- acara ---------- */
 .event-list{display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s5);}

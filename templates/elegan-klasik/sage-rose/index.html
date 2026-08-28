@@ -129,7 +129,7 @@
           <ellipse cx="94" cy="72" rx="6" ry="3" transform="rotate(40 94 72)"/>
         </svg>
         <span class="hero-monogram-letters">
-          <span class="mono-a" id="monoLetterA">A</span><span class="mono-b" id="monoLetterB">S</span>
+          <span class="mono-a" id="monoLetterA">A</span><span class="mono-sep">&amp;</span><span class="mono-b" id="monoLetterB">S</span>
         </span>
       </div>
     </section>
@@ -592,6 +592,34 @@
     var elB = document.getElementById('monoLetterB');
     if (elA) elA.textContent = hurufA;
     if (elB) elB.textContent = hurufB;
+    pasMonogram();
+  }
+
+  // Inisialnya datang dari nama pelanggan, jadi lebarnya tidak bisa
+  // diketahui saat menulis CSS: "I & I" sempit, "W & M" jauh lebih lebar.
+  // Ukurannya dikecilkan hanya kalau memang tidak muat, dan tidak pernah
+  // dibesarkan — supaya monogram pasangan yang berbeda tetap terlihat
+  // seukuran, bukan besar-kecil sendiri.
+  function pasMonogram(){
+    var blok = document.querySelector('.hero-monogram-letters');
+    var wadah = document.getElementById('heroMonogram');
+    if (!blok || !wadah) return;
+
+    blok.style.setProperty('--mono-skala', '1');
+    // Diukur setelah huruf benar-benar terpasang. requestAnimationFrame
+    // memberi browser satu kesempatan menata ulang; tanpa itu lebar yang
+    // terbaca masih lebar sebelum hurufnya diganti.
+    requestAnimationFrame(function(){
+      // Kotak yang boleh dipakai. Sengaja jauh lebih sempit dari cincinnya:
+      // font skrip menjulurkan sapuan jauh melewati lebar-maju glyph-nya,
+      // jadi scrollWidth SELALU melaporkan lebih sempit daripada yang
+      // benar-benar terlihat. 0,66 itu angka hasil melihat, bukan hitungan.
+      var muat = wadah.getBoundingClientRect().width * 0.66;
+      var lebar = blok.scrollWidth;
+      if (lebar > muat && lebar > 0) {
+        blok.style.setProperty('--mono-skala', (muat / lebar).toFixed(3));
+      }
+    });
   }
   buatMonogram();
   // Diekspos ke window supaya workspace editor bisa memanggil ulang
