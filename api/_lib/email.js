@@ -29,6 +29,32 @@ function alamatBalas() {
   return process.env.EMAIL_BALAS || 'kartuundanganofficial@gmail.com';
 }
 
+// Alamat balasan yang salah ketik TIDAK BOLEH menggagalkan seluruh email.
+//
+// Sudah terjadi: EMAIL_BALAS salah diisi, Resend menolak permintaannya
+// utuh, dan email uji gagal total. Di email uji itu cuma merepotkan — tapi
+// pada kuitansi sungguhan, artinya pelanggan yang sudah membayar TIDAK
+// menerima bukti apa pun, gara-gara satu kolom kenyamanan yang salah
+// ketik. Kuitansinya jauh lebih penting daripada tombol Balas-nya.
+//
+// Jadi kalau alamatnya jelas-jelas tidak sah, ia DIBUANG dan emailnya
+// tetap dikirim. Balasan pelanggan memang jadi tidak terarah, dan itu
+// dicatat di log — tapi surat yang sampai tanpa alamat balasan jauh lebih
+// baik daripada surat yang tidak pernah sampai.
+//
+// Sengaja tidak memakai regex ketat: yang dijaga cuma bentuk yang mustahil
+// benar (tanpa @, ada spasi, domain tanpa titik). Menolak alamat sah yang
+// tidak biasa justru menciptakan masalah yang sama dari arah sebaliknya.
+function alamatBalasSah() {
+  const a = String(alamatBalas() || '').trim();
+  if (!a) return null;
+  if (/\s/.test(a)) return null;
+  const bagian = a.split('@');
+  if (bagian.length !== 2) return null;
+  if (!bagian[0] || !bagian[1].includes('.')) return null;
+  return a;
+}
+
 /**
  * Kirim satu email. TIDAK PERNAH melempar.
  * @returns {Promise<{terkirim:boolean, id?:string, alasan?:string}>}
@@ -38,21 +64,31 @@ async function kirimEmail({ ke, subjek, html, teks }) {
   if (!kunci) return { terkirim: false, alasan: 'RESEND_API_KEY belum disetel' };
   if (!ke) return { terkirim: false, alasan: 'alamat tujuan kosong' };
 
+  const balas = alamatBalasSah();
+  if (!balas) {
+    console.warn('[email] EMAIL_BALAS tidak sah, dikirim tanpa alamat balasan:',
+                 JSON.stringify(process.env.EMAIL_BALAS || ''));
+  }
+
   try {
+    const muatan = {
+      from: pengirim(),
+      to: [ke],
+      subject: subjek,
+      html: html,
+      text: teks
+    };
+    // Hanya disertakan kalau memang sah — Resend menolak SELURUH
+    // permintaan kalau kolom ini ada tapi isinya bukan alamat.
+    if (balas) muatan.reply_to = balas;
+
     const r = await fetch(API, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + kunci,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        from: pengirim(),
-        to: [ke],
-        reply_to: alamatBalas(),
-        subject: subjek,
-        html: html,
-        text: teks
-      })
+      body: JSON.stringify(muatan)
     });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) {
