@@ -52,19 +52,21 @@
       <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h8l10 10-8 8L3 11V3z"/><circle cx="7.5" cy="7.5" r="1.3" fill="currentColor" stroke="none"/></svg></span>
       <span class="nav-label">Harga</span>
     </button>
+    <!-- Panel Admin duduk SEBELUM Profil. Profil adalah penutup daftar
+         menu di produk mana pun; menaruh apa pun sesudahnya membuatnya
+         terasa bukan akhir. Ditampilkan hanya untuk admin oleh
+         dashboard.js — dan menyembunyikan menu BUKAN pengamanan, tiap
+         RPC admin memeriksa is_admin() sendiri di database. -->
+    <button type="button" class="side-item" data-view="admin" id="sideAdminItem" hidden aria-label="Panel Admin">
+      <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v6c0 4.6-3.2 8-7.5 9-4.3-1-7.5-4.4-7.5-9V6z"/><path d="M9.2 12.2l2 2 3.6-3.8"/></svg></span>
+      <span class="nav-label">Panel Admin</span>
+    </button>
     <button type="button" class="side-item" data-view="profil" aria-label="Profil">
       <span class="nav-icon">
         <svg id="sideProfilIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5"/></svg>
         <span class="nav-avatar-badge" id="sideAvatarBadge" style="display:none" aria-hidden="true"></span>
       </span>
       <span class="nav-label" id="sideProfilLabel">Masuk</span>
-    </button>
-    <!-- Menu admin ditaruh PALING AKHIR supaya urutan menu yang sudah
-         dihafal pengguna biasa tidak bergeser sama sekali saat item ini
-         muncul. Ditampilkan hanya untuk admin oleh dashboard.js. -->
-    <button type="button" class="side-item" data-view="admin" id="sideAdminItem" hidden aria-label="Panel Admin">
-      <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v6c0 4.6-3.2 8-7.5 9-4.3-1-7.5-4.4-7.5-9V6z"/><path d="M9.2 12.2l2 2 3.6-3.8"/></svg></span>
-      <span class="nav-label">Panel Admin</span>
     </button>
   </div>
 </nav>
@@ -87,16 +89,16 @@
     <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h8l10 10-8 8L3 11V3z"/><circle cx="7.5" cy="7.5" r="1.3" fill="currentColor" stroke="none"/></svg></span>
     <span class="nav-label">Harga</span>
   </button>
+  <button type="button" class="tab-item" data-view="admin" id="tabAdminItem" hidden aria-label="Panel Admin">
+    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v6c0 4.6-3.2 8-7.5 9-4.3-1-7.5-4.4-7.5-9V6z"/><path d="M9.2 12.2l2 2 3.6-3.8"/></svg></span>
+    <span class="nav-label">Admin</span>
+  </button>
   <button type="button" class="tab-item" data-view="profil" aria-label="Profil">
     <span class="nav-icon">
       <svg id="tabProfilIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5"/></svg>
       <span class="nav-avatar-badge" id="tabAvatarBadge" style="display:none" aria-hidden="true"></span>
     </span>
     <span class="nav-label" id="tabProfilLabel">Masuk</span>
-  </button>
-  <button type="button" class="tab-item" data-view="admin" id="tabAdminItem" hidden aria-label="Panel Admin">
-    <span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v6c0 4.6-3.2 8-7.5 9-4.3-1-7.5-4.4-7.5-9V6z"/><path d="M9.2 12.2l2 2 3.6-3.8"/></svg></span>
-    <span class="nav-label">Admin</span>
   </button>
 </nav>
 
@@ -832,27 +834,34 @@
       <h2>Profil</h2>
     </div>
 
+    <!-- Kartu identitas. Penanda "Akun admin" duduk DI SINI sebagai lencana
+         kecil di sebelah nama, bukan sebagai blok penjelas tersendiri.
+         Blok lamanya memakan satu kartu penuh untuk memberi tahu tiga hal
+         yang semuanya bisa diringkas jadi satu kata, dan salah satunya
+         (konfirmasi kata sandi sebelum membuka Panel Admin) bahkan sudah
+         tidak berlaku sejak kuncinya dibuang.
+         Menyembunyikan lencana ini BUKAN pengamanan — hak admin dijaga
+         pemeriksaan is_admin() di dalam fungsi databasenya. -->
     <div class="profile-block profile-block-head">
       <span class="nav-avatar-badge profile-avatar-lg" id="profileAvatarBadge" aria-hidden="true"></span>
-      <div>
-        <h3 id="profileDisplayName">Akun</h3>
+      <div class="profile-ident">
+        <div class="profile-ident-baris">
+          <h3 id="profileDisplayName">Akun</h3>
+          <span class="badge badge-admin badge-admin-sm" id="profilAdminBlok" hidden title="Bebas biaya aktivasi dan tanpa batas jumlah draf">Admin</span>
+        </div>
         <p id="profileEmailSub">Kamu belum masuk.</p>
       </div>
     </div>
 
-    <!-- Hanya tampil untuk akun admin (muatStatusAdmin di dashboard.js).
-         Menyembunyikannya bukan pengamanan — datanya dijaga pemeriksaan
-         is_admin() di dalam fungsi databasenya, bukan oleh menu yang
-         disembunyikan. Ini semata supaya pelanggan biasa tidak melihat
-         pintu yang bukan untuknya. -->
-    <div class="profile-block" id="profilAdminBlok" hidden>
-      <div class="profile-block-head">
-        <span class="badge badge-admin">Akun admin</span>
-      </div>
-      <p>Akunmu bebas biaya aktivasi dan tanpa batas jumlah draf. Panel Admin ada di menu paling bawah, dan meminta konfirmasi kata sandi sebelum dibuka.</p>
-    </div>
-
+    <!-- AKUN — semua yang menyangkut identitas & cara masuk, dalam satu
+         kartu dan dalam urutan yang mengikuti alurnya: siapa kamu (nama),
+         alamat akunmu (email), kunci masuknya (kata sandi), lalu lewat apa
+         saja kamu bisa masuk (metode terhubung).
+         Sebelumnya kata sandi terlempar ke bawah Tema Tampilan, sehingga
+         pengaturan akun terpotong oleh pengaturan tampilan di tengahnya. -->
     <div class="profile-block">
+      <h3 class="profile-grup-judul">Akun</h3>
+
       <label for="profileNameInput">Nama tampilan</label>
       <div class="profile-name-row">
         <input type="text" id="profileNameInput" placeholder="Nama kamu" maxlength="80">
@@ -862,14 +871,21 @@
       <label>Email</label>
       <p class="profile-readonly" id="profileEmail"></p>
 
+      <label>Kata sandi</label>
+      <p class="profile-ket">Kami kirim link ganti kata sandi ke emailmu — kata sandi lama tidak perlu diketik di sini.</p>
+      <button type="button" class="btn btn-outline btn-sm" id="profilePasswordToggleBtn">Ganti Kata Sandi</button>
+
       <label>Metode masuk terhubung</label>
       <div class="profile-badges" id="profileBadges"></div>
 
       <p class="profile-msg" id="profileMsg" aria-live="polite"></p>
     </div>
 
+    <!-- TAMPILAN — sesudah Akun, karena ini preferensi, bukan identitas. -->
     <div class="profile-block">
-      <h3>Tema Tampilan</h3>
+      <h3 class="profile-grup-judul">Tampilan</h3>
+      <label>Tema</label>
+      <p class="profile-ket">Bawaannya terang. Pilihanmu diingat di perangkat ini.</p>
       <div class="toggle-wrap">
         <span class="toggle-label" id="lblThemeLight">Terang</span>
         <button type="button" class="switch" id="themeSwitch" aria-label="Ganti tema terang atau gelap"><span class="knob"></span></button>
@@ -878,11 +894,7 @@
     </div>
 
     <div class="profile-block">
-      <button type="button" class="btn btn-outline btn-block" id="profilePasswordToggleBtn">Ganti Kata Sandi</button>
-    </div>
-
-    <div class="profile-block">
-      <h3>Bantuan</h3>
+      <h3 class="profile-grup-judul">Bantuan</h3>
       <p>Ada kendala atau pertanyaan? Hubungi kami langsung.</p>
       <a class="btn btn-outline btn-sm" href="https://wa.me/628136372211" target="_blank" rel="noopener">Chat via WhatsApp</a>
     </div>

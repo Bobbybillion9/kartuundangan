@@ -1,11 +1,22 @@
 (function(){
+  // Bawaannya TERANG, sama seperti halaman depan (assets/ui.js).
+  //
+  // Sebelumnya baris ini mengikuti prefers-color-scheme sistem operasi,
+  // sehingga dashboard terbuka gelap untuk siapa pun yang HP-nya bertema
+  // gelap — padahal halaman depannya terang. Hasilnya satu produk dengan
+  // dua wajah berbeda tergantung halaman mana yang dibuka, dan tidak ada
+  // satu pun keputusan user di baliknya.
+  //
+  // Tema adalah pengaturan AKUN (Profil > Tema Tampilan), bukan sesuatu
+  // yang diputuskan diam-diam oleh perangkat. Pilihan yang pernah
+  // disimpan tetap dihormati supaya tampilannya tidak berubah sendiri
+  // saat berpindah antara dashboard dan halaman depan.
   try {
     var saved = localStorage.getItem('ku-theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
-    else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.setAttribute('data-theme','dark');
-    }
-  } catch(e){}
+    document.documentElement.setAttribute('data-theme', saved === 'dark' ? 'dark' : 'light');
+  } catch(e){
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
 
   var themeSwitch = document.getElementById('themeSwitch');
   var lblThemeLight = document.getElementById('lblThemeLight');

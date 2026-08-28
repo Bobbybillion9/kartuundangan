@@ -85,6 +85,95 @@
   }
 
   document.title = 'Pratinjau ' + safe + ' — Kartu Undangan';
+
+  // ---------------- Formulir tamu DIKUNCI di pratinjau ----------------
+  //
+  // Tiap tema membawa versi DEMO dari formulir kehadiran, ucapan, dan
+  // hadiah: skrip bawaan tema menampung isiannya, mereset formulirnya,
+  // lalu menampilkan pesan "berhasil" — padahal tidak ada apa pun yang
+  // dikirim ke mana pun. Di halaman pratinjau itu menyesatkan dua arah
+  // sekaligus: calon pembeli mengira ia baru saja mengirim ucapan, dan
+  // pemilik undangan mengira formulirnya sudah menerima sesuatu.
+  //
+  // Yang paling parah kolom bukti transfer — orang bisa memilih berkas
+  // foto dari galerinya sendiri di halaman yang bukan undangan siapa pun.
+  //
+  // Berlaku untuk KEDUA mode pratinjau (katalog tema maupun tab Pratinjau
+  // di workspace). Pratinjau memang bukan tempat mengirim apa pun; yang
+  // menerima kiriman cuma halaman undangan sungguhan di /u/<slug>.
+  var FORM_TAMU = ['rsvpForm', 'ucapanForm', 'hadiahForm'];
+
+  function kunciFormulirTamu(doc){
+    // Gaya untuk keadaan terkunci disuntikkan KE DALAM dokumen tema, bukan
+    // ditulis di style.css tiap tema. Satu tempat, dan tema baru yang
+    // ditambahkan nanti otomatis ikut tanpa perlu disentuh.
+    if (!doc.getElementById('gayaPratinjauTerkunci')) {
+      var gaya = doc.createElement('style');
+      gaya.id = 'gayaPratinjauTerkunci';
+      gaya.textContent =
+        '.is-pratinjau-terkunci{opacity:.72;}' +
+        '.is-pratinjau-terkunci input,.is-pratinjau-terkunci textarea,' +
+        '.is-pratinjau-terkunci select,.is-pratinjau-terkunci button{' +
+        'cursor:not-allowed!important;pointer-events:none;}' +
+        '.is-pratinjau-terkunci .form-msg{opacity:1!important;font-style:italic;}';
+      (doc.head || doc.documentElement).appendChild(gaya);
+    }
+
+    FORM_TAMU.forEach(function(id){
+      var form = doc.getElementById(id);
+      if (!form || form.dataset.pratinjauTerkunci) return;
+      form.dataset.pratinjauTerkunci = '1';
+
+      // Menonaktifkan kontrolnya saja tidak cukup: penangan submit milik
+      // tema sudah terpasang lebih dulu, dan Enter di dalam kolom teks
+      // masih bisa memicunya. Jadi submit-nya dihadang di fase CAPTURE,
+      // sebelum penangan mana pun sempat jalan.
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }, true);
+
+      Array.prototype.forEach.call(
+        form.querySelectorAll('input, textarea, select, button'),
+        function(el){ el.disabled = true; }
+      );
+      // Tombol pilihan (hadir/tidak, pihak) berupa <button> biasa yang
+      // sudah ikut disabled di atas; kelas ini mematikan gaya hover-nya
+      // supaya tidak terlihat masih bisa ditekan.
+      form.classList.add('is-pratinjau-terkunci');
+
+      var msg = form.querySelector('.form-msg');
+      if (!msg) {
+        msg = doc.createElement('p');
+        msg.className = 'form-msg';
+        form.appendChild(msg);
+      }
+      msg.textContent = 'Mode pratinjau — formulir ini dimatikan. Tamu bisa mengisinya setelah undanganmu aktif dan link-nya dibagikan.';
+      msg.className = 'form-msg';
+      msg.style.opacity = '1';
+    });
+
+    // Zona unggah bukti transfer sering berupa label/area klik di LUAR
+    // <form>, jadi tidak ikut tersapu querySelectorAll di atas.
+    Array.prototype.forEach.call(
+      doc.querySelectorAll('input[type="file"]'),
+      function(el){ el.disabled = true; }
+    );
+  }
+
+  function pasangKunci(){
+    var doc = frame.contentDocument;
+    if (!doc) return;
+    kunciFormulirTamu(doc);
+    // Beberapa tema menyusun ulang bagian formulirnya sesaat setelah
+    // DOMContentLoaded. Sekali lagi setelah itu sudah cukup — penanda
+    // data-pratinjauTerkunci membuat pemanggilan kedua tidak berefek
+    // apa-apa kalau ternyata tidak ada yang berubah.
+    setTimeout(function(){ kunciFormulirTamu(doc); }, 600);
+  }
+
+  frame.addEventListener('load', pasangKunci);
+
   frame.src = safe + '/index.html';
 
   if (!validId) return;

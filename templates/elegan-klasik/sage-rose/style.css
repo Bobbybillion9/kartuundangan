@@ -238,18 +238,17 @@ section{position:relative;padding:var(--s6) var(--s4);}
   background:var(--line-soft);
   z-index:3;pointer-events:none;
 }
-/* Di atas foto, garis tegasnya diganti lipatan yang sangat lirih: gelap
-   tipis di sisi kiri, terang tipis di sisi kanan, keduanya melebur ke
-   nol dalam 8px. Terbaca sebagai lipatan kertas, bukan sebagai garis —
-   dan animasi pintunya tetap utuh. */
-#cover.has-sampul .cover-door-left::after{
-  width:16px;right:-8px;
-  background:linear-gradient(90deg,
-    rgba(20,14,10,0) 0%,
-    rgba(20,14,10,.13) 46%,
-    rgba(255,255,255,.05) 56%,
-    rgba(255,255,255,0) 100%);
-}
+/* DI ATAS FOTO: TIDAK ADA JAHITAN SAMA SEKALI.
+   Percobaan pertama mengganti border dengan "lipatan" yang sangat lirih
+   (gelap tipis di kiri, terang tipis di kanan, melebur dalam 8px).
+   Secara angka itu memang halus, tapi user tetap melihatnya sebagai garis
+   membelah wajah pengantin — dan memang begitu: sehalus apa pun, sebuah
+   pita tegak setinggi layar penuh yang membelah foto tepat di tengah
+   akan selalu terbaca sebagai garis, bukan sebagai tekstur.
+   Pintunya tetap terbelah dan tetap membuka seperti jendela; yang dibuang
+   cuma penandanya, dan penanda itu memang tidak dibutuhkan karena
+   gerakannya sendiri yang memberi tahu bahwa sampulnya terbelah dua. */
+#cover.has-sampul .cover-door-left::after{display:none;}
 .cover-door-right{
   right:0;
   background:
