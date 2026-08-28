@@ -99,10 +99,14 @@ window.renderThemeCard = function (t, opts) {
   ringkas.className = 'tpl-ringkas';
   ringkas.textContent = t.ringkas || t.desc || '';
 
-  // Baris penanda kecil. Penanda pemakai diisi belakangan oleh
-  // window.isiPemakaiTema() setelah angkanya datang dari database, dan
-  // tetap tersembunyi kalau temanya belum dipakai siapa pun — "0 dipakai"
-  // hanya mengiklankan bahwa temanya belum laku.
+  // Baris penanda kecil. Isinya tinggal kategori.
+  //
+  // Penanda "N undangan aktif" DIBUANG atas permintaan user. Angka itu
+  // memang menarik dilihat dari sisi pemilik usaha, tapi di kartu tema ia
+  // memakan baris penuh untuk sesuatu yang tidak membantu orang memilih
+  // tema — dan di HP baris itu justru menutupi foto yang sedang dijual.
+  // Kalau angkanya masih ingin dipantau, tempatnya panel admin, bukan
+  // etalase. RPC hitung_pemakai_tema() dibiarkan hidup di database.
   var tags = document.createElement('div');
   tags.className = 'tpl-tags';
 
@@ -111,21 +115,30 @@ window.renderThemeCard = function (t, opts) {
   tagKategori.textContent = t.kategori;
   tags.appendChild(tagKategori);
 
-  var pakai = document.createElement('span');
-  pakai.className = 'tpl-tag tpl-pakai';
-  pakai.dataset.tema = t.name;
-  pakai.hidden = true;
-  tags.appendChild(pakai);
-
   var aksi = document.createElement('div');
   aksi.className = 'tpl-aksi';
 
+  // Pratinjau. Di layar lebar bertuliskan "Pratinjau"; di HP menyusut jadi
+  // tombol bundar berikon mata saja (lihat .tpl-btn-lihat di style.css).
+  // Alasannya ruang: dua tombol bertumpuk memakan hampir sepertiga tinggi
+  // kartu, padahal yang dijual kartu ini adalah fotonya. Ikon mata sudah
+  // jamak dipahami sebagai "lihat", dan teksnya tetap ada untuk pembaca
+  // layar lewat aria-label.
   var lihat = document.createElement('a');
-  lihat.className = 'tpl-btn tpl-btn-kaca';
+  lihat.className = 'tpl-btn tpl-btn-kaca tpl-btn-lihat';
   lihat.href = base + 'templates/pratinjau.html?tema=' + encodeURIComponent(t.id);
   lihat.target = '_blank';
   lihat.rel = 'noopener';
-  lihat.textContent = (opts.tombolLihat && opts.tombolLihat.teks) || 'Pratinjau';
+  var teksLihat = (opts.tombolLihat && opts.tombolLihat.teks) || 'Pratinjau';
+  lihat.setAttribute('aria-label', teksLihat + ' tema ' + t.name);
+  lihat.title = teksLihat;
+  lihat.innerHTML =
+    '<svg class="tpl-ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/>' +
+    '<circle cx="12" cy="12" r="2.6"/></svg>' +
+    '<span class="tpl-btn-teks"></span>';
+  lihat.querySelector('.tpl-btn-teks').textContent = teksLihat;
 
   var pakaiBtn = document.createElement('button');
   pakaiBtn.type = 'button';
@@ -144,28 +157,4 @@ window.renderThemeCard = function (t, opts) {
   isi.append(baris, ringkas, tags, aksi);
   card.append(img, scrim, isi);
   return card;
-};
-
-// Mengisi penanda "sedang dipakai N undangan" di semua kartu tema yang
-// sedang tampil.
-//
-// Angkanya dari RPC hitung_pemakai_tema() — cacah undangan berstatus
-// 'aktif' per tema, agregat saja, tidak ada data pasangan yang ikut
-// keluar. Kalau RPC-nya gagal atau sebuah tema belum dipakai siapa pun,
-// penandanya tetap disembunyikan: "0 dipakai" di kartu tema hanya
-// mengiklankan bahwa temanya belum laku.
-window.isiPemakaiTema = function (root) {
-  if (!window.KU || !KU.sb) return;
-  var wadah = root || document;
-  KU.sb.rpc('hitung_pemakai_tema').then(function (res) {
-    if (res.error || !Array.isArray(res.data)) return;
-    var peta = {};
-    res.data.forEach(function (r) { peta[r.nama_desain] = Number(r.jumlah) || 0; });
-    Array.prototype.forEach.call(wadah.querySelectorAll('.tpl-pakai'), function (el) {
-      var n = peta[el.dataset.tema] || 0;
-      if (!n) { el.hidden = true; return; }
-      el.textContent = n + ' undangan aktif';
-      el.hidden = false;
-    });
-  });
 };

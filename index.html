@@ -75,7 +75,7 @@
       "name": "Metode pembayaran apa saja yang tersedia?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Pembayaran bisa lewat QRIS (bisa dipindai semua e-wallet dan m-banking), e-wallet GoPay dan ShopeePay, serta transfer bank lewat Virtual Account BCA, BNI, BRI, Mandiri, dan lainnya. Semua diproses oleh Midtrans, dan data kartu maupun rekeningmu tidak pernah melewati situs kami."
+        "text": "Pembayaran bisa lewat QRIS (bisa dipindai semua e-wallet dan m-banking), e-wallet GoPay dan ShopeePay, transfer bank lewat Virtual Account BCA, BNI, BRI, Mandiri, Permata, CIMB Niaga, dan BSI, serta kartu debit dan kredit berlogo Visa atau Mastercard. Semua diproses oleh Midtrans, dan data kartu maupun rekeningmu tidak pernah melewati situs kami."
       }
     },
     {
@@ -543,7 +543,7 @@
       <details class="faq-item">
         <summary><span>Metode pembayaran apa saja yang tersedia?</span><span class="mark">+</span></summary>
         <div class="answer">
-          <p>Pembayaran bisa lewat QRIS (bisa dipindai semua e-wallet dan m-banking), e-wallet GoPay dan ShopeePay, serta transfer bank lewat Virtual Account BCA, BNI, BRI, Mandiri, dan lainnya. Semua diproses oleh Midtrans, dan data kartu maupun rekeningmu tidak pernah melewati situs kami.</p>
+          <p>Pembayaran bisa lewat QRIS (bisa dipindai semua e-wallet dan m-banking), e-wallet GoPay dan ShopeePay, transfer bank lewat Virtual Account BCA, BNI, BRI, Mandiri, Permata, CIMB Niaga, dan BSI, serta kartu debit dan kredit berlogo Visa atau Mastercard. Semua diproses oleh Midtrans, dan data kartu maupun rekeningmu tidak pernah melewati situs kami.</p>
         </div>
       </details>
       <details class="faq-item">
@@ -612,14 +612,13 @@
          Isinya HARUS cocok dengan KANAL_AKTIF di api/_lib/midtrans.js —
          mengiklankan metode yang tidak muncul di popup Snap adalah cara
          tercepat kehilangan kepercayaan tepat di detik orang mau bayar.
-         Lambangnya digambar sendiri sebagai SVG, bukan logo resmi merek:
-         memasang logo GoPay/ShopeePay/QRIS asli terikat aturan pemakaian
-         merek masing-masing, dan itu izin yang harus diurus pemilik usaha,
-         bukan diambil diam-diam dari internet. Kalau berkas resminya sudah
-         ada, tinggal ganti isi tiap <span class="pay-logo"> dengan <img>. -->
+         Isi kisinya dibangun assets/app.js (GRUP_BAYAR), tiga kelompok:
+         QRIS & e-wallet, transfer bank, lalu kartu. Logonya dimuat dari
+         assets/pembayaran/; metode yang berkas logonya belum ada tampil
+         sebagai teks, jadi footer tidak pernah terlihat rusak. -->
     <div class="foot-pay">
       <p class="foot-pay-judul">Metode pembayaran yang didukung</p>
-      <ul class="pay-list" id="payList"></ul>
+      <ul class="pay-grup-list" id="payList"></ul>
     </div>
 
     <div class="foot-bottom">

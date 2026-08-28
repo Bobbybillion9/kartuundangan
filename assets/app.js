@@ -437,17 +437,41 @@
   // mengiklankan metode yang tidak muncul di popup adalah cara tercepat
   // kehilangan kepercayaan tepat di detik orang mau bayar. Nama-nama bank
   // di bawah semuanya tercakup oleh kanal 'bank_transfer' dan 'echannel'.
-  var METODE_BAYAR = [
-    { nama: 'QRIS', berkas: 'qris' },
-    { nama: 'GoPay', berkas: 'gopay' },
-    { nama: 'ShopeePay', berkas: 'shopeepay' },
-    { nama: 'BCA', berkas: 'bca' },
-    { nama: 'BNI', berkas: 'bni' },
-    { nama: 'BRI', berkas: 'bri' },
-    { nama: 'Mandiri', berkas: 'mandiri' },
-    { nama: 'Permata', berkas: 'permata' },
-    { nama: 'CIMB Niaga', berkas: 'cimb' },
-    { nama: 'BSI', berkas: 'bsi' }
+  //
+  // Dikelompokkan, bukan satu deret panjang. Sepuluh-dua belas logo yang
+  // berbaris rata tanpa jeda terbaca sebagai tumpukan tanpa arti; yang
+  // sebetulnya ingin diketahui orang adalah "cara bayar yang biasa saya
+  // pakai ada tidak di sini", dan itu pertanyaan per KELOMPOK. Urutannya
+  // dari yang paling banyak dipakai di Indonesia: QRIS/e-wallet dulu,
+  // transfer bank, kartu terakhir.
+  var GRUP_BAYAR = [
+    {
+      judul: 'QRIS & e-wallet',
+      metode: [
+        { nama: 'QRIS', berkas: 'qris' },
+        { nama: 'GoPay', berkas: 'gopay' },
+        { nama: 'ShopeePay', berkas: 'shopeepay' }
+      ]
+    },
+    {
+      judul: 'Transfer bank (virtual account)',
+      metode: [
+        { nama: 'BCA', berkas: 'bca' },
+        { nama: 'Mandiri', berkas: 'mandiri' },
+        { nama: 'BNI', berkas: 'bni' },
+        { nama: 'BRI', berkas: 'bri' },
+        { nama: 'Permata', berkas: 'permata' },
+        { nama: 'CIMB Niaga', berkas: 'cimb' },
+        { nama: 'BSI', berkas: 'bsi' }
+      ]
+    },
+    {
+      judul: 'Kartu debit & kredit',
+      metode: [
+        { nama: 'Visa', berkas: 'visa' },
+        { nama: 'Mastercard', berkas: 'mastercard' }
+      ]
+    }
   ];
 
   function renderMetodeBayar(){
@@ -455,7 +479,24 @@
     if (!list) return;
     list.innerHTML = '';
 
-    METODE_BAYAR.forEach(function(m){
+    GRUP_BAYAR.forEach(function(g){
+      var grup = document.createElement('li');
+      grup.className = 'pay-grup';
+
+      var judul = document.createElement('span');
+      judul.className = 'pay-grup-judul';
+      judul.textContent = g.judul;
+
+      var deret = document.createElement('ul');
+      deret.className = 'pay-list';
+
+      g.metode.forEach(function(m){ deret.appendChild(chipMetode(m)); });
+      grup.append(judul, deret);
+      list.appendChild(grup);
+    });
+  }
+
+  function chipMetode(m){
       var li = document.createElement('li');
       li.className = 'pay-chip';
 
@@ -479,7 +520,16 @@
         img.remove();
         teks.classList.add('tampil');
       });
-      img.addEventListener('load', function(){ teks.classList.remove('tampil'); });
+      img.addEventListener('load', function(){
+        teks.classList.remove('tampil');
+        // Logo yang bentuknya mendekati kotak (GoPay, BSI) tampil jauh
+        // lebih kecil daripada logo memanjang kalau dibatasi TINGGI yang
+        // sama: yang memanjang mentok di lebar chip, yang kotak mentok di
+        // tinggi dan menyisakan ruang kosong di kiri-kanannya. Diberi
+        // jatah tinggi lebih supaya besarnya terbaca setara.
+        var w = img.naturalWidth, h = img.naturalHeight;
+        if (w && h && (w / h) < 1.9) img.classList.add('pay-logo-kotak');
+      });
       img.src = 'assets/pembayaran/' + m.berkas + '.svg';
 
       // Teks dipasang lebih dulu dan baru disembunyikan kalau gambarnya
@@ -487,8 +537,7 @@
       // gagal, tidak ada satu momen pun chip-nya kosong.
       teks.classList.add('tampil');
       li.append(img, teks);
-      list.appendChild(li);
-    });
+      return li;
   }
   renderMetodeBayar();
 
@@ -531,7 +580,6 @@
     if (!landingThemeGrid || !window.THEME_TEMPLATES) return;
     landingThemeGrid.innerHTML = '';
     window.THEME_TEMPLATES.forEach(function(t){ landingThemeGrid.appendChild(renderLandingThemeCard(t)); });
-    window.isiPemakaiTema(landingThemeGrid);
   }
   renderLandingThemeGrid();
 

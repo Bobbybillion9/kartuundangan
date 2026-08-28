@@ -178,9 +178,9 @@
     .tpl-tag{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
   }
   .tpl-tag[hidden]{display:none;}
-  .tpl-pakai::before{content:'';width:6px;height:6px;border-radius:50%;background:#6FE39B;box-shadow:0 0 0 3px rgba(111,227,155,.25);}
 
   .tpl-aksi{display:flex;gap:8px;}
+  .tpl-ikon{width:17px;height:17px;flex-shrink:0;display:none;}
   .tpl-btn{
     flex:1;min-width:0;
     display:inline-flex;align-items:center;justify-content:center;
@@ -304,12 +304,23 @@
      memberi tahu bahwa itu bisa dipindai semua e-wallet. */
   .foot-pay{padding-top:var(--s4);padding-bottom:var(--s4);border-top:1px solid var(--line);}
   .foot-pay-judul{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:var(--s3);}
+  /* Dikelompokkan per jenis, bukan satu deret panjang berisi dua belas
+     logo. Deret rata tanpa jeda terbaca sebagai tumpukan tanpa arti,
+     sementara yang sebetulnya ditanyakan orang — "cara bayar yang biasa
+     saya pakai ada tidak" — adalah pertanyaan per kelompok. */
+  .pay-grup-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--s3);}
+  .pay-grup-judul{display:block;font-size:11.5px;font-weight:600;color:var(--ink-soft);margin-bottom:8px;}
   /* Kisi metode pembayaran: kotak putih kecil berisi logo, mengikuti
      pola yang lazim di footer toko online. Ukurannya seragam supaya logo
      yang bentuknya berbeda-beda tetap terbaca sebagai satu deret. */
-  .pay-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;max-width:620px;}
+  /* Lebarnya ditahan di 400px supaya kelompok bank yang berisi tujuh
+     logo pecah jadi 4+3, bukan 6+1. Satu logo yang berdiri sendiri di
+     baris kedua terbaca seperti kesalahan, bukan seperti daftar. */
+  .pay-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;max-width:400px;}
   .pay-chip{display:flex;align-items:center;justify-content:center;height:46px;padding:8px 10px;border:1px solid var(--line-soft);border-radius:10px;background:#fff;}
   .pay-logo-img{max-width:100%;max-height:26px;width:auto;height:auto;object-fit:contain;display:block;}
+  /* Disetel assets/app.js setelah ukuran asli gambarnya terbaca. */
+  .pay-logo-kotak{max-height:34px;}
   /* Cadangan teks. Hanya tampil kalau logonya belum ada, jadi footer tidak
      pernah terlihat rusak selama berkas logonya belum dilengkapi. */
   .pay-teks{display:none;font-size:12px;font-weight:600;color:#4A4438;letter-spacing:.01em;text-align:center;line-height:1.2;}
@@ -559,6 +570,60 @@
   .admin-head-aksi{display:flex;gap:8px;flex-wrap:wrap;}
   .admin-sub{font-size:13px;color:var(--ink-soft);}
 
+  /* ---------- baris atas: angka pahlawan + kotak ringkas ----------
+     Blok ini sempat HILANG sama sekali. Markup, JS, dan penyesuaian
+     layar HP-nya sudah ada, tapi aturan dasarnya tidak pernah ikut
+     masuk — akibatnya .admin-atas dan .admin-tiles jatuh jadi tumpukan
+     blok tanpa kisi, dan SVG ikon dompet (yang sekarang sudah dibuang
+     dari markup) melar memenuhi lebar kartu karena tidak punya ukuran.
+     Gejalanya berupa tata letak berantakan, bukan error, jadi tidak ada
+     yang mengeluh selain matanya. */
+  .admin-atas{display:grid;grid-template-columns:minmax(240px,300px) 1fr;gap:var(--s3);margin-bottom:var(--s3);align-items:stretch;}
+
+  /* Kartu pendapatan memakai NILAI WARNA TETAP, bukan var(--accent).
+     Token itu BERBALIK di tema gelap (terang jadi #A9754C, gelap jadi
+     #C89968 yang justru lebih muda), dan blok berwarna bertulisan putih
+     yang mengandalkannya sudah pernah turun ke kontras ~2:1 di sini. */
+  .admin-hero{
+    display:flex;flex-direction:column;justify-content:space-between;gap:var(--s3);
+    padding:var(--s4);border-radius:var(--r-md);
+    background:linear-gradient(150deg,#8A5F3D 0%,#6E4A2E 100%);
+    color:#fff;box-shadow:0 14px 30px -20px rgba(60,40,25,.7);
+  }
+  .admin-hero-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s2);}
+  /* Semua teks di kartu ini dihitung kontrasnya terhadap latar tetap
+     #8A5F3D, bukan dikira-kira: putih penuh 5,6:1, dan yang di bawah ini
+     4,8:1 — masih di atas 4,5:1 untuk teks sekecil ini. Putih 78% yang
+     sempat dipakai jatuh ke 4,1:1. */
+  .admin-hero-label{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.9);}
+  .admin-hero-nilai{font-family:'Fraunces',serif;font-size:32px;font-weight:600;line-height:1.1;color:#fff;margin:0;word-break:break-word;}
+  .admin-hero-kaki{display:flex;flex-direction:column;gap:6px;}
+  .admin-hero-ket{font-size:12px;color:rgba(255,255,255,.9);line-height:1.5;}
+  /* Latar pil-nya GELAP, bukan putih transparan. Putih transparan justru
+     menaikkan terang latarnya sehingga tulisan putih di atasnya turun ke
+     ~4:1; menggelapkannya membuat kontrasnya naik, bukan turun. */
+  .admin-delta{align-self:flex-start;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600;background:rgba(0,0,0,.22);color:#fff;}
+  .admin-delta[hidden]{display:none;}
+  .admin-delta.naik{color:#B9F0CE;}
+  .admin-delta.turun{color:#FFC9BC;}
+
+  /* Kotak ringkas: kisi seragam, bukan deret yang panjangnya berbeda tiap
+     baris. Tinggi tiap kotak dibuat sama lewat align-content supaya
+     angkanya berbaris rata — label yang melipat dua baris tidak boleh
+     ikut menggeser angka di sebelahnya. */
+  .admin-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .admin-tile{
+    display:flex;flex-direction:column;justify-content:center;gap:3px;
+    padding:var(--s3);border-radius:var(--r-md);
+    background:var(--card);border:1px solid var(--line-soft);
+  }
+  .admin-tile-nilai{font-family:'Fraunces',serif;font-size:24px;font-weight:600;line-height:1;color:var(--ink);}
+  .admin-tile-label{font-size:11.5px;color:var(--ink-soft);line-height:1.35;}
+
+  .admin-duo{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);}
+  .admin-kartu{display:flex;flex-direction:column;}
+  .admin-blok-sub{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+
   /* ---------- grafik ----------
      Satu rona aksen penuh untuk semua batang. Langkah yang lebih muda
      tidak dipakai karena kontrasnya di bawah 3:1 terhadap kartu putih
@@ -790,7 +855,10 @@
        seperti kerja berat — dan itu makin parah begitu temanya bertambah
        banyak. Dua kolom membuat empat tema terlihat dalam satu layar. */
     #landingThemeGrid,#themeTemplateGrid{grid-template-columns:1fr 1fr;gap:10px;}
-    .tpl-card{aspect-ratio:3/4.9;border-radius:18px;}
+    /* Kartu dipendekkan dari 3/4.9: tinggi tambahan itu dulu disediakan
+       untuk dua tombol yang bertumpuk dan satu baris penanda, yang
+       dua-duanya sudah tidak ada lagi. */
+    .tpl-card{aspect-ratio:3/4.4;border-radius:18px;}
     .tpl-isi{padding:9px 9px 10px;}
     /* Nama dibiarkan melipat sampai dua baris, TIDAK dipotong ellipsis.
        Percobaan memotongnya membuat "Emerald Dusk" tampil sebagai
@@ -808,10 +876,22 @@
        ruang di kartu sesempit ini justru yang paling mahal. Muncul lagi
        sendiri di layar lebar. */
     .tpl-tag-kategori{display:none;}
-    .tpl-tags{gap:4px;margin-bottom:8px;}
+    /* Barisnya kosong di HP: kategori disembunyikan dan penanda pemakai
+       sudah dibuang, jadi tidak ada jarak yang perlu disisakan untuk baris
+       yang tidak menggambar apa pun. */
+    .tpl-tags{gap:4px;margin-bottom:0;}
     .tpl-tag{font-size:9.5px;padding:3px 7px;}
-    .tpl-aksi{flex-direction:column;gap:5px;}
-    .tpl-btn{height:32px;font-size:11.5px;border-radius:999px;}
+
+    /* Aksi jadi SEBARIS, bukan bertumpuk. Dua tombol selebar kartu yang
+       ditumpuk memakan hampir sepertiga tinggi kartu — di kartu yang
+       memang menjual fotonya, itu ruang paling mahal yang dipakai untuk
+       hal paling tidak penting. Pratinjau menyusut jadi lingkaran berikon
+       mata, dan "Gunakan" mengambil sisa lebarnya. */
+    .tpl-aksi{flex-direction:row;gap:6px;align-items:center;}
+    .tpl-btn{height:34px;font-size:11.5px;border-radius:999px;padding:0 10px;}
+    .tpl-btn-lihat{flex:0 0 34px;width:34px;padding:0;}
+    .tpl-btn-lihat .tpl-btn-teks{display:none;}
+    .tpl-ikon{display:block;}
     .final-cta{padding:var(--s5) var(--s3);}
     .tier-desc{min-height:auto;}
     .foot-grid{grid-template-columns:1fr 1fr;gap:var(--s4) var(--s3);}

@@ -6,10 +6,17 @@
 // melihat undangan dengan seluruh slot fotonya kosong dan tombol musiknya
 // mati — bukan gambaran yang adil tentang hasil akhirnya.
 //
-// Berkas contohnya ada di templates/_demo/ (dipakai bersama ketiga tema,
-// bukan disalin tiga kali). Kalau sebuah berkas belum ada, slot itu
-// dibiarkan seperti semula — jadi selama berkasnya belum lengkap,
-// pratinjau tetap tampil seperti sebelumnya, tidak pernah rusak.
+// Berkas contohnya ada di templates/_demo/<nama-tema>/ — SATU SET PER
+// TEMA, bukan satu set dipakai bertiga. Tiap tema punya nuansa warna
+// sendiri, dan set foto yang sama membuat dua dari tiga pratinjau terlihat
+// bertabrakan dengan desainnya sendiri: foto luar ruang bernuansa hijau di
+// Emerald Dusk yang gelap, atau foto berlatar gelap di Ivory Gold yang
+// krem. Nama temanya dibaca dari alamat halaman (lihat namaTema()), jadi
+// menambah tema baru tidak perlu menyentuh berkas ini.
+//
+// Kalau sebuah berkas belum ada, slot itu dibiarkan seperti semula — jadi
+// selama berkasnya belum lengkap, pratinjau tetap tampil seperti
+// sebelumnya, tidak pernah rusak.
 //
 // AMAN UNTUK UNDANGAN SUNGGUHAN. Berkas ini hanya berjalan di dalam
 // dokumen tema, dan setiap penerapannya diperiksa ulang terhadap penanda
@@ -19,7 +26,21 @@
 // menimpanya, sekalipun gambar contohnya baru selesai dimuat belakangan.
 (function () {
 
-  var BASIS = '../../_demo/';
+  // Nama tema = nama folder tempat index.html tema ini berada, mis.
+  // /templates/elegan-klasik/sage-rose/index.html -> "sage-rose".
+  // Dibaca dari alamat, bukan ditulis di tiap tema, supaya tema baru
+  // cukup menaruh foto di templates/_demo/<nama-folder-nya>/ tanpa
+  // menyentuh satu baris kode pun.
+  function namaTema() {
+    var potong = window.location.pathname.split('/').filter(Boolean);
+    // Buang nama berkasnya (index.html) kalau memang ada di alamat.
+    if (potong.length && potong[potong.length - 1].indexOf('.') !== -1) potong.pop();
+    return potong.length ? potong[potong.length - 1] : '';
+  }
+
+  var tema = namaTema();
+  if (!tema) return;
+  var BASIS = '../../_demo/' + tema + '/';
 
   // Nama berkas yang dicari. Ubah di sini kalau nama berkasnya berbeda.
   var FOTO = {

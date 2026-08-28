@@ -1,7 +1,17 @@
 # Berkas contoh untuk halaman Pratinjau tema
 
-Taruh berkas di folder ini. Ketiga tema memakai **set yang sama** — jadi
-cukup satu kali, bukan tiga kali.
+**Satu set per tema**, di folder yang namanya sama persis dengan folder
+temanya:
+
+```
+templates/_demo/sage-rose/
+templates/_demo/ivory-gold/
+templates/_demo/emerald-dusk/
+```
+
+Nama tema dibaca `assets/demo-template.js` dari alamat halaman, jadi
+menambah tema baru cukup dengan membuat folder baru di sini — tidak ada
+kode yang perlu disentuh.
 
 ## Kenapa ada folder ini
 
@@ -10,39 +20,56 @@ data siapa pun. Tanpa berkas di sini, calon pembeli yang menekan "Pratinjau"
 melihat undangan dengan semua slot foto kosong dan tombol musik mati —
 bukan gambaran yang adil tentang hasil akhirnya.
 
-## Berkas yang dicari
+## Kenapa per tema, bukan satu set dipakai bertiga
 
-| Berkas         | Dipakai di                | Saran ukuran        |
+Dulu memang satu set untuk ketiganya. Itu salah begitu fotonya benar-benar
+ada: tiap tema punya nuansa warnanya sendiri, dan satu set foto membuat dua
+dari tiga pratinjau bertabrakan dengan desainnya sendiri — foto luar ruang
+bernuansa hijau di Emerald Dusk yang gelap, atau foto berlatar hitam di
+Ivory Gold yang krem.
+
+Yang dipakai sekarang:
+
+| Tema           | Nuansa fotonya                          |
+|----------------|-----------------------------------------|
+| `sage-rose`    | Luar ruang, hijau, putih lembut         |
+| `ivory-gold`   | Mahkota emas, krem hangat               |
+| `emerald-dusk` | Latar gelap, jas hitam, dramatis        |
+
+## Berkas yang dicari di dalam tiap folder
+
+| Berkas         | Dipakai di                | Ukuran yang dipakai |
 |----------------|---------------------------|---------------------|
-| `sampul.jpg`   | Latar penuh sampul depan  | 1200 × 1800 (potret)|
+| `sampul.jpg`   | Latar penuh sampul depan  | 1200 × 1800         |
 | `utama.jpg`    | Foto utama di bagian hero | 1200 × 1500         |
-| `pria.jpg`     | Foto mempelai pria        | 800 × 1000 (potret) |
-| `wanita.jpg`   | Foto mempelai wanita      | 800 × 1000 (potret) |
-| `galeri-1.jpg` … `galeri-6.jpg` | Galeri momen | 1000 × 1000 (persegi) |
-| `musik.mp3`    | Musik latar               | lihat catatan bawah |
+| `pria.jpg`     | Foto mempelai pria        | 800 × 1000          |
+| `wanita.jpg`   | Foto mempelai wanita      | 800 × 1000          |
+| `galeri-1.jpg` … `galeri-6.jpg` | Galeri momen | 1000 × 1000       |
+| `musik.mp3`    | Musik latar               | dipotong 45 detik   |
 
 **Semua opsional.** Berkas yang belum ada dilewati begitu saja — slotnya
-tetap menampilkan keadaan kosong berdesain seperti sekarang, tidak pernah
+tetap menampilkan keadaan kosong berdesain seperti sebelumnya, tidak pernah
 menjadi ikon "gambar rusak".
 
-## Saran isi
+## Kalau mau mengganti fotonya
 
-- **`sampul.jpg` yang paling menentukan.** Itu yang pertama dilihat orang.
-  Pilih foto **potret** dengan ruang lapang di tengah — nama mempelai dan
-  tombol "Buka Undangan" duduk di situ. Foto dengan wajah tepat di tengah
-  akan tertutup tulisan.
-- Hindari foto yang terlalu ramai di bagian bawah: di situ gradasi gelap
-  paling pekat.
-- Ukuran berkas: usahakan tiap foto **di bawah 400 KB** (dan `sampul.jpg`
-  di bawah 600 KB). Pratinjau memuat semuanya sekaligus.
-- `musik.mp3`: **30–60 detik sudah cukup**, dan pakai bitrate 128 kbps.
-  Lagu utuh 5 menit berukuran 8 MB membuat pratinjau terasa berat, padahal
-  yang perlu ditunjukkan cuma bahwa fiturnya ada dan enak.
-- Pastikan kamu berhak memakai foto dan lagunya. Ini tampil publik di
-  halaman pratinjau, jadi berlaku sama seperti materi pemasaran lain.
+Foto sumber aslinya ada di
+`OneDrive/Dokumen/Website Project/Kartuundangan Project/FOTO UNTUK SAMPEL/`
+(FOLDER 1/2/3). Untuk mengolah ulang, tidak ada ImageMagick di mesin ini —
+yang dipakai skrip `System.Drawing` (bawaan .NET) untuk foto dan pemotong
+frame MP3 buatan sendiri untuk musik, keduanya di scratchpad sesi.
+Pemotongan fotonya "cover" dari titik sepertiga atas, supaya potret orang
+tidak terpotong kepalanya.
 
-## Kalau mau berbeda per tema
+Catatan penting: **begitu `sampul.jpg` sebuah tema diganti, thumbnail tema
+itu harus dipotret ulang** (`templates/<kategori>/<tema>/assets/thumbnail.jpg`,
+780×1170) — kalau tidak, kartu tema di halaman depan masih memperlihatkan
+sampul yang lama.
 
-Sekarang ketiganya memakai set yang sama. Kalau nanti tiap tema mau punya
-foto sendiri (mis. Emerald Dusk bernuansa malam), bilang saja — tinggal
-mengubah `BASIS` di `assets/demo-template.js` menjadi per-tema.
+## Soal hak pakai
+
+Foto dan lagu di sini tayang publik di halaman pratinjau, jadi berlaku sama
+seperti materi pemasaran lain. Lagu yang dipakai sekarang adalah rekaman
+komersial (Glenn Fredly, Payung Teduh, Tulus) yang dipotong 45 detik —
+pastikan pemakaiannya memang sudah kamu pertimbangkan, atau ganti dengan
+musik berlisensi bebas.

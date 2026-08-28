@@ -94,7 +94,19 @@ const KANAL_AKTIF = [
   'gopay',
   'shopeepay',
   'bank_transfer', // seluruh VA bank (BCA, BNI, BRI, Permata, CIMB, dll)
-  'echannel'       // Mandiri Bill Payment
+  'echannel',      // Mandiri Bill Payment
+  // Kartu Visa/Mastercard — kartu DEBIT berlogo Visa/Mastercard ikut
+  // lewat kanal ini; Midtrans tidak punya kanal debit yang terpisah.
+  //
+  // Di Sandbox kanal ini langsung hidup. Di PRODUCTION tidak: kartu harus
+  // diaktifkan sendiri oleh Midtrans setelah akunnya disetujui, dan
+  // biayanya paling mahal di antara semua kanal di sini (persentase per
+  // transaksi, bukan tarif tetap seperti VA/QRIS). Kalau nanti Midtrans
+  // belum menyalakannya, popup Snap hanya akan melewatkan pilihan kartu —
+  // kanal lain tetap jalan seperti biasa, tidak ada yang rusak. Yang
+  // harus ikut dicabut kalau itu terjadi: logo Visa & Mastercard di
+  // METODE_BAYAR (assets/app.js) dan jawaban FAQ di index.html.
+  'credit_card'
 ];
 
 /**
@@ -118,6 +130,12 @@ async function buatSnapToken({ orderId, amount, item, pelanggan }) {
       // dasbor Midtrans, supaya pilihannya ikut terbaca di kode dan tidak
       // diam-diam berubah kalau ada yang mengutak-atik setelan dasbor.
       enabled_payments: KANAL_AKTIF,
+      // 3D Secure untuk kartu. Dinyalakan eksplisit karena bawaannya
+      // MATI: tanpa ini kartu diproses tanpa OTP bank, dan tanggung jawab
+      // atas transaksi sanggahan (chargeback) berpindah ke merchant —
+      // yaitu kami. Sebagian besar penerbit kartu di Indonesia juga
+      // menolak transaksi non-3DS.
+      credit_card: { secure: true },
       // Kedaluwarsa supaya order menggantung tidak menumpuk selamanya.
       // Angkanya diekspor sebagai JAM_KEDALUWARSA supaya api/bayar/buat.js
       // menghitung expired_at dengan angka yang SAMA — kalau keduanya

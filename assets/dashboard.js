@@ -362,7 +362,6 @@
     if (!grid) return;
     grid.innerHTML = '';
     THEME_TEMPLATES.forEach(function(t){ grid.appendChild(renderThemeTemplateCard(t)); });
-    window.isiPemakaiTema(grid);
   }
   renderThemeTemplateGrid();
 
