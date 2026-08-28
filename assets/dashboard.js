@@ -2067,7 +2067,6 @@
   var tamuEmptyMsg = document.getElementById('tamuEmptyMsg');
   var tamuBlock = document.getElementById('tamuBlock');
   var tamuKunciBlock = document.getElementById('tamuKunciBlock');
-  var tamuKunciCatatan = document.getElementById('tamuKunciCatatan');
   var tamuHitungBadge = document.getElementById('tamuHitungBadge');
   var tamuKeSapaanBtn = document.getElementById('tamuKeSapaanBtn');
   var daftarTamu = [];
@@ -2080,10 +2079,14 @@
   // menawarkan alat yang hasilnya tidak akan terlihat.
   //
   // Yang TIDAK dilakukan: menghapus baris guests yang sudah ada. Link yang
-  // terlanjur dibagikan ke tamu harus tetap hidup — mematikan tampilannya
-  // di dashboard tidak boleh berarti mematikan link di HP orang. Kalau
-  // masih ada tamu tersimpan, jumlahnya tetap disebut supaya tidak ada
-  // data yang hilang diam-diam dari pandangan pemiliknya.
+  // terlanjur dibagikan ke tamu tetap hidup — mematikan tampilannya di
+  // dashboard tidak berarti mematikan link di HP orang.
+  //
+  // Sempat ada catatan di layar yang menjelaskan hal itu ke user, lalu
+  // DIBUANG atas permintaan user: yang perlu dia putuskan cuma mau
+  // memakai link personal atau tidak, dan penjelasan tentang apa yang
+  // terjadi pada baris data di belakangnya bukan bebannya. Perilakunya
+  // sendiri tidak berubah — datanya tetap aman.
   function setGerbangTamu(){
     if (!tamuBlock || !tamuKunciBlock) return;
     var sapaan = (currentInvitation && currentInvitation.sapaan_tamu) || 'personal';
@@ -2091,17 +2094,6 @@
 
     tamuBlock.hidden = !nyala;
     tamuKunciBlock.hidden = nyala;
-
-    if (!nyala && tamuKunciCatatan) {
-      if (daftarTamu.length) {
-        tamuKunciCatatan.textContent = 'Catatan: ' + daftarTamu.length +
-          ' link tamu yang sudah kamu buat TIDAK dihapus dan tetap berfungsi. ' +
-          'Daftarnya muncul lagi begitu sapaan diubah kembali.';
-        tamuKunciCatatan.style.display = '';
-      } else {
-        tamuKunciCatatan.style.display = 'none';
-      }
-    }
   }
 
   if (tamuKeSapaanBtn) {
