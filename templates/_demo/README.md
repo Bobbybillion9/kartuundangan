@@ -35,24 +35,6 @@ Yang dipakai sekarang:
 | `sage-rose`      | Luar ruang, hijau, putih lembut         |
 | `ivory-gold`     | Mahkota emas, krem hangat               |
 | `emerald-dusk`   | Latar gelap, jas hitam, dramatis        |
-| `alabaster-ink`  | **MEMINJAM set `sage-rose`** — lihat di bawah |
-
-## `alabaster-ink` masih meminjam, dan itu utang yang harus dibayar
-
-Ketiga folder sumber (`FOLDER 1/2/3`) berisi tepat 10 foto masing-masing
-dan sudah habis terpakai untuk tiga tema pertama — tidak ada set keempat.
-Jadi `alabaster-ink` untuk sementara memakai salinan set `sage-rose`,
-dipilih karena paling dominan putih dan paling tidak bertabrakan dengan
-kertas alabaster.
-
-Tetap saja ini melanggar alasan folder ini dibuat: dua tema kini
-memperlihatkan wajah yang sama di pratinjau, dan foto adat Jawa yang
-sarat detail adalah lawan dari tema yang dijual sebagai "minimalis".
-
-Yang dibutuhkan: satu set 10 foto bernuansa modern-minimalis — pasangan
-berbusana polos, latar rata, cahaya lembut, sedikit warna. Sesudah
-foto-nya masuk, jalankan `node tools/potret-tema.js alabaster-ink` supaya
-kartu temanya ikut diperbarui.
 
 ## Berkas yang dicari di dalam tiap folder
 

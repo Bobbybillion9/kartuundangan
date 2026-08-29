@@ -35,14 +35,6 @@ window.THEME_TEMPLATES = [
     desc: 'Nuansa resepsi malam: latar hijau zamrud pekat, emas berkilau lembut, dan sampul yang menyingkap dari gelap lewat cahaya hangat yang melebar dari tengah.',
     ringkas: 'Zamrud malam & emas · disingkap oleh cahaya',
     thumb: 'templates/elegan-klasik/emerald-dusk/assets/thumbnail.jpg'
-  },
-  {
-    id: 'modern-minimalis/alabaster-ink',
-    name: 'Alabaster Ink',
-    kategori: 'Modern Minimalis',
-    desc: 'Kertas alabaster, tinta hitam, dan garis satu piksel. Tanpa ornamen, tanpa huruf sambung — yang menghias halaman ini ruang kosong dan jarak antar huruf. Sampulnya tidak terbuka, melainkan larut sesudah satu garis ditarik melintasi tengah.',
-    ringkas: 'Alabaster & tinta · sampul larut, bukan terbuka',
-    thumb: 'templates/modern-minimalis/alabaster-ink/assets/thumbnail.jpg'
   }
 ];
 
