@@ -853,6 +853,477 @@ section{position:relative;padding:var(--s6) var(--s4);}
   .particles{display:none;}
 }
 
+
+/* ============================================================
+   BLANC ROYALE — LAPIS "MEWAH"
+   ------------------------------------------------------------
+   Revisi pertama tema ini gagal, dan gagalnya jelas: ia cuma Ivory Gold
+   yang dicat ulang. Struktur section, ritme tata letak, bentuk kartu,
+   dan susunan grid-nya sama persis — yang berubah hanya palet, huruf,
+   tekstur, dan ornamen sudut. User menolaknya dengan alasan yang tepat:
+   "tidak ada kesan value mewah, isi UI-nya juga mirip".
+
+   Blok ini yang membuatnya jadi tema tersendiri. Semua di sini
+   MENIMPA warisan Ivory Gold, jadi ia HARUS tetap berada di akhir
+   berkas (lihat catatan kekhususan di bawahnya).
+
+   Acuan yang dipakai (tren undangan mewah 2026, bukan tebakan):
+   - foil emas adalah penanda mewah nomor satu, DAN tren mutakhir
+     justru menahan diri — satu elemen berfoil di atas bidang tenang
+     terbaca lebih mahal daripada halaman penuh ornamen. Karena itu
+     ornamen sudut tetap hanya di sampul, dan foilnya dipakai terukur.
+   - teknik cetak yang dijual mahal: foil, letterpress (huruf tercetak
+     masuk ke kertas), dan kertas berwarna gelap berfoil emas. Ketiganya
+     ditiru di sini dengan cara web: gradasi bergerak, bayangan teks
+     dua arah, dan satu section gelap.
+   - tata letak editorial ala majalah: asimetris, angka bagian yang
+     besar, dan foto yang menembus tepi halaman.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. FOIL EMAS
+   Bukan sekadar warna emas: gradasi berlapis yang menyapu perlahan,
+   meniru cahaya yang bergerak di atas foil timbul. Inilah pembeda
+   paling cepat terlihat dari ketiga tema lama, yang emasnya rata.
+   ------------------------------------------------------------ */
+:root{
+  /* Titik paling terang SENGAJA tidak putih. Percobaan pertama memakai
+     #FFF7DF, dan di atas kertas krem bagian itu praktis lenyap — judulnya
+     terbaca separuh hilang, bukan berkilau. Emas sungguhan pun tidak
+     pernah seputih itu; yang membuatnya terbaca sebagai logam adalah
+     JARAK antara gelap dan terang, bukan seberapa terang puncaknya. */
+  --foil:linear-gradient(100deg,
+    #5A431A 0%,  #8A6A2C 12%, #B08A42 22%, #D4B36B 32%,
+    #E3C481 42%, #C9A75C 52%, #A8823C 64%, #75581B 78%, #4E3A16 100%);
+}
+.section-title,
+.countdown-num,
+.closing-names,
+.hero-monogram-letters .mono-a,
+.hero-monogram-letters .mono-b,
+.quote::first-letter{
+  background-image:var(--foil);
+  background-size:280% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+  animation:foilSapu 11s linear infinite;
+  /* Garis tepi rambut. Sapuan foil bergerak, jadi ada saat sebagian
+     huruf berada di titik paling terang; tanpa tepi, bagian itu nyaris
+     lenyap di atas kertas krem. Stroke ini yang menjamin bentuk hurufnya
+     tetap tegas di SETIAP saat animasi, bukan cuma rata-rata. */
+  -webkit-text-stroke:.4px rgba(78,58,22,.42);
+  filter:drop-shadow(0 1px 0 rgba(43,38,32,.16));
+}
+@keyframes foilSapu{
+  from{background-position:150% 0;}
+  to  {background-position:-150% 0;}
+}
+/* Tanpa animasi, foilnya berhenti di titik paling terang — jadi tetap
+   terlihat seperti emas, bukan seperti teks yang gagal dimuat. */
+@media(prefers-reduced-motion:reduce){
+  .section-title,.countdown-num,.closing-names,
+  .hero-monogram-letters .mono-a,.hero-monogram-letters .mono-b,
+  .quote::first-letter{animation:none;background-position:42% 0;}
+}
+
+/* ------------------------------------------------------------
+   2. LETTERPRESS
+   Label kecil dibuat seolah TERCETAK MASUK ke kertas: satu bayangan
+   terang di bawah huruf (cahaya memantul dari dasar cekungan) dan satu
+   bayangan gelap di atas. Efeknya cuma terbaca pada huruf kecil
+   berjarak lebar di atas latar terang — karena itu tidak dipakai di
+   section gelap (lihat #hadiah di bawah).
+   ------------------------------------------------------------ */
+.eyebrow,
+.couple-role,
+.countdown-label,
+.venue-address,
+.upload-hint{
+  text-shadow:0 1px 0 rgba(255,255,255,.9), 0 -1px 1px rgba(43,38,32,.28);
+}
+
+/* ------------------------------------------------------------
+   3. ANGKA BAGIAN (I, II, III ...)
+   Undangan Eropa formal disusun sebagai SUSUNAN ACARA bernomor, bukan
+   tumpukan section. Angkanya dibuat besar dan nyaris pudar sebagai
+   latar, memberi halaman rasa "terbitan" alih-alih "template".
+   Dipasang lewat counter CSS, jadi tidak ada satu pun markup yang
+   berubah dan urutannya mustahil salah ketik.
+   ------------------------------------------------------------ */
+.reveal-after-cover{counter-reset:bagian;}
+#pembuka,#mempelai,#acara,#countdown,#galeri,#rsvp,#ucapan,#hadiah{
+  counter-increment:bagian;
+}
+#pembuka::before,#mempelai::before,#acara::before,#countdown::before,
+#galeri::before,#rsvp::before,#ucapan::before,#hadiah::before{
+  content:counter(bagian, upper-roman);
+  position:absolute;
+  top:var(--s4);
+  left:50%;
+  transform:translateX(-50%);
+  font-family:'Cinzel Decorative',Georgia,serif;
+  font-size:clamp(96px,30vw,168px);
+  line-height:.8;
+  color:var(--gold);
+  opacity:.075;
+  letter-spacing:.02em;
+  pointer-events:none;
+  /* z-index negatif, BUKAN 0. Elemen ber-posisi dengan z-index 0
+     dilukis di atas isi biasa section, jadi angkanya akan menutupi
+     judulnya sendiri. */
+  z-index:-1;
+}
+
+/* ------------------------------------------------------------
+   4. PEMISAH ANTAR SECTION
+   Sulur SVG hati/cincin/pita diganti garis rangkap dengan wajik kecil
+   di tengah — bahasa yang sama dengan kartu undangan cetak kelas atas.
+   SVG-nya disembunyikan LEWAT ISINYA, bukan elemennya: .divider-ornament
+   itu sendiri adalah <svg>, dan menyembunyikannya ikut menghapus wajik.
+   ------------------------------------------------------------ */
+.section-divider{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  margin:0 0 var(--s5);
+}
+.section-divider::before,.section-divider::after{
+  content:'';
+  width:64px;height:3px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.divider-ornament{
+  width:7px;height:7px;flex:none;
+  background:var(--gold);
+  transform:rotate(45deg);
+  border-radius:1px;
+}
+.divider-ornament path,.divider-ornament circle,.divider-ornament rect{display:none;}
+
+/* ------------------------------------------------------------
+   5. PEMBUKA — huruf awal berukir
+   Drop cap adalah ciri khas terbitan lama; di sini ia jadi satu-satunya
+   benda berfoil di bidang yang tenang. Kutipannya dipindah dari huruf
+   sambung (Pinyon) ke serif miring, karena drop cap di atas huruf
+   sambung terbaca berantakan.
+   ------------------------------------------------------------ */
+.quote{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:clamp(21px,5.8vw,25px);
+  line-height:1.6;
+  max-width:330px;
+  text-align:left;
+}
+.quote::first-letter{
+  float:left;
+  font-family:'Cinzel Decorative',Georgia,serif;
+  font-style:normal;
+  font-size:3.5em;
+  line-height:.82;
+  padding-right:.07em;
+  margin-top:.05em;
+}
+
+/* ------------------------------------------------------------
+   6. MEMPELAI — belah editorial, bukan dua kartu kembar
+   Dua kartu simetris berdampingan adalah tata letak paling umum di
+   seluruh undangan digital, dan itu persis yang membuat revisi pertama
+   terasa "mirip". Di sini keduanya digeser berlawanan arah dan fotonya
+   dibiarkan MENEMBUS tepi halaman — gerakan khas tata letak majalah,
+   yang mustahil didapat dari grid rapi.
+   Aturan ini ditulis di luar media query dan berada paling akhir, jadi
+   ia menang atas blok @media(max-width:639px) "mempelai bersebelahan"
+   di atas — media query tidak menambah kekhususan.
+   ------------------------------------------------------------ */
+.couple{display:block;margin-top:var(--s5);}
+.couple-card{position:relative;text-align:left;flex:none;min-width:0;}
+.couple-card .photo-placeholder{
+  width:74%;
+  max-width:none;
+  aspect-ratio:4/5;
+  margin:0 0 var(--s3);
+  border-radius:0;
+  border:1px solid var(--line);
+}
+/* Menembus tepi: -28px = var(--s4), padding kiri/kanan section. */
+.couple .couple-card:first-of-type .photo-placeholder{
+  margin-left:calc(var(--s4) * -1);
+}
+.couple .couple-card:last-of-type{text-align:right;}
+.couple .couple-card:last-of-type .photo-placeholder{
+  margin-left:auto;
+  margin-right:calc(var(--s4) * -1);
+}
+.couple-role{
+  font-size:10px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--gold-dark);font-weight:400;margin-bottom:6px;
+}
+.couple-name{font-size:clamp(21px,6vw,26px);line-height:1.2;margin-bottom:8px;}
+.couple-parents{font-size:13px;line-height:1.6;max-width:none;margin:0;}
+.couple-amp{
+  display:block;
+  align-self:auto;
+  text-align:center;
+  font-family:'Cinzel Decorative',Georgia,serif;
+  font-size:30px;
+  line-height:1;
+  color:var(--gold);
+  margin:var(--s5) 0;
+}
+
+/* ------------------------------------------------------------
+   7. ACARA — daftar program bergaris, bukan kartu berikon wajik
+   Ini bentuk "susunan acara" yang dipakai undangan cetak formal:
+   waktu di satu kolom, keterangan di kolom lain, dipisah garis rambut.
+   Kartu berbingkai dengan ikon wajik di tengah adalah bentuk paling
+   umum di template undangan digital — dan justru itu yang dihindari.
+   ------------------------------------------------------------ */
+.event-list{
+  display:block;
+  margin-top:var(--s5);
+  border-top:1px solid var(--line);
+}
+.event-card{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  grid-template-areas:
+    "ikon nama"
+    "ikon tanggal"
+    "ikon waktu";
+  column-gap:var(--s3);
+  row-gap:2px;
+  align-items:start;
+  background:none;
+  border:0;
+  border-bottom:1px solid var(--line);
+  border-radius:0;
+  box-shadow:none;
+  padding:var(--s4) var(--s1);
+  text-align:left;
+}
+.event-icon{
+  grid-area:ikon;
+  align-self:center;
+  width:46px;height:46px;
+  margin:0;
+  background:none;
+  border:1px solid var(--gold);
+  border-radius:50%;
+  transform:none;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold-dark);
+}
+/* Ikon di tema asal diputar -45deg untuk menegakkan diri di dalam wajik
+   yang diputar 45deg. Wajiknya sudah tidak ada, jadi putarannya harus
+   ikut dibatalkan — kalau tidak, ikonnya miring sendirian. */
+.event-icon svg{transform:none;width:19px;height:19px;}
+.event-name{
+  grid-area:nama;
+  font-size:clamp(19px,5.4vw,23px);
+  margin:0;
+  line-height:1.2;
+}
+.event-date{grid-area:tanggal;font-size:13.5px;margin:0;color:var(--ink-mid);}
+.event-time{
+  grid-area:waktu;
+  font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink-soft);margin:0;
+}
+
+/* ------------------------------------------------------------
+   8. HITUNG MUNDUR — angka berfoil, tanpa kotak
+   Empat kotak berbingkai adalah bentuk bawaan hampir semua undangan
+   digital. Di sini kotaknya dibuang seluruhnya: yang tersisa angka
+   besar berfoil, label letterpress, dan garis rambut pemisah.
+   ------------------------------------------------------------ */
+.countdown-row{display:flex;gap:0;margin-top:var(--s4);}
+.countdown-box{
+  flex:1;
+  position:relative;
+  background:none;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  padding:0 4px;
+}
+.countdown-box + .countdown-box::before{
+  content:'';
+  position:absolute;left:0;top:14%;bottom:22%;
+  width:1px;background:var(--line);
+}
+.countdown-num{
+  font-size:clamp(32px,10vw,46px);
+  font-weight:400;
+  line-height:1.1;
+}
+.countdown-label{
+  font-size:9px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--ink-soft);
+}
+
+/* ------------------------------------------------------------
+   9. GALERI — mozaik editorial, bukan grid seragam
+   Satu foto besar lalu dua sedang lalu tiga kecil. Grid tiga kolom
+   seragam memperlakukan semua foto sama penting; mozaik memberi
+   halaman titik masuk, seperti halaman pembuka majalah.
+   ------------------------------------------------------------ */
+.galeri-grid.galeri--grid3{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  grid-auto-rows:76px;
+  gap:7px;
+  margin-top:var(--s4);
+}
+/* aspect-ratio WAJIB dibatalkan. Tema asal memberi `.galeri--grid3
+   .galeri-item{aspect-ratio:1}` supaya grid tiga kolomnya rapi bujur
+   sangkar. Di mozaik, tiap sel sudah punya tinggi dari jumlah barisnya —
+   dan aspect-ratio yang tertinggal memaksa LEBARNYA mengikuti tinggi itu.
+   Akibatnya tiga sel terkecil (masing-masing 2 baris = 159px) memaksa
+   dirinya 159px lebar, total 477px di dalam wadah 334px, dan barisnya
+   melimpah keluar tepi kanan halaman. */
+.galeri-grid.galeri--grid3 .galeri-item{
+  aspect-ratio:auto;
+  border-radius:0;
+  height:100%;
+  width:100%;
+  min-width:0;
+}
+.galeri-item:nth-child(1){grid-column:span 6;grid-row:span 3;}
+.galeri-item:nth-child(2){grid-column:span 3;grid-row:span 2;}
+.galeri-item:nth-child(3){grid-column:span 3;grid-row:span 2;}
+.galeri-item:nth-child(4){grid-column:span 2;grid-row:span 2;}
+.galeri-item:nth-child(5){grid-column:span 2;grid-row:span 2;}
+.galeri-item:nth-child(6){grid-column:span 2;grid-row:span 2;}
+/* .photo-placeholder aslinya berukuran tetap 168px dengan aspect-ratio
+   3/4 — di dalam mozaik ia harus mengikuti selnya, bukan sebaliknya. */
+.galeri-item .photo-placeholder{
+  width:100%;height:100%;
+  max-width:none;
+  aspect-ratio:auto;
+  margin:0;
+  border-radius:0;
+}
+
+/* ------------------------------------------------------------
+   10. TANDA KASIH — selingan panel GELAP
+   Perubahan tunggal yang paling mengubah rasa halaman. Ketiga tema lama
+   (dan revisi pertama tema ini) bernada sama dari atas sampai bawah;
+   satu bidang gelap di tengah gulir memberi halaman babak, dan meniru
+   teknik cetak kelas atas "kertas berwarna gelap + foil emas".
+   Semua warna di dalamnya ditulis ulang: teks gelap di atas panel gelap
+   adalah cara paling cepat merusak seluruh section.
+   ------------------------------------------------------------ */
+#hadiah{
+  background-color:#241F19;
+  background-image:
+    linear-gradient(rgba(31,26,21,.9),rgba(31,26,21,.9)),
+    var(--orn-plaster);
+  background-size:cover;
+  background-position:center;
+  margin-top:var(--s6);
+  padding-top:var(--s7);
+  color:#F1E9DA;
+}
+#hadiah::before{color:#E6CE93;opacity:.1;}
+#hadiah .eyebrow{color:rgba(241,233,218,.66);text-shadow:none;}
+#hadiah p,#hadiah .section-lead,#hadiah .gift-intro{color:rgba(241,233,218,.72);}
+#hadiah .section-divider::before,#hadiah .section-divider::after{
+  border-top-color:rgba(200,164,90,.3);
+  border-bottom-color:rgba(200,164,90,.3);
+}
+#hadiah .section-icon{color:rgba(230,206,147,.75);}
+#hadiah .gift-card,
+#hadiah .form-card{
+  background:rgba(255,255,255,.045);
+  border-color:rgba(200,164,90,.3);
+}
+#hadiah .gift-bank{color:rgba(230,206,147,.9);}
+#hadiah .gift-number{color:#F6F0E2;}
+#hadiah .gift-owner{color:rgba(241,233,218,.7);}
+#hadiah .btn-copy{border-color:rgba(200,164,90,.45);color:#E6CE93;}
+#hadiah .field-label-block,
+#hadiah label{color:rgba(241,233,218,.78);}
+#hadiah input,
+#hadiah textarea{
+  background:rgba(0,0,0,.26);
+  border-color:rgba(200,164,90,.28);
+  color:#F1E9DA;
+}
+#hadiah input::placeholder,#hadiah textarea::placeholder{color:rgba(241,233,218,.38);}
+/* background WAJIB ikut ditimpa, bukan cuma border & color. Aturan
+   asalnya memberi `background:var(--gold-tint)` — krem terang. Di panel
+   gelap ia jadi balok terang yang tulisannya (kini putih) tidak terbaca
+   sama sekali. Ini kesalahan khas saat membalik satu section jadi gelap:
+   yang teringat cuma warna teks. */
+#hadiah .upload-dropzone{
+  background:rgba(0,0,0,.24);
+  border-color:rgba(200,164,90,.4);
+  color:rgba(241,233,218,.72);
+}
+#hadiah .upload-dropzone:hover{background:rgba(0,0,0,.34);}
+#hadiah .upload-hint{color:rgba(241,233,218,.5);text-shadow:none;}
+#hadiah .upload-preview{background:rgba(255,255,255,.05);border-color:rgba(200,164,90,.28);}
+#hadiah .btn-primary-full{background:var(--gold);color:#241F19;}
+#hadiah .form-msg{color:rgba(241,233,218,.75);}
+
+/* Segel lilin menunggangi tepi atas panel gelap — sambungan langsung ke
+   amplop di awal, dan sekaligus penutup pertemuan dua bidang warna
+   supaya batasnya tidak terbaca sebagai potongan yang kasar.
+   Dipakai ::after karena ::before sudah dipakai angka bagian. */
+#hadiah::after{
+  content:'';
+  position:absolute;
+  top:-34px;left:50%;
+  transform:translateX(-50%);
+  width:68px;height:68px;
+  background-image:var(--amplop-segel);
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.45));
+  pointer-events:none;
+}
+
+/* ------------------------------------------------------------
+   11. PENUTUP — kembali terang, dengan tanda tangan berfoil
+   ------------------------------------------------------------ */
+.closing-names{font-size:clamp(34px,10vw,44px);line-height:1.2;}
+.closing-signature{
+  font-size:10px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--ink-soft);
+}
+
+
+/* ------------------------------------------------------------
+   12. BINGKAI GARIS RANGKAP DI SAMPUL
+   Tanpa ini, keempat ukiran emas terbaca sebagai empat benda terpisah
+   yang kebetulan ada di sudut. Garis rangkap tipis yang menghubungkannya
+   mengubahnya jadi SATU bingkai — persis cara kartu undangan resmi Eropa
+   disusun, dan alasan kenapa ornamen sudut di sana tidak pernah berdiri
+   sendiri.
+   Dipasang di .cover-content (bukan #cover) supaya letaknya mengikuti
+   layar, bukan tinggi sampul; keduanya kini sama tinggi karena padding
+   #cover sudah dinolkan, tapi .cover-content yang lebih aman kalau suatu
+   saat sampulnya jadi lebih panjang.
+   ------------------------------------------------------------ */
+.cover-content::before{
+  content:'';
+  position:absolute;
+  inset:22px;
+  border:1px solid rgba(176,138,74,.55);
+  outline:1px solid rgba(176,138,74,.4);
+  outline-offset:5px;
+  pointer-events:none;
+  z-index:0;
+}
+#cover.has-sampul .cover-content::before{
+  border-color:rgba(255,255,255,.42);
+  outline-color:rgba(255,255,255,.26);
+}
+
 /* ============================================================
    PENYESUAIAN TERAKHIR — harus berada di AKHIR berkas
    ------------------------------------------------------------
