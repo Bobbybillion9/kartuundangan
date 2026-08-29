@@ -84,6 +84,12 @@ const SLOT_FOTO = [
 // supaya jelas ini disengaja, bukan slot yang salah ketik.
 const SLOT_MILIK_TEMA = ['kalimat_hadiah', 'musik_url'];
 
+// Slot yang DIISI perender tapi TIDAK diwajibkan ada. Tema yang tidak
+// menyediakannya sama sekali tidak terpengaruh — setLogoBank() diam saja
+// kalau elemennya tidak ketemu. Ini disengaja: tiga tema elegan-klasik
+// yang sudah tayang tidak boleh berubah tampilannya gara-gara fitur baru.
+const SLOT_OPSIONAL = ['logo_bank_1', 'logo_bank_2'];
+
 // id yang dicari langsung di dokumen.
 const ID_DOKUMEN = [
   { id: 'cover',      tag: null,    oleh: 'setFotoSampul() & potret-tema.js' },
@@ -198,6 +204,8 @@ function cocokkanKontrakDenganPerender(lap) {
   while ((m = reTeks.exec(src))) dipakaiTeks.add(m[1]);
   const reFoto = /setSlotFoto\(\s*doc\s*,\s*'([a-z0-9_]+)'\s*,/g;
   while ((m = reFoto.exec(src))) dipakaiFoto.add(m[1]);
+  const reLogo = /setLogoBank\(\s*doc\s*,\s*'([a-z0-9_]+)'\s*,/g;
+  while ((m = reLogo.exec(src))) dipakaiTeks.add(m[1]);
   const reQuery = /\[data-slot="([a-z0-9_]+)"\]/g;
   while ((m = reQuery.exec(src))) dipakaiTeks.add(m[1]);
 
@@ -207,7 +215,7 @@ function cocokkanKontrakDenganPerender(lap) {
     for (let i = 1; i <= 6; i++) dipakaiFoto.add('foto_galeri_' + i);
   }
 
-  const kontrak = new Set([...SLOT_TEKS, ...SLOT_FOTO]);
+  const kontrak = new Set([...SLOT_TEKS, ...SLOT_FOTO, ...SLOT_OPSIONAL]);
   const asing = [...dipakaiTeks, ...dipakaiFoto].filter(s => !kontrak.has(s));
   if (asing.length) {
     lap.gagal('kontrak di cek-tema.js sudah menua',
@@ -418,7 +426,7 @@ function skripPemeriksa(kontrak) {
   if (!tanpaSlot.length && !tanpaImg.length) ok(K.slotFoto.length + ' slot foto lengkap & masing-masing punya <img>');
 
   // --- slot yang tidak dikenal ---
-  const dikenal = new Set([].concat(K.slotTeks, K.slotFoto, K.slotMilikTema));
+  const dikenal = new Set([].concat(K.slotTeks, K.slotFoto, K.slotMilikTema, K.slotOpsional));
   const asing = [...new Set([...document.querySelectorAll('[data-slot]')]
     .map(e => e.getAttribute('data-slot')))].filter(s => !dikenal.has(s));
   if (asing.length) gagal(asing.length + ' data-slot tidak dikenal', asing.join(', ') +
@@ -640,6 +648,7 @@ async function periksaDom(tema, lap) {
     const res = await kirim('Runtime.evaluate', {
       expression: skripPemeriksa({
         slotTeks: SLOT_TEKS, slotFoto: SLOT_FOTO, slotMilikTema: SLOT_MILIK_TEMA,
+        slotOpsional: SLOT_OPSIONAL,
         idDokumen: ID_DOKUMEN, isiForm: ISI_FORM, tokenPalet: TOKEN_PALET,
         pakaiAmplop: pakaiAmplop
       }),

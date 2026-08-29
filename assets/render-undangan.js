@@ -148,6 +148,67 @@
     setSlotText(doc, 'nama_tamu', namaTamu);
   }
 
+  // ---------------- Logo bank pada kartu hadiah ----------------
+  // User mengetik nama banknya BEBAS ("BCA", "Bank BCA", "bca",
+  // "B.C.A", "Bank Central Asia"), jadi yang dicocokkan bukan
+  // teksnya melainkan bentuk RINGKASNYA: huruf besar semua, semua
+  // yang bukan huruf/angka dibuang, lalu kata "BANK" dan "PT" ikut
+  // dibuang. Tanpa penyederhanaan itu, hanya ejaan yang persis sama
+  // yang akan ketemu — dan hampir tidak ada user yang mengetik persis.
+  //
+  // Berkasnya sudah ada di assets/pembayaran/ (dipakai juga oleh kisi
+  // logo di footer halaman depan), jadi tidak ada aset baru di sini.
+  //
+  // Path SENGAJA absolut dari root: berkas ini mengisi dokumen di dalam
+  // <iframe> yang alamatnya /templates/<kategori>/<tema>/, jadi path
+  // relatif akan dihitung dari sana dan meleset.
+  // PENTING soal bentuk kuncinya: ringkasNamaBank() sudah MEMBUANG kata
+  // 'BANK' di awal, jadi kunci seperti BANKCENTRALASIA mustahil cocok —
+  // ia tidak akan pernah terpanggil, dan itu tidak memberi error apa pun.
+  // Kunci yang benar adalah bentuk SESUDAH disederhanakan (CENTRALASIA).
+  // Kesalahan ini sempat ada dan cuma ketahuan lewat uji di
+  // scratchpad/uji-logobank.js, bukan dari membaca kodenya.
+  var LOGO_BANK = {
+    BCA: 'bca', CENTRALASIA: 'bca',
+    MANDIRI: 'mandiri',
+    BRI: 'bri', RAKYATINDONESIA: 'bri',
+    BNI: 'bni', NEGARAINDONESIA: 'bni',
+    BSI: 'bsi', SYARIAHINDONESIA: 'bsi',
+    CIMB: 'cimb', CIMBNIAGA: 'cimb', NIAGA: 'cimb',
+    // 'BANK' cuma dibuang kalau ada DI AWAL, jadi PERMATABANK tetap hidup.
+    PERMATA: 'permata', PERMATABANK: 'permata',
+    GOPAY: 'gopay', SHOPEEPAY: 'shopeepay', QRIS: 'qris'
+  };
+
+  function ringkasNamaBank(nama){
+    return String(nama || '')
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .replace(/^PT/, '')
+      .replace(/^BANK/, '');
+  }
+
+  // Slot logo bersifat OPSIONAL: tema yang tidak menyediakannya sama
+  // sekali tidak terpengaruh. Itu disengaja — tiga tema elegan-klasik
+  // yang sudah tayang tidak boleh berubah tampilannya.
+  function setLogoBank(doc, slot, namaBank){
+    var img = doc.querySelector('[data-slot="' + slot + '"]');
+    if (!img) return;
+    var berkas = LOGO_BANK[ringkasNamaBank(namaBank)];
+    if (berkas) {
+      img.src = '/assets/pembayaran/' + berkas + '.svg';
+      img.alt = String(namaBank || '');
+      img.style.display = '';
+    } else {
+      // Bank yang tidak dikenali (BPD daerah, bank digital baru, dsb)
+      // TIDAK boleh menampilkan logo bank lain, dan tidak boleh
+      // meninggalkan ikon gambar rusak. Nama banknya tetap tampil
+      // sebagai teks, persis seperti sebelum fitur ini ada.
+      img.removeAttribute('src');
+      img.style.display = 'none';
+    }
+  }
+
   function populateSlots(doc, inv, namaTamu){
     // Penanda untuk assets/demo-template.js: isi contoh di halaman
     // pratinjau harus berhenti menimpa apa pun begitu ada data asli.
@@ -243,6 +304,7 @@
     var giftCards = doc.querySelectorAll('.gift-card');
     var card1 = giftCards[0], card2 = giftCards[1];
     setSlotText(doc, 'nama_bank_1', textOrPlaceholder(inv.nama_bank_1, 'Bank belum diisi'));
+    setLogoBank(doc, 'logo_bank_1', inv.nama_bank_1);
     setSlotText(doc, 'no_rekening_1', textOrPlaceholder(inv.no_rekening_1, '-'));
     setSlotText(doc, 'pemilik_rekening_1', textOrPlaceholder(inv.pemilik_rekening_1, 'Pemilik belum diisi'));
     if (card1 && inv.no_rekening_1) {
@@ -253,6 +315,7 @@
     var isiBank2 = inv.nama_bank_2 || inv.no_rekening_2 || inv.pemilik_rekening_2;
     if (isiBank2) {
       setSlotText(doc, 'nama_bank_2', textOrPlaceholder(inv.nama_bank_2, 'Bank belum diisi'));
+      setLogoBank(doc, 'logo_bank_2', inv.nama_bank_2);
       setSlotText(doc, 'no_rekening_2', textOrPlaceholder(inv.no_rekening_2, '-'));
       setSlotText(doc, 'pemilik_rekening_2', textOrPlaceholder(inv.pemilik_rekening_2, 'Pemilik belum diisi'));
       if (card2 && inv.no_rekening_2) {

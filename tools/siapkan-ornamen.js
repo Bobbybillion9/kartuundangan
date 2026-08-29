@@ -139,6 +139,34 @@ const ORNAMEN = [
     sumber: 'WAX SEALS/WAX STAMPS (3).png',
     lebar: 360, mutu: 0.9, alpha: true,
     catatan: 'segel hitam dengan mawar emas'
+  },
+  // --- bingkai foto (transparan, DIWARNAI ULANG) ---
+  {
+    keluaran: 'bingkai-klasik-emas.webp',
+    sumber: 'FRAME ORNAMENT/725361083777041375-removebg-preview.png',
+    lebar: 500, mutu: 0.9, alpha: true,
+    warnai: { gelap: '#7E611F', terang: '#E6CA8C' },
+    catatan: 'bingkai garis klasik; sumbernya biru navy, diwarnai jadi emas'
+  },
+
+  // --- ornamen bebas (sudah emas, tinggal dikecilkan) ---
+  {
+    keluaran: 'bebas-bulu-emas.webp',
+    sumber: 'FREE ORNAMENT/590534569878681499-removebg-preview.png',
+    lebar: 260, mutu: 0.9, alpha: true,
+    catatan: 'bulu tulis emas — untuk bagian Ucapan & Doa'
+  },
+  {
+    keluaran: 'bebas-burung-emas.webp',
+    sumber: 'FREE ORNAMENT/923449098695577728-removebg-preview.png',
+    lebar: 360, mutu: 0.9, alpha: true,
+    catatan: 'tiga burung emas terbang — untuk bagian Penutup'
+  },
+  {
+    keluaran: 'bebas-jam-rococo.webp',
+    sumber: 'FREE ORNAMENT/1030409589791219572-removebg-preview.png',
+    lebar: 320, mutu: 0.9, alpha: true,
+    catatan: 'jam rococo emas — untuk bagian Hitung Mundur'
   }
 ];
 
@@ -202,7 +230,7 @@ async function cdp() {
 
 // Dijalankan di dalam Chrome: memuat gambar, menggambarnya ke canvas pada
 // ukuran target, lalu mengembalikan hasil WebP sebagai base64.
-function skripUbah(url, lebarTarget, mutu, alpha) {
+function skripUbah(url, lebarTarget, mutu, alpha, warnai) {
   return `(async () => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -224,6 +252,34 @@ function skripUbah(url, lebarTarget, mutu, alpha) {
     // yang punya tepi tipis bisa menghasilkan pinggiran gelap di WebP.
     if (!${!!alpha}) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
     g.drawImage(img, 0, 0, w, h);
+    // Pewarnaan ulang. Sebagian aset bagus bentuknya tapi salah
+    // warnanya untuk tema yang dituju — bingkai klasik tipis itu biru
+    // navy, padahal temanya emas. Diwarnai DI SINI, bukan lewat rantai
+    // filter CSS saat runtime: hasilnya pasti, tidak membebani HP tamu,
+    // dan tidak bergantung pada dukungan filter di browser mana pun.
+    //
+    // Cara kerjanya: alpha DIPERTAHANKAN apa adanya — itu yang menyimpan
+    // bentuk dan tepi halus garisnya. Yang diganti cuma RGB, jadi
+    // gradasi dari gelap ke terang mengikuti KEPEKATAN tinta aslinya:
+    // garis tebal jadi emas tua, sapuan tipis jadi emas muda. Mengganti
+    // RGB dengan satu warna rata membuat hasilnya terlihat seperti
+    // stiker, bukan seperti tinta.
+    if (${JSON.stringify(!!warnai)}) {
+      const W = ${JSON.stringify(warnai || {})};
+      const hx = (v) => [parseInt(v.slice(1,3),16), parseInt(v.slice(3,5),16), parseInt(v.slice(5,7),16)];
+      const cGelap = hx(W.gelap), cTerang = hx(W.terang);
+      const dat = g.getImageData(0, 0, w, h);
+      const px = dat.data;
+      for (let i = 0; i < px.length; i += 4) {
+        if (px[i+3] === 0) continue;
+        const L = (0.299*px[i] + 0.587*px[i+1] + 0.114*px[i+2]) / 255;
+        const t = 1 - L;
+        px[i]   = Math.round(cTerang[0] + (cGelap[0]-cTerang[0]) * t);
+        px[i+1] = Math.round(cTerang[1] + (cGelap[1]-cTerang[1]) * t);
+        px[i+2] = Math.round(cTerang[2] + (cGelap[2]-cTerang[2]) * t);
+      }
+      g.putImageData(dat, 0, 0);
+    }
     const url2 = c.toDataURL('image/webp', ${mutu});
     if (url2.indexOf('data:image/webp') !== 0) throw new Error('Chrome ini tidak menulis WebP');
     return JSON.stringify({ w: w, h: h, b64: url2.split(',')[1] });
@@ -276,7 +332,7 @@ function skripUbah(url, lebarTarget, mutu, alpha) {
     }
     const url = 'http://127.0.0.1:' + port + '/' + o.sumber.split('/').map(encodeURIComponent).join('/');
     const res = await kirim('Runtime.evaluate', {
-      expression: skripUbah(url, o.lebar, o.mutu, o.alpha),
+      expression: skripUbah(url, o.lebar, o.mutu, o.alpha, o.warnai),
       awaitPromise: true, returnByValue: true
     });
     if (res.result && res.result.exceptionDetails) {

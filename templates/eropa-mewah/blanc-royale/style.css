@@ -1048,14 +1048,21 @@ section{position:relative;padding:var(--s6) var(--s4);}
   border-radius:0;
   border:1px solid var(--line);
 }
-/* Menembus tepi: -28px = var(--s4), padding kiri/kanan section. */
+/* Asimetrinya kini dari PERATAAN, bukan dari menembus tepi.
+   Versi sebelumnya menggeser foto keluar halaman (-28px) supaya terbaca
+   editorial. Itu bagus SELAMA fotonya polos — begitu diberi bingkai emas,
+   sisi kiri bingkainya ikut terpotong layar, dan bingkai yang terpotong
+   separuh terbaca RUSAK, bukan disengaja. Foto mempelai pria tetap rapat
+   ke kiri dan wanita rapat ke kanan, jadi pergeserannya tetap terasa
+   tanpa mengorbankan bingkainya. */
 .couple .couple-card:first-of-type .photo-placeholder{
-  margin-left:calc(var(--s4) * -1);
+  margin-left:0;
+  margin-right:auto;
 }
 .couple .couple-card:last-of-type{text-align:right;}
 .couple .couple-card:last-of-type .photo-placeholder{
   margin-left:auto;
-  margin-right:calc(var(--s4) * -1);
+  margin-right:0;
 }
 .couple-role{
   font-size:10px;letter-spacing:.26em;text-transform:uppercase;
@@ -1323,6 +1330,153 @@ section{position:relative;padding:var(--s6) var(--s4);}
   border-color:rgba(255,255,255,.42);
   outline-color:rgba(255,255,255,.26);
 }
+
+
+/* ------------------------------------------------------------
+   13. LOGO BANK DI KARTU HADIAH
+   Nama bank yang diketik user dicocokkan ke berkas di
+   assets/pembayaran/ oleh setLogoBank() di assets/render-undangan.js.
+   Bank yang tidak dikenali menyembunyikan <img>-nya, dan kartunya
+   kembali persis seperti sebelum fitur ini ada — jadi aturan di bawah
+   tidak boleh mengandalkan logonya selalu ada (tidak ada tinggi tetap,
+   tidak ada latar kotak yang akan tertinggal kosong).
+
+   Di panel gelap, logo bank berwarna gelap (BCA biru tua, Mandiri biru)
+   akan tenggelam. Ditangani dengan alas terang berbentuk pil, bukan
+   dengan filter invert — membalik warna logo bank merusak identitas
+   mereknya dan itu justru yang membuatnya tidak terbaca sebagai bank.
+   ------------------------------------------------------------ */
+.gift-logo{
+  display:block;
+  height:26px;
+  width:auto;
+  max-width:64%;
+  margin:0 auto var(--s2);
+  object-fit:contain;
+}
+#hadiah .gift-logo{
+  background:#FFFFFF;
+  padding:6px 13px;
+  border-radius:2px;
+  height:30px;
+  max-width:56%;
+  box-sizing:content-box;
+  box-shadow:0 2px 10px -4px rgba(0,0,0,.5);
+}
+
+/* ------------------------------------------------------------
+   14. BINGKAI EMAS PADA FOTO MEMPELAI
+   Bingkai garis klasik dari templates/_ornamen/. Sumbernya biru navy
+   dan sudah diwarnai jadi emas oleh tools/siapkan-ornamen.js — bukan
+   oleh filter CSS, supaya hasilnya pasti dan tidak membebani HP tamu.
+
+   Dipasang sebagai LAPISAN DI ATAS foto lewat pseudo-element wadahnya,
+   bukan sebagai border-image: bingkainya punya sulur yang menjorok
+   keluar dari garis kotak, dan border-image akan memotongnya.
+
+   Bingkainya sengaja DILEBIHKAN keluar kotak foto (inset negatif) —
+   ujung sulurnya memang harus melampaui tepi foto, kalau pas-pasan ia
+   terlihat seperti bingkai yang kekecilan.
+   ------------------------------------------------------------ */
+.couple-card .photo-placeholder{
+  /* Ruang untuk bingkai yang menjorok keluar; tanpa ini sulur atas-bawah
+     terpotong oleh section berikutnya. */
+  overflow:visible;
+}
+.couple-card .photo-placeholder > img,
+.couple-card .photo-placeholder > svg,
+.couple-card .photo-placeholder > span{
+  /* Foto & keadaan kosongnya tetap terpotong rapi di dalam kotak,
+     sementara bingkainya bebas menjorok keluar. */
+  clip-path:inset(0);
+}
+.couple-card .photo-placeholder::after{
+  content:'';
+  position:absolute;
+  inset:-13px -11px;
+  background-image:url('/templates/_ornamen/bingkai-klasik-emas.webp');
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  pointer-events:none;
+  z-index:3;
+  opacity:.95;
+}
+
+/* ------------------------------------------------------------
+   15. ORNAMEN BEBAS — dipilih karena MAKNANYA, bukan sekadar hiasan
+     jam rococo  -> Hitung Mundur  (jam  = waktu)
+     bulu tulis  -> Ucapan & Doa   (bulu = alat menulis)
+     tiga burung -> Penutup        (terbang pergi, salam perpisahan)
+   Ornamen yang ditempel asal-asalan terbaca sebagai clip-art; yang
+   ditempatkan pada bagian yang tepat justru memperkuat isinya.
+
+   SOAL SASARANNYA — ini sudah salah sekali dan gagalnya senyap:
+   percobaan pertama menempel pada '.section-icon' di ketiga bagian,
+   padahal HANYA #acara dan #hadiah yang punya elemen itu. Jam dan bulu
+   tidak pernah muncul, dan tidak ada error apa pun yang memberi tahu.
+   Sekarang semuanya menempel pada elemen yang pasti ada di section
+   masing-masing, dan dipakai ::after karena ::before sudah dipakai
+   angka bagian Romawi (#hadiah bahkan sudah memakai ::after untuk
+   segel lilin, karena itu ia tidak kebagian ornamen bebas).
+
+   Semuanya z-index:-1 dan beropasitas rendah: ini LATAR, dan tidak
+   boleh menutupi satu huruf pun. Versi pertama burungnya menimpa
+   kalimat penutup sampai sulit dibaca.
+   ------------------------------------------------------------ */
+
+/* Jam rococo — muncul dari balik angka hitung mundur. */
+#countdown .countdown-row{position:relative;}
+#countdown .countdown-row::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  bottom:calc(100% + 8px);
+  width:132px;height:132px;
+  transform:translateX(-50%);
+  background-image:url('/templates/_ornamen/bebas-jam-rococo.webp');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  opacity:.34;
+  pointer-events:none;
+  z-index:-1;
+}
+
+/* Bulu tulis — berdiri miring di belakang judul Ucapan & Doa. */
+#ucapan::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:var(--s5);
+  width:84px;height:150px;
+  transform:translateX(-50%) rotate(-14deg);
+  background-image:url('/templates/_ornamen/bebas-bulu-emas.webp');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  opacity:.3;
+  pointer-events:none;
+  z-index:-1;
+}
+
+/* Tiga burung — di ruang kosong antara panel gelap dan pemisah pertama
+   bagian Penutup. Sengaja DI ATAS pemisah, bukan di bawahnya: di bawah
+   sana ada kalimat terima kasih, dan burungnya menimpanya. */
+#penutup::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:16px;
+  width:118px;height:118px;
+  transform:translateX(-50%);
+  background-image:url('/templates/_ornamen/bebas-burung-emas.webp');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  opacity:.55;
+  pointer-events:none;
+}
+#penutup{padding-top:var(--s7);}
 
 /* ============================================================
    PENYESUAIAN TERAKHIR — harus berada di AKHIR berkas

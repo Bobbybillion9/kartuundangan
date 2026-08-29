@@ -22,9 +22,20 @@ tetap cocok dengan `KANAL_AKTIF` (`api/_lib/midtrans.js`).
 | Kartu debit & kredit| Visa        | `visa.svg`        | ada           |
 |                     | Mastercard  | `mastercard.svg`  | ada           |
 
-BCA dan BRI menampilkan namanya sebagai teks sampai berkasnya ditaruh di
-sini. Footer tidak terlihat rusak karenanya — tapi dua chip berteks di
-antara sepuluh chip berlogo memang terlihat belum selesai.
+Kedua belas berkas sudah lengkap sejak 2026-08-28.
+
+## Dipakai di dua tempat, bukan satu
+
+Selain kisi logo di footer halaman depan, folder ini juga jadi sumber
+**logo bank pada kartu Tanda Kasih** di undangan. Nama bank yang diketik
+user dicocokkan ke berkas di sini oleh `setLogoBank()` di
+`assets/render-undangan.js`.
+
+Pencocokannya diuji `node tools/cek-logo-bank.js` — jalankan setiap kali
+daftar `LOGO_BANK` disentuh atau ada berkas baru masuk ke folder ini.
+Bank yang tidak dikenali menyembunyikan logonya dan menampilkan nama
+banknya sebagai teks, jadi menambah berkas di sini TIDAK cukup: namanya
+harus ikut didaftarkan di `LOGO_BANK`.
 
 ## Cara kerjanya
 
