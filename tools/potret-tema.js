@@ -41,31 +41,43 @@ const { execFileSync } = require('child_process');
 const REPO = path.resolve(__dirname, '..');
 const SERVER = 'http://localhost:5500';
 const CDP = 'http://127.0.0.1:9222';
-const KATEGORI = 'elegan-klasik';
 
 // Dua ukuran, dua tujuan. Lebar potret = lebar HP sungguhan; hasil
 // akhirnya diperbesar 2x oleh deviceScaleFactor lalu diperkecil ke ukuran
 // simpan di bawah.
+// `tema` di sini adalah objek dari temaTersedia(): { nama, kategori, id }.
+// Kategorinya ikut dibawa, bukan konstanta — dulu berkas ini mengunci
+// 'elegan-klasik', sehingga tema di kategori baru akan memotret path yang
+// tidak ada. Gagalnya senyap: yang muncul cuma folder assets/ kosong.
 const KELUARAN = [
   {
     nama: 'thumbnail',
     viewport: { w: 390, h: 585 },          // rasio 2:3, kartu tema
     simpan: { w: 780, h: 1170, mutu: 84 },
-    tujuan: t => path.join(REPO, 'templates', KATEGORI, t, 'assets', 'thumbnail.jpg')
+    tujuan: t => path.join(REPO, 'templates', t.kategori, t.nama, 'assets', 'thumbnail.jpg')
   },
   {
     nama: 'hero HP',
     viewport: { w: 390, h: 844 },          // rasio HP sungguhan, mockup hero
     simpan: { w: 640, h: 1385, mutu: 82 },
-    tujuan: t => path.join(REPO, 'assets', 'hero', t + '.jpg')
+    tujuan: t => path.join(REPO, 'assets', 'hero', t.nama + '.jpg')
   }
 ];
 
+// Ditelusuri dari struktur folder supaya kategori baru langsung ikut
+// terpotret tanpa berkas ini perlu diubah. Folder berawalan '_'
+// (mis. templates/_demo) bukan kategori.
 function temaTersedia() {
-  const dir = path.join(REPO, 'templates', KATEGORI);
-  return fs.readdirSync(dir, { withFileTypes: true })
-    .filter(d => d.isDirectory())
-    .map(d => d.name);
+  const akar = path.join(REPO, 'templates');
+  const hasil = [];
+  for (const kat of fs.readdirSync(akar, { withFileTypes: true })) {
+    if (!kat.isDirectory() || kat.name.startsWith('_')) continue;
+    for (const t of fs.readdirSync(path.join(akar, kat.name), { withFileTypes: true })) {
+      if (!t.isDirectory()) continue;
+      hasil.push({ nama: t.name, kategori: kat.name, id: kat.name + '/' + t.name });
+    }
+  }
+  return hasil;
 }
 
 async function cdp(url) {
@@ -95,7 +107,7 @@ async function potret(tema, keluaran) {
     deviceScaleFactor: 2, mobile: true
   });
   await kirim('Page.navigate', {
-    url: SERVER + '/templates/' + KATEGORI + '/' + tema + '/index.html'
+    url: SERVER + '/templates/' + tema.id + '/index.html'
   });
 
   // Menunggu gambar benar-benar selesai, bukan menunggu durasi tetap:
@@ -119,14 +131,14 @@ async function potret(tema, keluaran) {
     });
     siap = !!(res.result && res.result.result.value);
   }
-  if (!siap) console.warn('  ! ' + tema + ': sampul belum siap setelah 10 detik, tetap dipotret');
+  if (!siap) console.warn('  ! ' + tema.id + ': sampul belum siap setelah 10 detik, tetap dipotret');
 
   // Beri jeda pendek supaya animasi masuk sudah selesai — elemen yang
   // tertangkap di tengah transisi tampil setengah transparan.
   await new Promise(r => setTimeout(r, 900));
 
   const shot = await kirim('Page.captureScreenshot', { format: 'png' });
-  const tmp = path.join(require('os').tmpdir(), 'ku-potret-' + tema + '-' + Date.now() + '.png');
+  const tmp = path.join(require('os').tmpdir(), 'ku-potret-' + tema.nama + '-' + Date.now() + '.png');
   fs.writeFileSync(tmp, Buffer.from(shot.result.data, 'base64'));
   await tutup();
   return tmp;
@@ -160,9 +172,11 @@ function keJpeg(sumber, tujuan, lebar, tinggi, mutu) {
 (async () => {
   const diminta = process.argv.slice(2);
   const semua = temaTersedia();
-  const tema = diminta.length ? diminta.filter(t => semua.includes(t)) : semua;
+  const tema = diminta.length
+    ? semua.filter(t => diminta.includes(t.nama) || diminta.includes(t.id))
+    : semua;
   if (!tema.length) {
-    console.error('Tidak ada tema yang cocok. Tersedia: ' + semua.join(', '));
+    console.error('Tidak ada tema yang cocok. Tersedia: ' + semua.map(t => t.nama).join(', '));
     process.exit(1);
   }
 
@@ -176,7 +190,7 @@ function keJpeg(sumber, tujuan, lebar, tinggi, mutu) {
   }
 
   for (const t of tema) {
-    console.log(t);
+    console.log(t.id);
     for (const k of KELUARAN) {
       const png = await potret(t, k);
       const tujuan = k.tujuan(t);
