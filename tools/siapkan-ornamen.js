@@ -210,7 +210,10 @@ const ORNAMEN = [
   {
     keluaran: 'bebas-angsa-hati.webp',
     sumber: 'FREE ORNAMENT/26880929021432774-removebg-preview.png',
-    lebar: 380, mutu: 0.9, alpha: true,
+    // Dipangkas: gambar sumbernya punya margin transparan lebar, dan
+    // dengan background-size:contain margin itu ikut dihitung sehingga
+    // angsanya menyusut jauh di dalam kotaknya.
+    lebar: 380, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'dua angsa berhadapan membentuk hati — penutup bagian galeri'
   },
 

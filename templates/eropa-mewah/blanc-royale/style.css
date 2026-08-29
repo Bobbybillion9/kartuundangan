@@ -456,15 +456,33 @@ section{position:relative;padding:var(--s6) var(--s4);}
   background:var(--gold-tint);
   clip-path:none;
 }
+/* Bingkai garis di DALAM foto dibuang. Yang membingkai sekarang BENTUK
+   fotonya sendiri: puncaknya melengkung seperti jendela gereja, kakinya
+   bergelombang seperti tepi kertas berenda.
+
+   Lengkung atas memakai border-radius elips (bukan lingkaran penuh),
+   jadi lengkungnya landai dan tidak memotong wajah di bagian atas foto.
+
+   Gelombang bawah digambar dengan gradasi berulang berwarna kertas, BUKAN
+   dengan mask: kalau mask tidak didukung browser tamu, fotonya bisa
+   hilang sama sekali. Dengan cara ini yang terburuk cuma gelombangnya
+   tidak muncul dan tepinya kembali lurus. */
+.hero-photo{
+  border-radius:50% 50% 0 0 / 23% 23% 0 0;
+}
 .hero-photo::after{
   content:'';
   position:absolute;
-  inset:16px;
-  border:1px solid rgba(255,255,255,.52);
-  outline:1px solid rgba(255,255,255,.3);
-  outline-offset:5px;
+  left:-2px;right:-2px;
+  bottom:-1px;
+  height:22px;
+  background:
+    radial-gradient(circle at 11px 100%,
+      transparent 0 11px, var(--paper) 11.5px) repeat-x;
+  background-size:22px 22px;
+  background-position:bottom left;
   pointer-events:none;
-  z-index:2;
+  z-index:3;
 }
 .hero-photo-empty{
   position:absolute;inset:0;
@@ -473,9 +491,14 @@ section{position:relative;padding:var(--s6) var(--s4);}
 }
 .hero-photo-empty svg{width:44px;height:44px;opacity:.4;stroke-width:1;}
 .hero-photo-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;}
+/* Gradasi gelap bawaan Ivory Gold DIMATIKAN di tema ini. Ia membuat
+   gigitan gelombang di tepi bawah foto terbaca sebagai noda abu, bukan
+   sebagai lanjutan fotonya. Di sini yang memisahkan foto dari halaman
+   sudah bentuk tepinya sendiri, jadi gradasi itu tidak dibutuhkan.
+   Elemennya dibiarkan ada supaya markup tetap sebangun dengan tema lain. */
 .hero-photo-fade{
   position:absolute;left:0;right:0;bottom:0;height:30%;
-  background:linear-gradient(to top,rgba(42,42,42,.30),transparent);
+  background:none;
   pointer-events:none;
 }
 
@@ -493,20 +516,36 @@ section{position:relative;padding:var(--s6) var(--s4);}
 .hero-monogram{
   position:relative;
   z-index:3;
-  width:196px;height:196px;
-  margin:-104px auto 0;
+  width:246px;height:246px;
+  margin:-128px auto 0;
   display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 5px 10px rgba(43,38,32,.16));
+}
+/* Ornamennya dipindah ke ::after — DI ATAS cakram kertas.
+   Sebelumnya ia jadi background elemen, dan background selalu dilukis
+   PALING BAWAH: cakram kertasnya menimpa cincin emasnya sendiri. Itu
+   yang terlihat sebagai "ornamen tertimpa background bulat". */
+.hero-monogram::after{
+  content:'';
+  position:absolute;
+  inset:0;
   background-image:url('/templates/_ornamen/monogram-lingkar-emas.webp');
   background-size:contain;
   background-position:center;
   background-repeat:no-repeat;
-  filter:drop-shadow(0 6px 14px rgba(43,38,32,.26));
+  pointer-events:none;
+  z-index:1;
 }
+/* Cakram kertas DIPASKAN ke rongga cincinnya, bukan dikira-kira.
+   Rongga itu diukur dari berkas ornamennya sendiri: lebar 34% dan
+   berpusat pada 49,9% / 49,2%. Angka lama 39% jelas kebesaran — itulah
+   sebabnya cincin emasnya tertutup. Dipakai 33% supaya tepi emasnya
+   tetap utuh terlihat. */
 .hero-monogram::before{
   content:'';
   position:absolute;
-  left:50%;top:49.5%;
-  width:39%;aspect-ratio:1;
+  left:49.9%;top:49.2%;
+  width:33%;aspect-ratio:1;
   transform:translate(-50%,-50%);
   border-radius:50%;
   background:var(--paper);
@@ -535,9 +574,12 @@ section{position:relative;padding:var(--s6) var(--s4);}
    menambah satu benda lagi di ruang paling sempit. */
 .hero-monogram-letters{
   position:absolute;inset:0;
+  /* z-index WAJIB: ::after (ornamen) dilukis seolah anak terakhir, jadi
+     tanpa ini inisialnya tertutup ornamennya sendiri. */
+  z-index:2;
   font-family:'Pinyon Script',cursive;
   font-weight:400;
-  font-size:31px;
+  font-size:34px;
   line-height:1;
   color:var(--gold-dark);
   opacity:0;
@@ -553,8 +595,8 @@ section{position:relative;padding:var(--s6) var(--s4);}
 /* Lingkaran ornamennya SATU dan berpusat di tengah, bukan dua yang
    bersisian — jadi inisialnya duduk berdekatan mengapit garis tengah,
    bukan di 35,8%/64,2% seperti saat bingkainya sepasang cincin. */
-.hero-monogram-letters .mono-a{left:41%;}
-.hero-monogram-letters .mono-b{left:59%;}
+.hero-monogram-letters .mono-a{left:41.5%;top:49.2%;}
+.hero-monogram-letters .mono-b{left:58.3%;top:49.2%;}
 /* Garis tegak tipis pemisah kedua inisial. */
 .hero-monogram-letters::after{
   content:'';
@@ -1509,12 +1551,26 @@ section{position:relative;padding:var(--s6) var(--s4);}
    untuk menolongnya cuma kecerahan, BUKAN invert: membalik warna logo
    bank merusak identitas mereknya, dan merek yang terbalik justru
    berhenti terbaca sebagai bank. */
+/* Logo bank diberi GARIS TEPI PUTIH, bukan alas kotak putih.
+   Masalahnya nyata: logo bank umumnya berwarna gelap (BCA biru, Mandiri
+   biru tua) dan panel ini juga gelap, jadi bentuknya lenyap. Menaikkan
+   kecerahan saja tidak cukup — yang hilang bukan warnanya, melainkan
+   TEPINYA.
+
+   Caranya: drop-shadow putih tanpa geser, ditumpuk beberapa kali.
+   Tiap lapis menebalkan halo di sekeliling bentuk aslinya, dan karena
+   drop-shadow bekerja pada kanal alpha, hasilnya mengikuti bentuk logo —
+   bukan kotak. Warna mereknya sendiri tidak disentuh sama sekali. */
 #hadiah .gift-logo{
   background:none;
   padding:0;
   height:34px;
   max-width:62%;
-  filter:brightness(1.35) saturate(1.15) drop-shadow(0 2px 6px rgba(0,0,0,.55));
+  filter:
+    drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)
+    drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)
+    drop-shadow(0 0 2px rgba(255,255,255,.95))
+    drop-shadow(0 2px 5px rgba(0,0,0,.5));
 }
 
 /* ------------------------------------------------------------
@@ -1629,20 +1685,29 @@ section{position:relative;padding:var(--s6) var(--s4);}
 /* Tiga burung — di ruang kosong antara panel gelap dan pemisah pertama
    bagian Penutup. Sengaja DI ATAS pemisah, bukan di bawahnya: di bawah
    sana ada kalimat terima kasih, dan burungnya menimpanya. */
-#penutup::after{
+/* Burung dipindah ke BAWAH tanda tangan mempelai, bukan lagi di atas
+   bagian penutup. Di situ maknanya jadi benar: burung yang terbang pergi
+   sesudah nama keduanya terbaca sebagai salam perpisahan, bukan sebagai
+   hiasan pembuka. Ditempelkan pada .closing-names supaya letaknya
+   mengikuti nama itu, bukan mengikuti tinggi section yang bisa berubah. */
+.closing-names{position:relative;display:block;}
+.closing-names::after{
   content:'';
   position:absolute;
   left:50%;
-  top:16px;
-  width:118px;height:118px;
+  top:calc(100% + 18px);
+  width:132px;height:132px;
   transform:translateX(-50%);
   background-image:url('/templates/_ornamen/bebas-burung-emas.webp');
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center;
-  opacity:.55;
+  opacity:.6;
   pointer-events:none;
 }
+/* Ruang untuk burungnya sebelum baris kredit. */
+.closing-text ~ .closing-signature{margin-top:0;}
+#penutup .credit{margin-top:calc(var(--s7) + 96px);}
 #penutup{padding-top:var(--s7);}
 
 /* ------------------------------------------------------------
@@ -1679,7 +1744,11 @@ section{position:relative;padding:var(--s6) var(--s4);}
   position:absolute;
   left:50%;
   bottom:var(--s4);
-  width:150px;height:212px;
+  /* Ukuran kotak MENGIKUTI perbandingan gambarnya sesudah dipangkas
+     (305x154 -> 1,98). Angka sebelumnya menebak bentuk tegak, padahal
+     margin transparan gambar sumbernya yang tinggi, bukan angsanya —
+     akibatnya angsanya menyusut jauh di dalam kotaknya. */
+  width:min(280px,74%);height:141px;
   transform:translateX(-50%);
   background-image:url('/templates/_ornamen/bebas-angsa-hati.webp');
   background-size:contain;
@@ -1688,8 +1757,10 @@ section{position:relative;padding:var(--s6) var(--s4);}
   opacity:.85;
   pointer-events:none;
 }
-/* Ruang untuk karangan bunga di kaki bagian galeri. */
-#galeri{padding-bottom:calc(var(--s7) + 120px);}
+/* Ruang untuk angsa di kaki bagian galeri. Angkanya mengikuti tinggi
+   ornamennya (317px) + jarak nafas, supaya ia mengisi jeda menuju bagian
+   berikutnya tanpa menempel ke pembatasnya. */
+#galeri{padding-bottom:calc(var(--s6) + 176px);}
 
 /* ============================================================
    PENYESUAIAN TERAKHIR — harus berada di AKHIR berkas
