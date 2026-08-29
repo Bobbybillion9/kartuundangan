@@ -432,15 +432,39 @@ section{position:relative;padding:var(--s6) var(--s4);}
 
 /* ---------- foto utama (hero, lebar penuh + ujung bersudut kipas + monogram) ---------- */
 #fotoUtama{padding:0 0 var(--s6);}
+/* Diperpanjang ke bawah: foto utama adalah kesan pertama sesudah
+   sampul, dan pada tinggi lama ia berhenti terlalu cepat sehingga
+   halaman langsung berpindah ke teks.
+
+   Tepi kipas art-deco (clip-path) milik Ivory Gold DIBUANG — itu tanda
+   tangan tema lain, dan di sini ia bertabrakan dengan bingkai baru.
+   Gantinya "mat" garis rangkap yang terinset, cara membingkai yang biasa
+   dipakai cetak foto berkualitas. Sengaja BERBEDA dari bingkai ukiran
+   milik foto mempelai: dua bahasa bingkai yang berbeda dalam satu
+   halaman saling menegaskan, sedangkan bingkai yang sama dua kali
+   membuat foto utamanya terbaca sebagai pengulangan.
+
+   Latar gradasi krem yang dipatok mati juga diganti token, supaya ikut
+   berubah saat user mengganti palet. */
 .hero-photo{
   position:relative;
   width:100%;
-  height:76vh;
-  min-height:420px;
-  max-height:640px;
+  height:88vh;
+  min-height:500px;
+  max-height:780px;
   overflow:hidden;
-  background:linear-gradient(160deg,#EFE7D4,#E2D6B8);
-  clip-path:polygon(0% 0%,100% 0%,100% 88%,50% 100%,0% 88%);
+  background:var(--gold-tint);
+  clip-path:none;
+}
+.hero-photo::after{
+  content:'';
+  position:absolute;
+  inset:16px;
+  border:1px solid rgba(255,255,255,.52);
+  outline:1px solid rgba(255,255,255,.3);
+  outline-offset:5px;
+  pointer-events:none;
+  z-index:2;
 }
 .hero-photo-empty{
   position:absolute;inset:0;
@@ -458,18 +482,39 @@ section{position:relative;padding:var(--s6) var(--s4);}
 /* Monogram: dua cincin bertaut jadi bingkainya (bukan bingkai
    oktagon geometris) — inisial duduk tepat di area tumpang tindih
    kedua cincin, selaras dengan motif "cincin kembar bertautan". */
+/* Dua cincin bertaut milik Ivory Gold diganti LINGKARAN ORNAMEN
+   BERMAHKOTA. Mahkota kecil di puncaknya yang membuat monogram ini
+   terbaca "Royale", dan sekaligus membedakannya dari tema mana pun yang
+   memakai lingkaran polos.
+
+   Cakram kertas di baliknya WAJIB ada: bagian dalam ornamennya tembus
+   pandang, dan huruf tipis di atas foto sembarang warna tidak pernah
+   terbaca. */
 .hero-monogram{
   position:relative;
   z-index:3;
-  width:116px;height:100px;
-  margin:-50px auto 0;
+  width:196px;height:196px;
+  margin:-104px auto 0;
   display:flex;align-items:center;justify-content:center;
+  background-image:url('/templates/_ornamen/monogram-lingkar-emas.webp');
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 6px 14px rgba(43,38,32,.26));
 }
-.hero-monogram-ring{
-  position:absolute;inset:0;width:100%;height:100%;
-  color:var(--gold);
-  filter:drop-shadow(0 6px 14px rgba(42,42,42,.22));
+.hero-monogram::before{
+  content:'';
+  position:absolute;
+  left:50%;top:49.5%;
+  width:39%;aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:var(--paper);
+  z-index:0;
 }
+/* SVG dua cincin lamanya disembunyikan, bukan dihapus dari markup,
+   supaya struktur tema ini tetap sebangun dengan tema lain. */
+.hero-monogram-ring{display:none;}
 .hero-monogram-ring circle{fill:var(--paper);stroke:currentColor;stroke-width:1.1;}
 .hero-monogram-ring .ring-draw{stroke-dasharray:214;stroke-dashoffset:214;}
 #fotoUtama.in-view .hero-monogram-ring .ring-l{transition:stroke-dashoffset 1s ease .15s;stroke-dashoffset:0;}
@@ -492,7 +537,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
   position:absolute;inset:0;
   font-family:'Pinyon Script',cursive;
   font-weight:400;
-  font-size:38px;
+  font-size:31px;
   line-height:1;
   color:var(--gold-dark);
   opacity:0;
@@ -505,8 +550,21 @@ section{position:relative;padding:var(--s6) var(--s4);}
   transform:translate(-50%,-52%);
   white-space:nowrap;
 }
-.hero-monogram-letters .mono-a{left:35.8%;}
-.hero-monogram-letters .mono-b{left:64.2%;}
+/* Lingkaran ornamennya SATU dan berpusat di tengah, bukan dua yang
+   bersisian — jadi inisialnya duduk berdekatan mengapit garis tengah,
+   bukan di 35,8%/64,2% seperti saat bingkainya sepasang cincin. */
+.hero-monogram-letters .mono-a{left:41%;}
+.hero-monogram-letters .mono-b{left:59%;}
+/* Garis tegak tipis pemisah kedua inisial. */
+.hero-monogram-letters::after{
+  content:'';
+  position:absolute;
+  left:50%;top:50%;
+  width:1px;height:30px;
+  transform:translate(-50%,-50%);
+  background:var(--gold);
+  opacity:.5;
+}
 /* Ampersand tidak dipakai lagi di tema ini — tetap dimatikan lewat CSS
    supaya markup lama (atau tema turunan yang menyalinnya) tidak
    tiba-tiba menampilkan glyph nyasar di tengah cincin. */
@@ -983,22 +1041,42 @@ section{position:relative;padding:var(--s6) var(--s4);}
    SVG-nya disembunyikan LEWAT ISINYA, bukan elemennya: .divider-ornament
    itu sendiri adalah <svg>, dan menyembunyikannya ikut menghapus wajik.
    ------------------------------------------------------------ */
+/* Garis rangkap + wajik kecil digantikan ORNAMEN GARIS sungguhan, dan
+   sengaja BERGANTI-GANTI antar bagian: pembatas yang sama persis
+   sembilan kali membuat halaman terasa berulang, sedangkan tiga motif
+   yang bergiliran membuatnya terbaca seperti terbitan. */
 .section-divider{
-  display:flex;align-items:center;justify-content:center;gap:14px;
+  display:flex;align-items:center;justify-content:center;
   margin:0 0 var(--s5);
 }
-.section-divider::before,.section-divider::after{
-  content:'';
-  width:64px;height:3px;
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-}
+.section-divider::before,.section-divider::after{content:none;}
 .divider-ornament{
-  width:7px;height:7px;flex:none;
-  background:var(--gold);
-  transform:rotate(45deg);
-  border-radius:1px;
+  /* Tinggi = 250 / perbandingan gambar (503x99 -> 5,08), supaya
+     background-size:contain memakai LEBAR kotak, bukan tingginya.
+     Ini yang membuat pembatasnya benar-benar selebar 250px. */
+  width:min(250px,66%);
+  height:50px;
+  flex:none;
+  background:none;
+  background-image:url('/templates/_ornamen/garis-a.webp');
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  transform:none;
+  border-radius:0;
+  opacity:.92;
 }
+
+/* Giliran motifnya. Ditulis per-section, bukan dengan nth-child, supaya
+   tetap benar walaupun urutan section suatu saat ditukar. */
+#mempelai .divider-ornament,
+#galeri   .divider-ornament,
+#penutup  .divider-ornament{background-image:url('/templates/_ornamen/garis-b.webp');height:60px;}
+#acara    .divider-ornament,
+#rsvp     .divider-ornament,
+#hadiah   .divider-ornament{background-image:url('/templates/_ornamen/garis-c.webp');height:19px;}
+/* Di panel gelap, ornamen garis emas perlu sedikit dicerahkan. */
+#hadiah .divider-ornament{filter:brightness(1.3);opacity:.95;}
 .divider-ornament path,.divider-ornament circle,.divider-ornament rect{display:none;}
 
 /* ------------------------------------------------------------
@@ -1171,22 +1249,33 @@ section{position:relative;padding:var(--s6) var(--s4);}
   padding:var(--s4) var(--s1);
   text-align:left;
 }
+/* Ikon garis diganti ornamen sungguhan: sepasang cincin untuk Akad
+   Nikah, sepasang gelas berhias untuk Resepsi. Lingkaran garisnya ikut
+   dibuang — ornamennya sudah berbentuk dan berwarna, dan lingkaran di
+   sekelilingnya cuma menambah satu bentuk lagi di kolom yang sempit.
+   SVG lamanya disembunyikan, bukan dihapus dari markup. */
 .event-icon{
   grid-area:ikon;
   align-self:center;
-  width:46px;height:46px;
+  width:66px;height:66px;
   margin:0;
   background:none;
-  border:1px solid var(--gold);
-  border-radius:50%;
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  border:0;
+  border-radius:0;
   transform:none;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--gold-dark);
+  display:block;
 }
-/* Ikon di tema asal diputar -45deg untuk menegakkan diri di dalam wajik
-   yang diputar 45deg. Wajiknya sudah tidak ada, jadi putarannya harus
-   ikut dibatalkan — kalau tidak, ikonnya miring sendirian. */
-.event-icon svg{transform:none;width:19px;height:19px;}
+.event-icon svg{display:none;}
+.event-list .event-card:nth-of-type(1) .event-icon{
+  background-image:url('/templates/_ornamen/ikon-cincin-emas.webp');
+  background-size:118%;
+}
+.event-list .event-card:nth-of-type(2) .event-icon{
+  background-image:url('/templates/_ornamen/ikon-gelas-emas.webp');
+}
 .event-name{
   grid-area:nama;
   font-size:clamp(19px,5.4vw,23px);
@@ -1590,9 +1679,9 @@ section{position:relative;padding:var(--s6) var(--s4);}
   position:absolute;
   left:50%;
   bottom:var(--s4);
-  width:172px;height:172px;
+  width:150px;height:212px;
   transform:translateX(-50%);
-  background-image:url('/templates/_ornamen/karangan-bunga-emas.webp');
+  background-image:url('/templates/_ornamen/bebas-angsa-hati.webp');
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center;

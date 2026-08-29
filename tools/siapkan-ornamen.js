@@ -185,7 +185,53 @@ const ORNAMEN = [
     keluaran: 'karangan-bunga-emas.webp',
     sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/Ақбота-removebg-preview.png',
     lebar: 420, mutu: 0.9, alpha: true,
-    catatan: 'karangan bunga krem-emas melingkar berpita — hiasan galeri'
+    catatan: 'karangan bunga krem-emas melingkar berpita'
+  },
+
+  // --- lingkaran monogram & ikon acara ---
+  {
+    keluaran: 'monogram-lingkar-emas.webp',
+    sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/WEDDIN_1-removebg-preview.png',
+    lebar: 420, mutu: 0.9, alpha: true,
+    catatan: 'lingkaran emas bermahkota — latar monogram inisial'
+  },
+  {
+    keluaran: 'ikon-cincin-emas.webp',
+    sumber: 'FREE ORNAMENT/Elegant_Gold_Wedding_Ring_Set_Illustration-removebg-preview.png',
+    lebar: 240, mutu: 0.9, alpha: true,
+    catatan: 'sepasang cincin emas polos — ikon Akad Nikah'
+  },
+  {
+    keluaran: 'ikon-gelas-emas.webp',
+    sumber: 'FREE ORNAMENT/Watercolor_Floral_Champagne_Glasses_Clipart__Wedding_PNGs__300DPI_-removebg-preview.png',
+    lebar: 240, mutu: 0.9, alpha: true,
+    catatan: 'sepasang gelas berhias bunga krem — ikon Resepsi'
+  },
+  {
+    keluaran: 'bebas-angsa-hati.webp',
+    sumber: 'FREE ORNAMENT/26880929021432774-removebg-preview.png',
+    lebar: 380, mutu: 0.9, alpha: true,
+    catatan: 'dua angsa berhadapan membentuk hati — penutup bagian galeri'
+  },
+
+  // --- garis pembatas (JPG berlatar putih, latarnya dibuang) ---
+  {
+    keluaran: 'garis-a.webp',
+    sumber: 'LINE ORNAMENT/37647346881472345.jpg',
+    lebar: 560, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    catatan: 'garis tipis dengan sulur kecil di tengah — pembatas paling tenang'
+  },
+  {
+    keluaran: 'garis-b.webp',
+    sumber: 'LINE ORNAMENT/884816658062299109.jpg',
+    lebar: 560, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    catatan: 'sulur baroque penuh — pembatas paling ramai'
+  },
+  {
+    keluaran: 'garis-c.webp',
+    sumber: 'LINE ORNAMENT/Gold Line Divider Ornament, Divider, Line Dividers, Line PNG Transparent Clipart Image and PSD File for Free Download.jpg',
+    lebar: 560, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    catatan: 'garis halus bermotif tengah kecil — pembatas sedang'
   }
 ];
 
@@ -249,7 +295,7 @@ async function cdp() {
 
 // Dijalankan di dalam Chrome: memuat gambar, menggambarnya ke canvas pada
 // ukuran target, lalu mengembalikan hasil WebP sebagai base64.
-function skripUbah(url, lebarTarget, mutu, alpha, warnai) {
+function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas) {
   return `(async () => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -261,16 +307,41 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai) {
     // Tidak pernah memperbesar: memperbesar cuma menambah berat tanpa
     // menambah detail, dan pada ornamen justru memperlihatkan tepi kasar.
     const skala = Math.min(1, ${lebarTarget} / img.naturalWidth);
-    const w = Math.round(img.naturalWidth * skala);
-    const h = Math.round(img.naturalHeight * skala);
+    let w = Math.round(img.naturalWidth * skala);
+    let h = Math.round(img.naturalHeight * skala);
     const c = document.createElement('canvas');
     c.width = w; c.height = h;
     const g = c.getContext('2d');
     g.imageSmoothingQuality = 'high';
     // Aset tak-transparan diberi alas putih dulu: tanpa itu, JPEG sumber
     // yang punya tepi tipis bisa menghasilkan pinggiran gelap di WebP.
-    if (!${!!alpha}) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
+    if (!${!!alpha} && !${!!hapusPutih}) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
     g.drawImage(img, 0, 0, w, h);
+    // Membuang LATAR PUTIH. Seluruh berkas LINE ORNAMENT berupa JPG
+    // dengan latar putih pekat — dipakai apa adanya, tiap pembatas akan
+    // jadi balok putih di atas kertas krem.
+    //
+    // Bukan sekadar "putih jadi transparan": tinta pada JPG sudah
+    // TERCAMPUR dengan latar putihnya, jadi kalau hanya alpha yang
+    // diubah, garisnya ikut memudar dan tepinya berkabut. Di sini
+    // campurannya diurai balik — alpha diambil dari seberapa jauh
+    // piksel itu dari putih, lalu warna aslinya dipulihkan dengan
+    // membagi balik proporsi campurannya.
+    if (${JSON.stringify(!!hapusPutih)}) {
+      const dp = g.getImageData(0, 0, w, h);
+      const q = dp.data;
+      for (let i = 0; i < q.length; i += 4) {
+        const kanalTerendah = Math.min(q[i], q[i+1], q[i+2]);
+        const a = 1 - (kanalTerendah / 255);
+        if (a < 0.03) { q[i+3] = 0; continue; }
+        for (let k = 0; k < 3; k++) {
+          const asli = (q[i+k] - 255 * (1 - a)) / a;
+          q[i+k] = Math.max(0, Math.min(255, Math.round(asli)));
+        }
+        q[i+3] = Math.round(Math.min(1, a * 1.15) * 255);
+      }
+      g.putImageData(dp, 0, 0);
+    }
     // Pewarnaan ulang. Sebagian aset bagus bentuknya tapi salah
     // warnanya untuk tema yang dituju — bingkai klasik tipis itu biru
     // navy, padahal temanya emas. Diwarnai DI SINI, bukan lewat rantai
@@ -298,6 +369,37 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai) {
         px[i+2] = Math.round(cTerang[2] + (cGelap[2]-cTerang[2]) * t);
       }
       g.putImageData(dat, 0, 0);
+    }
+    // Membuang MARGIN TRANSPARAN di keempat sisi.
+    //
+    // Kenapa perlu: ornamen garis pembatas datang sebagai gambar persegi
+    // yang sebagian besar isinya ruang kosong — garisnya cuma sejalur
+    // tipis di tengah. Dipakai apa adanya dengan background-size:contain,
+    // yang menentukan skalanya adalah TINGGI kotak, jadi pembatas selebar
+    // 250px menyusut jadi sekitar 60px dan nyaris tidak terlihat.
+    // Sesudah dipangkas, perbandingan gambarnya menjadi benar-benar
+    // memanjang dan contain memakai lebarnya.
+    if (${!!pangkas}) {
+      const dq = g.getImageData(0, 0, w, h);
+      const qq = dq.data;
+      let x0 = w, y0 = h, x1 = -1, y1 = -1;
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          if (qq[((y * w) + x) * 4 + 3] > 8) {
+            if (x < x0) x0 = x;
+            if (x > x1) x1 = x;
+            if (y < y0) y0 = y;
+            if (y > y1) y1 = y;
+          }
+        }
+      }
+      if (x1 >= x0 && y1 >= y0) {
+        const lw = x1 - x0 + 1, lh = y1 - y0 + 1;
+        const potong = g.getImageData(x0, y0, lw, lh);
+        c.width = lw; c.height = lh;
+        g.putImageData(potong, 0, 0);
+        w = lw; h = lh;
+      }
     }
     const url2 = c.toDataURL('image/webp', ${mutu});
     if (url2.indexOf('data:image/webp') !== 0) throw new Error('Chrome ini tidak menulis WebP');
@@ -351,7 +453,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai) {
     }
     const url = 'http://127.0.0.1:' + port + '/' + o.sumber.split('/').map(encodeURIComponent).join('/');
     const res = await kirim('Runtime.evaluate', {
-      expression: skripUbah(url, o.lebar, o.mutu, o.alpha, o.warnai),
+      expression: skripUbah(url, o.lebar, o.mutu, o.alpha, o.warnai, o.hapusPutih, o.pangkas),
       awaitPromise: true, returnByValue: true
     });
     if (res.result && res.result.exceptionDetails) {
