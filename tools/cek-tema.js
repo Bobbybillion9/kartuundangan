@@ -548,6 +548,39 @@ function skripPemeriksa(kontrak) {
           'foto sampul yang diunggah user tidak akan pernah tampil, dan potret-tema.js akan menunggu selamanya');
   }
 
+  // --- tahap amplop + wax seal (opsional per tema) ---
+  // Diperiksa HANYA kalau tema memuat assets/amplop.js. Modul itu membaca
+  // seluruh tampilannya dari variabel --amplop-* milik tema; variabel yang
+  // lupa disetel tidak memberi error, cuma menghasilkan amplop polos tanpa
+  // segel — dan segel lilin itulah yang dijual.
+  if (K.pakaiAmplop) {
+    const amp = document.getElementById('amplop');
+    if (!amp) {
+      gagal('#amplop tidak terbentuk',
+        'tema memuat assets/amplop.js tapi amplopnya tidak ada di DOM — periksa path skripnya');
+    } else {
+      const segel = amp.querySelector('.amplop-segel');
+      const badan = amp.querySelector('.amplop-badan');
+      const gs = segel ? getComputedStyle(segel).backgroundImage : 'none';
+      const gb = badan ? getComputedStyle(badan).backgroundImage : 'none';
+      gs && gs !== 'none'
+        ? ok('amplop: wax seal terpasang')
+        : gagal('amplop tanpa wax seal', 'setel --amplop-segel di :root tema; tanpa itu amplopnya polos');
+      gb && gb !== 'none'
+        ? ok('amplop: tekstur kertas terpasang')
+        : gagal('amplop tanpa tekstur kertas', 'setel --amplop-kertas di :root tema');
+      if (!amp.querySelector('.amplop-tombol')) gagal('amplop tanpa tombol buka');
+      // Nama tamu di muka amplop harus ikut terisi perender.
+      if (!amp.querySelector('[data-slot="nama_tamu"]')) {
+        gagal('amplop tidak punya slot nama_tamu', 'nama tamu tidak akan tampil di muka amplop');
+      }
+      typeof (window.__KU_AMPLOP || {}).lewati === 'function'
+        ? ok('amplop: window.__KU_AMPLOP.lewati() tersedia')
+        : gagal('window.__KU_AMPLOP.lewati() tidak ada',
+            'tools/potret-tema.js memakainya untuk melewati amplop; tanpa itu kartu tema jadi gambar amplop');
+    }
+  }
+
   // --- palet benar-benar mengubah tampilan ---
   // Token yang cuma ADA di :root belum tentu DIPAKAI. Di sini palet
   // ditimpa persis seperti applyPalette() melakukannya, lalu warna
@@ -576,6 +609,9 @@ function skripPemeriksa(kontrak) {
 }
 
 async function periksaDom(tema, lap) {
+  // Tahap amplop bersifat opsional: hanya tema yang memuat assets/amplop.js
+  // yang diperiksa kontraknya.
+  const pakaiAmplop = /amplop.js/.test(fs.readFileSync(path.join(tema.dir, 'index.html'), 'utf8'));
   const { kirim, peristiwa, tutup } = await cdp();
   try {
     await kirim('Page.enable');
@@ -604,7 +640,8 @@ async function periksaDom(tema, lap) {
     const res = await kirim('Runtime.evaluate', {
       expression: skripPemeriksa({
         slotTeks: SLOT_TEKS, slotFoto: SLOT_FOTO, slotMilikTema: SLOT_MILIK_TEMA,
-        idDokumen: ID_DOKUMEN, isiForm: ISI_FORM, tokenPalet: TOKEN_PALET
+        idDokumen: ID_DOKUMEN, isiForm: ISI_FORM, tokenPalet: TOKEN_PALET,
+        pakaiAmplop: pakaiAmplop
       }),
       returnByValue: true
     });
@@ -631,7 +668,20 @@ async function periksaDom(tema, lap) {
     lempar.length
       ? lap.gagal(lempar.length + ' error JavaScript saat memuat', lempar.slice(0, 3).join(' | '))
       : lap.ok('tidak ada error JavaScript saat memuat');
-    if (galat.length) lap.ingat(galat.length + ' pesan error di konsol', galat.slice(0, 4).join(' | '));
+    // Berkas tema yang 404 BUKAN sekadar peringatan. Gambar yang tidak
+    // ketemu tidak menampilkan apa pun dan tidak menghentikan apa pun —
+    // temanya cuma tampil "agak kosong", persis pola gagal-senyap yang
+    // jadi alasan alat ini dibuat. Sudah terjadi sekali: url() di dalam
+    // custom property diselesaikan relatif terhadap berkas CSS yang
+    // MEMAKAINYA, bukan yang menulisnya, sehingga dua ornamen mendarat di
+    // path yang salah.
+    const hilang = galat.filter(t => /404/.test(t) && /\/(templates|assets)\//.test(t));
+    const lain = galat.filter(t => hilang.indexOf(t) === -1);
+    if (hilang.length) {
+      lap.gagal(hilang.length + ' berkas tema tidak ditemukan (404)',
+        hilang.slice(0, 4).join(' | ') + ' — periksa path-nya; gambar yang 404 hilang tanpa pesan apa pun di layar');
+    }
+    if (lain.length) lap.ingat(lain.length + ' pesan error di konsol', lain.slice(0, 4).join(' | '));
   } finally {
     await tutup();
   }

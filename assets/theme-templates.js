@@ -35,6 +35,14 @@ window.THEME_TEMPLATES = [
     desc: 'Nuansa resepsi malam: latar hijau zamrud pekat, emas berkilau lembut, dan sampul yang menyingkap dari gelap lewat cahaya hangat yang melebar dari tengah.',
     ringkas: 'Zamrud malam & emas · disingkap oleh cahaya',
     thumb: 'templates/elegan-klasik/emerald-dusk/assets/thumbnail.jpg'
+  },
+  {
+    id: 'eropa-mewah/blanc-royale',
+    name: 'Blanc Royale',
+    kategori: 'Eropa Mewah',
+    desc: 'Kertas relief putih bercetak timbul dengan ukiran emas antik di keempat sudut sampul. Dibuka dari amplop bersegel lilin emas terlebih dahulu, baru sampulnya, baru undangannya.',
+    ringkas: 'Relief putih & ukiran emas · dibuka dari amplop bersegel',
+    thumb: 'templates/eropa-mewah/blanc-royale/assets/thumbnail.jpg'
   }
 ];
 

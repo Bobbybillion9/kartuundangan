@@ -106,8 +106,13 @@ async function potret(tema, keluaran) {
     width: keluaran.viewport.w, height: keluaran.viewport.h,
     deviceScaleFactor: 2, mobile: true
   });
+  // ?amplop=lewat mematikan tahap amplop+wax seal (assets/amplop.js).
+  // WAJIB di sini: kalau amplopnya tampil, ia menutupi seluruh layar dan
+  // setiap kartu tema jadi gambar amplop — yang bentuknya nyaris sama
+  // untuk semua tema, sehingga etalase kehilangan gunanya. Yang harus
+  // dipotret adalah sampul temanya.
   await kirim('Page.navigate', {
-    url: SERVER + '/templates/' + tema.id + '/index.html'
+    url: SERVER + '/templates/' + tema.id + '/index.html?amplop=lewat'
   });
 
   // Menunggu gambar benar-benar selesai, bukan menunggu durasi tetap:
