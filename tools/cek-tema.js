@@ -1,0 +1,651 @@
+/**
+ * Pemeriksa kesesuaian tema.
+ *
+ * KENAPA BERKAS INI ADA
+ * ---------------------
+ * Sebuah tema bukan cuma "halaman yang bagus". Ia harus memenuhi KONTRAK
+ * yang tidak tertulis di mana pun kecuali di dalam kode yang memakainya:
+ *
+ *   assets/render-undangan.js  mencari [data-slot="..."] tertentu, sembilan
+ *                              slot foto yang masing-masing membungkus satu
+ *                              <img>, sederet id formulir, dan dua fungsi
+ *                              global (buatMonogram, mulaiHitungMundur)
+ *   assets/demo-template.js    mencari #cover, #bgMusic, #musicBtn, dan
+ *                              berkas contoh di templates/_demo/<tema>/
+ *   tools/potret-tema.js       menunggu #cover.has-sampul
+ *   assets/theme-templates.js  harus mendaftarkan folder temanya
+ *
+ * Kalau satu mata rantai itu putus, TIDAK ADA yang melempar error. Slot
+ * yang salah nama cuma tidak terisi; <img> yang lupa dipasang cuma
+ * membuat fotonya hilang; id formulir yang berbeda cuma membuat kiriman
+ * tamu tidak pernah sampai. Semuanya tampak "hampir benar" di layar.
+ *
+ * Pola itu sudah terjadi berkali-kali dengan baru TIGA tema, dan
+ * pemeriksaannya selama ini manual. Rencananya tema akan ditambah banyak;
+ * pada saat itu pemeriksaan manual pasti jebol. Berkas ini menggantikannya.
+ *
+ * JALANKAN SETIAP KALI:
+ *   - menambah tema baru (WAJIB, sebelum ditawarkan ke pelanggan)
+ *   - mengubah markup/CSS sebuah tema
+ *   - mengubah assets/render-undangan.js atau assets/demo-template.js
+ *
+ * PRASYARAT untuk pemeriksaan DOM (bagian berkas jalan tanpa keduanya):
+ *   1. server statis lokal di http://localhost:5500 dari root repo
+ *   2. Chrome headless dengan --remote-debugging-port=9222
+ *
+ * PAKAI:  node tools/cek-tema.js [nama-tema ...]   (tanpa argumen = semua)
+ *         --rinci    tampilkan juga pemeriksaan yang lolos
+ *         --berkas   lewati pemeriksaan DOM (tidak butuh Chrome)
+ *
+ * KELUAR dengan kode 1 kalau ada satu saja pemeriksaan yang GAGAL, supaya
+ * bisa dipakai sebagai gerbang sebelum commit.
+ */
+const fs = require('fs');
+const path = require('path');
+
+const REPO = path.resolve(__dirname, '..');
+const SERVER = 'http://localhost:5500';
+const CDP = 'http://127.0.0.1:9222';
+
+// ============================================================
+// KONTRAK
+// ============================================================
+// Daftar di bawah ini adalah salinan dari apa yang benar-benar dicari
+// assets/render-undangan.js. Salinan selalu bisa menua — karena itu
+// cocokkanKontrakDenganPerender() di bawah membaca ulang berkas perender
+// dan mengadu isinya dengan daftar ini. Kalau perender mulai memakai slot
+// baru dan daftar ini tidak ikut diperbarui, alat ini yang berteriak
+// duluan, bukan pelanggan.
+
+// Slot teks yang diisi setSlotText()/dibaca querySelector() di perender.
+const SLOT_TEKS = [
+  'nama_tamu',
+  'nama_pria_panggilan', 'nama_wanita_panggilan',
+  'nama_pria_lengkap', 'nama_wanita_lengkap',
+  'orangtua_pria', 'orangtua_wanita',
+  'tanggal_akad', 'tanggal_resepsi', 'tanggal_acara',
+  'waktu_akad', 'waktu_resepsi',
+  'lokasi_nama', 'lokasi_alamat', 'lokasi_maps_url',
+  'tanggal_hitung_mundur',
+  'kalimat_pembuka', 'kalimat_penutup',
+  'nama_bank_1', 'no_rekening_1', 'pemilik_rekening_1',
+  'nama_bank_2', 'no_rekening_2', 'pemilik_rekening_2'
+];
+
+// Slot foto: masing-masing WAJIB membungkus satu <img>, karena
+// setSlotFoto() memasang src ke <img> di dalamnya — bukan ke wadahnya.
+const SLOT_FOTO = [
+  'foto_utama', 'foto_pria', 'foto_wanita',
+  'foto_galeri_1', 'foto_galeri_2', 'foto_galeri_3',
+  'foto_galeri_4', 'foto_galeri_5', 'foto_galeri_6'
+];
+
+// Slot yang dipakai tema sendiri tapi TIDAK disentuh perender. Didaftarkan
+// supaya jelas ini disengaja, bukan slot yang salah ketik.
+const SLOT_MILIK_TEMA = ['kalimat_hadiah', 'musik_url'];
+
+// id yang dicari langsung di dokumen.
+const ID_DOKUMEN = [
+  { id: 'cover',      tag: null,    oleh: 'setFotoSampul() & potret-tema.js' },
+  { id: 'openBtn',    tag: null,    oleh: 'tombol buka undangan' },
+  { id: 'musicBtn',   tag: null,    oleh: 'populateSlots() & demo-template.js' },
+  { id: 'bgMusic',    tag: 'AUDIO', oleh: 'populateSlots() & demo-template.js' },
+  { id: 'ucapanList', tag: null,    oleh: 'daftar ucapan tamu' }
+];
+
+// id yang dicari DI DALAM sebuah form (form.querySelector('#...')).
+// Letaknya penting: elemen yang benar ada tapi duduk di luar <form> akan
+// terbaca null oleh perender — dan itu gagal tanpa suara.
+const ISI_FORM = {
+  rsvpForm: [
+    '#rsvpMsg', '#fieldJumlahTamu', '#rsvpJumlah', '#rsvpNama',
+    'input[name="pihak"]', 'input[name="kehadiran"]', 'button[type="submit"]'
+  ],
+  ucapanForm: [
+    '#ucapanMsg', '#ucapanNama', '#ucapanPesan', 'button[type="submit"]'
+  ],
+  hadiahForm: [
+    '#hadiahMsg', '#hadiahNama', '#hadiahPesan', '#buktiTransferInput',
+    '#uploadDropzone', '#uploadPreview', '#uploadPreviewImg',
+    '#uploadFilename', '#uploadRemoveBtn', 'button[type="submit"]'
+  ]
+};
+
+// Berkas contoh yang dicari demo-template.js di templates/_demo/<tema>/.
+const BERKAS_DEMO = [
+  'sampul.jpg', 'utama.jpg', 'pria.jpg', 'wanita.jpg',
+  'galeri-1.jpg', 'galeri-2.jpg', 'galeri-3.jpg',
+  'galeri-4.jpg', 'galeri-5.jpg', 'galeri-6.jpg',
+  'musik.mp3'
+];
+
+// ============================================================
+// Pengumpul hasil
+// ============================================================
+function laporan() {
+  const baris = [];
+  return {
+    baris,
+    ok:    (label, detail) => baris.push({ status: 'ok',    label, detail }),
+    gagal: (label, detail) => baris.push({ status: 'gagal', label, detail }),
+    ingat: (label, detail) => baris.push({ status: 'ingat', label, detail })
+  };
+}
+
+// ============================================================
+// Menemukan tema
+// ============================================================
+// Ditelusuri dari struktur folder, bukan dari daftar kategori yang ditulis
+// tangan — supaya kategori baru langsung ikut terperiksa tanpa berkas ini
+// perlu diubah.
+function semuaTema() {
+  const akar = path.join(REPO, 'templates');
+  const hasil = [];
+  for (const kat of fs.readdirSync(akar, { withFileTypes: true })) {
+    if (!kat.isDirectory() || kat.name.startsWith('_')) continue;
+    for (const tema of fs.readdirSync(path.join(akar, kat.name), { withFileTypes: true })) {
+      if (!tema.isDirectory()) continue;
+      hasil.push({
+        nama: tema.name,
+        kategori: kat.name,
+        id: kat.name + '/' + tema.name,
+        dir: path.join(akar, kat.name, tema.name)
+      });
+    }
+  }
+  return hasil;
+}
+
+// Katalog dibaca sebagai teks lalu dievaluasi: berkasnya menempel ke
+// window dan tidak bisa di-require begitu saja dari Node.
+function bacaKatalog() {
+  const src = fs.readFileSync(path.join(REPO, 'assets', 'theme-templates.js'), 'utf8');
+  const m = /window\.THEME_TEMPLATES\s*=\s*(\[[\s\S]*?\n\];)/.exec(src);
+  if (!m) return null;
+  try { return eval('(' + m[1].replace(/;$/, '') + ')'); } catch (e) { return null; }
+}
+
+// ============================================================
+// Menjaga kontrak di berkas ini tetap sama dengan perender
+// ============================================================
+function cocokkanKontrakDenganPerender(lap) {
+  const src = fs.readFileSync(path.join(REPO, 'assets', 'render-undangan.js'), 'utf8');
+
+  const dipakaiTeks = new Set();
+  const dipakaiFoto = new Set();
+  let m;
+  // Koma penutup itu wajib ada di pola. Tanpanya, potongan string dari
+  // penggabungan `setSlotFoto(doc, 'foto_galeri_' + (g + 1), ...)` ikut
+  // tertangkap sebagai slot bernama "foto_galeri_" yang tidak pernah ada.
+  const reTeks = /setSlotText\(\s*doc\s*,\s*'([a-z0-9_]+)'\s*,/g;
+  while ((m = reTeks.exec(src))) dipakaiTeks.add(m[1]);
+  const reFoto = /setSlotFoto\(\s*doc\s*,\s*'([a-z0-9_]+)'\s*,/g;
+  while ((m = reFoto.exec(src))) dipakaiFoto.add(m[1]);
+  const reQuery = /\[data-slot="([a-z0-9_]+)"\]/g;
+  while ((m = reQuery.exec(src))) dipakaiTeks.add(m[1]);
+
+  // foto_galeri_N dibangun dengan penggabungan string di dalam loop, jadi
+  // tidak tertangkap regex di atas — dimaklumi secara eksplisit.
+  if (/setSlotFoto\(doc, 'foto_galeri_' \+/.test(src)) {
+    for (let i = 1; i <= 6; i++) dipakaiFoto.add('foto_galeri_' + i);
+  }
+
+  const kontrak = new Set([...SLOT_TEKS, ...SLOT_FOTO]);
+  const asing = [...dipakaiTeks, ...dipakaiFoto].filter(s => !kontrak.has(s));
+  if (asing.length) {
+    lap.gagal('kontrak di cek-tema.js sudah menua',
+      'assets/render-undangan.js memakai slot yang tidak terdaftar di sini: ' +
+      asing.join(', ') + '. Tambahkan ke SLOT_TEKS/SLOT_FOTO, lalu jalankan lagi.');
+  } else {
+    lap.ok('kontrak sama dengan assets/render-undangan.js');
+  }
+
+  const tidakDipakai = [...kontrak].filter(s => !dipakaiTeks.has(s) && !dipakaiFoto.has(s));
+  if (tidakDipakai.length) {
+    lap.ingat('slot diwajibkan tapi tidak dipakai perender', tidakDipakai.join(', '));
+  }
+}
+
+// ============================================================
+// Bagian 1 — pemeriksaan berkas (tanpa browser)
+// ============================================================
+function periksaBerkas(tema, katalog, lap) {
+  const rel = p => path.relative(REPO, p).replace(/\\/g, '/');
+  const ada = p => fs.existsSync(p);
+
+  const indexHtml = path.join(tema.dir, 'index.html');
+  const styleCss  = path.join(tema.dir, 'style.css');
+  const thumb     = path.join(tema.dir, 'assets', 'thumbnail.jpg');
+  const hero      = path.join(REPO, 'assets', 'hero', tema.nama + '.jpg');
+  const demoDir   = path.join(REPO, 'templates', '_demo', tema.nama);
+
+  for (const [label, berkas] of [['index.html', indexHtml], ['style.css', styleCss]]) {
+    ada(berkas) ? lap.ok(label + ' ada') : lap.gagal(label + ' tidak ada', rel(berkas));
+  }
+  if (!ada(indexHtml)) return;
+
+  const html = fs.readFileSync(indexHtml, 'utf8');
+  const css  = ada(styleCss) ? fs.readFileSync(styleCss, 'utf8') : '';
+
+  // --- katalog ---
+  const entri = katalog && katalog.find(t => t.id === tema.id);
+  if (!entri) {
+    lap.gagal('belum terdaftar di THEME_TEMPLATES',
+      'tambahkan entri ber-id "' + tema.id + '" di assets/theme-templates.js — ' +
+      'tanpa itu tema tidak muncul di halaman depan MAUPUN di dashboard');
+  } else {
+    lap.ok('terdaftar di THEME_TEMPLATES sebagai "' + entri.name + '"');
+    if (!entri.thumb || !ada(path.join(REPO, entri.thumb))) {
+      lap.gagal('thumb di katalog menunjuk berkas yang tidak ada', String(entri.thumb));
+    }
+    for (const wajib of ['name', 'kategori', 'desc', 'ringkas']) {
+      if (!entri[wajib]) lap.gagal('entri katalog kehilangan "' + wajib + '"');
+    }
+  }
+
+  // --- gambar hasil potret ---
+  ada(thumb) ? lap.ok('thumbnail.jpg ada')
+             : lap.gagal('thumbnail.jpg tidak ada', 'jalankan: node tools/potret-tema.js ' + tema.nama);
+  ada(hero)  ? lap.ok('assets/hero/' + tema.nama + '.jpg ada')
+             : lap.ingat('tidak ada gambar hero',
+                 'hero sengaja memuat tiga tema pilihan saja — abaikan kalau tema ini memang bukan salah satunya');
+
+  // --- berkas contoh pratinjau ---
+  if (!ada(demoDir)) {
+    lap.gagal('templates/_demo/' + tema.nama + '/ tidak ada',
+      'tanpa itu pratinjau tema tampil dengan SEMUA slot foto kosong');
+  } else {
+    const kurang = BERKAS_DEMO.filter(b => !ada(path.join(demoDir, b)));
+    kurang.length
+      ? lap.gagal('berkas contoh kurang ' + kurang.length + '/' + BERKAS_DEMO.length, kurang.join(', '))
+      : lap.ok('berkas contoh pratinjau lengkap (' + BERKAS_DEMO.length + ')');
+  }
+
+  // --- potret basi ---
+  // Sumber apa pun yang lebih baru dari potretnya berarti potret itu
+  // memotret versi lama. Ini persisnya bug yang membuat garis putih Sage
+  // Rose tetap terlihat di halaman depan berjam-jam setelah diperbaiki.
+  // Statusnya PERINGATAN, bukan gagal: sesudah `git clone`, seluruh berkas
+  // punya waktu ubah yang sama dan perbandingannya jadi tidak berarti.
+  const sumber = [indexHtml, styleCss].concat(
+    ada(demoDir) ? fs.readdirSync(demoDir).map(b => path.join(demoDir, b)) : []
+  ).filter(ada);
+  const terbaru = Math.max.apply(null, sumber.map(p => fs.statSync(p).mtimeMs));
+  for (const [label, gambar] of [['thumbnail.jpg', thumb], ['hero ' + tema.nama + '.jpg', hero]]) {
+    if (!ada(gambar)) continue;
+    const umur = fs.statSync(gambar).mtimeMs;
+    if (terbaru - umur > 60000) {
+      const pemicu = sumber.filter(p => fs.statSync(p).mtimeMs > umur).map(rel);
+      lap.ingat(label + ' kemungkinan basi',
+        'lebih tua dari: ' + pemicu.slice(0, 4).join(', ') +
+        (pemicu.length > 4 ? ' (+' + (pemicu.length - 4) + ' lagi)' : '') +
+        ' — jalankan: node tools/potret-tema.js ' + tema.nama);
+    } else {
+      lap.ok(label + ' lebih baru dari sumbernya');
+    }
+  }
+
+  // --- demo-template.js dimuat ---
+  /demo-template\.js/.test(html)
+    ? lap.ok('memuat assets/demo-template.js')
+    : lap.gagal('tidak memuat assets/demo-template.js',
+        'pratinjau tema ini akan tampil dengan slot foto kosong');
+
+  // --- slot foto WAJIB dikirim kosong ---
+  // Aturan di CLAUDE.md: foto contoh tidak boleh dipanggang ke dalam
+  // markup tema. Dulu sage-rose & ivory-gold melanggarnya, dan setiap
+  // calon pembeli yang menekan "Pratinjau" melihat foto anjing bertuliskan
+  // "Foto Mempelai Pria".
+  const imgSlot = html.match(/<img[^>]*data-rv="img"[^>]*>/g) || [];
+  const berSrc = imgSlot.filter(t => /\ssrc\s*=/.test(t));
+  if (berSrc.length) {
+    lap.gagal(berSrc.length + ' slot foto memanggang foto ke dalam markup',
+      'hapus atribut src-nya — foto contoh tempatnya di templates/_demo/' + tema.nama + '/');
+  } else {
+    lap.ok('slot foto dikirim kosong (' + imgSlot.length + ' <img>)');
+  }
+
+  // --- sampul full-bleed ---
+  // setFotoSampul() cuma mengirim --foto-sampul + class .has-sampul; kalau
+  // style.css tema tidak punya aturan yang memakainya, foto sampul tidak
+  // pernah muncul dan tidak ada satu pun pesan error.
+  (/--foto-sampul/.test(css) && /\.has-sampul/.test(css))
+    ? lap.ok('style.css memakai --foto-sampul & .has-sampul')
+    : lap.gagal('style.css tidak memakai --foto-sampul/.has-sampul',
+        'foto sampul tidak akan pernah tampil; lihat blok "FOTO SAMPUL FULL-BLEED" di tema lain');
+}
+
+// Arah sebaliknya: katalog yang menunjuk folder yang tidak ada.
+function periksaKatalogYatim(katalog, daftarTema, lap) {
+  if (!katalog) { lap.gagal('THEME_TEMPLATES tidak bisa dibaca'); return; }
+  const punyaFolder = new Set(daftarTema.map(t => t.id));
+  const yatim = katalog.filter(t => !punyaFolder.has(t.id));
+  yatim.length
+    ? lap.gagal(yatim.length + ' entri katalog tanpa folder',
+        yatim.map(t => t.id).join(', ') + ' — kartunya tampil, tapi "Pratinjau" membuka halaman kosong')
+    : lap.ok('semua entri THEME_TEMPLATES punya folder (' + katalog.length + ')');
+}
+
+// ============================================================
+// Bagian 2 — pemeriksaan DOM di browser sungguhan
+// ============================================================
+async function cdp() {
+  const r = await fetch(CDP + '/json/new?about:blank', { method: 'PUT' });
+  const t = await r.json();
+  const ws = new WebSocket(t.webSocketDebuggerUrl);
+  let id = 0;
+  const nunggu = new Map();
+  const peristiwa = [];
+  await new Promise(res => (ws.onopen = res));
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data);
+    if (m.id && nunggu.has(m.id)) { nunggu.get(m.id)(m); nunggu.delete(m.id); }
+    else if (m.method) peristiwa.push(m);
+  };
+  const kirim = (metode, params) => new Promise(res => {
+    const n = ++id; nunggu.set(n, res);
+    ws.send(JSON.stringify({ id: n, method: metode, params: params || {} }));
+  });
+  return { kirim, peristiwa, tutup: async () => { ws.close(); await fetch(CDP + '/json/close/' + t.id); } };
+}
+
+// Dijalankan DI DALAM dokumen tema. Mengembalikan larik hasil, supaya tiap
+// pemeriksaan duduk sedekat mungkin dengan DOM yang diperiksanya.
+function skripPemeriksa(kontrak) {
+  return `(() => {
+  const K = ${JSON.stringify(kontrak)};
+  const h = [];
+  const ok = (l, d) => h.push({ status: 'ok', label: l, detail: d });
+  const gagal = (l, d) => h.push({ status: 'gagal', label: l, detail: d });
+
+  // --- slot teks ---
+  const hilang = K.slotTeks.filter(s => !document.querySelector('[data-slot="' + s + '"]'));
+  hilang.length
+    ? gagal(hilang.length + ' slot teks hilang', hilang.join(', '))
+    : ok('semua slot teks ada (' + K.slotTeks.length + ')');
+
+  // --- slot foto + <img> di dalamnya ---
+  const tanpaSlot = [], tanpaImg = [];
+  K.slotFoto.forEach(s => {
+    const w = document.querySelector('[data-slot="' + s + '"]');
+    if (!w) tanpaSlot.push(s);
+    else if (!w.querySelector('img')) tanpaImg.push(s);
+  });
+  if (tanpaSlot.length) gagal(tanpaSlot.length + ' slot foto hilang', tanpaSlot.join(', '));
+  if (tanpaImg.length) gagal(tanpaImg.length + ' slot foto tanpa <img> di dalamnya',
+    tanpaImg.join(', ') + ' — setSlotFoto() memasang src ke <img>, jadi slot tanpa <img> diam saja');
+  if (!tanpaSlot.length && !tanpaImg.length) ok(K.slotFoto.length + ' slot foto lengkap & masing-masing punya <img>');
+
+  // --- slot yang tidak dikenal ---
+  const dikenal = new Set([].concat(K.slotTeks, K.slotFoto, K.slotMilikTema));
+  const asing = [...new Set([...document.querySelectorAll('[data-slot]')]
+    .map(e => e.getAttribute('data-slot')))].filter(s => !dikenal.has(s));
+  if (asing.length) gagal(asing.length + ' data-slot tidak dikenal', asing.join(', ') +
+    ' — nama slot yang salah ketik tidak pernah terisi dan tidak pernah memberi error');
+
+  // --- id dokumen ---
+  let idGagal = 0;
+  K.idDokumen.forEach(d => {
+    const el = document.getElementById(d.id);
+    if (!el) { idGagal++; gagal('#' + d.id + ' tidak ada', 'dibutuhkan ' + d.oleh); }
+    else if (d.tag && el.tagName !== d.tag) {
+      idGagal++;
+      gagal('#' + d.id + ' bukan <' + d.tag.toLowerCase() + '>', 'ditemukan <' + el.tagName.toLowerCase() + '>');
+    }
+  });
+  if (!idGagal) ok('id dokumen lengkap (' + K.idDokumen.length + ')');
+
+  // --- isi formulir ---
+  Object.keys(K.isiForm).forEach(idForm => {
+    const form = document.getElementById(idForm);
+    if (!form) { gagal('#' + idForm + ' tidak ada', 'formulir tamu tidak akan pernah tersambung'); return; }
+    if (form.tagName !== 'FORM') { gagal('#' + idForm + ' bukan <form>', 'ditemukan <' + form.tagName.toLowerCase() + '>'); return; }
+    const kurang = K.isiForm[idForm].filter(sel => !form.querySelector(sel));
+    if (kurang.length) {
+      const adaDiLuar = kurang.filter(sel => document.querySelector(sel));
+      gagal('#' + idForm + ' kekurangan ' + kurang.length + ' elemen', kurang.join(', ') +
+        (adaDiLuar.length ? ' — ' + adaDiLuar.join(', ') + ' ADA tapi di LUAR <form>, sedangkan perender mencarinya di dalam' : ''));
+    } else ok('#' + idForm + ' lengkap (' + K.isiForm[idForm].length + ' elemen)');
+  });
+
+  // --- pill-group ---
+  // initPillGroupUmum() mencari input[type=hidden] lewat parentElement.
+  const pill = document.querySelectorAll('.pill-group');
+  const pillRusak = [...pill].filter(g =>
+    !(g.parentElement && g.parentElement.querySelector('input[type="hidden"]')));
+  pillRusak.length
+    ? gagal(pillRusak.length + ' .pill-group tanpa input hidden bersaudara',
+        'pilihan tamu (pihak/kehadiran) tidak akan pernah ikut terkirim')
+    : ok(pill.length + ' .pill-group tersambung ke input hidden');
+
+  // --- kartu hadiah ---
+  const kartu = document.querySelectorAll('.gift-card');
+  if (kartu.length < 2) gagal('cuma ada ' + kartu.length + ' .gift-card', 'perender mengisi dua rekening');
+  else {
+    const tanpaSalin = [...kartu].filter(k => !k.querySelector('.btn-copy')).length;
+    tanpaSalin ? gagal(tanpaSalin + ' .gift-card tanpa .btn-copy', 'nomor rekening sungguhan tidak dipasang ke tombol salin')
+               : ok(kartu.length + ' .gift-card, masing-masing punya .btn-copy');
+  }
+
+  // --- lokasi_maps_url harus <a> ---
+  const maps = document.querySelector('[data-slot="lokasi_maps_url"]');
+  if (maps && maps.tagName !== 'A') gagal('lokasi_maps_url bukan <a>',
+    'perender memasang href padanya; <' + maps.tagName.toLowerCase() + '> mengabaikannya');
+  else if (maps) ok('lokasi_maps_url berupa <a>');
+
+  // CATATAN, supaya tidak ditambahkan lagi: sempat ada pemeriksaan yang
+  // mensyaratkan .section-lead di dalam #ucapanList, dan itu SALAH.
+  // .section-lead di sana dibuat perender sendiri (buatPesanUcapan) sebagai
+  // keadaan "Belum ada ucapan", bukan sesuatu yang tema harus sediakan —
+  // dan ucapan contoh milik tema toh sudah dibuang oleh
+  // ucapanList.innerHTML = '' sebelum daftar aslinya digambar. Yang benar-
+  // benar dituntut dari tema cuma keberadaan #ucapanList (lihat ID_DOKUMEN).
+
+  // --- dua fungsi global ---
+  ['buatMonogram', 'mulaiHitungMundur'].forEach(f => {
+    typeof window[f] === 'function'
+      ? ok('window.' + f + '() tersedia')
+      : gagal('window.' + f + '() tidak ada',
+          'perender memanggilnya setelah mengisi data; tanpa itu ' +
+          (f === 'buatMonogram' ? 'monogram tetap memakai inisial contoh' : 'hitung mundur tetap ke tanggal contoh'));
+  });
+
+  // --- monogram benar-benar berubah ---
+  // Diuji dari PERILAKU, bukan dari id tertentu: dua tema memakai
+  // #monoLetterA/B, satu memakai .mono-a/.mono-b. Yang penting hurufnya
+  // ikut berubah, bukan caranya.
+  if (typeof window.buatMonogram === 'function') {
+    document.querySelectorAll('[data-slot="nama_pria_panggilan"]').forEach(e => e.textContent = 'Zulfikar');
+    document.querySelectorAll('[data-slot="nama_wanita_panggilan"]').forEach(e => e.textContent = 'Qorina');
+    try {
+      window.buatMonogram();
+      const teks = [...document.querySelectorAll('body *')]
+        .filter(e => e.children.length === 0)
+        .map(e => e.textContent.trim());
+      const adaZ = teks.indexOf('Z') !== -1, adaQ = teks.indexOf('Q') !== -1;
+      (adaZ && adaQ)
+        ? ok('buatMonogram() memakai inisial dari data (Z & Q)')
+        : gagal('buatMonogram() tidak mengubah monogram',
+            'nama diganti Zulfikar & Qorina, tapi ' +
+            (!adaZ && !adaQ ? 'huruf Z maupun Q' : (!adaZ ? 'huruf Z' : 'huruf Q')) +
+            ' tidak muncul di mana pun — pada undangan sungguhan monogram akan menampilkan inisial contoh');
+    } catch (e) { gagal('buatMonogram() melempar error', String((e && e.message) || e)); }
+  }
+
+  // --- hitung mundur benar-benar jalan ---
+  if (typeof window.mulaiHitungMundur === 'function') {
+    const target = new Date(Date.now() + 3 * 86400000 + 3600000).toISOString();
+    try {
+      window.mulaiHitungMundur(target);
+      const angka = ['cdDays', 'cdHours', 'cdMinutes', 'cdSeconds']
+        .map(id => { const e = document.getElementById(id); return e ? e.textContent.trim() : null; });
+      const kosong = angka.filter(a => !a || !/^\\d+$/.test(a));
+      kosong.length
+        ? gagal('mulaiHitungMundur() tidak mengisi angka',
+            'cdDays/cdHours/cdMinutes/cdSeconds terbaca: ' + JSON.stringify(angka))
+        : ok('mulaiHitungMundur() mengisi hitung mundur (' + angka.join(':') + ')');
+      // Tanggal kosong harus ditangani, bukan membuat halaman meledak.
+      window.mulaiHitungMundur('');
+      ok('mulaiHitungMundur("") ditangani tanpa error');
+    } catch (e) { gagal('mulaiHitungMundur() melempar error', String((e && e.message) || e)); }
+  }
+
+  // --- sampul: --foto-sampul benar-benar dipakai CSS ---
+  // Diuji sungguhan, bukan dengan mencari teks di style.css: aturannya bisa
+  // saja ada tapi menyasar elemen yang salah.
+  const cover = document.getElementById('cover');
+  if (cover) {
+    const baca = () => [...cover.querySelectorAll('*'), cover]
+      .map(e => getComputedStyle(e).backgroundImage).join('|');
+    const sebelum = baca();
+    cover.style.setProperty('--foto-sampul',
+      'url("data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==")');
+    cover.classList.add('has-sampul');
+    baca() !== sebelum
+      ? ok('#cover.has-sampul benar-benar memakai --foto-sampul')
+      : gagal('#cover.has-sampul tidak mengubah apa pun',
+          'foto sampul yang diunggah user tidak akan pernah tampil, dan potret-tema.js akan menunggu selamanya');
+  }
+
+  return h;
+})()`;
+}
+
+async function periksaDom(tema, lap) {
+  const { kirim, peristiwa, tutup } = await cdp();
+  try {
+    await kirim('Page.enable');
+    await kirim('Runtime.enable');
+    await kirim('Log.enable');
+    await kirim('Emulation.setDeviceMetricsOverride', {
+      width: 390, height: 844, deviceScaleFactor: 1, mobile: true
+    });
+    await kirim('Page.navigate', { url: SERVER + '/templates/' + tema.id + '/index.html' });
+
+    // Menunggu skrip tema selesai jalan, bukan menunggu durasi tetap.
+    let siap = false;
+    for (let i = 0; i < 40 && !siap; i++) {
+      await new Promise(r => setTimeout(r, 250));
+      const res = await kirim('Runtime.evaluate', {
+        expression: "document.readyState === 'complete'", returnByValue: true
+      });
+      siap = !!(res.result && res.result.result && res.result.result.value);
+    }
+    if (!siap) { lap.gagal('halaman tidak selesai dimuat dalam 10 detik'); return; }
+
+    // Beri kesempatan demo-template.js memasang foto contoh — bukan syarat
+    // lolos, tapi membuat pemeriksaan error konsol di bawah bermakna.
+    await new Promise(r => setTimeout(r, 1200));
+
+    const res = await kirim('Runtime.evaluate', {
+      expression: skripPemeriksa({
+        slotTeks: SLOT_TEKS, slotFoto: SLOT_FOTO, slotMilikTema: SLOT_MILIK_TEMA,
+        idDokumen: ID_DOKUMEN, isiForm: ISI_FORM
+      }),
+      returnByValue: true
+    });
+    if (res.result && res.result.exceptionDetails) {
+      lap.gagal('pemeriksa DOM gagal dijalankan',
+        String(res.result.exceptionDetails.text ||
+               (res.result.exceptionDetails.exception || {}).description));
+      return;
+    }
+    for (const b of (res.result.result.value || [])) lap.baris.push(b);
+
+    // --- error konsol & gambar gagal dimuat ---
+    // favicon.ico disaring: halaman tema memang tidak punya favicon sendiri
+    // (ia selalu tampil di dalam iframe), jadi 404-nya derau tetap, bukan
+    // cacat tema.
+    const galat = peristiwa
+      .filter(p => p.method === 'Log.entryAdded' && p.params.entry.level === 'error')
+      .filter(p => !/favicon\.ico/.test(p.params.entry.url || ''))
+      .map(p => p.params.entry.text +
+        (p.params.entry.url ? ' (' + p.params.entry.url.replace(SERVER, '') + ')' : ''));
+    const lempar = peristiwa
+      .filter(p => p.method === 'Runtime.exceptionThrown')
+      .map(p => ((p.params.exceptionDetails.exception || {}).description) || p.params.exceptionDetails.text);
+    lempar.length
+      ? lap.gagal(lempar.length + ' error JavaScript saat memuat', lempar.slice(0, 3).join(' | '))
+      : lap.ok('tidak ada error JavaScript saat memuat');
+    if (galat.length) lap.ingat(galat.length + ' pesan error di konsol', galat.slice(0, 4).join(' | '));
+  } finally {
+    await tutup();
+  }
+}
+
+// ============================================================
+// Cetak
+// ============================================================
+const IKON = { ok: '  ok  ', gagal: 'GAGAL ', ingat: 'ingat ' };
+
+function cetak(judul, lap, rinci) {
+  const gagal = lap.baris.filter(b => b.status === 'gagal');
+  const ingat = lap.baris.filter(b => b.status === 'ingat');
+  const ok    = lap.baris.filter(b => b.status === 'ok');
+
+  const ringkas = ok.length + ' lolos' +
+    (ingat.length ? ', ' + ingat.length + ' perlu diingat' : '') +
+    (gagal.length ? ', ' + gagal.length + ' GAGAL' : '');
+  console.log('\n' + (gagal.length ? 'x ' : 'v ') + judul + '  --  ' + ringkas);
+
+  for (const b of (rinci ? lap.baris : gagal.concat(ingat))) {
+    console.log('   [' + IKON[b.status] + '] ' + b.label);
+    if (b.detail) console.log('            ' + b.detail);
+  }
+  return gagal.length;
+}
+
+// ============================================================
+(async () => {
+  const arg = process.argv.slice(2);
+  const rinci = arg.includes('--rinci');
+  const hanyaBerkas = arg.includes('--berkas');
+  const diminta = arg.filter(a => !a.startsWith('--'));
+
+  const daftar = semuaTema();
+  const tema = diminta.length
+    ? daftar.filter(t => diminta.includes(t.nama) || diminta.includes(t.id))
+    : daftar;
+  if (!tema.length) {
+    console.error('Tidak ada tema yang cocok. Tersedia: ' + daftar.map(t => t.nama).join(', '));
+    process.exit(1);
+  }
+
+  const katalog = bacaKatalog();
+  let totalGagal = 0;
+
+  const lapUmum = laporan();
+  cocokkanKontrakDenganPerender(lapUmum);
+  periksaKatalogYatim(katalog, daftar, lapUmum);
+  totalGagal += cetak('Kontrak & katalog', lapUmum, rinci);
+
+  let pakaiBrowser = !hanyaBerkas;
+  if (pakaiBrowser) {
+    try { await fetch(SERVER + '/'); }
+    catch (e) {
+      console.error('\n! Server lokal di ' + SERVER + ' tidak menjawab — pemeriksaan DOM DILEWATI.');
+      pakaiBrowser = false;
+    }
+  }
+  if (pakaiBrowser) {
+    try { await fetch(CDP + '/json/version'); }
+    catch (e) {
+      console.error('\n! Chrome dengan --remote-debugging-port=9222 tidak ditemukan — pemeriksaan DOM DILEWATI.');
+      pakaiBrowser = false;
+    }
+  }
+
+  for (const t of tema) {
+    const lap = laporan();
+    periksaBerkas(t, katalog, lap);
+    if (pakaiBrowser) await periksaDom(t, lap);
+    totalGagal += cetak(t.id, lap, rinci);
+  }
+
+  if (!pakaiBrowser && !hanyaBerkas) {
+    console.log('\nCatatan: bagian terpenting (kontrak DOM) TIDAK dijalankan.');
+    console.log('Nyalakan server statis & Chrome headless, lalu ulangi.');
+  }
+  console.log('\n' + (totalGagal ? totalGagal + ' pemeriksaan GAGAL.' : 'Semua pemeriksaan lolos.'));
+  process.exit(totalGagal ? 1 : 0);
+})();
