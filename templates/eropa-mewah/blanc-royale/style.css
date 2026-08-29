@@ -1038,47 +1038,107 @@ section{position:relative;padding:var(--s6) var(--s4);}
    ia menang atas blok @media(max-width:639px) "mempelai bersebelahan"
    di atas — media query tidak menambah kekhususan.
    ------------------------------------------------------------ */
-.couple{display:block;margin-top:var(--s5);}
-.couple-card{position:relative;text-align:left;flex:none;min-width:0;}
+/* Dua mempelai BERSEBELAHAN, masing-masing di dalam bingkai ukiran
+   emas yang tengahnya berlubang.
+
+   Soal bingkainya: versi sebelumnya menggambar garis bingkai DI ATAS
+   foto, jadi keduanya menyatu dan bingkainya tidak terbaca sebagai
+   benda tersendiri. Sekarang bingkainya benda utuh dengan lubang di
+   tengah, dan FOTONYA yang dimasukkan ke dalam lubang itu — persis
+   seperti foto di bingkai sungguhan.
+
+   Angka inset foto (14,5% mendatar / 14% tegak) BUKAN kira-kira: itu
+   tebal bilah bingkai pada gambar aslinya yang berukuran 408x612.
+   Kalau bingkainya diganti gambar lain, angka ini WAJIB diukur ulang,
+   kalau tidak fotonya akan menyembul keluar bilah. */
+.couple{
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  justify-content:center;
+  gap:10px;
+  margin-top:var(--s5);
+}
+.couple-card{
+  flex:1 1 0;
+  min-width:0;
+  position:relative;
+  text-align:center;
+}
 .couple-card .photo-placeholder{
-  width:74%;
+  position:relative;
+  width:100%;
   max-width:none;
-  aspect-ratio:4/5;
+  /* Rasio bingkainya, bukan rasio fotonya. */
+  aspect-ratio:408 / 612;
   margin:0 0 var(--s3);
+  border:0;
   border-radius:0;
-  border:1px solid var(--line);
+  background:none;
+  overflow:visible;
 }
-/* Asimetrinya kini dari PERATAAN, bukan dari menembus tepi.
-   Versi sebelumnya menggeser foto keluar halaman (-28px) supaya terbaca
-   editorial. Itu bagus SELAMA fotonya polos — begitu diberi bingkai emas,
-   sisi kiri bingkainya ikut terpotong layar, dan bingkai yang terpotong
-   separuh terbaca RUSAK, bukan disengaja. Foto mempelai pria tetap rapat
-   ke kiri dan wanita rapat ke kanan, jadi pergeserannya tetap terasa
-   tanpa mengorbankan bingkainya. */
-.couple .couple-card:first-of-type .photo-placeholder{
-  margin-left:0;
-  margin-right:auto;
+/* Bidang foto = lubang bingkai. Diberi latar kertas supaya keadaan
+   kosongnya tetap terlihat sebagai bidang, bukan lubang tembus. */
+.couple-card .photo-placeholder::before{
+  content:'';
+  position:absolute;
+  inset:14% 14.5%;
+  background:var(--gold-tint);
+  z-index:0;
 }
-.couple .couple-card:last-of-type{text-align:right;}
-.couple .couple-card:last-of-type .photo-placeholder{
-  margin-left:auto;
-  margin-right:0;
+/* Lebar & tinggi WAJIB ditulis eksplisit, tidak boleh width:auto.
+   Pada elemen tergantikan (img) yang diposisikan absolut, width:auto
+   memakai ukuran ASLI gambarnya dan mengabaikan inset kanan/bawah —
+   fotonya lalu meluber keluar lubang bingkai. Angkanya diturunkan dari
+   inset yang sama: 100 - 2x14,5 = 71 dan 100 - 2x14 = 72. */
+.couple-card .photo-placeholder > img{
+  position:absolute;
+  left:14.5%;
+  top:14%;
+  width:71%;
+  height:72%;
+  object-fit:cover;
+  z-index:1;
+}
+/* Ikon & keterangan keadaan kosong ikut masuk ke dalam lubang. */
+.couple-card .photo-placeholder > svg,
+.couple-card .photo-placeholder > span{
+  position:relative;
+  z-index:1;
+}
+.couple-card .photo-placeholder > svg{width:22px;height:22px;}
+.couple-card .photo-placeholder > span{font-size:9px;padding:0 18%;}
+/* Bingkainya sendiri: menutupi seluruh kotak, di atas foto. */
+.couple-card .photo-placeholder::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:url('/templates/_ornamen/bingkai-foto-emas.webp');
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  pointer-events:none;
+  z-index:2;
 }
 .couple-role{
-  font-size:10px;letter-spacing:.26em;text-transform:uppercase;
-  color:var(--gold-dark);font-weight:400;margin-bottom:6px;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold-dark);font-weight:400;margin-bottom:5px;
 }
-.couple-name{font-size:clamp(21px,6vw,26px);line-height:1.2;margin-bottom:8px;}
-.couple-parents{font-size:13px;line-height:1.6;max-width:none;margin:0;}
+.couple-name{font-size:clamp(16px,4.6vw,20px);line-height:1.22;margin-bottom:6px;}
+.couple-parents{font-size:11.5px;line-height:1.55;max-width:none;margin:0;}
+/* Ampersand didudukkan sejajar bagian tengah bingkai, bukan di tengah
+   kartu: panjang nama orang tua berbeda-beda, dan align-self:center
+   akan membuatnya naik-turun mengikuti tinggi teks.
+   100%/2 * (612/408) / 2 = tinggi setengah bingkai, dihitung dari LEBAR
+   .couple — jadi keduanya menyusut bersama di lebar layar mana pun. */
 .couple-amp{
-  display:block;
-  align-self:auto;
-  text-align:center;
+  align-self:flex-start;
+  flex:none;
   font-family:'Cinzel Decorative',Georgia,serif;
-  font-size:30px;
+  font-size:24px;
   line-height:1;
   color:var(--gold);
-  margin:var(--s5) 0;
+  margin:0;
+  margin-top:calc((100% / 2) * 1.5 / 2 - 12px);
 }
 
 /* ------------------------------------------------------------
@@ -1354,14 +1414,18 @@ section{position:relative;padding:var(--s6) var(--s4);}
   margin:0 auto var(--s2);
   object-fit:contain;
 }
+/* Tanpa alas putih — logonya tampil apa adanya di atas panel gelap.
+   Konsekuensinya harus disadari: logo bank yang warnanya gelap (BCA
+   biru, Mandiri biru tua) jadi kurang kontras di sini. Yang dipakai
+   untuk menolongnya cuma kecerahan, BUKAN invert: membalik warna logo
+   bank merusak identitas mereknya, dan merek yang terbalik justru
+   berhenti terbaca sebagai bank. */
 #hadiah .gift-logo{
-  background:#FFFFFF;
-  padding:6px 13px;
-  border-radius:2px;
-  height:30px;
-  max-width:56%;
-  box-sizing:content-box;
-  box-shadow:0 2px 10px -4px rgba(0,0,0,.5);
+  background:none;
+  padding:0;
+  height:34px;
+  max-width:62%;
+  filter:brightness(1.35) saturate(1.15) drop-shadow(0 2px 6px rgba(0,0,0,.55));
 }
 
 /* ------------------------------------------------------------
@@ -1426,21 +1490,35 @@ section{position:relative;padding:var(--s6) var(--s4);}
 
 /* Jam rococo — muncul dari balik angka hitung mundur. */
 #countdown .countdown-row{position:relative;}
+/* Jam dipindah ke BAWAH angka dan diputar 180 derajat, jadi mahkota
+   ukirannya menjuntai dari bawah. Sebelumnya ia di atas dan tertimpa
+   judul "Hitung Mundur" — dua benda berebut ruang yang sama, dan
+   keduanya jadi sulit dibaca. Di bawah, ruangnya kosong, jadi jamnya
+   bisa dibesarkan dan dipertegas. */
 #countdown .countdown-row::before{
   content:'';
   position:absolute;
   left:50%;
-  bottom:calc(100% + 8px);
-  width:132px;height:132px;
-  transform:translateX(-50%);
+  top:calc(100% + 14px);
+  width:210px;height:210px;
+  transform:translateX(-50%) rotate(180deg);
   background-image:url('/templates/_ornamen/bebas-jam-rococo.webp');
   background-size:contain;
   background-repeat:no-repeat;
-  background-position:center bottom;
-  opacity:.34;
+  background-position:center top;
+  opacity:.5;
   pointer-events:none;
   z-index:-1;
+  /* Gambar sumbernya memang terpotong di satu sisi; sesudah diputar
+     180 derajat potongan itu jatuh di ATAS dan terbaca sebagai garis
+     lurus yang kaku. Dilembutkan dengan gradasi. Kalau browser tidak
+     mendukung mask, ornamennya tetap tampil utuh — cuma tepinya kembali
+     tegas, jadi ini penurunan mutu yang aman. */
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 16%);
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 16%);
 }
+/* Ruang untuk jam yang kini menjuntai ke bawah. */
+#countdown{padding-bottom:calc(var(--s7) + 96px);}
 
 /* Bulu tulis — berdiri miring di belakang judul Ucapan & Doa. */
 #ucapan::after{
@@ -1477,6 +1555,52 @@ section{position:relative;padding:var(--s6) var(--s4);}
   pointer-events:none;
 }
 #penutup{padding-top:var(--s7);}
+
+/* ------------------------------------------------------------
+   16. HIASAN GALERI
+   Dua perangkat, keduanya DI LUAR foto — mozaiknya rapat, dan ornamen
+   yang menimpanya akan terbaca sebagai kotoran, bukan hiasan.
+
+   a) sulur bunga emas di dua sudut berseberangan mozaik, menyembul
+      keluar tepi grid sehingga galerinya terbaca "dibingkai"
+   b) karangan bunga berpita sebagai penutup bagian, di bawah mozaik
+   ------------------------------------------------------------ */
+.galeri-grid{position:relative;}
+.galeri-grid::before,
+.galeri-grid::after{
+  content:'';
+  position:absolute;
+  width:104px;height:104px;
+  background-image:url('/templates/_ornamen/sudut-bunga-emas.webp');
+  background-size:contain;
+  background-repeat:no-repeat;
+  pointer-events:none;
+  opacity:.9;
+  z-index:2;
+}
+/* Gambar sumbernya bersudut kanan-bawah (lihat catatan di blok sampul),
+   jadi sudut kiri-atas perlu dicerminkan dua arah.
+   Digeser cukup jauh KELUAR mozaik: pada jarak semula, sulurnya menutupi
+   wajah di foto sudut. Hiasan tidak boleh memakan isi. */
+.galeri-grid::before{ top:-44px;  left:-38px;  transform:scale(-1,-1); }
+.galeri-grid::after { bottom:-44px; right:-38px; }
+
+#galeri::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  bottom:var(--s4);
+  width:172px;height:172px;
+  transform:translateX(-50%);
+  background-image:url('/templates/_ornamen/karangan-bunga-emas.webp');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  opacity:.85;
+  pointer-events:none;
+}
+/* Ruang untuk karangan bunga di kaki bagian galeri. */
+#galeri{padding-bottom:calc(var(--s7) + 120px);}
 
 /* ============================================================
    PENYESUAIAN TERAKHIR — harus berada di AKHIR berkas

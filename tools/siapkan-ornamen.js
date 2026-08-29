@@ -167,6 +167,25 @@ const ORNAMEN = [
     sumber: 'FREE ORNAMENT/1030409589791219572-removebg-preview.png',
     lebar: 320, mutu: 0.9, alpha: true,
     catatan: 'jam rococo emas — untuk bagian Hitung Mundur'
+  },
+
+  // --- bingkai foto sungguhan (tengahnya BERLUBANG) ---
+  // Bedanya dari bingkai-klasik-emas: yang ini bingkai ukiran bervolume
+  // dengan lubang di tengah, jadi fotonya duduk DI DALAM bingkai dan
+  // bingkainya terbaca sebagai benda tersendiri. Sudah diperiksa: kelima
+  // titik contoh di bagian tengahnya beralpha 0, jadi foto di baliknya
+  // benar-benar terlihat.
+  {
+    keluaran: 'bingkai-foto-emas.webp',
+    sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/Premium_Rectangle_Gold_Picture_Frame_Mockup_with_Ornate_Design-removebg-preview.png',
+    lebar: 440, mutu: 0.9, alpha: true,
+    catatan: 'bingkai ukiran emas 408x612, lubang tengah transparan'
+  },
+  {
+    keluaran: 'karangan-bunga-emas.webp',
+    sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/Ақбота-removebg-preview.png',
+    lebar: 420, mutu: 0.9, alpha: true,
+    catatan: 'karangan bunga krem-emas melingkar berpita — hiasan galeri'
   }
 ];
 
