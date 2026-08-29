@@ -111,6 +111,23 @@ const ISI_FORM = {
   ]
 };
 
+// Token warna yang WAJIB didefinisikan tema di :root.
+//
+// applyPalette() di render-undangan.js menyuntikkan `:root{}` berisi
+// persis nama-nama ini sesuai palet pilihan user (kolom data.palet).
+// Tema yang menulis warnanya langsung alih-alih lewat token akan tampak
+// baik-baik saja — sampai user mengganti palet dan TIDAK ADA yang berubah.
+// Sebagian palet juga GELAP (sapphire-dusk, onyx-gold, ...): di sana
+// --ivory jadi hampir hitam dan --ink jadi hampir putih, jadi warna yang
+// dipatok mati bukan cuma tidak ikut berubah, tapi berbalik jadi tak
+// terbaca.
+const TOKEN_PALET = [
+  'ivory', 'paper', 'card',
+  'ink', 'ink-mid', 'ink-soft',
+  'gold', 'gold-dark', 'gold-tint',
+  'line', 'line-soft'
+];
+
 // Berkas contoh yang dicari demo-template.js di templates/_demo/<tema>/.
 const BERKAS_DEMO = [
   'sampul.jpg', 'utama.jpg', 'pria.jpg', 'wanita.jpg',
@@ -303,6 +320,30 @@ function periksaBerkas(tema, katalog, lap) {
       'hapus atribut src-nya — foto contoh tempatnya di templates/_demo/' + tema.nama + '/');
   } else {
     lap.ok('slot foto dikirim kosong (' + imgSlot.length + ' <img>)');
+  }
+
+  // --- token palet ---
+  // Aturannya BUKAN "harus mendefinisikan kesebelas token". Tema yang
+  // memang tidak memakai --gold-tint tidak rugi apa-apa dengan tidak
+  // mendefinisikannya (sage-rose & emerald-dusk begitu, dan itu wajar).
+  // Yang berbahaya justru sebaliknya: token yang DIPAKAI tapi tidak
+  // didefinisikan. Di halaman pratinjau mandiri tidak ada palet yang
+  // disuntikkan, jadi var(--token) itu tidak menghasilkan apa-apa —
+  // temanya rusak di etalase, tapi terlihat benar pada undangan yang
+  // kebetulan sudah punya palet.
+  const root = /:root\s*\{([\s\S]*?)\}/.exec(css);
+  if (!root) {
+    lap.gagal('style.css tidak punya blok :root',
+      'di sanalah token palet didefinisikan; tanpa itu pratinjau mandiri kehilangan seluruh warnanya');
+  } else {
+    const dipakaiTanpaDefinisi = TOKEN_PALET.filter(t =>
+      new RegExp('var\\(\\s*--' + t + '\\b').test(css) &&
+      !new RegExp('--' + t + '\\s*:').test(root[1]));
+    dipakaiTanpaDefinisi.length
+      ? lap.gagal(dipakaiTanpaDefinisi.length + ' token palet dipakai tapi tidak didefinisikan',
+          dipakaiTanpaDefinisi.map(t => '--' + t).join(', ') +
+          ' — di pratinjau mandiri (tanpa palet) warnanya kosong')
+      : lap.ok('semua token palet yang dipakai sudah didefinisikan di :root');
   }
 
   // --- sampul full-bleed ---
@@ -507,6 +548,29 @@ function skripPemeriksa(kontrak) {
           'foto sampul yang diunggah user tidak akan pernah tampil, dan potret-tema.js akan menunggu selamanya');
   }
 
+  // --- palet benar-benar mengubah tampilan ---
+  // Token yang cuma ADA di :root belum tentu DIPAKAI. Di sini palet
+  // ditimpa persis seperti applyPalette() melakukannya, lalu warna
+  // sungguhan sebelum/sesudah dibandingkan. Kalau tidak ada yang bergerak,
+  // tema itu menulis warnanya mati dan fitur ganti palet tidak berfungsi
+  // untuknya — tanpa satu pun pesan error.
+  const contoh = [document.body].concat([...document.querySelectorAll('body *')].slice(0, 300));
+  const warna = () => contoh.map(e => {
+    const s = getComputedStyle(e);
+    return s.backgroundColor + ' ' + s.color + ' ' + s.borderTopColor;
+  }).join('|');
+  const warnaSebelum = warna();
+  const gaya = document.createElement('style');
+  gaya.textContent = ':root{' + K.tokenPalet
+    .map((t, i) => '--' + t + ':rgb(' + (i * 20 + 7) + ',' + (i * 7 + 3) + ',' + (255 - i * 20) + ')')
+    .join(';') + '}';
+  document.head.appendChild(gaya);
+  warna() !== warnaSebelum
+    ? ok('palet: menimpa token di :root benar-benar mengubah warna')
+    : gagal('palet: menimpa token di :root tidak mengubah apa pun',
+        'tema ini menulis warnanya langsung, bukan lewat var(--token) — user mengganti palet dan tidak ada yang berubah; pada palet GELAP hasilnya malah jadi tak terbaca');
+  gaya.remove();
+
   return h;
 })()`;
 }
@@ -540,7 +604,7 @@ async function periksaDom(tema, lap) {
     const res = await kirim('Runtime.evaluate', {
       expression: skripPemeriksa({
         slotTeks: SLOT_TEKS, slotFoto: SLOT_FOTO, slotMilikTema: SLOT_MILIK_TEMA,
-        idDokumen: ID_DOKUMEN, isiForm: ISI_FORM
+        idDokumen: ID_DOKUMEN, isiForm: ISI_FORM, tokenPalet: TOKEN_PALET
       }),
       returnByValue: true
     });
