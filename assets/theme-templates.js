@@ -75,6 +75,14 @@ window.THEME_TEMPLATES = [
     desc: 'Undangan pernikahan Muslim bernuansa malam: biru lazuardi pekat bertabur bintang emas, semua bukaan foto berbentuk oktagon, dan medali bintang delapan yang membesar saat sampul dibuka.',
     ringkas: 'Lazuardi malam & emas · oktagon & bintang delapan',
     thumb: 'templates/islami/nur-lazuardi/assets/thumbnail.jpg'
+  },
+  {
+    id: 'islami/nur-sakinah',
+    name: 'Nur Sakinah',
+    kategori: 'Islami',
+    desc: 'Undangan pernikahan Muslim yang tenang dan lapang: marmer gading, tanah liat hangat, kisi mashrabiya, dan semua bukaan foto berpuncak kubah membulat. Sampulnya terbelah diagonal saat dibuka.',
+    ringkas: 'Gading & tanah liat · kisi mashrabiya & kubah',
+    thumb: 'templates/islami/nur-sakinah/assets/thumbnail.jpg'
   }
 ];
 
