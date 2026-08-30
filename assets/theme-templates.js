@@ -91,6 +91,22 @@ window.THEME_TEMPLATES = [
     desc: 'Undangan pernikahan Tionghoa klasik: merah delima dan emas, aksara 囍 kebahagiaan ganda, kisi jendela, dan semua bukaan foto berbentuk gerbang bulan. Sampulnya menggulung ke atas seperti gulungan gantung.',
     ringkas: 'Merah delima & emas · aksara 囍 & gerbang bulan',
     thumb: 'templates/cina/shuangxi-merah/assets/thumbnail.jpg'
+  },
+  {
+    id: 'cina/giok-langit',
+    name: 'Giok Langit',
+    kategori: 'Chinese',
+    desc: 'Undangan pernikahan Tionghoa yang lembut: batu giok dan krem, motif retak es, dan semua bukaan foto berbentuk kipas. Sampulnya mengayun membuka seperti satu bilah kipas lipat.',
+    ringkas: 'Giok & krem · bentuk kipas & motif retak es',
+    thumb: 'templates/cina/giok-langit/assets/thumbnail.jpg'
+  },
+  {
+    id: 'cina/tinta-emas',
+    name: 'Tinta Emas',
+    kategori: 'Chinese',
+    desc: 'Undangan pernikahan Tionghoa modern yang sepi: putih tulang, tinta arang, dan satu garis emas. Foto berbentuk gulungan tegak, tanpa pola berulang sama sekali, dan ditutup dengan satu bidang tinta pekat.',
+    ringkas: 'Putih tulang & tinta arang · gulungan tegak, tanpa pola',
+    thumb: 'templates/cina/tinta-emas/assets/thumbnail.jpg'
   }
 ];
 
