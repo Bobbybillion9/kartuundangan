@@ -408,6 +408,53 @@ const ORNAMEN = [
     sumber: 'UNDUHAN CLAUDE/sudut-geometris-emas.jpg',
     lebar: 420, mutu: 0.88, alpha: true, hapusLatarPucat: true, pangkas: true,
     catatan: 'sudut kisi geometris emas — sudut sampul tema Islami'
+  },
+
+  // --- kategori CHINESE (unduhan Pinterest, 2026-08-30) ---
+  {
+    keluaran: 'xi-ganda-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/xi-ganda-emas.png',
+    lebar: 420, mutu: 0.9, alpha: true, hapusLatarGelap: true, pangkas: true,
+    catatan: 'aksara 囍 (shuangxi/kebahagiaan ganda) emas — lambang paling khas pernikahan Tionghoa'
+  },
+  {
+    keluaran: 'awan-cina-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/awan-cina-emas.jpg',
+    lebar: 560, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'motif awan (yun wen) emas mendatar — motif keberuntungan klasik Tionghoa'
+  },
+  {
+    keluaran: 'lentera-cina-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/lentera-cina-emas.png',
+    lebar: 300, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'lentera gantung emas berumbai — sumbernya cuma 360px, jangan dipakai lebih besar dari ~200px'
+  },
+  {
+    keluaran: 'peoni-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/peoni-emas.jpg',
+    lebar: 380, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'bunga peoni emas — bunga pernikahan Tionghoa, lambang kemakmuran'
+  },
+  {
+    keluaran: 'garis-cina-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/garis-cina-emas.jpg',
+    lebar: 520, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    // hapusPutih, BUKAN hapusLatarPucat: garisnya sangat tipis dan
+    // latarnya putih rata. hapusPutih mengurai balik campuran tintanya
+    // sehingga garis tetap pekat; kunci kejenuhan akan memudarkannya.
+    catatan: 'pembatas mendatar tipis bergaya Tionghoa'
+  },
+    {
+    keluaran: 'lingkar-awan-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/lingkar-awan-emas.png',
+    lebar: 420, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'lingkaran emas beraksen awan — bingkai monogram tema Tionghoa'
+  },
+  {
+    keluaran: 'bingkai-merah-lentera.webp',
+    sumber: 'UNDUHAN CLAUDE/bingkai-merah-lentera.jpg',
+    lebar: 440, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'bingkai bundar merah bergantung lentera — merah pekat, aman dikunci kejenuhan'
   }
 ];
 
@@ -471,7 +518,7 @@ async function cdp() {
 
 // Dijalankan di dalam Chrome: memuat gambar, menggambarnya ke canvas pada
 // ukuran target, lalu mengembalikan hasil WebP sebagai base64.
-function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, hapusLatarPucat) {
+function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, hapusLatarPucat, hapusLatarGelap) {
   return `(async () => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -491,7 +538,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
     g.imageSmoothingQuality = 'high';
     // Aset tak-transparan diberi alas putih dulu: tanpa itu, JPEG sumber
     // yang punya tepi tipis bisa menghasilkan pinggiran gelap di WebP.
-    if (!${!!alpha} && !${!!hapusPutih} && !${!!hapusLatarPucat}) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
+    if (!${!!alpha} && !${!!hapusPutih} && !${!!hapusLatarPucat} && !${!!hapusLatarGelap}) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
     g.drawImage(img, 0, 0, w, h);
     // Membuang LATAR PUTIH. Seluruh berkas LINE ORNAMENT berupa JPG
     // dengan latar putih pekat — dipakai apa adanya, tiap pembatas akan
@@ -555,6 +602,33 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
         }
       }
       g.putImageData(dq, 0, 0);
+    }
+
+    // --- hapusLatarGelap: cermin dari hapusLatarPucat ---
+    // Untuk ornamen emas/terang yang sumbernya di atas latar HITAM.
+    // Kunci kejenuhan yang sama, hanya sisi kecerahannya dibalik: yang
+    // dibuang piksel GELAP dan tak berwarna, bukan yang terang.
+    //
+    // Perlu ada karena hapusLatarPucat tidak bisa dipakai di sini sama
+    // sekali — hitam punya kecerahan RENDAH, jadi rumus di atas justru
+    // menandainya OPAK. Sudah terjadi: dua ornamen Tionghoa keluar
+    // dengan kotak hitam pekat mengelilinginya, dan itu baru kelihatan
+    // setelah hasilnya dilihat, bukan dari log yang semuanya "berhasil".
+    if (${JSON.stringify(!!hapusLatarGelap)}) {
+      const dr = g.getImageData(0, 0, w, h);
+      const v = dr.data;
+      for (let i = 0; i < v.length; i += 4) {
+        const maks = Math.max(v[i], v[i+1], v[i+2]);
+        const min  = Math.min(v[i], v[i+1], v[i+2]);
+        const jenuh = maks === 0 ? 0 : (maks - min) / maks;
+        const terang = maks / 255;
+        if (jenuh < 0.20) {
+          const t = (terang - 0.12) / 0.28;   // 0 di 0,12; 1 di 0,40
+          const s = jenuh / 0.20;
+          v[i+3] = Math.round(255 * Math.max(0, Math.min(1, Math.max(t, s * s))));
+        }
+      }
+      g.putImageData(dr, 0, 0);
     }
     // Pewarnaan ulang. Sebagian aset bagus bentuknya tapi salah
     // warnanya untuk tema yang dituju — bingkai klasik tipis itu biru
@@ -667,7 +741,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
     }
     const url = 'http://127.0.0.1:' + port + '/' + o.sumber.split('/').map(encodeURIComponent).join('/');
     const res = await kirim('Runtime.evaluate', {
-      expression: skripUbah(url, o.lebar, o.mutu, o.alpha, o.warnai, o.hapusPutih, o.pangkas, o.hapusLatarPucat),
+      expression: skripUbah(url, o.lebar, o.mutu, o.alpha, o.warnai, o.hapusPutih, o.pangkas, o.hapusLatarPucat, o.hapusLatarGelap),
       awaitPromise: true, returnByValue: true
     });
     if (res.result && res.result.exceptionDetails) {

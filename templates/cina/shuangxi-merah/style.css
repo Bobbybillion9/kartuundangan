@@ -1,0 +1,660 @@
+/* ============================================================
+   SHUANGXI MERAH — chinese
+   ------------------------------------------------------------
+   Undangan pernikahan Tionghoa klasik: merah delima, emas, dan aksara
+   囍 (shuangxi, "kebahagiaan ganda"). Bentuk pengaturnya GERBANG BULAN
+   (moon gate) — lingkaran penuh, bentuk pintu taman Tionghoa.
+
+   BAHASA VISUAL KATEGORI INI, dan kenapa berbeda dari empat kategori
+   sebelumnya. Tiap kategori sengaja beda JENIS, bukan cuma warna:
+     - elegan-klasik : sulur SVG tipis
+     - eropa-mewah   : ukiran emas hasil foto + tahap amplop bersegel
+     - islami        : geometri berulang (girih) + bentuk arsitektur Islam
+     - chinese       : KISI JENDELA + LINGKARAN GERBANG BULAN + AKSARA
+   Aksara adalah pembeda terbesarnya: 囍 dan 百年好合 bukan hiasan, itu
+   yang membuat undangan Tionghoa langsung dikenali. Ditulis sebagai
+   TEKS, bukan gambar, supaya tajam di layar berapa pun.
+
+   Tema ini TIDAK memuat assets/amplop.js — tahap amplop milik
+   eropa-mewah.
+
+   Yang harus dijaga saat mengubah berkas ini:
+   - bidang gading di #hadiah menimpa SELURUH warnanya sendiri.
+   - kisi jendela WAJIB diredam lapisan warna di atasnya, bukan opacity.
+   - merah di sini merah DELIMA (kebiruan), bukan merah oranye. Merah
+     oranye membuat emasnya terlihat kuning murahan.
+   ============================================================ */
+:root{
+  /* Nama token WAJIB sama dengan tema lain — applyPalette() menimpanya.
+     Token ini SLOT SEMANTIK: di tema gelap --ivory/--paper justru MERAH
+     PEKAT dan --ink justru krem. */
+  --ivory:#6E1119;
+  --paper:#7C1620;
+  --card:#8E1F29;
+  --ink:#FBEFDC;
+  --ink-mid:#E4CBAE;
+  --ink-soft:#B79079;
+  --rose:#D9AE55;
+  --rose-dark:#F0D08A;
+  --rose-tint:rgba(217,174,85,0.14);
+  --sage:#E0A9A0;
+  --sage-tint:rgba(224,169,160,0.10);
+  --gold:#A87C25;
+  --champagne:#F6E4B8;
+  --line:rgba(217,174,85,0.32);
+  --line-soft:rgba(217,174,85,0.18);
+  --shadow:0 24px 55px -22px rgba(40,4,8,0.7);
+  --s1:6px; --s2:12px; --s3:20px; --s4:28px; --s5:40px; --s6:56px; --s7:80px;
+  --r-sm:2px; --r-md:4px; --r-lg:6px;
+
+  --gading:#F7EFE0;
+  --gading-tinta:#5A1219;
+
+  /* --- KISI JENDELA TIONGHOA (huiwen / meander) ---
+     Motif "回" bersambung — pagar kisi jendela Tionghoa. Digambar SVG
+     data-URI supaya berulang mulus dan warnanya ikut token.
+     Sengaja SIKU-SIKU: kategori Islami sudah memakai bintang (persegi
+     berputar), lingkaran, dan titik. Meander bersudut tegak lurus
+     adalah bahasa yang belum terpakai. '#' WAJIB %23. */
+  --kisi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23D9AE55' stroke-width='1.6'%3E%3Cpath d='M8 8h40v40H8z'/%3E%3Cpath d='M16 16h24v24H16z'/%3E%3Cpath d='M24 24h8v8h-8z'/%3E%3Cpath d='M28 0v8M28 48v8M0 28h8M48 28h8'/%3E%3C/g%3E%3C/svg%3E");
+
+  /* --- aset ornamen bersama --- */
+  --orn-xi:url('/templates/_ornamen/xi-ganda-emas.webp');
+  --orn-awan:url('/templates/_ornamen/awan-cina-emas.webp');
+  --orn-lentera:url('/templates/_ornamen/lentera-cina-emas.webp');
+  --orn-peoni:url('/templates/_ornamen/peoni-emas.webp');
+  --orn-garis:url('/templates/_ornamen/garis-cina-emas.webp');
+  --orn-lingkar:url('/templates/_ornamen/lingkar-awan-emas.webp');
+  --orn-bingkai:url('/templates/_ornamen/bingkai-merah-lentera.webp');
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  background:var(--ivory);color:var(--ink);
+  line-height:1.75;font-size:16px;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{
+  font-family:'Cinzel',Georgia,serif;
+  font-weight:500;letter-spacing:.05em;line-height:1.4;color:var(--ink);
+}
+p{color:var(--ink-mid);}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;}
+img{max-width:100%;display:block;}
+:focus-visible{outline:2px solid var(--rose);outline-offset:3px;}
+
+/* ---------- layout shell ---------- */
+.invitation{
+  position:relative;
+  background-color:var(--ivory);
+  /* Kisi diredam lapisan warna DI ATASNYA, bukan opacity — opacity pada
+     wadah ikut meredupkan seluruh isinya. */
+  background-image:
+    linear-gradient(rgba(110,17,25,.90),rgba(110,17,25,.90)),
+    var(--kisi);
+  background-size:100% 100%,56px 56px;
+  background-repeat:no-repeat,repeat;
+  overflow:hidden;
+}
+@media(min-width:640px){
+  body{
+    background-color:#3E080D;
+    padding:var(--s6) var(--s3);min-height:100vh;
+    display:flex;justify-content:center;align-items:flex-start;
+  }
+  .invitation{width:100%;max-width:460px;box-shadow:var(--shadow);border:1px solid var(--line-soft);}
+}
+
+/* ---------- reveal lock & animasi scroll ---------- */
+body.cover-locked{overflow-y:auto;overflow-x:hidden;height:100vh;}
+body.cover-locked .reveal-after-cover{display:none;}
+.reveal-after-cover{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;}
+.reveal-after-cover.in{opacity:1;transform:translateY(0);}
+[data-rv="text"]{
+  opacity:0;transform:translateY(18px);
+  transition:opacity .65s cubic-bezier(.22,.61,.36,1),transform .65s cubic-bezier(.22,.61,.36,1);
+  transition-delay:calc(var(--d,0) * 110ms);
+}
+[data-reveal].in-view [data-rv="text"]{opacity:1;transform:translateY(0);}
+[data-rv="img"]{transform:scale(1.05);transition:transform 1.1s cubic-bezier(.22,.61,.36,1);transition-delay:calc(var(--d,0) * 110ms);}
+[data-reveal].in-view [data-rv="img"]{transform:scale(1);}
+.ring-draw{stroke-dasharray:340;stroke-dashoffset:340;transition:stroke-dashoffset 1.3s ease;transition-delay:calc(var(--d,0) * 110ms);}
+[data-reveal].in-view .ring-draw{stroke-dashoffset:0;}
+.particles{display:none;}
+
+/* ------------------------------------------------------------
+   IRAMA BAGIAN
+   ------------------------------------------------------------ */
+section{position:relative;padding:var(--s6) var(--s4);}
+.section-divider{display:flex;align-items:center;justify-content:center;margin:0 0 var(--s4);}
+.nz-divider{
+  display:block;width:min(220px,62%);height:36px;
+  background-image:var(--orn-garis);
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+  filter:brightness(1.25);opacity:.95;
+}
+.nz-divider-line,.nz-divider-gem{display:none;}
+
+/* Penanda bagian: aksara 囍 kecil. Ornamen sungguhan, bukan digambar
+   CSS — dan ia satu-satunya penanda, jadi tidak ada dua hiasan yang
+   berebut satu tugas. */
+#pembuka .center::before,#mempelai .center::before,#acara .center::before,
+#countdown .center::before,#galeri .center::before,#rsvp .center::before,
+#ucapan .center::before,#hadiah .center::before{
+  content:'';display:block;
+  width:30px;height:30px;margin:0 auto var(--s3);
+  background-image:var(--orn-xi);
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+  opacity:.8;
+}
+
+.eyebrow{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  font-size:11px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--rose);font-weight:600;margin-bottom:var(--s2);
+}
+.eyebrow::before,.eyebrow::after{content:'';width:16px;height:1px;background:currentColor;opacity:.5;}
+.section-title{font-size:clamp(20px,5.8vw,26px);margin-bottom:var(--s2);}
+.section-title.shimmer-gold{
+  background-image:linear-gradient(100deg,#A87C25 0%,#D9AE55 22%,#F6E4B8 38%,#D9AE55 54%,#A87C25 74%,#D9AE55 100%);
+  background-size:240% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:foilSapu 12s linear infinite;
+}
+@keyframes foilSapu{0%{background-position:0% 50%}100%{background-position:240% 50%}}
+.section-lead{max-width:340px;margin:0 auto;font-size:14.5px;}
+.center{text-align:center;}
+
+/* ------------------------------------------------------------
+   SAMPUL
+   ------------------------------------------------------------ */
+#cover{
+  position:relative;min-height:100svh;min-height:100vh;
+  overflow:hidden;
+  /* WAJIB nol — #cover ikut mewarisi padding section{}. */
+  padding:0;
+  background:#3E080D;
+}
+.cover-foto{
+  position:absolute;inset:0;
+  background-image:var(--foto-sampul);
+  background-size:cover;background-position:center;
+  display:none;
+}
+.cover-foto::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(48,6,10,.64) 0%,rgba(48,6,10,.36) 42%,rgba(48,6,10,.82) 100%);
+}
+#cover.has-sampul .cover-foto{display:block;}
+#cover.has-sampul .cover-kisi{opacity:.10;}
+
+.cover-kisi{
+  position:absolute;inset:0;
+  background-image:var(--kisi);
+  background-size:56px 56px;
+  opacity:.35;pointer-events:none;
+}
+
+/* ============================================================
+   ANIMASI BUKA SAMPUL — GULUNGAN MENGGULUNG KE ATAS
+   Sampul Tionghoa klasik memang berupa gulungan gantung, jadi
+   gerakannya diambil dari bendanya sendiri: seluruh sampul menyusut
+   ke atas (scaleY dari tepi ATAS) sementara batang gulungannya ikut
+   naik. Kontrak: #cover diberi class "is-opening" oleh openCover().
+   ============================================================ */
+#cover .cover-foto,#cover .cover-kisi,#cover .cover-content{
+  transform-origin:top center;
+  transition:transform 1.15s cubic-bezier(.7,0,.24,1), opacity .6s ease;
+}
+#cover.is-opening .cover-foto,
+#cover.is-opening .cover-kisi{transform:scaleY(0);}
+#cover.is-opening .cover-content{opacity:0;pointer-events:none;}
+
+/* Batang gulungan: garis emas tebal di kaki sampul yang naik mengikuti
+   gulungannya. Tanpa ini, sampul yang menyusut cuma terbaca sebagai
+   bidang yang hilang — batangnya yang membuatnya terbaca sebagai
+   gulungan yang benar-benar digulung. */
+.cover-gulung{
+  position:absolute;left:0;right:0;bottom:0;
+  height:10px;
+  background:linear-gradient(180deg,#F0D08A,#A87C25 55%,#6E4E13);
+  box-shadow:0 -6px 18px -6px rgba(0,0,0,.6);
+  z-index:4;
+  transition:transform 1.15s cubic-bezier(.7,0,.24,1);
+}
+#cover.is-opening .cover-gulung{transform:translateY(calc(-100vh + 10px));}
+
+.cover-content{
+  position:relative;z-index:3;
+  min-height:100svh;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:var(--s6) var(--s4);
+}
+/* ============================================================ */
+
+/* Aksara 囍 di puncak sampul — tanda tangan tema. */
+.cover-lafaz{
+  font-family:'Cinzel',Georgia,serif;
+  font-size:54px;line-height:1;
+  color:var(--champagne);
+  margin-bottom:var(--s3);
+  text-shadow:0 2px 14px rgba(0,0,0,.5);
+}
+.cover-monogram{position:relative;width:104px;height:104px;margin-bottom:var(--s3);}
+.monogram-ring{position:absolute;inset:0;width:100%;height:100%;}
+.monogram-ring circle,.monogram-ring path,.monogram-ring ellipse{fill:none;stroke:var(--champagne);stroke-width:1;opacity:.7;}
+.monogram-letters{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:1px;
+  font-family:'Cinzel',Georgia,serif;font-size:26px;color:var(--champagne);
+}
+.monogram-letters .mono-sep{font-size:.6em;opacity:.7;margin:0 2px;}
+
+.cover-guest{font-size:12.5px;color:rgba(246,228,184,.68);letter-spacing:.06em;margin-bottom:var(--s4);}
+.cover-guest b{color:var(--champagne);font-weight:600;}
+.cover-eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--rose);font-weight:600;margin-bottom:var(--s3);}
+.cover-names{font-family:'Cinzel',Georgia,serif;font-size:clamp(28px,8.8vw,38px);line-height:1.3;color:#FFFDF4;margin-bottom:var(--s2);}
+.cover-names.shimmer-gold{background:none;-webkit-background-clip:initial;background-clip:initial;color:#FFFDF4;animation:none;}
+.cover-names .amp{display:block;font-size:.5em;color:var(--rose);margin:4px 0;}
+.cover-date{font-size:14.5px;letter-spacing:.12em;color:rgba(246,228,184,.88);margin-bottom:var(--s4);}
+.btn-open{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:15px 30px;border-radius:var(--r-sm);
+  background:var(--champagne);color:#6E1119;
+  font-size:14px;letter-spacing:.06em;font-weight:600;
+  box-shadow:0 16px 30px -14px rgba(0,0,0,.7);
+  transition:transform .2s ease;position:relative;
+}
+.btn-open::before{content:'';position:absolute;inset:3px;border:1px solid rgba(110,17,25,.3);pointer-events:none;}
+.btn-open:hover{transform:translateY(-2px);}
+.btn-open svg{width:16px;height:16px;}
+
+/* ------------------------------------------------------------
+   FOTO UTAMA — GERBANG BULAN (lingkaran penuh)
+   Semua bukaan foto di tema ini lingkaran: foto utama, mempelai, dan
+   galeri. Itu yang membuatnya sebuah SISTEM, bukan satu foto bulat
+   yang kebetulan (bandingkan Noir Dore, yang cuma foto utamanya
+   berbentuk medali sementara sisanya oval dan persegi).
+   ------------------------------------------------------------ */
+#fotoUtama{padding:var(--s6) var(--s4) var(--s5);text-align:center;}
+.hero-photo{
+  position:relative;
+  width:min(290px,80%);aspect-ratio:1;margin:0 auto;
+  background:var(--rose);border-radius:50%;
+}
+.hero-photo-empty{
+  position:absolute;inset:4px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(165deg,#93242E,#6E1119);
+  color:rgba(217,174,85,.55);border-radius:50%;
+}
+.hero-photo-empty svg{width:44px;height:44px;opacity:.5;stroke-width:1;}
+.hero-photo-img{
+  position:absolute;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px);
+  object-fit:cover;object-position:center;border-radius:50%;
+}
+.hero-photo-fade{position:absolute;inset:0;pointer-events:none;}
+
+.hero-monogram{
+  position:relative;width:118px;height:118px;margin:-30px auto 0;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  background-color:var(--ivory);
+  background-image:var(--orn-lingkar);
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+  border-radius:50%;box-shadow:0 0 0 7px var(--ivory);
+}
+.hero-monogram-ring{display:none;}
+.hero-monogram-letters{
+  position:relative;display:flex;align-items:center;justify-content:center;gap:1px;
+  font-family:'Cinzel',Georgia,serif;font-size:23px;color:var(--champagne);
+}
+.hero-monogram-letters .mono-sep{font-size:.6em;opacity:.65;margin:0 2px;}
+
+/* ------------------------------------------------------------
+   PEMBUKA
+   ------------------------------------------------------------ */
+#pembuka{text-align:center;}
+/* 百年好合 — "seratus tahun rukun bersama", ucapan pernikahan Tionghoa
+   yang paling lazim. Ukurannya besar karena ia yang jadi judul batin
+   bagian ini, bukan hiasan kecil. */
+.salam{
+  font-family:'Cinzel',Georgia,serif;
+  font-size:30px;letter-spacing:.14em;
+  color:var(--rose-dark);margin-bottom:var(--s2);
+}
+.quote{
+  font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;
+  font-size:clamp(17px,4.6vw,19px);line-height:1.75;
+  max-width:340px;margin:0 auto var(--s1);color:var(--ink);
+}
+.quote-rujukan{
+  font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--rose);font-weight:600;margin-bottom:var(--s4);
+}
+.opening-text{max-width:360px;margin:0 auto;font-size:14.5px;}
+/* Motif awan di belakang bagian pembuka — latar, tidak pernah menutupi
+   satu huruf pun. */
+#pembuka{overflow:hidden;}
+#pembuka .opening-text::after{
+  content:'';position:absolute;
+  left:50%;bottom:-6px;
+  /* 515x239 -> tinggi = lebar / 2,155 */
+  width:230px;height:107px;
+  transform:translateX(-50%);
+  background-image:var(--orn-awan);
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+  opacity:.16;z-index:-1;pointer-events:none;
+}
+
+/* ------------------------------------------------------------
+   MEMPELAI — dua gerbang bulan bersebelahan
+   ------------------------------------------------------------ */
+.couple{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:var(--s2);margin-top:var(--s5);}
+.couple-card{text-align:center;min-width:0;}
+.photo-placeholder{
+  position:relative;width:100%;aspect-ratio:1;margin:0 auto var(--s3);
+  background:var(--rose);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.photo-placeholder::before{
+  content:'';position:absolute;inset:3px;
+  background:linear-gradient(165deg,#93242E,#6E1119);border-radius:50%;
+}
+.photo-placeholder svg{width:24px;height:24px;opacity:.5;position:relative;z-index:1;color:rgba(217,174,85,.6);}
+.photo-placeholder span{display:none;}
+.photo-placeholder-img{
+  position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);
+  object-fit:cover;border-radius:50%;z-index:2;
+}
+.couple-role{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--rose);font-weight:600;margin-bottom:4px;}
+.couple-name{font-family:'Cinzel',Georgia,serif;font-size:15px;line-height:1.35;margin-bottom:6px;}
+.couple-parents{font-size:12px;line-height:1.6;}
+.couple-amp{align-self:center;font-family:'Cinzel',Georgia,serif;font-size:22px;color:var(--rose);padding-top:40px;}
+
+/* ------------------------------------------------------------
+   ACARA — kartu bertepi kisi
+   Bingkainya GARIS RANGKAP bersudut siku, bahasa yang sama dengan pola
+   kisinya. Bukan kartu membulat, bukan oktagon, bukan tiket.
+   ------------------------------------------------------------ */
+.event-list{display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s5);}
+.event-card{
+  position:relative;text-align:center;
+  padding:var(--s5) var(--s4);
+  background:var(--card);
+  border:1px solid var(--rose);
+}
+/* Garis kedua di dalam — cetakan Tionghoa klasik hampir selalu
+   bergaris rangkap. */
+.event-card::before{
+  content:'';position:absolute;inset:5px;
+  border:1px solid rgba(217,174,85,.42);
+  pointer-events:none;
+}
+.event-card > *{position:relative;z-index:1;}
+.event-icon{width:32px;height:32px;margin:0 auto var(--s2);color:var(--champagne);}
+.event-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;}
+.event-name{font-family:'Cinzel',Georgia,serif;font-size:17px;color:#FFFDF4;margin-bottom:6px;}
+.event-date{font-size:14px;color:var(--ink-mid);margin-bottom:2px;}
+.event-time{font-size:12.5px;letter-spacing:.08em;color:var(--ink-soft);}
+
+.venue{margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--line-soft);text-align:center;}
+.venue-name{font-family:'Cinzel',Georgia,serif;font-size:15px;color:#FFFDF4;margin-bottom:4px;}
+.venue-address{font-size:13.5px;margin-bottom:var(--s3);}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 24px;border-radius:var(--r-sm);
+  border:1px solid var(--rose);color:var(--rose);
+  font-size:13px;font-weight:600;letter-spacing:.04em;
+  transition:background .2s ease,color .2s ease;
+}
+.btn-outline:hover{background:var(--rose);color:#6E1119;}
+.btn-outline svg{width:15px;height:15px;}
+
+/* ------------------------------------------------------------
+   HITUNG MUNDUR — empat gerbang bulan kecil
+   ------------------------------------------------------------ */
+#countdown{text-align:center;}
+.countdown-row{display:flex;justify-content:center;gap:8px;margin-top:var(--s5);}
+.countdown-box{
+  position:relative;flex:1;max-width:74px;aspect-ratio:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--rose);border-radius:50%;
+}
+.countdown-box::before{content:'';position:absolute;inset:1.5px;background:var(--card);border-radius:50%;}
+.countdown-num{position:relative;z-index:1;font-family:'Cinzel',Georgia,serif;font-size:20px;line-height:1;color:var(--champagne);transition:transform .3s ease;}
+.countdown-num.tick{transform:translateY(-3px);}
+.countdown-label{position:relative;z-index:1;font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:3px;}
+.countdown-msg{margin-top:var(--s3);font-size:14px;color:var(--rose);}
+.countdown-msg[hidden]{display:none;}
+
+/* ------------------------------------------------------------
+   GALERI — deretan gerbang bulan
+   ------------------------------------------------------------ */
+.galeri-grid{display:grid;gap:10px;margin-top:var(--s5);}
+.galeri--grid3{grid-template-columns:repeat(3,1fr);}
+.galeri-item{
+  display:block;padding:0;
+  background:var(--rose);border-radius:50%;aspect-ratio:1;
+  transition:transform .3s ease;
+}
+.galeri-item:hover{transform:scale(1.05);}
+.galeri-photo{position:relative;width:100%;height:100%;margin:0;background:none;border-radius:0;aspect-ratio:auto;}
+.galeri-photo::before{inset:2px;border-radius:50%;}
+.galeri-photo .photo-placeholder-img{inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);border-radius:50%;}
+.galeri-photo svg{width:18px;height:18px;}
+/* Peoni emas di sela galeri — bunga pernikahan Tionghoa. Latar. */
+#galeri{overflow:hidden;}
+#galeri .galeri-grid::after{
+  content:'';position:absolute;
+  right:-16px;bottom:var(--s3);
+  width:120px;height:120px;
+  background-image:var(--orn-peoni);
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+  opacity:.2;z-index:-1;pointer-events:none;
+}
+
+/* ---------- lightbox ---------- */
+.lightbox{position:fixed;inset:0;background:rgba(40,4,8,0.95);z-index:200;display:none;align-items:center;justify-content:center;padding:var(--s4);}
+.lightbox.open{display:flex;}
+.lightbox-stage{width:100%;max-width:300px;}
+/* Lightbox tidak dibulatkan: tamu sedang melihat fotonya, dan
+   memotongnya jadi lingkaran memotong bagian gambar. */
+.lightbox-photo{width:100%;height:auto;aspect-ratio:3/4;margin:0;border-radius:var(--r-md);background:var(--rose);}
+.lightbox-photo::before{inset:3px;border-radius:var(--r-md);}
+.lightbox-photo .photo-placeholder-img,
+.lightbox-photo img{inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);border-radius:var(--r-md);}
+.lightbox-photo span{display:block;color:var(--ink-soft);font-size:12px;position:relative;z-index:3;}
+.lightbox-close{position:absolute;top:var(--s3);right:var(--s3);width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.16);color:#fff;display:flex;align-items:center;justify-content:center;}
+.lightbox-close svg{width:18px;height:18px;}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.16);color:#fff;display:flex;align-items:center;justify-content:center;}
+.lightbox-nav svg{width:18px;height:18px;}
+.lightbox-prev{left:var(--s2);}
+.lightbox-next{right:var(--s2);}
+
+/* ---------- form ---------- */
+.form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s4);margin-top:var(--s5);}
+.field{margin-bottom:var(--s3);}
+.field label{display:block;font-size:13px;color:var(--ink-mid);margin-bottom:6px;font-weight:600;}
+.field input[type="text"],.field input[type="number"],.field textarea{
+  width:100%;padding:11px 14px;border-radius:var(--r-sm);
+  border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  font-size:15px;font-family:inherit;
+}
+.field textarea{resize:vertical;min-height:84px;}
+.field input:focus-visible,.field textarea:focus-visible{outline:2px solid var(--rose);outline-offset:1px;border-color:var(--rose);}
+.field.is-hidden{display:none;}
+.pill-group{display:flex;gap:8px;}
+.pill-btn{
+  flex:1;padding:11px 8px;border-radius:var(--r-sm);
+  border:1px solid var(--line);background:var(--paper);
+  font-size:12.5px;font-weight:600;color:var(--ink-mid);
+  text-align:center;transition:background .2s ease,border-color .2s ease,color .2s ease;
+}
+.pill-btn.is-active{background:var(--rose);border-color:var(--rose);color:#6E1119;}
+.btn-primary-full{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;padding:14px;border-radius:var(--r-sm);
+  background:var(--rose);color:#6E1119;font-size:14.5px;font-weight:600;letter-spacing:.04em;
+  box-shadow:0 16px 30px -14px rgba(0,0,0,.6);transition:transform .2s ease;
+}
+.btn-primary-full:hover{transform:translateY(-2px);}
+.form-msg{font-size:13px;text-align:center;margin-top:var(--s3);min-height:18px;color:var(--ink-mid);}
+.form-msg.err{color:#F0A79E;}
+.form-msg.ok{color:var(--rose-dark);}
+
+/* ---------- ucapan list ---------- */
+.ucapan-list{margin-top:var(--s4);max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:var(--s3);padding-right:4px;}
+.ucapan-item{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--rose);border-radius:var(--r-sm);padding:var(--s3);}
+.ucapan-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;}
+.ucapan-name{font-size:14px;font-weight:600;color:var(--ink);}
+.ucapan-time{font-size:11px;color:var(--ink-soft);flex-shrink:0;}
+.ucapan-text{font-size:13.5px;line-height:1.65;}
+
+/* ============================================================
+   TANDA KASIH — SATU BIDANG GADING
+   SELURUH warna di dalamnya WAJIB ditulis ulang. Teks krem di atas
+   kertas krem tidak memberi error, ia cuma hilang.
+   ============================================================ */
+#hadiah{background-color:var(--gading);color:var(--gading-tinta);margin-top:var(--s5);}
+#hadiah .nz-divider{filter:brightness(.55) saturate(1.3);}
+#hadiah .center::before{opacity:.55;filter:brightness(.6) saturate(1.4);}
+#hadiah .eyebrow{color:#9C6A1E;}
+#hadiah .section-title,#hadiah .section-title.shimmer-gold{
+  background:none;-webkit-background-clip:initial;background-clip:initial;
+  color:var(--gading-tinta);animation:none;
+}
+#hadiah p,#hadiah .section-lead,#hadiah .gift-intro{color:rgba(90,18,25,.75);}
+#hadiah .gift-card,#hadiah .form-card{background:#FFFDF6;border-color:rgba(168,124,37,.32);}
+#hadiah .gift-bank{color:#9C6A1E;}
+#hadiah .gift-number{color:var(--gading-tinta);}
+#hadiah .field label,#hadiah .field-label-block{color:rgba(90,18,25,.8);}
+#hadiah .field input,#hadiah .field textarea{background:#FBF5E9;border-color:rgba(168,124,37,.32);color:var(--gading-tinta);}
+#hadiah .btn-copy{border-color:#A87C25;color:#9C6A1E;}
+#hadiah .btn-copy:hover{background:rgba(168,124,37,.12);}
+#hadiah .btn-primary-full{background:#8E1F29;color:#F6E4B8;}
+#hadiah .upload-dropzone{border-color:#A87C25;background:rgba(168,124,37,.1);color:#9C6A1E;}
+#hadiah .upload-preview{background:#FFFDF6;border-color:rgba(168,124,37,.32);}
+#hadiah .upload-filename{color:rgba(90,18,25,.75);}
+#hadiah .upload-remove{color:#9C6A1E;}
+#hadiah .upload-hint{color:rgba(90,18,25,.55);}
+#hadiah .form-msg{color:rgba(90,18,25,.75);}
+
+.gift-intro{max-width:340px;margin:var(--s4) auto var(--s5);font-size:14px;text-align:center;}
+.gift-cards{display:flex;flex-direction:column;gap:var(--s3);}
+.gift-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s4);text-align:center;}
+.gift-logo{height:26px;width:auto;max-width:120px;object-fit:contain;margin:0 auto var(--s2);}
+.gift-logo[hidden]{display:none;}
+.gift-bank{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--rose);font-weight:600;margin-bottom:6px;}
+.gift-number{font-family:'Cinzel',Georgia,serif;font-size:17px;color:var(--ink);margin-bottom:4px;letter-spacing:.03em;}
+.gift-owner{font-size:13px;margin-bottom:var(--s3);}
+.btn-copy{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:var(--r-sm);
+  border:1px solid var(--rose);color:var(--rose);font-size:12.5px;font-weight:600;transition:background .2s ease;
+}
+.btn-copy:hover{background:var(--rose-tint);}
+.btn-copy svg{width:14px;height:14px;}
+
+/* ---------- unggah bukti transfer ---------- */
+.upload-bukti{margin-top:var(--s4);}
+.field-label-block{display:block;font-size:13px;color:var(--ink-mid);margin-bottom:8px;font-weight:600;text-align:center;}
+.upload-input-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.upload-dropzone{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:var(--s4) var(--s3);
+  border:1.5px dashed var(--rose);border-radius:var(--r-sm);
+  background:var(--rose-tint);color:var(--rose);
+  font-size:13px;text-align:center;cursor:pointer;transition:background .2s ease;
+}
+.upload-dropzone:hover{background:rgba(217,174,85,.22);}
+.upload-dropzone svg{width:26px;height:26px;}
+.upload-dropzone[hidden]{display:none;}
+.upload-preview{display:flex;align-items:center;gap:var(--s3);background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s3);}
+.upload-preview[hidden]{display:none;}
+.upload-preview img{width:60px;height:60px;object-fit:cover;border-radius:var(--r-sm);flex-shrink:0;border:1px solid var(--line);}
+.upload-preview-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+.upload-filename{font-size:12.5px;color:var(--ink-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.upload-remove{align-self:flex-start;font-size:12px;color:var(--rose);text-decoration:underline;text-underline-offset:2px;}
+.upload-hint{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:8px;}
+
+/* ---------- tombol mengambang ---------- */
+.float-btn{
+  position:fixed;width:42px;height:42px;border-radius:50%;
+  background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--rose);z-index:140;
+  transition:opacity .25s ease,transform .25s ease,background .2s ease;
+}
+.float-btn:hover{background:var(--rose-tint);}
+.float-btn svg{width:18px;height:18px;}
+.float-music{top:var(--s3);right:8px;}
+.icon-music-on{display:none;}
+.icon-music-off{display:block;}
+.float-music.is-playing .icon-music-on{display:block;}
+.float-music.is-playing .icon-music-off{display:none;}
+.float-top{bottom:var(--s3);right:8px;opacity:0;pointer-events:none;transform:translateY(8px);}
+.float-top.show{opacity:1;pointer-events:auto;transform:translateY(0);}
+
+/* ------------------------------------------------------------
+   PENUTUP
+   ------------------------------------------------------------ */
+#penutup{position:relative;text-align:center;padding-bottom:var(--s7);}
+/* Sepasang lentera gantung di kedua sisi. Sumbernya cuma 360px, jadi
+   ukurannya sengaja kecil — diperbesar melewati itu akan terlihat lunak. */
+#penutup::before,#penutup::after{
+  content:'';position:absolute;top:var(--s4);
+  width:64px;height:124px;
+  background-image:var(--orn-lentera);
+  background-size:contain;background-position:top center;background-repeat:no-repeat;
+  opacity:.5;pointer-events:none;
+}
+#penutup::before{left:var(--s2);}
+#penutup::after{right:var(--s2);transform:scaleX(-1);}
+.closing-text{max-width:340px;margin:0 auto var(--s5);font-size:14.5px;}
+.closing-signature{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+.closing-names{font-family:'Cinzel',Georgia,serif;font-size:26px;line-height:1.35;color:var(--rose-dark);}
+.divider{display:flex;align-items:center;justify-content:center;gap:10px;margin:var(--s4) 0;}
+.divider-line{width:36px;height:1px;background:var(--line);}
+.divider svg{width:18px;height:18px;color:var(--rose);}
+/* `rect` & `circle` WAJIB ikut disebut — bentuk SVG yang tidak disebut
+   memakai fill hitam bawaan browser. */
+.divider svg path,.divider svg rect,.divider svg circle{fill:none;stroke:currentColor;stroke-width:1.2;stroke-linejoin:round;}
+.credit{margin-top:var(--s6);font-size:11px;color:var(--ink-soft);letter-spacing:.03em;}
+.credit-link{color:var(--rose);text-decoration:underline;text-underline-offset:2px;}
+
+/* ------------------------------------------------------------
+   LAYAR LEBAR / PENDEK / SEMPIT
+   ------------------------------------------------------------ */
+@media(min-width:640px){
+  .gift-cards{flex-direction:row;}
+  .gift-cards .gift-card{flex:1;}
+}
+/* Sampul pada layar PENDEK — termasuk 390x585 yang dipakai
+   tools/potret-tema.js. Tanpa ini tombol "Buka Undangan" terpotong di
+   kartu tema, dan itulah gambar yang dilihat calon pembeli. */
+@media(max-height:680px){
+  .cover-content{padding:var(--s4) var(--s4);}
+  .cover-lafaz{font-size:42px;margin-bottom:var(--s2);}
+  .cover-monogram{width:78px;height:78px;margin-bottom:var(--s2);}
+  .monogram-letters{font-size:21px;}
+  .cover-guest{margin-bottom:var(--s3);}
+  .cover-eyebrow{margin-bottom:var(--s2);}
+  .cover-names{font-size:clamp(24px,7.4vw,30px);}
+  .cover-date{margin-bottom:var(--s3);}
+  .btn-open{padding:12px 24px;}
+}
+@media(max-width:359px){
+  .couple{gap:6px;}
+  .couple-amp{font-size:18px;padding-top:32px;}
+  .couple-name{font-size:13px;}
+  .couple-parents{font-size:11px;}
+  .countdown-row{gap:5px;}
+  .countdown-num{font-size:17px;}
+  .galeri-grid{gap:7px;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{transition:none !important;animation:none !important;}
+  .particles{display:none;}
+}

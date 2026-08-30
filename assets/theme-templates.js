@@ -83,6 +83,14 @@ window.THEME_TEMPLATES = [
     desc: 'Undangan pernikahan Muslim yang tenang dan lapang: marmer gading, tanah liat hangat, kisi mashrabiya, dan semua bukaan foto berpuncak kubah membulat. Sampulnya terbelah diagonal saat dibuka.',
     ringkas: 'Gading & tanah liat · kisi mashrabiya & kubah',
     thumb: 'templates/islami/nur-sakinah/assets/thumbnail.jpg'
+  },
+  {
+    id: 'cina/shuangxi-merah',
+    name: 'Shuangxi Merah',
+    kategori: 'Chinese',
+    desc: 'Undangan pernikahan Tionghoa klasik: merah delima dan emas, aksara 囍 kebahagiaan ganda, kisi jendela, dan semua bukaan foto berbentuk gerbang bulan. Sampulnya menggulung ke atas seperti gulungan gantung.',
+    ringkas: 'Merah delima & emas · aksara 囍 & gerbang bulan',
+    thumb: 'templates/cina/shuangxi-merah/assets/thumbnail.jpg'
   }
 ];
 
