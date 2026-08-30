@@ -51,6 +51,14 @@ window.THEME_TEMPLATES = [
     desc: 'Undangan resepsi malam: kertas hitam pekat berdaun emas, foto utama berbentuk medali bulat, mempelai dalam bingkai ukiran oval, dan rangkaian acara yang menurun pada satu garis emas.',
     ringkas: 'Hitam & emas malam · medali bulat & bingkai oval',
     thumb: 'templates/eropa-mewah/noir-dore/assets/thumbnail.jpg'
+  },
+  {
+    id: 'eropa-mewah/bordeaux',
+    name: 'Bordeaux',
+    kategori: 'Eropa Mewah',
+    desc: 'Undangan yang dibaca seperti surat lama bersegel lilin merah: lembar demi lembar kertas krem bertepi sobek di atas bidang beludru burgundy, foto dipasang berpenjepit sudut emas, acara berupa kartu tiket, dan hitung mundur di atas empat perangko.',
+    ringkas: 'Burgundy & kertas sobek · surat bersegel lilin',
+    thumb: 'templates/eropa-mewah/bordeaux/assets/thumbnail.jpg'
   }
 ];
 

@@ -1,0 +1,1375 @@
+/* ============================================================
+   BORDEAUX — eropa mewah
+   ------------------------------------------------------------
+   Undangan yang dibaca sebagai SURAT LAMA BERSEGEL LILIN MERAH:
+   lembar-lembar kertas krem bertepi sobek diletakkan di atas bidang
+   beludru burgundy, dan di akhir suratnya ditutup kembali dengan segel.
+
+   KENAPA INI BUKAN NOIR DORE / BLANC ROYALE YANG DICAT MERAH
+   ----------------------------------------------------------
+   Revisi pertama Blanc Royale pernah ditolak user justru karena itu —
+   struktur, ritme, bentuk kartu, dan grid-nya sama, yang berubah cuma
+   palet. Jadi yang membedakan tema ini bukan warnanya:
+
+   - RITME HALAMAN. Blanc Royale terang sepanjang halaman dengan satu
+     bidang gelap; Noir Dore gelap sepanjang halaman dengan satu bidang
+     terang. Di sini halaman tidak satu bidang sama sekali: tiap bagian
+     adalah LEMBAR TERPISAH bertepi sobek, dan latar burgundy terlihat
+     di sela-selanya. Menggulir terasa seperti membalik halaman surat.
+   - PENANDA BAGIAN. Dua tema itu memakai angka Romawi membayang di
+     tengah. Di sini nomornya kecil, TEGAK di tepi kiri lembar, seperti
+     nomor halaman terbitan lama.
+   - FOTO UTAMA. Di sana persegi berpuncak lengkung (Blanc) dan medali
+     bulat (Noir); di sini CETAKAN FOTO MIRING yang dipegang empat
+     penjepit sudut emas, seperti dipasang di halaman album.
+   - MONOGRAM. Di sana lingkaran bermahkota dan cincin bertaut; di sini
+     inisialnya TERCAP DI SEGEL LILIN.
+   - ACARA. Di sana daftar program bergaris dan garis waktu tegak; di
+     sini dua KARTU TIKET bertepi perforasi.
+   - HITUNG MUNDUR. Di sana angka polos tanpa kotak; di sini empat
+     PERANGKO bertepi gerigi.
+   - GALERI. Di sana mozaik dan grid; di sini foto BERHAMBURAN MIRING
+     di atas meja, tiap lembar berpenjepit sudut.
+   - BIDANG PEMBEDA. Di kedua tema itu bidang yang dibalik warnanya
+     adalah Tanda Kasih. Di sini PENUTUP — supaya babak terakhirnya
+     jatuh bersamaan dengan suratnya ditutup dan disegel.
+   - FOIL EMAS. Blanc Royale memakai foil beranimasi pada judul. Di sini
+     ada satu aturan yang dipegang: foil HANYA muncul di bidang gelap
+     (penutup). Di atas kertas krem, judulnya justru LETTERPRESS —
+     tercetak MASUK ke kertas. Dua teknik cetak mahal yang berbeda.
+
+   Aset gambarnya di templates/_ornamen/ — dipakai bersama tema lain di
+   kategori ini, dan dihasilkan tools/siapkan-ornamen.js. JANGAN menunjuk
+   langsung ke folder OneDrive user: berkas mentahnya 23 MB dan tidak ada
+   di repo.
+
+   Yang harus dijaga saat mengubah berkas ini:
+   - tepi sobek dibuat clip-path, BUKAN gambar atau mask. Sengaja:
+     titik-titiknya memakai % untuk sumbu X dan px untuk sumbu Y, jadi
+     tinggi sobekannya tetap sama di lembar setinggi apa pun. Kalau
+     diganti % pada sumbu Y, lembar panjang akan bergerigi raksasa.
+   - clip-path IKUT MEMOTONG box-shadow. Bayangan lembar karena itu
+     digambar elemen tersendiri (.invitation > section::after), bukan
+     box-shadow pada lembarnya.
+   - ornamen sudut emas HANYA di sampul, sama seperti dua tema lain.
+     Sudah dicoba di tiap lembar dan hasilnya halaman terasa penuh.
+   ============================================================ */
+:root{
+  /* Nama token WAJIB sama dengan tema lain — applyPalette() di
+     assets/render-undangan.js menimpa :root dengan nama-nama ini. */
+  /* Token ini SLOT SEMANTIK, bukan nama warna harfiah. Di tema ini
+     permukaan utamanya kertas krem, jadi --ivory/--paper/--card terang
+     dan --ink gelap — kebalikan Noir Dore. Warna burgundy-nya BUKAN
+     token palet: ia identitas tema, dan ditulis sebagai --wine* supaya
+     tidak ikut tertimpa saat user mengganti palet. */
+  --ivory:#F5EDDD;
+  --paper:#FAF4E8;
+  --card:#FFFCF4;
+  --ink:#3B1620;
+  --ink-mid:#6E4451;
+  --ink-soft:#9C7F88;
+  --gold:#A9803A;
+  --gold-dark:#8A6524;
+  --gold-tint:#F2E6CC;
+  --line:rgba(169,128,58,.32);
+  --line-soft:rgba(169,128,58,.16);
+  --shadow:0 24px 50px -24px rgba(46,8,20,0.55);
+  --s1:6px; --s2:12px; --s3:20px; --s4:28px; --s5:40px; --s6:56px; --s7:80px;
+  --r-sm:3px; --r-md:6px; --r-lg:10px;
+
+  /* --- identitas Bordeaux (di luar sistem palet, sengaja) --- */
+  --wine:#5E1226;
+  --wine-dark:#3A0A17;
+  --wine-deep:#2A0610;
+
+  /* Tepi sobek. Titiknya sengaja TIDAK berjarak rata dan tidak setinggi
+     sama — sobekan tangan tidak pernah rapi, dan gerigi yang teratur
+     langsung terbaca sebagai perangko, bukan kertas robek. */
+  --tepi-sobek:polygon(
+    0% 7px, 4% 1px, 9% 5px, 13% 0px, 19% 4px, 24% 1px, 30% 6px, 36% 2px,
+    42% 5px, 49% 0px, 55% 4px, 61% 1px, 67% 6px, 73% 2px, 79% 5px,
+    85% 0px, 91% 4px, 96% 1px, 100% 6px,
+    100% calc(100% - 6px), 95% calc(100% - 1px), 89% calc(100% - 5px),
+    83% calc(100% - 0px), 77% calc(100% - 6px), 71% calc(100% - 2px),
+    65% calc(100% - 4px), 58% calc(100% - 0px), 52% calc(100% - 5px),
+    46% calc(100% - 1px), 39% calc(100% - 6px), 33% calc(100% - 2px),
+    27% calc(100% - 4px), 20% calc(100% - 0px), 14% calc(100% - 5px),
+    8% calc(100% - 2px), 3% calc(100% - 6px), 0% calc(100% - 3px)
+  );
+
+  /* --- aset ornamen bersama ---
+     Path SENGAJA absolut dari root, bukan relatif seperti biasanya.
+     Alasannya nyata dan pernah menggigit di sini: url() di dalam sebuah
+     custom property diselesaikan relatif terhadap berkas CSS yang
+     MEMAKAINYA, bukan yang menulisnya. Variabel --amplop-* di bawah
+     dipakai assets/amplop.css, jadi '../../_ornamen/' dihitung dari
+     /assets/ dan mendarat di /_ornamen/ yang tidak ada — gambarnya
+     hilang tanpa satu pun pesan di layar, hanya 404 di konsol.
+     Path absolut menghapus seluruh persoalan itu. */
+  --orn-latar:url('/templates/_ornamen/latar-burgundy-kertas.webp');
+  --orn-sudut:url('/templates/_ornamen/sudut-sulur-krem.webp');
+  --orn-tirai:url('/templates/_ornamen/tirai-beludru-merah.webp');
+  --orn-lis:url('/templates/_ornamen/fleur-de-lis-emas.webp');
+  --orn-segel:url('/templates/_ornamen/segel-mawar-merah.webp');
+
+  /* --- tahap amplop (assets/amplop.css membaca variabel ini) --- */
+  --amplop-latar:#2A0610;
+  --amplop-warna:#5E1226;
+  --amplop-kertas:var(--orn-latar);
+  --amplop-segel:url('/templates/_ornamen/segel-mawar-merah.webp');
+  --amplop-tinta:#F0DFC0;
+  --amplop-garis:rgba(214,178,104,.42);
+  /* Kabut di belakang nama tamu harus GELAP di sini, bukan terang —
+     nilai bawaannya putih dan akan jadi balok pucat di amplop burgundy. */
+  --amplop-kabut:linear-gradient(to top,rgba(26,4,10,.82),rgba(26,4,10,0));
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  background:var(--wine-deep);
+  color:var(--ink);
+  line-height:1.7;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+}
+/* Cinzel: kapital Romawi terpahat. Sengaja BUKAN Marcellus (Noir Dore)
+   maupun huruf Blanc Royale — dua tema yang berbagi huruf akan terasa
+   kembar berapa pun bedanya warna. */
+h1,h2,h3{
+  font-family:'Cinzel',Georgia,serif;
+  font-weight:500;
+  text-transform:uppercase;
+  line-height:1.35;
+  letter-spacing:.05em;
+  color:var(--ink);
+}
+p{color:var(--ink-mid);}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;}
+img{max-width:100%;display:block;}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+
+/* Aksen script — hanya di monogram & tanda tangan penutup. Pinyon
+   Script: copperplate Eropa, tipis dan miring tajam, sejalan dengan
+   tulisan tangan pada surat lama. */
+.script{font-family:'Pinyon Script',cursive;font-weight:400;color:var(--gold-dark);}
+
+/* ------------------------------------------------------------
+   LAYOUT SHELL — bidang beludru burgundy tempat lembar diletakkan
+   ------------------------------------------------------------ */
+.invitation{
+  position:relative;
+  background-color:var(--wine-dark);
+  /* Tekstur beludru/kertas burgundy. background-attachment:fixed dan
+     size:cover karena gambarnya cuma 675px: kalau dibiarkan merentang
+     sepanjang halaman (belasan ribu piksel) ia melar jadi buram.
+     Lapisan gelap tipis menahannya supaya tetap jadi LATAR. */
+  background-image:
+    linear-gradient(rgba(42,6,16,.72),rgba(42,6,16,.72)),
+    var(--orn-latar);
+  background-size:cover,cover;
+  background-position:center,center;
+  background-attachment:fixed,fixed;
+  overflow:hidden;
+  /* Penomoran lembar dimulai dari sini, bukan dari body — #cover berada
+     di luar hitungan dan lembar pertama yang bernomor adalah #pembuka. */
+  counter-reset:bagian;
+}
+
+@media(min-width:640px){
+  body{
+    background-color:var(--wine-deep);
+    background-image:
+      linear-gradient(rgba(20,3,8,.78),rgba(20,3,8,.78)),
+      var(--orn-latar);
+    background-size:cover,cover;
+    background-position:center,center;
+    background-repeat:no-repeat,no-repeat;
+    min-height:100vh;
+    padding:var(--s6) var(--s3);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+  }
+  .invitation{
+    width:100%;
+    max-width:460px;
+    border-radius:var(--r-lg);
+    box-shadow:var(--shadow);
+    border:1px solid rgba(214,178,104,.18);
+  }
+}
+
+/* ---------- reveal-before-open lock ---------- */
+body.cover-locked{overflow-y:auto;overflow-x:hidden;height:100vh;}
+body.cover-locked .reveal-after-cover{display:none;}
+
+.reveal-after-cover{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;}
+.reveal-after-cover.in{opacity:1;transform:translateY(0);}
+
+/* ============================================================
+   SISTEM ANIMASI SCROLL PER-ELEMEN — dipakai sama persis oleh
+   seluruh tema; jangan diubah hanya untuk satu tema.
+   ============================================================ */
+[data-rv="text"]{
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .65s cubic-bezier(.22,.61,.36,1),transform .65s cubic-bezier(.22,.61,.36,1);
+  transition-delay:calc(var(--d,0) * 110ms);
+}
+[data-reveal].in-view [data-rv="text"]{opacity:1;transform:translateY(0);}
+
+[data-rv="img"]{
+  transform:scale(1.05);
+  transition:transform 1.1s cubic-bezier(.22,.61,.36,1);
+  transition-delay:calc(var(--d,0) * 110ms);
+}
+[data-reveal].in-view [data-rv="img"]{transform:scale(1);}
+
+.rv-draw-path{
+  stroke-dasharray:260;
+  stroke-dashoffset:260;
+  transition:stroke-dashoffset 1.15s ease;
+  transition-delay:calc(var(--d,0) * 110ms);
+}
+[data-reveal].in-view [data-rv="draw"] .rv-draw-path{stroke-dashoffset:0;}
+
+/* ---------- partikel latar: DIMATIKAN ----------
+   Elemen & skripnya dibiarkan supaya markup sebangun dengan tema lain;
+   yang dimatikan cuma tampilannya. Latar di sini sudah bertekstur
+   beludru, dan motif setipis partikel di atasnya tidak terbaca sebagai
+   hiasan — yang terlihat cuma noda samar seperti kotoran di kertas. */
+.particles{display:none;}
+.particle{
+  position:absolute;
+  bottom:-6%;
+  width:20px;height:20px;
+  color:var(--gold);
+  opacity:0;
+  animation:particleFloat var(--dur,30s) linear var(--delay,0s) infinite;
+}
+.particle path,.particle circle{fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;}
+@keyframes particleFloat{
+  0%{transform:translate(0,0) rotate(0deg);opacity:0;}
+  10%{opacity:.06;}
+  50%{transform:translate(var(--drift,24px),-58vh) rotate(var(--rot,25deg));}
+  90%{opacity:.04;}
+  100%{transform:translate(calc(var(--drift,24px) * 1.6),-112vh) rotate(calc(var(--rot,25deg) * 2));opacity:0;}
+}
+
+/* ------------------------------------------------------------
+   LEMBAR KERTAS — bentuk pembawa identitas tema ini
+   ------------------------------------------------------------
+   Tiap bagian adalah lembar tersendiri, bukan bagian dari satu bidang
+   panjang. Latar burgundy terlihat di sela-selanya, dan itulah yang
+   membuat menggulir terasa seperti membalik halaman surat.
+
+   #cover DIKECUALIKAN (ia satu lembar penuh layar dengan aturannya
+   sendiri) dan #penutup DIKECUALIKAN (ia justru bidang burgundy).
+   ------------------------------------------------------------ */
+section{position:relative;padding:var(--s6) var(--s4);}
+
+#fotoUtama,#pembuka,#mempelai,#acara,#countdown,
+#galeri,#rsvp,#ucapan,#hadiah{
+  background-color:var(--ivory);
+  background-image:linear-gradient(160deg,rgba(255,255,255,.55),rgba(255,255,255,0) 55%);
+  margin:0 10px 16px;
+  clip-path:var(--tepi-sobek);
+  counter-increment:bagian;
+}
+/* Lembar pertama menempel ke bawah sampul tanpa jarak yang menggantung. */
+#fotoUtama{margin-top:14px;}
+
+/* NOMOR LEMBAR — kecil, tegak, di tepi kiri. Bukan angka Romawi
+   membayang di tengah seperti dua tema lain; ini nomor halaman
+   terbitan lama, dan letaknya di tepi justru menegaskan bahwa yang
+   dibaca adalah sehelai kertas. */
+#fotoUtama::before,#pembuka::before,#mempelai::before,#acara::before,
+#countdown::before,#galeri::before,#rsvp::before,#ucapan::before,
+#hadiah::before{
+  content:counter(bagian,decimal-leading-zero);
+  position:absolute;
+  left:9px;
+  top:var(--s5);
+  font-family:'Cinzel',Georgia,serif;
+  font-size:10px;
+  letter-spacing:.18em;
+  color:var(--gold);
+  opacity:.62;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  pointer-events:none;
+}
+/* Garis tipis di bawah nomor — menutup jarak antara nomor dan tepi
+   lembar, supaya nomornya terbaca sebagai bagian dari kertas dan bukan
+   sebagai benda yang tercecer. */
+#pembuka::after,#mempelai::after,#countdown::after,
+#rsvp::after,#hadiah::after{
+  content:'';
+  position:absolute;
+  left:13px;
+  top:calc(var(--s5) + 34px);
+  width:1px;height:44px;
+  background:linear-gradient(to bottom,var(--gold),rgba(169,128,58,0));
+  opacity:.5;
+  pointer-events:none;
+}
+
+/* ---------- irama judul bersama ---------- */
+.eyebrow{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--wine);font-weight:600;margin-bottom:var(--s2);
+}
+.eyebrow::before,.eyebrow::after{content:'';width:16px;height:1px;background:currentColor;opacity:.45;}
+.section-title{font-size:clamp(18px,5.2vw,23px);letter-spacing:.06em;margin-bottom:var(--s2);}
+.section-lead{max-width:340px;margin:0 auto;font-size:14.5px;}
+.center{text-align:center;}
+
+/* Ikon garis tipis berdiri sendiri (#acara & #hadiah punya elemen ini) */
+.section-icon{display:flex;justify-content:center;margin-bottom:var(--s2);color:var(--gold);}
+.section-icon svg{width:52px;height:auto;}
+.section-icon path,.section-icon circle,.section-icon rect{fill:none;stroke:currentColor;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;}
+/* Di #acara ikon ini DIMATIKAN: bentuknya sepasang gelas, dan kartu
+   Resepsi tepat di bawahnya sudah memakai gelas anggur sungguhan. Dua
+   gelas dalam satu layar membuat yang sungguhan kehilangan bobotnya.
+   Elemennya dibiarkan di markup supaya tetap sebangun dengan tema lain. */
+#acara .section-icon{display:none;}
+
+/* ------------------------------------------------------------
+   LETTERPRESS — huruf tercetak MASUK ke kertas
+   Teknik cetak yang dijual mahal, dan pasangan yang tepat untuk kertas
+   krem. Foil emas sengaja TIDAK dipakai di sini; ia disimpan untuk
+   bidang burgundy di penutup (lihat blok PENUTUP).
+   Bayangannya dua arah: terang di bawah huruf (pantulan tepi cekungan)
+   dan gelap di atas — dibalik, hurufnya justru terlihat timbul.
+   ------------------------------------------------------------ */
+.section-title,.cover-names,.couple-name,.event-name{
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.85),
+    0 -1px 1px rgba(59,22,32,.22);
+}
+
+/* ------------------------------------------------------------
+   PEMISAH ANTAR BAGIAN
+   SVG bawaan markup disembunyikan LEWAT ISINYA (path/circle/rect),
+   bukan lewat elemennya: .divider-ornament itu sendiri adalah <svg>,
+   dan menyembunyikannya ikut menghapus gambar latarnya.
+   Motifnya bergiliran — pembatas yang sama persis sembilan kali membuat
+   halaman terasa berulang. Giliran DAN berkasnya sengaja berbeda dari
+   dua tema lain (Blanc: a/b/c, Noir: a/b/d, Bordeaux: c/d + fleur).
+   ------------------------------------------------------------ */
+.section-divider{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  margin:0 0 var(--s5);
+}
+.divider-ornament{
+  width:min(220px,60%);
+  height:44px;
+  flex:none;
+  background:none;
+  background-image:url('/templates/_ornamen/garis-c.webp');
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  opacity:.9;
+  filter:saturate(1.05) brightness(.92);
+}
+.divider-ornament path,.divider-ornament circle,.divider-ornament rect{display:none;}
+
+#mempelai .divider-ornament,
+#galeri   .divider-ornament,
+#hadiah   .divider-ornament{background-image:url('/templates/_ornamen/garis-d.webp');height:50px;}
+
+/* Varian ketiga BUKAN garis, melainkan satu fleur-de-lis berdiri di
+   antara dua rule tipis — bentuk pembatas yang berbeda jenisnya, bukan
+   sekadar gambar garis yang lain. */
+#acara .section-divider,
+#ucapan .section-divider,
+#countdown .section-divider{gap:14px;}
+#acara .section-divider::before,#acara .section-divider::after,
+#ucapan .section-divider::before,#ucapan .section-divider::after,
+#countdown .section-divider::before,#countdown .section-divider::after{
+  content:'';
+  width:52px;height:1px;
+  background:linear-gradient(to right,rgba(169,128,58,0),var(--gold),rgba(169,128,58,0));
+}
+#acara .divider-ornament,
+#ucapan .divider-ornament,
+#countdown .divider-ornament{
+  background-image:var(--orn-lis);
+  /* 137x182 -> lebih tinggi daripada lebar, jadi kotaknya dibalik:
+     lebar dihitung dari tinggi, bukan sebaliknya. Salah menghitung ini
+     membuat ornamennya menyusut tanpa ada yang memberi tahu. */
+  width:34px;height:46px;
+  opacity:.95;
+}
+
+/* pembatas kecil di dalam penutup (markup .divider) */
+.divider{display:flex;align-items:center;justify-content:center;gap:10px;margin:var(--s4) 0;}
+.divider-line{width:36px;height:1px;background:var(--line);}
+.divider svg{width:18px;height:18px;color:var(--gold);}
+.divider svg path{fill:none;stroke:currentColor;stroke-width:1.2;stroke-linejoin:round;}
+
+/* ------------------------------------------------------------
+   SAMPUL
+   ------------------------------------------------------------ */
+#cover{
+  position:relative;
+  min-height:100svh;
+  min-height:100vh;
+  overflow:hidden;
+  /* WAJIB nol. #cover adalah <section>, jadi ia ikut mewarisi
+     `section{padding:var(--s6) var(--s4)}` — 56px atas & bawah. Padding
+     itu ditambahkan DI LUAR .cover-content yang sudah setinggi 100vh,
+     sehingga sampulnya jadi 956px pada layar 844px. Selisih itu
+     mendorong sudut bawahnya keluar layar, dan tidak akan pernah
+     terlihat sebagai bug sampai ada yang ditaruh di sana. */
+  padding:0;
+  background:var(--wine-dark);
+  /* Ruang 3D untuk halaman yang dibalik. Tanpa perspective, rotateY
+     cuma memipihkan lembar secara datar dan tidak terbaca sebagai
+     halaman yang berputar sama sekali. */
+  perspective:1400px;
+  perspective-origin:left center;
+}
+
+/* ============================================================
+   ANIMASI BUKA SAMPUL — HALAMAN SURAT DIBALIK KE KIRI
+   Satu lembar, berengsel di tepi kiri. Untuk tema lain dengan animasi
+   berbeda, ganti blok ini + markup .cover-sheet di index.html + fungsi
+   openCover() di script. Kontrak: #cover diberi class "is-opening" oleh
+   openCover(); .cover-content harus tetap terlihat sebelum itu.
+   ============================================================ */
+.cover-sheet{
+  position:absolute;inset:0;
+  z-index:1;
+  overflow:hidden;
+  background-color:var(--ivory);
+  background-image:linear-gradient(165deg,rgba(255,255,255,.5),rgba(255,255,255,0) 60%);
+  transform-origin:left center;
+  transform-style:preserve-3d;
+  transition:transform 1.05s cubic-bezier(.66,0,.28,1);
+}
+#cover.is-opening .cover-sheet{transform:rotateY(-108deg);}
+
+/* Bayangan yang menggelap saat halaman berputar menjauh — tanpa ini
+   lembarnya berputar tapi terangnya tidak berubah, dan matanya membaca
+   itu sebagai gambar yang dimiringkan, bukan kertas yang dibalik. */
+.cover-sheet::before,.cover-sheet::after{
+  content:'';
+  position:absolute;
+  width:132px;height:132px;
+  background-image:var(--orn-sudut);
+  background-size:contain;
+  background-repeat:no-repeat;
+  z-index:2;
+  opacity:.9;
+  pointer-events:none;
+}
+.cover-sheet::before{top:0;left:0;background-position:left top;}
+.cover-sheet::after{top:0;right:0;transform:scaleX(-1);background-position:left top;}
+/* Dua sudut bawah menumpang di .cover-tepi — satu elemen cuma punya
+   ::before dan ::after, jadi empat sudut butuh dua elemen. */
+.cover-tepi{position:absolute;inset:0;z-index:2;pointer-events:none;}
+.cover-tepi::before,.cover-tepi::after{
+  content:'';
+  position:absolute;
+  width:132px;height:132px;
+  background-image:var(--orn-sudut);
+  background-size:contain;
+  background-repeat:no-repeat;
+  opacity:.9;
+}
+.cover-tepi::before{bottom:0;left:0;transform:scaleY(-1);background-position:left top;}
+.cover-tepi::after{bottom:0;right:0;transform:scale(-1,-1);background-position:left top;}
+
+/* Juntai tirai beludru merah di puncak sampul — tanda tangan tema ini,
+   dan penyambung ke amplop merah di tahap sebelumnya. */
+.cover-drape{
+  position:absolute;top:0;left:0;
+  /* LEBAR PENUH, dan itu bukan pilihan gaya. Pada percobaan pertama
+     tirainya selebar 340px di tengah sampul selebar 420px, sehingga
+     kedua tepi tegaknya berhenti di tengah bidang — yang terbaca bukan
+     tirai yang tergantung, melainkan sebuah persegi merah yang
+     ditempelkan. Begitu lebarnya penuh, kedua tepi itu keluar layar dan
+     yang tersisa cuma juntaiannya. */
+  /* Lebih lebar dari sampul lalu digeser ke kiri, supaya kedua tepi
+     tegaknya benar-benar keluar layar. */
+  left:-15%;
+  width:130%;
+  /* Tingginya DIKUNCI ke perbandingan gambar (420x176), bukan dihitung
+     dari tinggi sampul. Percobaan sebelumnya memakai `height:calc(100%/5)`
+     dan itu memotong juntaian bawah tirai jadi satu garis merah lurus
+     melintang — persis hal yang gagal senyap: tidak ada error, cuma
+     ornamen yang terlihat seperti balok. */
+  aspect-ratio:420 / 176;
+  /* Tinggi tirai terikat ke LEBAR sampul (lewat aspect-ratio), jadi pada
+     viewport yang PENDEK ia membengkak secara proporsional. Itu bukan
+     kasus khayalan: potret kartu tema diambil pada 390x585, jauh lebih
+     pendek daripada layar HP sungguhan (390x844), dan di situ tirainya
+     menutupi seperempat sampul sampai memotong baris nama tamu.
+     Karena itu ada batas terhadap TINGGI sampul, bukan cuma lebar. */
+  max-height:26%;
+  background-image:var(--orn-tirai);
+  /* `100% 100%` = gambar MENGIKUTI kotak, jadi ia boleh sedikit
+     termampatkan tegak pada sampul yang pendek. Itu pilihan sadar
+     setelah ketiga kemungkinannya dicoba:
+       - `100% auto` -> bagian bawah terpotong jadi GARIS merah lurus
+       - `contain`   -> tirai menyusut dan kedua tepi tegaknya muncul
+                        menggantung di tengah bidang
+       - `100% 100%` -> tirai termampatkan sampai ~28% pada rasio
+                        terpendek (kartu tema 390x585), dan pada layar
+                        HP sungguhan tidak termampatkan sama sekali
+                        karena max-height belum mengikat.
+     Ornamen hias yang sedikit lebih pendek tidak terbaca sebagai cacat;
+     garis merah melintang dan tepi menggantung terbaca sebagai cacat. */
+  background-size:100% 100%;
+  background-position:center top;
+  background-repeat:no-repeat;
+  /* DI BAWAH ornamen sudut (z-index:2), di atas foto sampul (auto).
+     Kalau ia di atas sudut, kedua ukiran atas tertutup separuh. */
+  z-index:1;
+  opacity:.92;
+  pointer-events:none;
+}
+
+/* ---------- FOTO SAMPUL FULL-BLEED ----------
+   Satu salinan saja: lembar sampul di sini utuh, tidak terbelah dua
+   seperti tirai Noir Dore. --foto-sampul dan .has-sampul dipasang
+   assets/render-undangan.js; tanpa foto, lembarnya kembali jadi kertas
+   krem polos dan sampulnya tetap utuh. */
+.cover-foto{
+  position:absolute;inset:0;
+  background-image:var(--foto-sampul);
+  background-size:cover;
+  background-position:center;
+  display:none;
+}
+/* Lapis gelap supaya tulisan di depannya tetap terbaca berapa pun
+   terangnya foto yang diunggah user. */
+.cover-foto::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(38,6,16,.60) 0%,rgba(38,6,16,.30) 40%,rgba(38,6,16,.78) 100%);
+}
+#cover.has-sampul .cover-foto{display:block;}
+#cover.has-sampul .cover-guest{color:rgba(255,255,255,.86);}
+#cover.has-sampul .cover-guest b{color:#fff;}
+#cover.has-sampul .cover-eyebrow{color:#EFD9A8;}
+#cover.has-sampul .cover-names{color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);}
+#cover.has-sampul .cover-names .amp{color:#E4BE72;}
+#cover.has-sampul .cover-date{color:rgba(255,255,255,.9);}
+#cover.has-sampul .cover-lis{filter:brightness(1.25);}
+
+.cover-content{
+  position:relative;
+  z-index:4;
+  min-height:100svh;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  /* Padding atas lebih besar daripada bawah: isinya dipusatkan, jadi
+     selisih itulah yang mendorong seluruh blok turun menjauhi tirai.
+     Tanpa ini baris "Kepada Yth." bertabrakan dengan juntaian tirai
+     pada sampul yang pendek. */
+  padding:calc(var(--s6) + 100px) var(--s4) var(--s6);
+  transition:opacity .35s ease;
+}
+#cover.is-opening .cover-content{opacity:0;pointer-events:none;}
+/* ============================================================ */
+
+.cover-guest{font-size:12.5px;color:var(--ink-soft);letter-spacing:.06em;margin-bottom:var(--s4);}
+.cover-guest b{color:var(--ink-mid);font-weight:600;}
+.cover-lis{
+  width:30px;height:40px;
+  margin-bottom:var(--s3);
+  background-image:var(--orn-lis);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  /* Bayangan, bukan sekadar dicerahkan: ornamen emas tipis di atas foto
+     terang kehilangan tepinya dan berubah jadi noda. Bayangan gelap
+     tipis mengembalikan bentuknya tanpa membuatnya berat. */
+  filter:drop-shadow(0 1px 3px rgba(30,4,12,.6));
+}
+.cover-eyebrow{font-size:12.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--wine);font-weight:600;margin-bottom:var(--s3);}
+.cover-names{font-size:clamp(30px,9.6vw,40px);letter-spacing:.04em;line-height:1.24;color:var(--ink);margin-bottom:var(--s2);}
+/* Ampersand: Pinyon Script itu huruf yang SANGAT tipis, jadi pada
+   ukuran yang terlihat wajar untuk huruf blok ia menghilang — pada
+   percobaan pertama ia terbaca sebagai noda kecil di antara dua nama,
+   bukan sebagai penghubung. Diperbesar dan diberi bayangan sendiri. */
+.cover-names .amp{
+  display:block;
+  font-family:'Pinyon Script',cursive;
+  text-transform:none;
+  font-size:.86em;
+  line-height:.9;
+  letter-spacing:0;
+  color:var(--gold);
+  margin:6px 0 2px;
+  text-shadow:0 1px 2px rgba(30,4,12,.35);
+}
+.cover-date{font-size:14.5px;letter-spacing:.14em;color:var(--ink-mid);margin-bottom:var(--s4);}
+.cover-date span{padding:0 2px;}
+.btn-open{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:15px 30px;
+  border-radius:2px;
+  background:var(--wine);
+  color:#F6E7C8;
+  font-size:14px;letter-spacing:.08em;font-weight:600;
+  box-shadow:0 16px 30px -14px rgba(46,8,20,0.6);
+  transition:transform .2s ease,box-shadow .2s ease;
+  position:relative;
+}
+.btn-open::before{
+  content:'';position:absolute;inset:3px;border:1px solid rgba(230,196,132,.5);pointer-events:none;
+}
+.btn-open:hover{transform:translateY(-2px);box-shadow:0 20px 34px -14px rgba(46,8,20,0.7);}
+.btn-open svg{width:16px;height:16px;}
+
+/* ------------------------------------------------------------
+   FOTO UTAMA — cetakan foto dipasang di halaman album
+   ------------------------------------------------------------
+   Bukan bidang lebar penuh. Fotonya sedikit miring dan dipegang empat
+   penjepit sudut emas, di atas lembar kertas — persis cara foto
+   ditempel di album lama. Keempat penjepit dari pseudo-element
+   .hero-photo (dua atas) dan .hero-photo-fade (dua bawah).
+   ------------------------------------------------------------ */
+#fotoUtama{padding:var(--s6) var(--s4) var(--s5);text-align:center;}
+.hero-photo{
+  position:relative;
+  width:min(280px,78%);
+  aspect-ratio:3/4;
+  margin:0 auto;
+  overflow:visible;
+  background:#EDE3CE;
+  /* Tepi cetakan foto: bingkai putih tebal seperti kertas foto lama,
+     lalu garis emas tipis di luarnya. */
+  border:9px solid #FFFDF6;
+  outline:1px solid var(--line);
+  box-shadow:0 18px 34px -18px rgba(46,8,20,.5);
+  transform:rotate(-1.8deg);
+}
+/* Fotonya sendiri harus terpotong di dalam bingkai, tapi penjepit
+   sudutnya justru harus MENONJOL KELUAR. Karena itu overflow:hidden
+   dipasang di lapisan dalam (img + empty state), bukan di .hero-photo. */
+.hero-photo-empty{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#EFE7D4,#E2D6B8);
+  color:var(--ink-soft);
+  overflow:hidden;
+}
+.hero-photo-empty svg{width:44px;height:44px;opacity:.4;stroke-width:1;}
+.hero-photo-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;}
+
+/* Empat penjepit sudut emas. Segitiga siku CSS — bukan gambar, supaya
+   warnanya ikut token tema dan tidak menambah satu permintaan pun. */
+.hero-photo::before,.hero-photo::after,
+.hero-photo-fade::before,.hero-photo-fade::after{
+  content:'';
+  position:absolute;
+  width:0;height:0;
+  z-index:3;
+  border:15px solid transparent;
+}
+.hero-photo::before{top:-9px;left:-9px;border-top-color:var(--gold);border-left-color:var(--gold);}
+.hero-photo::after{top:-9px;right:-9px;border-top-color:var(--gold);border-right-color:var(--gold);}
+.hero-photo-fade{position:absolute;inset:0;pointer-events:none;}
+.hero-photo-fade::before{bottom:-9px;left:-9px;border-bottom-color:var(--gold);border-left-color:var(--gold);}
+.hero-photo-fade::after{bottom:-9px;right:-9px;border-bottom-color:var(--gold);border-right-color:var(--gold);}
+
+/* ------------------------------------------------------------
+   MONOGRAM — inisial tercap di segel lilin
+   ------------------------------------------------------------
+   Cakramnya digambar CSS, bukan gambar: warnanya jadi ikut token tema
+   dan hurufnya tetap tajam di layar berapa pun kerapatannya.
+   Tepi bergerigi segel memakai border-radius tak beraturan — segel
+   lilin sungguhan tidak pernah bundar sempurna, dan lingkaran rapi
+   langsung terbaca sebagai stiker.
+   ------------------------------------------------------------ */
+.hero-monogram{
+  position:relative;
+  width:92px;height:92px;
+  margin:-30px auto 0;
+  z-index:4;
+  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 34% 30%,#8E2038 0%,#6A1428 46%,#4A0C1B 100%);
+  border-radius:47% 53% 50% 50% / 52% 48% 52% 48%;
+  box-shadow:
+    0 10px 20px -8px rgba(30,4,12,.7),
+    inset 0 2px 6px rgba(255,255,255,.22),
+    inset 0 -3px 8px rgba(0,0,0,.45);
+}
+/* Cincin cap bagian dalam — cekungan tipis yang membuat cakramnya
+   terbaca sebagai lilin yang tertekan stempel, bukan kancing. */
+.hero-monogram::before{
+  content:'';
+  position:absolute;inset:9px;
+  border-radius:inherit;
+  border:1px solid rgba(255,225,190,.24);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.4);
+  pointer-events:none;
+}
+.hero-monogram::after{content:none;}
+/* SVG tepi gerigi disembunyikan: bentuk gerigi sudah ditangani
+   border-radius di atas. Elemen & class .ring-draw dipertahankan supaya
+   markup tetap sebangun dengan tema lain — cek-tema.js memeriksa
+   inisialnya, bukan bentuk bingkainya. */
+.hero-monogram-ring{display:none;}
+.hero-monogram-ring circle{fill:none;stroke:currentColor;stroke-width:1.1;}
+.hero-monogram-ring .ring-draw{stroke-dasharray:214;stroke-dashoffset:214;}
+
+.hero-monogram-letters{
+  position:relative;
+  display:flex;align-items:baseline;justify-content:center;gap:1px;
+  font-family:'Pinyon Script',cursive;
+  font-size:31px;
+  line-height:1;
+  color:#F3D9A6;
+  /* Huruf yang TERCETAK KE DALAM lilin: terang di bawah, gelap di atas.
+     Kalau dibalik, hurufnya terbaca timbul seperti tempelan. */
+  text-shadow:0 1px 0 rgba(255,235,205,.30),0 -1px 1px rgba(28,4,10,.75);
+}
+.hero-monogram-letters .mono-a,
+.hero-monogram-letters .mono-b{display:inline-block;}
+.hero-monogram-letters .mono-sep{
+  font-size:.62em;
+  color:rgba(243,217,166,.72);
+  margin:0 1px;
+}
+
+/* ------------------------------------------------------------
+   PEMBUKA — huruf awal berukir
+   ------------------------------------------------------------ */
+.quote{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:clamp(20px,5.6vw,24px);
+  line-height:1.6;
+  max-width:330px;
+  margin:0 auto;
+  text-align:left;
+  color:var(--ink);
+}
+.quote::first-letter{
+  float:left;
+  font-family:'Cinzel',Georgia,serif;
+  font-style:normal;
+  font-size:3.4em;
+  line-height:.86;
+  padding-right:.08em;
+  margin-top:.04em;
+  color:var(--wine);
+}
+.opening-text{max-width:360px;margin:var(--s4) auto 0;font-size:14.5px;text-align:center;}
+/* Dua tangan saling meraih — ornamen dipilih karena MAKNANYA: bagian
+   pembuka adalah tempat dua keluarga bertemu. z-index negatif dan
+   opasitas rendah: ini latar, tidak boleh menutupi satu huruf pun. */
+#pembuka{position:relative;overflow:hidden;}
+#pembuka .opening-text::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  bottom:-10px;
+  /* 300x160 -> tinggi = lebar / 1,875 */
+  width:150px;height:80px;
+  transform:translateX(-50%);
+  background-image:url('/templates/_ornamen/bebas-dua-tangan.webp');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  opacity:.22;
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* ------------------------------------------------------------
+   MEMPELAI — bersilang (zigzag), bukan dua kartu kembar
+   ------------------------------------------------------------
+   Dua kartu simetris berdampingan adalah tata letak paling umum di
+   seluruh undangan digital, dan persis itu yang membuat sebuah tema
+   terasa "mirip". Di sini mempelai pria berfoto di kiri dan mempelai
+   wanita di kanan, jadi matanya menyilang turun — gerakan yang mustahil
+   didapat dari dua kartu sejajar.
+   ------------------------------------------------------------ */
+.couple{display:flex;flex-direction:column;gap:var(--s4);margin-top:var(--s5);}
+/* JEBAKAN yang sudah menggigit di sini: .couple-card punya EMPAT anak
+   (foto, peran, nama, orang tua), bukan dua. Pada grid dua kolom tanpa
+   penempatan eksplisit, keempatnya mengalir sendiri — fotonya di kolom
+   1 baris 1, peran di kolom 2 baris 1, lalu NAMA jatuh ke kolom 1
+   baris 2 (di bawah foto) dan orang tua ke kolom 2. Hasilnya berantakan
+   dan tidak memberi error apa pun. Karena itu foto dan ketiga teksnya
+   ditempatkan EKSPLISIT di bawah ini. */
+.couple-card{
+  display:grid;
+  grid-template-columns:118px 1fr;
+  grid-template-rows:auto auto auto;
+  column-gap:var(--s3);
+  align-items:center;
+  text-align:left;
+}
+.couple-card .photo-placeholder{grid-column:1;grid-row:1 / span 3;align-self:center;}
+.couple-card .couple-role{grid-column:2;grid-row:1;align-self:end;}
+.couple-card .couple-name{grid-column:2;grid-row:2;}
+.couple-card .couple-parents{grid-column:2;grid-row:3;align-self:start;}
+
+/* Mempelai wanita: foto pindah ke kanan, teks rata kanan — inilah
+   silangnya, dan itu satu-satunya alasan blok ini ada. */
+.couple-card:last-of-type{grid-template-columns:1fr 118px;text-align:right;}
+.couple-card:last-of-type .photo-placeholder{grid-column:2;}
+.couple-card:last-of-type .couple-role,
+.couple-card:last-of-type .couple-name,
+.couple-card:last-of-type .couple-parents{grid-column:1;}
+
+.photo-placeholder{
+  position:relative;
+  overflow:hidden;
+  width:100%;aspect-ratio:3/4;margin:0;
+  border-radius:0;
+  background:linear-gradient(160deg,#EFE7D4,#E2D6B8);
+  border:6px solid #FFFDF6;
+  outline:1px solid var(--line);
+  box-shadow:0 12px 22px -14px rgba(46,8,20,.5);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  color:var(--ink-soft);
+  text-align:center;
+}
+.photo-placeholder svg{width:30px;height:30px;opacity:.6;}
+.photo-placeholder span{font-size:10.5px;letter-spacing:.04em;}
+.photo-placeholder-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+.couple-role{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--wine);font-weight:600;margin-bottom:4px;}
+.couple-name{font-size:17px;letter-spacing:.02em;line-height:1.25;margin-bottom:5px;}
+.couple-parents{font-size:12.5px;line-height:1.55;}
+/* Ampersand Pinyon Script itu glif yang sangat tipis dan bergaya; pada
+   34px ia terbaca sebagai coretan kecil, bukan sebagai penghubung dua
+   nama. Diperbesar sampai bentuknya terbaca, dan diberi garis tipis di
+   kiri-kanannya supaya jelas ia memisahkan dua mempelai. */
+.couple-amp{
+  align-self:center;
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  font-family:'Pinyon Script',cursive;
+  font-weight:400;
+  font-size:46px;
+  line-height:1;
+  color:var(--gold);
+}
+.couple-amp::before,.couple-amp::after{
+  content:'';
+  width:46px;height:1px;
+  background:linear-gradient(to right,rgba(169,128,58,0),var(--gold),rgba(169,128,58,0));
+}
+/* Foto mempelai miring berlawanan arah — dua cetakan yang diletakkan
+   tangan, bukan dua sel grid. Sudutnya kecil (1,2 derajat): lebih dari
+   itu terbaca sebagai kesalahan tata letak, bukan sebagai gaya. */
+.couple-card:first-of-type .photo-placeholder{transform:rotate(-1.2deg);}
+.couple-card:last-of-type .photo-placeholder{transform:rotate(1.2deg);}
+
+/* ------------------------------------------------------------
+   ACARA — dua kartu TIKET bertepi perforasi
+   ------------------------------------------------------------
+   Bukan daftar program bergaris (Blanc Royale) dan bukan garis waktu
+   tegak (Noir Dore). Tiket punya alasan di tema ini: yang dipegang tamu
+   memang sepotong kertas yang memberi hak masuk.
+
+   Perforasinya dibuat radial-gradient berulang, bukan gambar — jadi ia
+   ikut tinggi kartu berapa pun panjang teksnya.
+   ------------------------------------------------------------ */
+.event-list{display:flex;flex-direction:column;gap:var(--s3);margin-top:var(--s5);}
+/* Sama seperti .couple-card: EMPAT anak (ikon, nama, tanggal, waktu) di
+   grid dua kolom akan mengalir sendiri dan menjatuhkan tanggal ke bawah
+   ikon. Ketiga teks ditempatkan eksplisit di kolom 2. */
+.event-card{
+  position:relative;
+  display:grid;
+  grid-template-columns:64px 1fr;
+  grid-template-rows:auto auto auto;
+  align-items:center;
+  column-gap:var(--s3);
+  padding:var(--s3) var(--s3) var(--s3) var(--s2);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:none;
+  box-shadow:0 10px 22px -16px rgba(46,8,20,.45);
+}
+.event-card .event-icon{grid-column:1;grid-row:1 / span 3;}
+.event-card .event-name{grid-column:2;grid-row:1;align-self:end;}
+.event-card .event-date{grid-column:2;grid-row:2;}
+.event-card .event-time{grid-column:2;grid-row:3;align-self:start;}
+/* Sisi kiri tiket: garis perforasi tegak. */
+.event-card::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:10px;
+  background-image:radial-gradient(circle at 0 50%,transparent 0 4.5px,var(--card) 4.5px);
+  background-size:100% 13px;
+  background-repeat:repeat-y;
+  border-left:1px dashed var(--line);
+}
+.event-icon{
+  width:60px;height:60px;
+  display:flex;align-items:center;justify-content:center;
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+/* Ikon garis tipis bawaan markup DIGANTI ornamen sungguhan, dipilih
+   karena maknanya: merpati mengangkat cincin untuk akad, gelas anggur
+   merah bersulang untuk resepsi. Gelas anggur merah itu sekaligus
+   tanda tangan tema ini — namanya Bordeaux. */
+.event-icon svg{display:none;}
+.event-list .event-card:nth-of-type(1) .event-icon{
+  background-image:url('/templates/_ornamen/bebas-merpati-cincin.webp');
+}
+.event-list .event-card:nth-of-type(2) .event-icon{
+  background-image:url('/templates/_ornamen/bebas-anggur-merah.webp');
+}
+.event-name{font-size:15.5px;letter-spacing:.04em;margin-bottom:4px;}
+.event-date{font-size:14px;color:var(--ink-mid);margin-bottom:2px;}
+.event-time{font-size:12.5px;color:var(--ink-soft);letter-spacing:.06em;}
+
+.venue{
+  margin-top:var(--s5);
+  padding-top:var(--s4);
+  border-top:1px dashed var(--line);
+  text-align:center;
+}
+.venue-name{font-size:15.5px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.venue-address{font-size:13.5px;margin-bottom:var(--s3);}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 22px;border-radius:2px;
+  border:1.5px solid var(--wine);color:var(--wine);
+  font-size:13px;font-weight:600;letter-spacing:.04em;
+  transition:background .2s ease,color .2s ease;
+}
+.btn-outline:hover{background:var(--wine);color:#F6E7C8;}
+.btn-outline svg{width:15px;height:15px;}
+
+/* ------------------------------------------------------------
+   HITUNG MUNDUR — empat PERANGKO
+   ------------------------------------------------------------
+   Gerigi perangko dibuat mask radial berulang di keempat sisi. Kalau
+   browser tidak mendukung mask, kotaknya tetap tampil utuh dengan tepi
+   lurus — penurunan mutu yang aman, bukan kotak yang hilang.
+   ------------------------------------------------------------ */
+.countdown-row{display:flex;justify-content:center;gap:10px;margin-top:var(--s5);}
+.countdown-box{
+  position:relative;
+  flex:1;max-width:74px;
+  padding:12px 4px 10px;
+  text-align:center;
+  background:
+    linear-gradient(160deg,#FFFDF6,#F3E9D6);
+  --gerigi:radial-gradient(circle at 50% 0,transparent 0 3px,#000 3.5px);
+  -webkit-mask-image:var(--gerigi),
+    radial-gradient(circle at 50% 100%,transparent 0 3px,#000 3.5px),
+    radial-gradient(circle at 0 50%,transparent 0 3px,#000 3.5px),
+    radial-gradient(circle at 100% 50%,transparent 0 3px,#000 3.5px);
+  -webkit-mask-size:9px 100%,9px 100%,100% 9px,100% 9px;
+  -webkit-mask-repeat:repeat-x,repeat-x,repeat-y,repeat-y;
+  -webkit-mask-composite:source-in;
+  mask-image:var(--gerigi),
+    radial-gradient(circle at 50% 100%,transparent 0 3px,#000 3.5px),
+    radial-gradient(circle at 0 50%,transparent 0 3px,#000 3.5px),
+    radial-gradient(circle at 100% 50%,transparent 0 3px,#000 3.5px);
+  mask-size:9px 100%,9px 100%,100% 9px,100% 9px;
+  mask-repeat:repeat-x,repeat-x,repeat-y,repeat-y;
+  mask-composite:intersect;
+}
+/* Bingkai tipis di dalam perangko — cetakan perangko selalu punya
+   pinggiran kosong sebelum gambarnya. */
+.countdown-box::before{
+  content:'';
+  position:absolute;inset:6px;
+  border:1px solid var(--line);
+  pointer-events:none;
+}
+.countdown-num{
+  font-family:'Cinzel',Georgia,serif;
+  font-size:24px;
+  line-height:1.1;
+  color:var(--wine);
+  transition:transform .3s ease;
+}
+.countdown-num.tick{transform:translateY(-3px);}
+.countdown-label{
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-soft);margin-top:3px;
+}
+.countdown-msg{
+  margin-top:var(--s3);text-align:center;font-size:14px;color:var(--wine);
+}
+.countdown-msg[hidden]{display:none;}
+
+/* ------------------------------------------------------------
+   GALERI — cetakan foto berhamburan di meja
+   ------------------------------------------------------------
+   Bukan grid seragam dan bukan mozaik. Tiap foto punya bingkai kertas
+   putih, sedikit miring ke arah yang berbeda, dan saling menindih
+   tipis — susunan yang terbaca sebagai tumpukan foto yang baru saja
+   ditebar, bukan sebagai galeri situs web.
+
+   Kemiringan ditulis per-anak dengan nth-child, bukan diacak JS: nilai
+   acak berubah tiap muat halaman dan membuat potret tema ikut berubah
+   tiap kali dipotret ulang.
+   ------------------------------------------------------------ */
+.galeri-grid{display:grid;gap:12px;margin-top:var(--s5);}
+.galeri-item{
+  display:block;padding:0;
+  background:#FFFDF6;
+  padding:6px 6px 16px;
+  border:1px solid var(--line-soft);
+  box-shadow:0 12px 22px -16px rgba(46,8,20,.55);
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.galeri-photo{
+  width:100%;height:100%;margin:0;border-radius:0;
+  border:none;outline:none;box-shadow:none;
+  aspect-ratio:1;
+}
+.galeri-item:hover{transform:rotate(0deg) scale(1.03);box-shadow:0 18px 30px -16px rgba(46,8,20,.6);z-index:2;position:relative;}
+
+.galeri--grid3{grid-template-columns:repeat(3,1fr);}
+.galeri--grid3 .galeri-item:nth-child(1){transform:rotate(-2.4deg);}
+.galeri--grid3 .galeri-item:nth-child(2){transform:rotate(1.6deg);}
+.galeri--grid3 .galeri-item:nth-child(3){transform:rotate(-1.1deg);}
+.galeri--grid3 .galeri-item:nth-child(4){transform:rotate(2.1deg);}
+.galeri--grid3 .galeri-item:nth-child(5){transform:rotate(-1.8deg);}
+.galeri--grid3 .galeri-item:nth-child(6){transform:rotate(1.2deg);}
+
+.galeri--masonry{grid-template-columns:repeat(2,1fr);grid-auto-rows:110px;grid-auto-flow:dense;}
+.galeri--masonry .galeri-item{height:100%;}
+.galeri--masonry .galeri-photo{aspect-ratio:auto;}
+.galeri--masonry .galeri-item:nth-child(1){grid-row:span 3;transform:rotate(-1.6deg);}
+.galeri--masonry .galeri-item:nth-child(4){grid-row:span 3;transform:rotate(1.4deg);}
+.galeri--masonry .galeri-item:nth-child(2),
+.galeri--masonry .galeri-item:nth-child(3),
+.galeri--masonry .galeri-item:nth-child(5),
+.galeri--masonry .galeri-item:nth-child(6){grid-row:span 2;}
+
+/* Kupu-kupu emas naik dari sela tumpukan foto — maknanya: momen yang
+   berterbangan. Di belakang, tidak pernah menutupi foto. */
+#galeri{overflow:hidden;}
+#galeri .galeri-grid::after{
+  content:'';
+  position:absolute;
+  right:-6px;
+  bottom:var(--s4);
+  /* 138x289 -> lebar = tinggi / 2,094 */
+  width:62px;height:130px;
+  background-image:url('/templates/_ornamen/bebas-kupu-emas.webp');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  opacity:.35;
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* ---------- lightbox ---------- */
+.lightbox{position:fixed;inset:0;background:rgba(30,4,12,0.94);z-index:200;display:none;align-items:center;justify-content:center;padding:var(--s4);}
+.lightbox.open{display:flex;}
+.lightbox-stage{width:100%;max-width:300px;}
+.lightbox-photo{width:100%;height:auto;aspect-ratio:3/4;margin:0;border-radius:0;border:8px solid #FFFDF6;transform:none;box-shadow:none;outline:none;}
+.lightbox-close{position:absolute;top:var(--s3);right:var(--s3);width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.14);color:#fff;display:flex;align-items:center;justify-content:center;}
+.lightbox-close svg{width:18px;height:18px;}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.14);color:#fff;display:flex;align-items:center;justify-content:center;}
+.lightbox-nav svg{width:18px;height:18px;}
+.lightbox-prev{left:var(--s2);}
+.lightbox-next{right:var(--s2);}
+
+/* ---------- form (konfirmasi kehadiran & ucapan) ---------- */
+.form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s4);margin-top:var(--s5);}
+.field{margin-bottom:var(--s3);}
+.field label{display:block;font-size:13px;color:var(--ink-mid);margin-bottom:6px;font-weight:600;}
+.field input[type="text"],
+.field input[type="number"],
+.field textarea{
+  width:100%;padding:11px 14px;border-radius:var(--r-sm);
+  border:1.5px solid var(--line);background:var(--paper);color:var(--ink);
+  font-size:15px;font-family:inherit;
+}
+.field textarea{resize:vertical;min-height:84px;}
+.field input:focus-visible,.field textarea:focus-visible{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold);}
+.field.is-hidden{display:none;}
+
+.pill-group{display:flex;gap:8px;}
+.pill-btn{
+  flex:1;padding:11px 8px;border-radius:var(--r-sm);
+  border:1.5px solid var(--line);background:var(--paper);
+  font-size:12.5px;font-weight:600;color:var(--ink-mid);
+  text-align:center;transition:background .2s ease,border-color .2s ease,color .2s ease;
+}
+.pill-btn.is-active{background:var(--wine);border-color:var(--wine);color:#F6E7C8;}
+
+.btn-primary-full{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;padding:14px;border-radius:2px;
+  background:var(--wine);color:#F6E7C8;font-size:14.5px;font-weight:600;letter-spacing:.04em;
+  box-shadow:0 16px 30px -14px rgba(46,8,20,0.5);
+  transition:transform .2s ease;
+}
+.btn-primary-full:hover{transform:translateY(-2px);}
+
+.form-msg{font-size:13px;text-align:center;margin-top:var(--s3);min-height:18px;color:var(--ink-mid);}
+.form-msg.err{color:#B23A2E;}
+.form-msg.ok{color:var(--gold-dark);}
+
+/* ---------- ucapan list ---------- */
+.ucapan-list{margin-top:var(--s4);max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:var(--s3);padding-right:4px;}
+.ucapan-item{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s3);border-left:3px solid var(--wine);}
+.ucapan-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;}
+.ucapan-name{font-size:14px;font-weight:600;color:var(--ink);}
+.ucapan-time{font-size:11px;color:var(--ink-soft);flex-shrink:0;}
+.ucapan-text{font-size:13.5px;line-height:1.6;}
+
+/* ---------- tanda kasih ---------- */
+.gift-intro{max-width:340px;margin:var(--s4) auto var(--s5);font-size:14px;text-align:center;}
+.gift-cards{display:flex;flex-direction:column;gap:var(--s3);}
+.gift-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s4);text-align:center;}
+.gift-logo{height:26px;width:auto;max-width:120px;object-fit:contain;margin:0 auto var(--s2);}
+.gift-bank{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--wine);font-weight:600;margin-bottom:6px;}
+.gift-number{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--ink);margin-bottom:4px;letter-spacing:.03em;}
+.gift-owner{font-size:13px;margin-bottom:var(--s3);}
+.btn-copy{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 18px;border-radius:2px;
+  border:1.5px solid var(--gold);color:var(--gold-dark);
+  font-size:12.5px;font-weight:600;
+  transition:background .2s ease;
+}
+.btn-copy:hover{background:var(--gold-tint);}
+.btn-copy svg{width:14px;height:14px;}
+
+/* ---------- unggah bukti transfer ---------- */
+.upload-bukti{margin-top:var(--s4);}
+.field-label-block{display:block;font-size:13px;color:var(--ink-mid);margin-bottom:8px;font-weight:600;text-align:center;}
+.upload-input-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.upload-dropzone{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:var(--s4) var(--s3);
+  border:1.5px dashed var(--gold);
+  border-radius:var(--r-sm);
+  background:var(--gold-tint);
+  color:var(--gold-dark);
+  font-size:13px;text-align:center;
+  cursor:pointer;
+  transition:background .2s ease;
+}
+.upload-dropzone:hover{background:#EADCBE;}
+.upload-dropzone svg{width:26px;height:26px;}
+.upload-dropzone[hidden]{display:none;}
+.upload-preview{
+  display:flex;align-items:center;gap:var(--s3);
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:var(--s3);
+}
+.upload-preview[hidden]{display:none;}
+.upload-preview img{width:60px;height:60px;object-fit:cover;border-radius:var(--r-sm);flex-shrink:0;border:1px solid var(--line);}
+.upload-preview-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+.upload-filename{font-size:12.5px;color:var(--ink-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.upload-remove{align-self:flex-start;font-size:12px;color:var(--gold-dark);text-decoration:underline;text-underline-offset:2px;}
+.upload-hint{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:8px;}
+
+/* ---------- tombol mengambang ---------- */
+.float-btn{
+  position:fixed;
+  width:42px;height:42px;
+  border-radius:50%;
+  background:var(--card);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--wine);
+  z-index:140;
+  transition:opacity .25s ease,transform .25s ease,background .2s ease;
+}
+.float-btn:hover{background:var(--gold-tint);}
+.float-btn svg{width:18px;height:18px;}
+.float-music{top:var(--s3);right:8px;}
+.icon-music-on{display:none;}
+.icon-music-off{display:block;}
+.float-music.is-playing .icon-music-on{display:block;}
+.float-music.is-playing .icon-music-off{display:none;}
+.float-top{
+  bottom:var(--s3);right:8px;
+  opacity:0;pointer-events:none;transform:translateY(8px);
+}
+.float-top.show{opacity:1;pointer-events:auto;transform:translateY(0);}
+
+/* ============================================================
+   PENUTUP — SATU BIDANG BURGUNDY, SURATNYA DITUTUP KEMBALI
+   ------------------------------------------------------------
+   Bidang yang dibalik warnanya di sini adalah PENUTUP, bukan Tanda
+   Kasih seperti dua tema lain. Alasannya bukan variasi: babak terakhir
+   halaman jadi jatuh bersamaan dengan suratnya ditutup dan disegel,
+   dan segel merah di puncaknya menyambung balik ke amplop di awal.
+
+   SELURUH warna di dalamnya WAJIB ditulis ulang. Teks gelap di atas
+   bidang gelap adalah cara paling cepat menghapus satu section penuh,
+   dan tidak akan memberi error apa pun. Daftar yang harus disebut:
+   warna teks, eyebrow, garis pembatas, ornamen pembatas, dan credit.
+   ============================================================ */
+#penutup{
+  position:relative;
+  text-align:center;
+  margin:34px 10px 0;
+  /* Ruang ekstra di atas supaya segel lilin yang menunggangi batas tidak
+     menimpa ornamen pembatas di bawahnya. */
+  padding-top:calc(var(--s7) + 22px);
+  background-color:var(--wine-dark);
+  /* SENGAJA tanpa var(--orn-latar). Gambar itu bukan tekstur rata: ia
+     sebuah KOMPOSISI yang sudah memuat selembar kertas sobek DAN sebuah
+     segel merah. Dipasang di sini, segelnya sendiri muncul membayang
+     tepat di belakang segel yang kita pasang, dan kertasnya terbaca
+     sebagai noda pucat di belakang kalimat penutup. Sudah terjadi, dan
+     kelihatan seperti bug rendering. Yang dibutuhkan di sini cuma bidang
+     burgundy yang dalam — jadi gradasi, bukan gambar. */
+  background-image:
+    radial-gradient(120% 80% at 50% 0%,rgba(120,26,50,.55) 0%,rgba(58,10,23,0) 62%),
+    linear-gradient(180deg,#4A0E1D 0%,#330814 100%);
+  clip-path:var(--tepi-sobek);
+  color:#F3E4C6;
+}
+/* Segel lilin merah menunggangi batas atas bidang — benda yang menutup
+   surat, diletakkan tepat di tempat suratnya berakhir. */
+#penutup::before{
+  content:'';
+  position:absolute;
+  top:-8px;left:50%;
+  width:66px;height:66px;
+  transform:translateX(-50%);
+  background-image:var(--orn-segel);
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  z-index:3;
+  filter:drop-shadow(0 6px 10px rgba(20,2,8,.6));
+}
+#penutup .eyebrow{color:#D9A85E;}
+#penutup .eyebrow::before,#penutup .eyebrow::after{background:#D9A85E;opacity:.5;}
+#penutup p,#penutup .closing-text{color:rgba(243,228,198,.82);}
+#penutup .divider-line{background:rgba(217,168,94,.45);}
+#penutup .divider svg{color:#D9A85E;}
+#penutup .divider-ornament{filter:brightness(1.35) saturate(1.05);opacity:.95;}
+#penutup .section-divider::before,#penutup .section-divider::after{
+  background:linear-gradient(to right,rgba(217,168,94,0),#D9A85E,rgba(217,168,94,0));
+}
+.closing-text{max-width:340px;margin:0 auto var(--s5);font-size:14.5px;}
+.closing-signature{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(243,228,198,.6);margin-bottom:4px;}
+
+/* FOIL EMAS — satu-satunya tempat di tema ini yang memakainya, dan
+   itu disengaja: foil adalah teknik cetak untuk kertas BERWARNA GELAP.
+   Di atas kertas krem, judulnya justru letterpress (lihat blok di
+   atas). Dua teknik cetak berbeda untuk dua jenis kertas, bukan satu
+   efek yang ditempel di mana-mana. */
+.closing-names{
+  font-family:'Pinyon Script',cursive;
+  font-weight:400;
+  font-size:46px;
+  line-height:1.2;
+  background-image:linear-gradient(100deg,
+    #A9803A 0%,#D9A85E 18%,#F6E3B4 34%,#D9A85E 50%,#A9803A 66%,#D9A85E 84%,#F6E3B4 100%);
+  background-size:280% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  animation:foilSapu 11s linear infinite;
+}
+@keyframes foilSapu{
+  0%{background-position:0% 50%;}
+  100%{background-position:280% 50%;}
+}
+/* Tiga burung emas di bawah tanda tangan — maknanya: kabar yang
+   diterbangkan pergi. Latar, tidak pernah menutupi teks. */
+#penutup .closing-names::after{content:none;}
+.credit{
+  margin-top:var(--s6);
+  font-size:11px;color:rgba(243,228,198,.55);letter-spacing:.03em;
+}
+.credit-link{color:#D9A85E;text-decoration:underline;text-underline-offset:2px;}
+
+/* ------------------------------------------------------------
+   LOGO BANK — dipasang setLogoBank() di render-undangan.js dari nama
+   bank yang diketik user. Kalau banknya tidak dikenali, elemennya
+   disembunyikan dan kartunya tetap utuh.
+   ------------------------------------------------------------ */
+.gift-logo[hidden]{display:none;}
+
+/* ------------------------------------------------------------
+   LAYAR LEBAR
+   ------------------------------------------------------------ */
+@media(min-width:640px){
+  .gift-cards{flex-direction:row;}
+  .gift-cards .gift-card{flex:1;}
+  .couple-card{grid-template-columns:150px 1fr;}
+  .couple-card:last-of-type{grid-template-columns:1fr 150px;}
+}
+
+/* Layar sangat sempit: tiket dan perangko yang paling cepat sesak. */
+@media(max-width:359px){
+  .event-card{grid-template-columns:48px 1fr;gap:var(--s2);}
+  .event-icon{width:46px;height:46px;}
+  .countdown-row{gap:6px;}
+  .countdown-num{font-size:20px;}
+  .couple-card{grid-template-columns:96px 1fr;}
+  .couple-card:last-of-type{grid-template-columns:1fr 96px;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{transition:none !important;animation:none !important;}
+  .particles{display:none;}
+}
+
+/* ------------------------------------------------------------
+   AMPERSAND — huruf tersendiri, dan ada alasannya
+   ------------------------------------------------------------
+   Pinyon Script dipakai di tema ini untuk nama & inisial, dan itu
+   tepat. Tapi glif ampersand-nya berbentuk kaligrafi lama yang pada
+   ukuran sedang terbaca seperti tanda centang, bukan seperti "dan" —
+   sudah diperiksa di potret, bukan dugaan. Karena itu KHUSUS ampersand
+   dipakai Cormorant Garamond miring: bentuknya klasik, dan yang paling
+   penting, langsung terbaca.
+   Inisial di segel lilin TIDAK ikut diubah — di sana ampersand-nya
+   kecil dan memang berfungsi sebagai ornamen, bukan sebagai kata.
+   ------------------------------------------------------------ */
+.cover-names .amp,
+.couple-amp,
+.closing-names .amp{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-style:italic;
+  font-weight:500;
+}
+.couple-amp{font-size:40px;}
+.closing-names .amp{font-size:.66em;}
+
+/* ------------------------------------------------------------
+   FOIL EMAS — dipertegas
+   Versi pertama memakai terlalu banyak henti pucat (#F6E3B4), sehingga
+   di atas bidang burgundy tanda tangannya terbaca sebagai krem rata,
+   bukan sebagai emas yang tersapu cahaya. Sekarang emas tuanya lebih
+   dominan dan pucatnya cuma satu pita sempit — itulah yang membuat
+   sapuannya terlihat bergerak.
+   ------------------------------------------------------------ */
+.closing-names{
+  background-image:linear-gradient(100deg,
+    #8A6524 0%,#A9803A 14%,#D9A85E 27%,#F6E3B4 34%,#D9A85E 41%,
+    #A9803A 55%,#8A6524 68%,#C9994E 82%,#8A6524 100%);
+  background-size:240% 100%;
+}
+@keyframes foilSapu{
+  0%{background-position:0% 50%;}
+  100%{background-position:240% 50%;}
+}

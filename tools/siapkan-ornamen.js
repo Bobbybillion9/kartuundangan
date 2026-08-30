@@ -255,6 +255,63 @@ const ORNAMEN = [
     sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/ORNAME_1-removebg-preview.png',
     lebar: 420, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'lingkaran sulur emas halus — latar monogram tema gelap'
+  },
+
+  // --- aset tema ketiga eropa-mewah (Bordeaux) ---
+  // Semuanya dipilih karena MAKNANYA di bagian tempat ia dipasang, bukan
+  // karena bentuknya bagus. Dua tema sebelumnya sudah memakai habis empat
+  // "ornamen bebas" yang ada; kalau Bordeaux memungut yang sama, tema
+  // ketiga ini akan terbaca sebagai Noir Dore yang dicat merah.
+  {
+    keluaran: 'tirai-beludru-merah.webp',
+    sumber: 'CORNER ORNAMENT/CORNER (8).png',
+    lebar: 560, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'juntai tirai beludru merah — mahkota sampul & amplop Bordeaux'
+  },
+  {
+    keluaran: 'sudut-sulur-krem.webp',
+    sumber: 'CORNER ORNAMENT/CORNER (7).png',
+    lebar: 420, mutu: 0.88, alpha: true,
+    catatan: 'sulur emas krem mengalir — sudut lembar kertas, lebih ringan dari baroque'
+  },
+  {
+    keluaran: 'bebas-anggur-merah.webp',
+    sumber: 'FREE ORNAMENT/3940718419666726-removebg-preview.png',
+    lebar: 300, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'dua gelas anggur MERAH bersulang — ikon Resepsi, sekaligus tanda tangan tema Bordeaux'
+  },
+  {
+    keluaran: 'bebas-merpati-cincin.webp',
+    sumber: 'FREE ORNAMENT/211174978693952-removebg-preview.png',
+    lebar: 320, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'dua merpati mengangkat sepasang cincin — ikon Akad Nikah'
+  },
+  {
+    keluaran: 'fleur-de-lis-emas.webp',
+    sumber: 'FREE ORNAMENT/10625749120124463-removebg-preview.png',
+    lebar: 200, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'fleur-de-lis emas — penanda tiap bagian Bordeaux (pengganti angka Romawi)'
+  },
+  {
+    keluaran: 'bebas-dua-tangan.webp',
+    sumber: 'FREE ORNAMENT/1125829606875863431-removebg-preview.png',
+    lebar: 300, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'dua tangan saling meraih — bagian Pembuka'
+  },
+  {
+    keluaran: 'bebas-kupu-emas.webp',
+    sumber: 'FREE ORNAMENT/770045236280479891-removebg-preview.png',
+    lebar: 340, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'kupu-kupu emas berhamburan naik — bagian Galeri'
+  },
+  {
+    keluaran: 'mahkota-bunga-emas.webp',
+    sumber: 'FREE ORNAMENT/957155727076148201-removebg-preview.png',
+    lebar: 300, mutu: 0.9, alpha: true, pangkas: true,
+    // Disiapkan untuk Bordeaux lalu TIDAK jadi dipakai: sesudah dilihat
+    // hasilnya, mahkota ini bergaya gunungan/Jawa, bukan Eropa. Dibiarkan
+    // di sini karena kategori "Adat Tradisional" nanti justru mencarinya.
+    catatan: 'mahkota emas berbunga bergaya Jawa — untuk kategori Adat Tradisional, BUKAN eropa-mewah'
   }
 ];
 
