@@ -455,6 +455,44 @@ const ORNAMEN = [
     sumber: 'UNDUHAN CLAUDE/bingkai-merah-lentera.jpg',
     lebar: 440, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
     catatan: 'bingkai bundar merah bergantung lentera — merah pekat, aman dikunci kejenuhan'
+  },
+
+  // --- kategori ADAT TRADISIONAL ---
+  // Semuanya dari folder user yang sudah lama ada tapi belum pernah
+  // terpakai. Cek folder ini lebih dulu sebelum mengunduh apa pun untuk
+  // kategori adat — isinya jauh lebih cocok daripada hasil pencarian.
+  {
+    keluaran: 'latar-wayang-pasangan.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/TRADITIONAL/download (5).jpg',
+    lebar: 720, mutu: 0.74,
+    // Nama berkas sumbernya TIDAK menggambarkan isinya sama sekali —
+    // sudah salah sekali di sini. Selalu lihat hasilnya sebelum memberi
+    // nama keluaran.
+    catatan: 'siluet sepasang tokoh wayang berlatar jingga hangat'
+  },
+  {
+    keluaran: 'latar-candi-bentar.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/TRADITIONAL/1096978421764286181.jpg',
+    lebar: 720, mutu: 0.74,
+    catatan: 'gerbang candi bentar Bali berlatar biru malam — sampul tema Bali'
+  },
+  {
+    keluaran: 'latar-gunungan-emas.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/TRADITIONAL/Gradient paper design with tribal puppet….jpg',
+    lebar: 720, mutu: 0.74,
+    catatan: 'sepasang gunungan wayang berlatar emas hangat berawan — sampul tema Jawa'
+  },
+  {
+    keluaran: 'bebas-gunungan-emas.webp',
+    sumber: 'FREE ORNAMENT/292311832084344705-removebg-preview.png',
+    lebar: 320, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'gunungan wayang emas berlubang — lambang pembuka pertunjukan, ikon tema Jawa'
+  },
+  {
+    keluaran: 'bebas-ornamen-bali.webp',
+    sumber: 'FREE ORNAMENT/ornamen_bali-removebg-preview.png',
+    lebar: 340, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'ornamen ukir Bali emas melingkar — ikon tema Bali'
   }
 ];
 

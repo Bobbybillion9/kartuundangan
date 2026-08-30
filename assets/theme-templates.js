@@ -107,6 +107,14 @@ window.THEME_TEMPLATES = [
     desc: 'Undangan pernikahan Tionghoa modern yang sepi: putih tulang, tinta arang, dan satu garis emas. Foto berbentuk gulungan tegak, tanpa pola berulang sama sekali, dan ditutup dengan satu bidang tinta pekat.',
     ringkas: 'Putih tulang & tinta arang · gulungan tegak, tanpa pola',
     thumb: 'templates/cina/tinta-emas/assets/thumbnail.jpg'
+  },
+  {
+    id: 'adat/sekar-jagad',
+    name: 'Sekar Jagad',
+    kategori: 'Adat Tradisional',
+    desc: 'Undangan pernikahan adat Jawa: kertas gading, sogan cokelat batik, dan motif parang. Semua bukaan foto berbentuk gunungan wayang, dan sampulnya dibuka dengan gunungan yang terangkat seperti awal sebuah lakon.',
+    ringkas: 'Gading & sogan · gunungan wayang & motif parang',
+    thumb: 'templates/adat/sekar-jagad/assets/thumbnail.jpg'
   }
 ];
 
