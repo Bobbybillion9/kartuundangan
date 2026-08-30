@@ -361,6 +361,53 @@ const ORNAMEN = [
     sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/Myriam_Campo_-removebg-preview.png',
     lebar: 420, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'lingkaran emas tipis berjuntai sapuan kaligrafis — latar monogram Islami'
+  },
+
+  // --- batch unduhan Pinterest, 2026-08-30 (tools/unduh-ornamen.js) ---
+  // Sumbernya di subfolder "UNDUHAN CLAUDE". Lima di antaranya PNG
+  // beralpha utuh (langsung `alpha:true`); tiga sisanya JPEG berlatar
+  // putih sehingga butuh `hapusLatarPucat`.
+  {
+    keluaran: 'bintang-navy-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/bintang-navy-emas.png',
+    lebar: 460, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'medali bintang delapan navy bertabur bintang, tepi emas — tanda tangan tema Islami navy'
+  },
+  {
+    keluaran: 'bintang-hijau-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/bintang-hijau-emas.png',
+    lebar: 460, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'medali bintang delapan hijau zamrud bertepi emas'
+  },
+  {
+    keluaran: 'arch-mihrab-polos.webp',
+    sumber: 'UNDUHAN CLAUDE/arch-mihrab-polos.png',
+    lebar: 420, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'garis arch mihrab polos tanpa motif — lebih ringan dari arch-mihrab-emas'
+  },
+  {
+    keluaran: 'tepi-kisi-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/tepi-kisi-emas.png',
+    lebar: 420, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'tepi kisi geometris emas bertepi lengkung — pembatas bidang'
+  },
+  {
+    keluaran: 'garis-islami-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/garis-islami-emas.jpg',
+    lebar: 520, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'pembatas mendatar arabesque emas — kategori Islami belum punya pembatas sendiri'
+  },
+  {
+    keluaran: 'lingkar-medali-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/lingkar-medali-emas.jpg',
+    lebar: 420, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'medali lingkar emas bertengah kosong — bingkai monogram'
+  },
+  {
+    keluaran: 'sudut-geometris-emas.webp',
+    sumber: 'UNDUHAN CLAUDE/sudut-geometris-emas.jpg',
+    lebar: 420, mutu: 0.88, alpha: true, hapusLatarPucat: true, pangkas: true,
+    catatan: 'sudut kisi geometris emas — sudut sampul tema Islami'
   }
 ];
 
@@ -424,7 +471,7 @@ async function cdp() {
 
 // Dijalankan di dalam Chrome: memuat gambar, menggambarnya ke canvas pada
 // ukuran target, lalu mengembalikan hasil WebP sebagai base64.
-function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas) {
+function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, hapusLatarPucat) {
   return `(async () => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -444,7 +491,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas) {
     g.imageSmoothingQuality = 'high';
     // Aset tak-transparan diberi alas putih dulu: tanpa itu, JPEG sumber
     // yang punya tepi tipis bisa menghasilkan pinggiran gelap di WebP.
-    if (!${!!alpha} && !${!!hapusPutih}) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
+    if (!${!!alpha} && !${!!hapusPutih} && !${!!hapusLatarPucat}) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
     g.drawImage(img, 0, 0, w, h);
     // Membuang LATAR PUTIH. Seluruh berkas LINE ORNAMENT berupa JPG
     // dengan latar putih pekat — dipakai apa adanya, tiap pembatas akan
@@ -470,6 +517,44 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas) {
         q[i+3] = Math.round(Math.min(1, a * 1.15) * 255);
       }
       g.putImageData(dp, 0, 0);
+    }
+
+    // --- hapusLatarPucat: kunci berbasis KEJENUHAN, bukan kecerahan ---
+    // Untuk berkas hasil unduhan Pinterest (lihat tools/unduh-ornamen.js).
+    // Bedanya dari hapusPutih di atas, dan kenapa keduanya perlu ada:
+    //
+    //   hapusPutih      -> latar PUTIH RATA. Ia mengurai balik campuran
+    //                      tinta dengan putih, jadi garis tipis tetap
+    //                      pekat dan tepinya tidak berkabut.
+    //   hapusLatarPucat -> latar PUCAT TAPI TIDAK RATA, khususnya papan
+    //                      catur transparansi yang ikut terpanggang saat
+    //                      Pinterest menyimpan ulang gambar jadi JPEG.
+    //
+    // Papan catur itu putih DAN abu-muda berselang-seling. Kunci berbasis
+    // kecerahan tidak bisa memisahkannya dari ornamen tanpa ikut memakan
+    // sorotan terang di dalam ornamennya. Kunci kejenuhan bisa: ornamennya
+    // berwarna (emas/hijau/biru), latarnya netral.
+    //
+    // Ambangnya sengaja TAJAM. Versi pertama memakai ramp landai dan kotak
+    // abu-muda (terang ~0,92) masih menyisakan alpha ~65 — tidak terlihat
+    // di atas kertas krem, tapi muncul jelas sebagai hantu kotak-kotak
+    // begitu ornamennya dipakai di tema gelap. Periksa hasilnya di latar
+    // GELAP, bukan cuma di latar terang.
+    if (${JSON.stringify(!!hapusLatarPucat)}) {
+      const dq = g.getImageData(0, 0, w, h);
+      const u = dq.data;
+      for (let i = 0; i < u.length; i += 4) {
+        const maks = Math.max(u[i], u[i+1], u[i+2]);
+        const min  = Math.min(u[i], u[i+1], u[i+2]);
+        const jenuh = maks === 0 ? 0 : (maks - min) / maks;
+        const terang = maks / 255;
+        if (jenuh < 0.18) {
+          const t = (0.88 - terang) / 0.28;   // 1 di 0,60; 0 di 0,88
+          const s = jenuh / 0.18;
+          u[i+3] = Math.round(255 * Math.max(0, Math.min(1, Math.max(t, s * s))));
+        }
+      }
+      g.putImageData(dq, 0, 0);
     }
     // Pewarnaan ulang. Sebagian aset bagus bentuknya tapi salah
     // warnanya untuk tema yang dituju — bingkai klasik tipis itu biru
@@ -582,7 +667,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas) {
     }
     const url = 'http://127.0.0.1:' + port + '/' + o.sumber.split('/').map(encodeURIComponent).join('/');
     const res = await kirim('Runtime.evaluate', {
-      expression: skripUbah(url, o.lebar, o.mutu, o.alpha, o.warnai, o.hapusPutih, o.pangkas),
+      expression: skripUbah(url, o.lebar, o.mutu, o.alpha, o.warnai, o.hapusPutih, o.pangkas, o.hapusLatarPucat),
       awaitPromise: true, returnByValue: true
     });
     if (res.result && res.result.exceptionDetails) {
