@@ -123,6 +123,14 @@ window.THEME_TEMPLATES = [
     desc: 'Undangan pernikahan adat Bali: biru malam, emas ukir, dan terakota bata. Semua bukaan foto berbentuk gerbang candi bentar yang berundak, dengan motif tumpal dan satu bidang terakota di galeri.',
     ringkas: 'Biru malam & terakota · candi bentar & motif tumpal',
     thumb: 'templates/adat/pura-bentar/assets/thumbnail.jpg'
+  },
+  {
+    id: 'adat/songket-saga',
+    name: 'Songket Saga',
+    kategori: 'Adat Tradisional',
+    desc: 'Undangan pernikahan adat Minang-Melayu: merah saga, emas songket, dan motif belah ketupat tenun. Semua bukaan foto berbentuk belah ketupat memanjang, dengan satu bidang krem di bagian Ucapan & Doa.',
+    ringkas: 'Merah saga & emas songket · motif belah ketupat',
+    thumb: 'templates/adat/songket-saga/assets/thumbnail.jpg'
   }
 ];
 
