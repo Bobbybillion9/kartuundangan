@@ -67,6 +67,14 @@ window.THEME_TEMPLATES = [
     desc: 'Undangan pernikahan Muslim dengan kertas gading, geometri emas, dan lengkung mihrab: dibuka dari sepasang daun pintu, memuat basmalah dan QS. Ar-Rum 21, dengan rangkaian acara di atas satu bidang zamrud pekat.',
     ringkas: 'Gading & zamrud · lengkung mihrab & geometri emas',
     thumb: 'templates/islami/nur-zamrud/assets/thumbnail.jpg'
+  },
+  {
+    id: 'islami/nur-lazuardi',
+    name: 'Nur Lazuardi',
+    kategori: 'Islami',
+    desc: 'Undangan pernikahan Muslim bernuansa malam: biru lazuardi pekat bertabur bintang emas, semua bukaan foto berbentuk oktagon, dan medali bintang delapan yang membesar saat sampul dibuka.',
+    ringkas: 'Lazuardi malam & emas · oktagon & bintang delapan',
+    thumb: 'templates/islami/nur-lazuardi/assets/thumbnail.jpg'
   }
 ];
 
