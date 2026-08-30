@@ -196,6 +196,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
 #cover.has-sampul .cover-lafaz{color:#EFE6C4;}
 #cover.has-sampul .cover-guest{color:rgba(255,255,255,.85);}
 #cover.has-sampul .cover-guest b{color:#fff;}
+#cover.has-sampul .cover-eyebrow{color:#F3E2B4;}
 #cover.has-sampul .cover-names{color:#fff;}
 #cover.has-sampul .cover-date{color:rgba(255,255,255,.9);}
 #cover.has-sampul .monogram-ring circle,

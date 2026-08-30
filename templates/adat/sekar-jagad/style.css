@@ -206,11 +206,16 @@ section{position:relative;padding:var(--s6) var(--s4);}
   content:'';position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(48,30,14,.56) 0%,rgba(48,30,14,.26) 42%,rgba(48,30,14,.78) 100%);
 }
-#cover.has-sampul .cover-foto{display:none;}
+/* WAJIB block. Sempat 'none' karena kerangka ini disalin dari Tinta
+   Emas yang memakai .cover-panel, bukan .cover-foto — akibatnya foto
+   sampul yang sudah diunggah user TIDAK PERNAH muncul, dan tidak ada
+   error apa pun yang memberi tahu. */
+#cover.has-sampul .cover-foto{display:block;}
 #cover.has-sampul .cover-kisi{opacity:.12;}
 #cover.has-sampul .cover-lafaz{color:#EFE6C4;}
 #cover.has-sampul .cover-guest{color:rgba(255,255,255,.85);}
 #cover.has-sampul .cover-guest b{color:#fff;}
+#cover.has-sampul .cover-eyebrow{color:#F3E2B4;}
 #cover.has-sampul .cover-names{color:#fff;}
 #cover.has-sampul .cover-date{color:rgba(255,255,255,.9);}
 #cover.has-sampul .monogram-ring circle,

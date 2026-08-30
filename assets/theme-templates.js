@@ -115,6 +115,14 @@ window.THEME_TEMPLATES = [
     desc: 'Undangan pernikahan adat Jawa: kertas gading, sogan cokelat batik, dan motif parang. Semua bukaan foto berbentuk gunungan wayang, dan sampulnya dibuka dengan gunungan yang terangkat seperti awal sebuah lakon.',
     ringkas: 'Gading & sogan · gunungan wayang & motif parang',
     thumb: 'templates/adat/sekar-jagad/assets/thumbnail.jpg'
+  },
+  {
+    id: 'adat/pura-bentar',
+    name: 'Pura Bentar',
+    kategori: 'Adat Tradisional',
+    desc: 'Undangan pernikahan adat Bali: biru malam, emas ukir, dan terakota bata. Semua bukaan foto berbentuk gerbang candi bentar yang berundak, dengan motif tumpal dan satu bidang terakota di galeri.',
+    ringkas: 'Biru malam & terakota · candi bentar & motif tumpal',
+    thumb: 'templates/adat/pura-bentar/assets/thumbnail.jpg'
   }
 ];
 
