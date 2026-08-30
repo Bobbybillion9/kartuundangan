@@ -43,6 +43,14 @@ window.THEME_TEMPLATES = [
     desc: 'Kertas relief putih bercetak timbul dengan ukiran emas antik di keempat sudut sampul. Dibuka dari amplop bersegel lilin emas terlebih dahulu, baru sampulnya, baru undangannya.',
     ringkas: 'Relief putih & ukiran emas · dibuka dari amplop bersegel',
     thumb: 'templates/eropa-mewah/blanc-royale/assets/thumbnail.jpg'
+  },
+  {
+    id: 'eropa-mewah/noir-dore',
+    name: 'Noir Dore',
+    kategori: 'Eropa Mewah',
+    desc: 'Undangan resepsi malam: kertas hitam pekat berdaun emas, foto utama berbentuk medali bulat, mempelai dalam bingkai ukiran oval, dan rangkaian acara yang menurun pada satu garis emas.',
+    ringkas: 'Hitam & emas malam · medali bulat & bingkai oval',
+    thumb: 'templates/eropa-mewah/noir-dore/assets/thumbnail.jpg'
   }
 ];
 

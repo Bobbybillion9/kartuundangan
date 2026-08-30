@@ -235,6 +235,26 @@ const ORNAMEN = [
     sumber: 'LINE ORNAMENT/Gold Line Divider Ornament, Divider, Line Dividers, Line PNG Transparent Clipart Image and PSD File for Free Download.jpg',
     lebar: 560, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
     catatan: 'garis halus bermotif tengah kecil — pembatas sedang'
+  },
+  {
+    keluaran: 'garis-d.webp',
+    sumber: 'LINE ORNAMENT/Яндекс Картинки_ поиск изображений в интернете, поиск по картинке.jpg',
+    lebar: 560, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    catatan: 'sulur baroque tebal & mengalir — pembatas untuk tema gelap'
+  },
+
+  // --- bingkai & lingkaran untuk tema kedua eropa-mewah ---
+  {
+    keluaran: 'bingkai-oval-emas.webp',
+    sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/Rámeček-removebg-preview.png',
+    lebar: 440, mutu: 0.9, alpha: true,
+    catatan: 'bingkai ukiran emas OVAL, lubang tengah transparan'
+  },
+  {
+    keluaran: 'lingkar-sulur-emas.webp',
+    sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/ORNAME_1-removebg-preview.png',
+    lebar: 420, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'lingkaran sulur emas halus — latar monogram tema gelap'
   }
 ];
 
