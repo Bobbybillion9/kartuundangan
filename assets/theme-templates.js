@@ -59,6 +59,14 @@ window.THEME_TEMPLATES = [
     desc: 'Undangan yang dibaca seperti surat lama bersegel lilin merah: lembar demi lembar kertas krem bertepi sobek di atas bidang beludru burgundy, foto dipasang berpenjepit sudut emas, acara berupa kartu tiket, dan hitung mundur di atas empat perangko.',
     ringkas: 'Burgundy & kertas sobek · surat bersegel lilin',
     thumb: 'templates/eropa-mewah/bordeaux/assets/thumbnail.jpg'
+  },
+  {
+    id: 'islami/nur-zamrud',
+    name: 'Nur Zamrud',
+    kategori: 'Islami',
+    desc: 'Undangan pernikahan Muslim dengan kertas gading, geometri emas, dan lengkung mihrab: dibuka dari sepasang daun pintu, memuat basmalah dan QS. Ar-Rum 21, dengan rangkaian acara di atas satu bidang zamrud pekat.',
+    ringkas: 'Gading & zamrud · lengkung mihrab & geometri emas',
+    thumb: 'templates/islami/nur-zamrud/assets/thumbnail.jpg'
   }
 ];
 

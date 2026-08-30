@@ -312,6 +312,55 @@ const ORNAMEN = [
     // hasilnya, mahkota ini bergaya gunungan/Jawa, bukan Eropa. Dibiarkan
     // di sini karena kategori "Adat Tradisional" nanti justru mencarinya.
     catatan: 'mahkota emas berbunga bergaya Jawa — untuk kategori Adat Tradisional, BUKAN eropa-mewah'
+  },
+
+  // --- aset kategori ISLAMI ---
+  // Catatan yang menghemat waktu nanti: aset Islami di folder user
+  // hampir semuanya BIRU NAVY, bukan emas. Ketiga bingkai di bawah
+  // karena itu diwarnai ulang lewat `warnai` — jangan dicari padanan
+  // emasnya di folder, tidak ada.
+  {
+    keluaran: 'arch-mihrab-emas.webp',
+    sumber: 'FRAME ORNAMENT/997969598706653822-removebg-preview.png',
+    lebar: 520, mutu: 0.9, alpha: true, pangkas: true,
+    warnai: { gelap: '#7A5C1C', terang: '#E8CE90' },
+    catatan: 'arch mihrab bermotif, sumbernya navy — bentuk pengatur tema Islami'
+  },
+  {
+    keluaran: 'sudut-renda-islami.webp',
+    sumber: 'FRAME ORNAMENT/984247693580936360-removebg-preview.png',
+    lebar: 420, mutu: 0.88, alpha: true, pangkas: true,
+    warnai: { gelap: '#7A5C1C', terang: '#E8CE90' },
+    catatan: 'sudut renda geometris Islami, sumbernya navy — sudut sampul'
+  },
+  {
+    keluaran: 'kubah-islami-emas.webp',
+    sumber: 'FRAME ORNAMENT/427701295869465115-removebg-preview.png',
+    lebar: 460, mutu: 0.88, alpha: true, pangkas: true,
+    warnai: { gelap: '#7A5C1C', terang: '#E8CE90' },
+    catatan: 'lengkung kubah bermotif titik, sumbernya navy — mahkota bagian'
+  },
+  {
+    keluaran: 'latar-mihrab-lembut.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/ISLAMIC/292522938312851282.jpg',
+    lebar: 700, mutu: 0.72,
+    // Disiapkan untuk Nur Zamrud lalu tidak jadi dipakai: temanya
+    // memakai jaring girih yang digambar SVG, dan dua latar bermotif
+    // bertumpuk saling berebut. Dibiarkan karena tema Islami ke-2/ke-3
+    // (yang tidak memakai girih) justru mencarinya. BUKAN aset yatim.
+    catatan: 'siluet arch mihrab pada kertas bertekstur — cadangan untuk tema Islami berikutnya, belum dipakai'
+  },
+  {
+    keluaran: 'segel-bulan-hijau.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (11).png',
+    lebar: 340, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'segel lilin hijau tua bermotif bulan sabit & bintang'
+  },
+  {
+    keluaran: 'lingkar-kaligrafi-emas.webp',
+    sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/Myriam_Campo_-removebg-preview.png',
+    lebar: 420, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'lingkaran emas tipis berjuntai sapuan kaligrafis — latar monogram Islami'
   }
 ];
 
