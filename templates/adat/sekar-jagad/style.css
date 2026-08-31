@@ -112,7 +112,13 @@
   --amplop-latar:#2A1B0D;
   --amplop-warna:#7A4A1E;
   --amplop-kertas:url('/templates/_ornamen/latar-gunungan-emas.webp');
-  --amplop-segel:url('/templates/_ornamen/bebas-gunungan-emas.webp');
+  --amplop-segel:url('/templates/_ornamen/segel-pro-sekar.webp');
+  /* Tutup GUNUNGAN — tinggi dan meruncing, bentuk yang membuka setiap
+     pergelaran wayang, dan pembuka undangan ini juga. Halonya kuat
+     karena kertasnya justru paling terang tepat di tengah. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 26%,68% 34%,58% 58%,52% 82%,50% 100%,48% 82%,42% 58%,32% 34%,0 26%);
+  --amplop-tutup-tinggi:62%;
+  --amplop-halo:radial-gradient(circle,rgba(42,27,13,.30),rgba(42,27,13,0) 62%);
   --amplop-tinta:#EFDCB2;
   --amplop-garis:rgba(166,122,46,.45);
   --amplop-kabut:linear-gradient(to top,rgba(42,27,13,.85),rgba(42,27,13,0));
@@ -857,4 +863,51 @@ section{position:relative;padding:var(--s6) var(--s4);}
   transform:translateX(-50%);
   background-image:var(--adat-ornamen-b);
   opacity:.22;
+}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  --fp-bentuk:var(--gunungan);
+  --fp-radius:0;
+  --fp-rasio:1;
+  --fp-galeri-bentuk:var(--gunungan);
+  --fp-galeri-radius:0;
+  /* Puncak gunungan menunjuk ke bawah di kaki foto utama. */
+  --fp-hero-bentuk:polygon(0 0,100% 0,100% 88%,68% 91%,58% 96%,50% 100%,42% 96%,32% 91%,0 88%);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:3 / 4;
+  --fp-kaki:#F6EFE0;
+  --fp-kaki-tinggi:46%;
+  --fp-kosong:#EDE3CE;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:3;
+  --kal-radius:3px;
+  --kal-bingkai:1px solid rgba(122,74,30,.3);
+  --kal-alas-pola:repeating-linear-gradient(45deg,rgba(122,74,30,.05) 0 2px,rgba(122,74,30,0) 2px 9px);
+  --kal-padding:16px 15px 14px;
+  --kal-judul-font:'Cormorant Garamond',Georgia,serif;
+  --kal-judul-ukuran:20px;
+  --kal-judul-huruf:none;
+  --kal-judul-spasi:.06em;
+  --kal-judul-warna:#7A4A1E;
+  /* Penanda: GUNUNGAN — yang membuka setiap pergelaran wayang, di sini
+     membuka hari-H. Pelatnya sendiri bermotif garis miring parang. */
+  --kal-tanda-latar:rgba(122,74,30,.16);
+  --kal-tanda-clip:var(--gunungan);
+  --kal-tanda-inset:-6%;
 }

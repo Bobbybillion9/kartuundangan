@@ -104,7 +104,19 @@
   --amplop-latar:#070F1E;
   --amplop-warna:#1D3052;
   --amplop-kertas:url('/templates/_ornamen/latar-candi-bentar.webp');
-  --amplop-segel:url('/templates/_ornamen/bebas-ornamen-bali.webp');
+  /* Digeser ke BAWAH dan diperbesar. Gambarnya memuat awan api Bali di
+     tepi ATAS; pada layar HP yang lebih jangkung daripada gambarnya,
+     awan itu terpotong separuh persis di tepi layar dan terbaca sebagai
+     gambar yang kurang, bukan sebagai ornamen. Yang harus terlihat
+     adalah candi bentarnya — jadi gambar ditambatkan ke dasar. */
+  --amplop-kertas-ukuran:auto 132%;
+  --amplop-kertas-posisi:center bottom;
+  --amplop-segel:url('/templates/_ornamen/segel-pro-pura.webp');
+  /* Tutup CANDI BENTAR — dua sisi gerbang yang terbelah, dengan celah
+     tepat di tengah. Bentuk itulah nama temanya. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 42%,78% 96%,56% 96%,50% 56%,44% 96%,22% 96%,0 42%);
+  --amplop-tutup-tinggi:48%;
+  --amplop-halo:radial-gradient(circle,rgba(243,226,180,.16),rgba(243,226,180,0) 62%);
   --amplop-tinta:#F3E2B4;
   --amplop-garis:rgba(212,169,79,.42);
   --amplop-kabut:linear-gradient(to top,rgba(7,15,30,.85),rgba(7,15,30,0));
@@ -849,4 +861,59 @@ section{position:relative;padding:var(--s6) var(--s4);}
   transform:translateX(-50%);
   background-image:var(--adat-ornamen-b);
   opacity:.2;
+}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  --fp-bentuk:var(--gunungan);
+  --fp-radius:0;
+  --fp-rasio:3 / 4;
+  --fp-galeri-bentuk:var(--gunungan);
+  --fp-galeri-radius:0;
+  /* Celah candi bentar di kaki foto — gerbang yang terbelah, bentuk
+     yang jadi nama temanya. */
+  --fp-hero-bentuk:polygon(0 0,100% 0,100% 86%,78% 100%,56% 100%,50% 90%,44% 100%,22% 100%,0 86%);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:3 / 4;
+  --fp-kaki:#101C33;
+  /* Lebih pendek daripada tema terang. Kaki gradasi ke warna GELAP
+     menutup fotonya jauh lebih cepat daripada kaki ke warna krem —
+     pada 48% separuh foto sudah jadi bidang hitam. */
+  --fp-kaki-tinggi:40%;
+  --fp-kosong:#22375C;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:3;
+  --kal-radius:0;
+  --kal-clip:polygon(0 14px,14px 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);
+  --kal-alas:#14233F;
+  --kal-bingkai:0;
+  --kal-bayang:0 0 0 1px rgba(212,169,79,.42) inset;
+  --kal-padding:19px 16px 16px;
+  --kal-judul-font:'Cinzel',Georgia,serif;
+  --kal-judul-ukuran:15px;
+  --kal-judul-spasi:.3em;
+  --kal-judul-warna:#D4A94F;
+  --kal-hari-warna:rgba(212,169,79,.8);
+  /* Penanda: DUA CINCIN SEPUSAT — padma, teratai bersusun yang jadi
+     tanda pemujaan di Bali; sekaligus satu-satunya penanda BERLAPIS di
+     antara dua belas kalender. */
+  --kal-tanda-garis:1.2px solid #D4A94F;
+  --kal-tanda-radius:50%;
+  --kal-tanda-inset:2%;
+  --kal-tanda-latar:radial-gradient(circle,rgba(212,169,79,.24) 0 34%,rgba(212,169,79,0) 35%);
 }

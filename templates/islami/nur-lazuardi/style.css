@@ -103,7 +103,12 @@
   --amplop-kertas:var(--taburan);
   --amplop-kertas-ukuran:140px;
   --amplop-kertas-ulang:repeat;
-  --amplop-segel:url('/templates/_ornamen/bintang-navy-emas.webp');
+  --amplop-segel:url('/templates/_ornamen/segel-pro-lazuardi.webp');
+  /* Tutup OKTAGON terpotong — bentuk khas tema ini, dan sengaja PENDEK
+     supaya langit berbintangnya tetap terlihat luas. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 46%,72% 46%,60% 74%,40% 74%,28% 46%,0 46%);
+  --amplop-tutup-tinggi:44%;
+  --amplop-halo:radial-gradient(circle,rgba(242,227,184,.16),rgba(242,227,184,0) 62%);
   --amplop-tinta:#F2E3B8;
   --amplop-garis:rgba(210,172,87,.40);
   --amplop-kabut:linear-gradient(to top,rgba(5,12,30,.85),rgba(5,12,30,0));
@@ -952,4 +957,54 @@ section{position:relative;padding:var(--s6) var(--s4);}
   background:radial-gradient(64% 48% at 50% 52%,rgba(6,14,32,.62) 0%,rgba(0,0,0,0) 78%);
   z-index:-1;
   pointer-events:none;
+}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  --fp-bentuk:var(--oktagon);
+  --fp-radius:0;
+  --fp-rasio:3 / 4;
+  --fp-galeri-bentuk:var(--oktagon);
+  --fp-galeri-radius:0;
+  --fp-hero-bentuk:polygon(0 0,100% 0,100% 88%,88% 100%,12% 100%,0 88%);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:3 / 4;
+  --fp-kaki:#0B1733;
+  /* Lebih pendek daripada tema terang. Kaki gradasi ke warna GELAP
+     menutup fotonya jauh lebih cepat daripada kaki ke warna krem —
+     pada 48% separuh foto sudah jadi bidang hitam. */
+  --fp-kaki-tinggi:40%;
+  --fp-kosong:#1B2E56;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:1;
+  --kal-radius:0;
+  --kal-clip:var(--oktagon);
+  --kal-bingkai:0;
+  --kal-alas:#13224A;
+  --kal-padding:22px 18px 20px;
+  --kal-judul-font:'Cinzel',Georgia,serif;
+  --kal-judul-ukuran:15px;
+  --kal-judul-spasi:.32em;
+  --kal-judul-warna:#D9B45E;
+  --kal-hari-warna:rgba(217,180,94,.8);
+  /* Penanda: OKTAGON bergaris — bentuk yang sama dengan bukaan foto
+     dan dengan pelat kalendernya sendiri: satu bentuk, tiga ukuran. */
+  --kal-tanda-garis:1.2px solid #D9B45E;
+  --kal-tanda-clip:var(--oktagon);
+  --kal-tanda-inset:2%;
 }

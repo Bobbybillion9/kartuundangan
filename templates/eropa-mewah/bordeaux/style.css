@@ -115,8 +115,27 @@
   /* --- tahap amplop (assets/amplop.css membaca variabel ini) --- */
   --amplop-latar:#2A0610;
   --amplop-warna:#5E1226;
-  --amplop-kertas:var(--orn-latar);
-  --amplop-segel:url('/templates/_ornamen/segel-mawar-merah.webp');
+  /* SUTRA BURGUNDY, bukan var(--orn-latar).
+     Gambar itu bukan tekstur: ia foto selembar kertas sobek di atas
+     burgundy, lengkap dengan segelnya sendiri. Dipakai sebagai kertas
+     amplop layar penuh, yang muncul adalah kartu putih melayang di
+     tengah layar — dua segel dalam satu layar dan tidak ada yang
+     terbaca sebagai amplop. Diganti tenunan sutra dari gradien: dua
+     arah serat yang berpotongan, sesuai lapisan dalam amplop
+     burgundy sungguhan, dan nol kilobyte tambahan. */
+  --amplop-kertas:
+    repeating-linear-gradient(102deg,rgba(255,255,255,.055) 0 2px,rgba(255,255,255,0) 2px 7px),
+    repeating-linear-gradient(78deg,rgba(0,0,0,.11) 0 3px,rgba(0,0,0,0) 3px 9px),
+    radial-gradient(120% 78% at 50% 10%,rgba(214,178,104,.16),rgba(214,178,104,0) 60%);
+  --amplop-kertas-ukuran:auto;
+  --amplop-kertas-ulang:repeat;
+  --amplop-segel:url('/templates/_ornamen/segel-pro-bordeaux.webp');
+  /* Tutup V DALAM berbahu lebar — amplop surat sungguhan, paling
+     jujur dari ketiganya, cocok untuk tema yang isinya lembar cetak
+     berpenjepit. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 38%,50% 100%,0 38%);
+  --amplop-tutup-tinggi:58%;
+  --amplop-halo:radial-gradient(circle,rgba(240,223,192,.15),rgba(240,223,192,0) 62%);
   --amplop-tinta:#F0DFC0;
   --amplop-garis:rgba(214,178,104,.42);
   /* Kabut di belakang nama tamu harus GELAP di sini, bukan terang —
@@ -1485,4 +1504,49 @@ section{position:relative;padding:var(--s6) var(--s4);}
   background-repeat:no-repeat;
   background-position:center;
   filter:drop-shadow(0 3px 5px rgba(35,6,14,.5));
+}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  /* Tepi sobek: tema ini bercerita lewat lembar cetak berpenjepit, dan
+     tepi sobek itu sudah jadi bahasanya di kartu-kartu lain. */
+  --fp-bentuk:var(--tepi-sobek);
+  --fp-radius:0;
+  --fp-rasio:3 / 4;
+  --fp-galeri-bentuk:var(--tepi-sobek);
+  --fp-galeri-radius:0;
+  --fp-hero-bentuk:var(--tepi-sobek);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:3 / 4;
+  --fp-kaki:#F5EDDD;
+  --fp-kaki-tinggi:44%;
+  --fp-kosong:#E7DCC4;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:3;
+  --kal-clip:var(--tepi-sobek);
+  --kal-bingkai:0;
+  --kal-padding:19px 17px 17px;
+  --kal-judul-font:'Cinzel',Georgia,serif;
+  --kal-judul-ukuran:15px;
+  --kal-judul-spasi:.3em;
+  /* Penanda: HATI TULISAN TANGAN. Persis acuan yang dikirim user, dan
+     satu-satunya tema di katalog yang berhak memakainya — Bordeaux
+     adalah tema yang paling terang-terangan romantis. */
+  --kal-tanda-gambar:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 28.2C16 28.2 3.2 20.2 3.2 11.6 3.2 7.2 6.7 4.2 10.3 4.2c2.5 0 4.6 1.4 5.7 3.3C17.2 5.6 19.3 4.2 21.8 4.2c3.6 0 7.1 3 7.1 7.4 0 8.6-12.9 16.6-12.9 16.6z' fill='none' stroke='%23A3232E' stroke-width='2'/%3E%3C/svg%3E");
+  --kal-tanda-inset:-6%;
 }

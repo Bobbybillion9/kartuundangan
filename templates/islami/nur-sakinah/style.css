@@ -87,7 +87,13 @@
   --amplop-latar:#33291F;
   --amplop-warna:#F2EBDD;
   --amplop-kertas:url('/templates/_ornamen/latar-plaster-daun.webp');
-  --amplop-segel:url('/templates/_ornamen/segel-gading.webp');
+  --amplop-segel:url('/templates/_ornamen/segel-pro-sakinah.webp');
+  /* Tutup KUBAH MEMBULAT — bentuk tema ini. Halonya paling kuat di
+     antara kedua belas amplop dengan alasan yang jelas: segel gading
+     di atas kertas gading akan lenyap tanpa itu. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 30%,88% 56%,72% 80%,50% 100%,28% 80%,12% 56%,0 30%);
+  --amplop-tutup-tinggi:42%;
+  --amplop-halo:radial-gradient(circle,rgba(122,61,40,.20),rgba(122,61,40,0) 60%);
   --amplop-tinta:#7A3D28;
   --amplop-garis:rgba(156,122,60,.38);
   --amplop-kabut:linear-gradient(to top,rgba(246,241,231,.92),rgba(246,241,231,0));
@@ -841,4 +847,49 @@ section{position:relative;padding:var(--s7) var(--s5);}
   background:radial-gradient(64% 48% at 50% 52%,rgba(51,41,31,.5) 0%,rgba(0,0,0,0) 78%);
   z-index:-1;
   pointer-events:none;
+}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  --fp-bentuk:none;
+  --fp-radius:var(--kubah);
+  --fp-rasio:3 / 4;
+  --fp-galeri-bentuk:none;
+  --fp-galeri-radius:var(--kubah);
+  --fp-hero-bentuk:polygon(0 0,100% 0,100% 84%,86% 93%,66% 99%,50% 100%,34% 99%,14% 93%,0 84%);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:3 / 4;
+  --fp-kaki:#F6F1E7;
+  --fp-kaki-tinggi:44%;
+  --fp-kosong:#E7DFCE;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:3;
+  --kal-radius:var(--kubah);
+  --kal-bingkai:1px solid rgba(122,61,40,.26);
+  --kal-padding:24px 15px 14px;
+  --kal-judul-font:'Cormorant Garamond',Georgia,serif;
+  --kal-judul-ukuran:21px;
+  --kal-judul-huruf:none;
+  --kal-judul-spasi:.06em;
+  --kal-judul-warna:#7A3D28;
+  /* Penanda: KUBAH MEMBULAT terisi tanah liat. Tema ini yang paling
+     hangat dan paling tidak bersudut dari ketiga tema Islami. */
+  --kal-tanda-latar:rgba(122,61,40,.15);
+  --kal-tanda-radius:999px 999px 34% 34%;
+  --kal-tanda-inset:0%;
 }

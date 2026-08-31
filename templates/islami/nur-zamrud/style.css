@@ -113,7 +113,12 @@
   --amplop-latar:#072019;
   --amplop-warna:#EFE7D3;
   --amplop-kertas:url('/templates/_ornamen/latar-mihrab-lembut.webp');
-  --amplop-segel:url('/templates/_ornamen/segel-bulan-hijau.webp');
+  --amplop-segel:url('/templates/_ornamen/segel-pro-zamrud.webp');
+  /* Tutup LENGKUNG MIHRAB berpuncak — bentuk yang sama dengan bukaan
+     foto tema ini. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 30%,78% 40%,62% 58%,54% 80%,50% 100%,46% 80%,38% 58%,22% 40%,0 30%);
+  --amplop-tutup-tinggi:56%;
+  --amplop-halo:radial-gradient(circle,rgba(14,74,60,.15),rgba(14,74,60,0) 64%);
   --amplop-tinta:#0E4A3C;
   --amplop-garis:rgba(176,138,52,.42);
   --amplop-kabut:linear-gradient(to top,rgba(246,241,227,.9),rgba(246,241,227,0));
@@ -1146,3 +1151,50 @@ section{position:relative;padding:var(--s6) var(--s4);}
   pointer-events:none;
 }
 #penutup .credit{position:relative;z-index:1;}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  --fp-bentuk:url(#archMihrab);
+  --fp-radius:0;
+  --fp-rasio:3 / 4;
+  --fp-galeri-bentuk:url(#archMihrab);
+  --fp-galeri-radius:0;
+  /* Kaki berpuncak mihrab — puncaknya menunjuk ke bawah, jadi lengkung
+     yang membuka foto di atas dan yang menutupnya di bawah adalah
+     lengkung yang sama. */
+  --fp-hero-bentuk:polygon(0 0,100% 0,100% 86%,74% 92%,58% 97%,50% 100%,42% 97%,26% 92%,0 86%);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:3 / 4;
+  --fp-kaki:#F6F1E3;
+  --fp-kaki-tinggi:44%;
+  --fp-kosong:#E6DFC8;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:3;
+  --kal-radius:999px 999px 5px 5px;
+  --kal-bingkai:1px solid rgba(14,74,60,.28);
+  --kal-padding:26px 15px 14px;
+  --kal-judul-font:'Cormorant Garamond',Georgia,serif;
+  --kal-judul-ukuran:19px;
+  --kal-judul-spasi:.22em;
+  /* Penanda: BINTANG DELAPAN (najmah) — geometri berulang yang jadi
+     bahasa seluruh kategori Islami, di sini dalam bentuk paling
+     ringkasnya. */
+  --kal-tanda-latar:rgba(14,74,60,.14);
+  --kal-tanda-clip:polygon(50% 0,61% 27%,89% 15%,79% 43%,100% 50%,79% 57%,89% 85%,61% 73%,50% 100%,39% 73%,11% 85%,21% 57%,0 50%,21% 43%,11% 15%,39% 27%);
+  --kal-tanda-inset:-4%;
+}

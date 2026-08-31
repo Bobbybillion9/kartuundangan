@@ -88,7 +88,17 @@
   --amplop-kertas:var(--kisi);
   --amplop-kertas-ukuran:56px;
   --amplop-kertas-ulang:repeat;
-  --amplop-segel:url('/templates/_ornamen/xi-ganda-emas.webp');
+  --amplop-segel:url('/templates/_ornamen/segel-pro-shuangxi.webp');
+  /* Tutup GERBANG BULAN — bukan segitiga sama sekali: tepi lurus yang
+     digigit satu lingkaran di tengahnya, persis moon gate yang jadi
+     bentuk bukaan foto tema ini. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 100%,70% 100%,68% 82%,60% 70%,50% 66%,40% 70%,32% 82%,30% 100%,0 100%);
+  --amplop-tutup-tinggi:40%;
+  --amplop-halo:radial-gradient(circle,rgba(246,228,184,.17),rgba(246,228,184,0) 62%);
+  /* Lebih lebar daripada bawaan: kertas tema ini berpola rapat sampai
+     ke tepi, dan halo selebar segel cuma menyelamatkan segelnya sambil
+     membiarkan inisial serta judul di bawahnya tenggelam. */
+  --amplop-halo-ukuran:138vw;
   --amplop-tinta:#F6E4B8;
   --amplop-garis:rgba(217,174,85,.45);
   --amplop-kabut:linear-gradient(to top,rgba(61,8,13,.85),rgba(61,8,13,0));
@@ -871,4 +881,58 @@ section{position:relative;padding:var(--s6) var(--s4);}
   left:14%;right:14%;bottom:-3px;height:2px;
   background:linear-gradient(to right,rgba(217,174,85,0),#D9AE55 24%,#D9AE55 76%,rgba(217,174,85,0));
   pointer-events:none;
+}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  /* Gerbang bulan: lingkaran penuh, bentuk yang jadi sistem tema ini. */
+  --fp-bentuk:none;
+  --fp-radius:50%;
+  --fp-rasio:1;
+  --fp-galeri-bentuk:none;
+  --fp-galeri-radius:50%;
+  /* Kaki foto utama digigit satu lengkung bulan — gerbang yang sama,
+     kali ini sebagai ambang bawah. */
+  --fp-hero-bentuk:polygon(0 0,100% 0,100% 100%,66% 100%,64% 92%,58% 87%,50% 85%,42% 87%,36% 92%,34% 100%,0 100%);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:4 / 5;
+  --fp-kaki:#6E1119;
+  /* Lebih pendek daripada tema terang. Kaki gradasi ke warna GELAP
+     menutup fotonya jauh lebih cepat daripada kaki ke warna krem —
+     pada 48% separuh foto sudah jadi bidang hitam. */
+  --fp-kaki-tinggi:40%;
+  --fp-kosong:#8E1F29;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:1;
+  --kal-radius:2px;
+  --kal-alas:#6E1119;
+  --kal-bingkai:1px solid rgba(217,174,85,.5);
+  --kal-padding:17px 15px 15px;
+  --kal-judul-font:'Cinzel',Georgia,serif;
+  --kal-judul-ukuran:15px;
+  --kal-judul-spasi:.3em;
+  --kal-judul-warna:#D9AE55;
+  --kal-hari-warna:rgba(217,174,85,.78);
+  --kal-bayang:0 0 0 3px rgba(217,174,85,.16) inset;
+  /* Penanda: GERBANG BULAN — lingkaran penuh, bentuk yang jadi sistem
+     tema ini dari sampul sampai galeri. */
+  --kal-tanda-latar:rgba(217,174,85,.16);
+  --kal-tanda-garis:1.2px solid #D9AE55;
+  --kal-tanda-radius:50%;
+  --kal-tanda-inset:4%;
 }

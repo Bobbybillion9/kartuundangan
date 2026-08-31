@@ -52,7 +52,13 @@
   --amplop-latar:#241F19;
   --amplop-warna:#EFE8DA;
   --amplop-kertas:var(--orn-plaster);
-  --amplop-segel:url('/templates/_ornamen/segel-emas-bunga.webp');
+  --amplop-segel:url('/templates/_ornamen/segel-pro-blanc.webp');
+  /* Tutup KUBAH KATEDRAL — lengkung yang sama dengan bukaan foto tema
+     ini, jadi bentuk pertama yang dilihat tamu sudah menjanjikan bentuk
+     yang akan ia temui di dalam. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 16%,93% 42%,80% 66%,62% 88%,50% 100%,38% 88%,20% 66%,7% 42%,0 16%);
+  --amplop-tutup-tinggi:50%;
+  --amplop-halo:radial-gradient(circle,rgba(90,72,40,.16),rgba(90,72,40,0) 66%);
   --amplop-tinta:#5B5348;
   --amplop-garis:rgba(138,103,48,.34);
 
@@ -1788,3 +1794,52 @@ section{position:relative;padding:var(--s6) var(--s4);}
 /* Tombol musik duduk di sudut kanan-atas, persis di atas ukiran emas.
    Diturunkan supaya keduanya tidak bertumpuk. */
 .float-music{top:calc(var(--s3) + 88px);}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  /* Lengkung katedral: bahasa bentuk tema ini, sekarang jadi bukaan
+     fotonya sendiri, bukan lagi ukiran emas yang mengelilinginya. */
+  --fp-bentuk:none;
+  --fp-radius:50% 50% 0 0 / 26% 26% 0 0;
+  --fp-rasio:3 / 4;
+  --fp-galeri-bentuk:none;
+  --fp-galeri-radius:0;
+  /* Kaki foto utama bergigi renda — tepi kertas cetak halus, motif yang
+     sama dengan gelombang yang dulu ada di bawah foto ini. */
+  --fp-hero-bentuk:polygon(0 0,100% 0,100% 93%,92% 100%,83% 93%,75% 100%,67% 93%,58% 100%,50% 93%,42% 100%,33% 93%,25% 100%,17% 93%,8% 100%,0 93%);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:3 / 4;
+  --fp-kaki:#FDFBF6;
+  --fp-kaki-tinggi:46%;
+  --fp-kosong:#EFE7D4;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:3;
+  --kal-radius:14px 14px 3px 3px;
+  --kal-bingkai:1px solid rgba(138,103,48,.34);
+  --kal-judul-font:'Cormorant Garamond',Georgia,serif;
+  --kal-judul-ukuran:23px;
+  --kal-judul-huruf:none;
+  --kal-judul-miring:italic;
+  --kal-judul-spasi:.04em;
+  /* Penanda: CINCIN PENA. Tema ini bicara lewat garis tipis berfoil,
+     bukan bidang berwarna — hari-H-nya karena itu dilingkari, bukan
+     diblok. */
+  --kal-tanda-garis:1.4px solid var(--gold,#B08D4E);
+  --kal-tanda-radius:50%;
+  --kal-tanda-inset:6%;
+}

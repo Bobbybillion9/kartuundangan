@@ -92,7 +92,16 @@
   --amplop-kertas:var(--kisi);
   --amplop-kertas-ukuran:90px;
   --amplop-kertas-ulang:repeat;
-  --amplop-segel:url('/templates/_ornamen/peoni-emas.webp');
+  --amplop-segel:url('/templates/_ornamen/segel-pro-giok.webp');
+  /* Tutup BERGELOMBANG KIPAS — tiga lekuk, meneruskan bentuk kipas
+     yang jadi bukaan foto tema ini. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 46%,83% 82%,66% 50%,50% 96%,34% 50%,17% 82%,0 46%);
+  --amplop-tutup-tinggi:44%;
+  --amplop-halo:radial-gradient(circle,rgba(231,220,182,.16),rgba(231,220,182,0) 62%);
+  /* Lebih lebar daripada bawaan: kertas tema ini berpola rapat sampai
+     ke tepi, dan halo selebar segel cuma menyelamatkan segelnya sambil
+     membiarkan inisial serta judul di bawahnya tenggelam. */
+  --amplop-halo-ukuran:138vw;
   --amplop-tinta:#E7DCB6;
   --amplop-garis:rgba(168,134,58,.45);
   --amplop-kabut:linear-gradient(to top,rgba(18,40,31,.85),rgba(18,40,31,0));
@@ -894,4 +903,54 @@ section{position:relative;padding:var(--s6) var(--s4);}
   left:14%;right:14%;bottom:-3px;height:2px;
   background:linear-gradient(to right,rgba(46,95,82,0),var(--giok) 24%,var(--giok) 76%,rgba(46,95,82,0));
   pointer-events:none;
+}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  --fp-bentuk:none;
+  --fp-radius:var(--kipas);
+  --fp-rasio:1;
+  --fp-galeri-bentuk:none;
+  --fp-galeri-radius:var(--kipas);
+  /* Tiga lekuk kipas di kaki foto. */
+  --fp-hero-bentuk:polygon(0 0,100% 0,100% 90%,83% 100%,66% 90%,50% 100%,34% 90%,17% 100%,0 90%);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:1;
+  --fp-kaki:#F2EFE4;
+  --fp-kaki-tinggi:46%;
+  --fp-kosong:#E4DFCD;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:3;
+  /* Bukan var(--kipas) apa adanya: 999px di kaki pelat seukuran ini
+     menghasilkan setengah lingkaran penuh yang menyisakan ruang kosong
+     setinggi 80px di bawah baris terakhir. Lengkungnya dijinakkan
+     supaya tetap terbaca kipas tanpa jadi kantong. */
+  --kal-radius:4px 4px 88px 88px;
+  --kal-bingkai:1px solid rgba(46,95,82,.3);
+  --kal-padding:15px 15px 20px;
+  --kal-judul-font:'Cormorant Garamond',Georgia,serif;
+  --kal-judul-ukuran:20px;
+  --kal-judul-huruf:none;
+  --kal-judul-spasi:.06em;
+  --kal-judul-warna:#2E5F52;
+  /* Penanda: KIPAS — bersudut di atas, membulat di bawah; bentuk
+     bukaan foto tema ini. */
+  --kal-tanda-latar:rgba(46,95,82,.15);
+  --kal-tanda-radius:var(--kipas);
+  --kal-tanda-inset:2%;
 }

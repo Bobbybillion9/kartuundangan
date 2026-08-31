@@ -81,7 +81,13 @@
   --amplop-latar:#0B0A09;
   --amplop-warna:#1C1815;
   --amplop-kertas:var(--orn-plaster);
-  --amplop-segel:url('/templates/_ornamen/segel-mawar-hitam-emas.webp');
+  --amplop-segel:url('/templates/_ornamen/segel-pro-noir.webp');
+  /* Tutup BERUNDAK ART DECO — bahasa yang sama dengan medali dan
+     bingkai oval di dalamnya, dan sekaligus yang paling menjauhkannya
+     dari Blanc Royale yang sekategori. */
+  --amplop-tutup-bentuk:polygon(0 0,100% 0,100% 48%,76% 48%,76% 74%,58% 74%,50% 100%,42% 74%,24% 74%,24% 48%,0 48%);
+  --amplop-tutup-tinggi:46%;
+  --amplop-halo:radial-gradient(circle,rgba(228,203,144,.17),rgba(228,203,144,0) 64%);
   --amplop-tinta:#E4CB90;
   --amplop-garis:rgba(201,164,75,.38);
   /* Kabut di belakang nama tamu harus GELAP di sini, bukan terang —
@@ -1930,3 +1936,56 @@ section{position:relative;padding:var(--s6) var(--s4);}
 /* Tombol musik duduk di sudut kanan-atas, persis di atas ukiran emas.
    Diturunkan supaya keduanya tidak bertumpuk. */
 .float-music{top:calc(var(--s3) + 88px);}
+
+/* ------------------------------------------------------------
+   FOTO PENUH — variabel yang dibaca assets/foto-penuh.css
+   Bingkai foto dilepas atas permintaan user; bentuk bukaannya pindah
+   dari gambar bingkai ke WADAH fotonya, supaya foto mengisi bentuk itu
+   sampai ke tepi. --fp-kaki WAJIB sewarna latar section fotonya —
+   itu warna tempat gradasi kaki berakhir, dan kalau meleset yang
+   muncul balok kabut yang tidak menyambung ke apa pun.
+   ------------------------------------------------------------ */
+:root{
+  /* Oval — bahasa medali Art Deco tema ini. Radius 50% pada rasio 3/4
+     menghasilkan elips tegak, bukan lingkaran. */
+  --fp-bentuk:none;
+  --fp-radius:50%;
+  --fp-rasio:3 / 4;
+  --fp-galeri-bentuk:none;
+  --fp-galeri-radius:3px;
+  /* Kaki bertingkat: siluet yang sama dengan tutup amplopnya. */
+  --fp-hero-bentuk:polygon(0 0,100% 0,100% 88%,72% 88%,64% 100%,36% 100%,28% 88%,0 88%);
+  --fp-hero-radius:0;
+  --fp-hero-rasio:3 / 4;
+  --fp-kaki:#1A1715;
+  /* Lebih pendek daripada tema terang. Kaki gradasi ke warna GELAP
+     menutup fotonya jauh lebih cepat daripada kaki ke warna krem —
+     pada 48% separuh foto sudah jadi bidang hitam. */
+  --fp-kaki-tinggi:40%;
+  --fp-kosong:#262220;
+}
+
+/* ------------------------------------------------------------
+   LEMBAR BULAN — variabel yang dibaca assets/acara-lokasi.css
+   Kedua belas tema Pro WAJIB terlihat berbeda di sini (perintah user),
+   dan yang dibedakan bukan cuma warna: bentuk pelat, jenis huruf
+   judul, panjang nama hari, dan BENTUK PENANDA hari-H.
+   ------------------------------------------------------------ */
+:root{
+  --kal-label:1;
+  --kal-radius:0;
+  --kal-clip:polygon(9px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 9px),calc(100% - 9px) 100%,9px 100%,0 calc(100% - 9px),0 9px);
+  --kal-bingkai:0;
+  --kal-alas:#141110;
+  --kal-judul-font:'Marcellus',Georgia,serif;
+  --kal-judul-ukuran:16px;
+  --kal-judul-spasi:.34em;
+  --kal-bayang:0 0 0 1px rgba(196,160,90,.4) inset;
+  /* Penanda: DUA GARIS EMAS mengapit angka, atas dan bawah. Bukan
+     lingkaran dan bukan belah ketupat — keduanya sudah dipakai tema
+     lain, dan yang khas Art Deco justru garis mendatar, bukan bentuk
+     tertutup. Digambar dengan gradien, bukan border, supaya hanya dua
+     sisi yang tergambar tanpa elemen tambahan. */
+  --kal-tanda-latar:linear-gradient(var(--gold,#C4A05A) 0 1.5px,transparent 1.5px calc(100% - 1.5px),var(--gold,#C4A05A) calc(100% - 1.5px) 100%);
+  --kal-tanda-inset:16% 8%;
+}
