@@ -76,6 +76,20 @@
   );
 
   /* --- aset ornamen bersama --- */
+  /* Belah ketupat versi LEBIH LEBAR untuk bingkai foto utama. Bentuk
+     asli di atas memotong keempat sudut sampai 7%/20%, dan pada foto
+     berdua itu memakan bahu keduanya sekaligus. */
+  --gunungan-lembut:polygon(
+    50% 0%, 99% 14%, 99% 86%, 50% 100%, 1% 86%, 1% 14%
+  );
+  --adat-kartuse:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='110' viewBox='0 0 260 110'%3E%3Cg fill='none' stroke='%23F2D89A' stroke-width='1.4' stroke-linejoin='round'%3E%3Cpath d='M6 55L26 8H234L254 55L234 102H26Z'/%3E%3Cpath d='M18 55L34 18H226L242 55L226 92H34Z' opacity='.5'/%3E%3Cpath d='M26 8L34 18M234 8L226 18M26 102L34 92M234 102L226 92'/%3E%3C/g%3E%3Cg fill='%23F2D89A' opacity='.8'%3E%3Cpath d='M130 4L136 12L130 20L124 12Z'/%3E%3Cpath d='M130 90L136 98L130 106L124 98Z'/%3E%3C/g%3E%3C/svg%3E");
+  --adat-cincin:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%23F2D89A' stroke-width='1.4' stroke-linejoin='round'%3E%3Ccircle cx='70' cy='70' r='66'/%3E%3Cpath d='M70 2L104 36L70 70L36 36Z' opacity='.0'/%3E%3Cpath d='M70 6L86 22L70 38L54 22Z'/%3E%3Cpath d='M70 102L86 118L70 134L54 118Z'/%3E%3Cpath d='M6 70L22 54L38 70L22 86Z'/%3E%3Cpath d='M134 70L118 54L102 70L118 86Z'/%3E%3Ccircle cx='70' cy='70' r='56' stroke-width='.9' opacity='.5'/%3E%3C/g%3E%3C/svg%3E");
+  --adat-karangan:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='32' viewBox='0 0 260 32'%3E%3Cg fill='none' stroke='%23F2D89A' stroke-width='1.15'%3E%3Cpath d='M6 16H96M164 16H254' stroke-linecap='round'/%3E%3Cpath d='M104 16L118 4L132 16L118 28Z'/%3E%3Cpath d='M132 16L146 4L160 16L146 28Z'/%3E%3Cpath d='M118 12L118 20M146 12L146 20' opacity='.55'/%3E%3C/g%3E%3Cg fill='%23F2D89A'%3E%3Ccircle cx='100' cy='16' r='1.8'/%3E%3Ccircle cx='164' cy='16' r='1.8'/%3E%3C/g%3E%3C/svg%3E");
+  --adat-ornamen-a:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='180' viewBox='0 0 140 180'%3E%3Cg fill='none' stroke='%23F2D89A' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M26 8V176M114 8V176'/%3E%3Cpath d='M26 8H114'/%3E%3Cpath d='M26 24H114M26 62H114M26 100H114'/%3E%3Cpath d='M26 138C48 128 92 148 114 138'/%3E%3Cpath d='M26 176H114'/%3E%3C/g%3E%3Cg fill='%23F2D89A' opacity='.55'%3E%3Ccircle cx='26' cy='8' r='3.2'/%3E%3Ccircle cx='114' cy='8' r='3.2'/%3E%3C/g%3E%3C/svg%3E");
+  --adat-ornamen-b:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='130' viewBox='0 0 220 130'%3E%3Cg fill='none' stroke='%23F2D89A' stroke-width='1.4' stroke-linejoin='round'%3E%3Cpath d='M22 74C22 74 34 40 42 22C44 34 50 52 58 62'/%3E%3Cpath d='M198 74C198 74 186 40 178 22C176 34 170 52 162 62'/%3E%3Cpath d='M78 62C78 62 88 30 96 14C98 26 104 48 110 58'/%3E%3Cpath d='M142 62C142 62 132 30 124 14C122 26 116 48 110 58'/%3E%3Cpath d='M22 74H198'/%3E%3Cpath d='M32 74V112H188V74'/%3E%3Cpath d='M32 112H188'/%3E%3Cpath d='M56 84H84V112H56ZM136 84H164V112H136Z'/%3E%3Cpath d='M96 84H124V112H96Z'/%3E%3Cpath d='M14 120H206'/%3E%3C/g%3E%3C/svg%3E");
+  --pembatas-a:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='32' viewBox='0 0 260 32'%3E%3Cg fill='none' stroke='%23F2D89A' stroke-width='1.15'%3E%3Cpath d='M6 16H96M164 16H254' stroke-linecap='round'/%3E%3Cpath d='M104 16L118 4L132 16L118 28Z'/%3E%3Cpath d='M132 16L146 4L160 16L146 28Z'/%3E%3Cpath d='M118 12L118 20M146 12L146 20' opacity='.55'/%3E%3C/g%3E%3Cg fill='%23F2D89A'%3E%3Ccircle cx='100' cy='16' r='1.8'/%3E%3Ccircle cx='164' cy='16' r='1.8'/%3E%3C/g%3E%3C/svg%3E");
+  --pembatas-b:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%23F2D89A' stroke-width='1.2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M6 26H94M166 26H254'/%3E%3Cpath d='M94 26C94 26 104 8 112 4C114 12 118 20 124 24'/%3E%3Cpath d='M166 26C166 26 156 8 148 4C146 12 142 20 136 24'/%3E%3Cpath d='M124 24H136'/%3E%3Cpath d='M130 24V12'/%3E%3C/g%3E%3C/svg%3E");
+  --pembatas-c:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%23F2D89A' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M6 17H88M172 17H254'/%3E%3Cpath d='M88 17C96 6 112 6 118 14C124 6 140 6 148 14C154 8 166 10 172 17'/%3E%3Cpath d='M118 14C114 22 106 26 100 24M148 14C144 22 136 26 130 24'/%3E%3C/g%3E%3C/svg%3E");
   --orn-bali:url('/templates/_ornamen/bebas-ornamen-bali.webp');
   --orn-mahkota:url('/templates/_ornamen/mahkota-bunga-emas.webp');
   --orn-karangan:url('/templates/_ornamen/karangan-bunga-emas.webp');
@@ -733,3 +747,150 @@ section{position:relative;padding:var(--s6) var(--s4);}
   *{transition:none !important;animation:none !important;}
   .particles{display:none;}
 }
+
+
+/* ============================================================
+   PERBAIKAN DARI PENILAIAN USER  (2026-08-31)
+   ------------------------------------------------------------
+   1. BINGKAI FOTO PALING ATAS terlalu sempit, mempelai tidak terlihat
+      utuh, dan bentuknya kaku.
+      Lebarnya 80%/290px dan bentuknya dipotong clip-path yang menyempit
+      tajam ke atas — dua hal yang bekerja sama memakan wajah. Sekarang
+      lebarnya 92%/348px, dan potongannya dilonggarkan lewat variabel
+      --gunungan-lembut yang puncaknya jauh lebih landai. Ditambah
+      karangan ornamen di kaki bingkainya supaya tepinya tidak berhenti
+      sebagai potongan yang mendadak.
+   2. Kartu ornamen di belakang judul sampul, dan cincin ornamen
+      mengelilingi inisial.
+   3. Tiga motif pembatas bergiliran, bukan satu motif berulang.
+   4. Ornamen khas budayanya, ditempatkan menurut MAKNA.
+   ============================================================ */
+.hero-photo{
+  width:min(348px,92%);
+  clip-path:var(--gunungan-lembut);
+}
+.hero-photo-empty,.hero-photo-img{clip-path:var(--gunungan-lembut);}
+/* Karangan di kaki bingkai foto. Tanpa ini tepi bawah potongan berhenti
+   sebagai garis lurus yang mendadak — itu yang terbaca "kaku". */
+#fotoUtama{position:relative;}
+.hero-photo::after{
+  content:'';
+  position:absolute;
+  left:50%;bottom:-16px;
+  width:190px;height:24px;
+  transform:translateX(-50%);
+  background-image:var(--adat-karangan);
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  opacity:.85;
+  pointer-events:none;
+  z-index:2;
+}
+
+/* --- pembatas bergiliran --- */
+.nz-divider,.divider-ornament{
+  display:block;
+  width:min(240px,66%);
+  height:32px;
+  background-image:var(--pembatas-a);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  margin:0 auto;
+}
+.nz-divider-line,.nz-divider-gem{display:none;}
+.divider-ornament path,.divider-ornament circle,.divider-ornament rect{display:none;}
+#mempelai .nz-divider,#mempelai .divider-ornament,
+#galeri   .nz-divider,#galeri   .divider-ornament,
+#penutup  .nz-divider,#penutup  .divider-ornament{background-image:var(--pembatas-b);}
+#countdown .nz-divider,#countdown .divider-ornament,
+#ucapan    .nz-divider,#ucapan    .divider-ornament,
+#hadiah    .nz-divider,#hadiah    .divider-ornament{background-image:var(--pembatas-c);height:34px;}
+
+/* --- kartu judul sampul + cincin inisial --- */
+.cover-lafaz{
+  position:relative;
+  display:inline-block;
+  /* Judulnya jatuh ke DUA baris di layar HP, jadi jarak tegaknya harus
+     dihitung untuk dua baris — bukan untuk satu. Pada 16px baris kedua
+     menyembul di bawah bingkainya. */
+  padding:26px 44px;
+  z-index:1;
+}
+.cover-lafaz::before{
+  content:'';
+  position:absolute;
+  inset:-12px -20px;
+  z-index:-1;
+  background-image:var(--adat-kartuse);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  opacity:.9;
+  filter:drop-shadow(0 3px 10px rgba(0,0,0,.35));
+}
+.monogram-ring{display:none;}
+.cover-monogram::before{
+  content:'';
+  position:absolute;
+  inset:-12px;
+  background-image:var(--adat-cincin);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  pointer-events:none;
+}
+
+/* --- ornamen khas budaya, semuanya LATAR --- */
+#ucapan,#penutup{position:relative;overflow:hidden;}
+#ucapan > *,#penutup > *{position:relative;z-index:1;}
+#ucapan::after,#penutup::after{
+  content:'';
+  position:absolute;
+  pointer-events:none;
+  background-size:contain;
+  background-repeat:no-repeat;
+  z-index:0;
+}
+#ucapan::after{
+  right:-8px;bottom:var(--s4);width:110px;height:142px;
+  background-image:var(--adat-ornamen-a);
+  opacity:.2;
+}
+#penutup::after{
+  left:50%;bottom:-14px;
+  width:230px;height:136px;
+  transform:translateX(-50%);
+  background-image:var(--adat-ornamen-b);
+  opacity:.2;
+}
+
+/* ---- PITA TENUN DI KEDUA TEPI, BUKAN CUMA KIRI (2026-08-31) ----
+   Keluhan user: "bagian cover sampul foto terlihat kaku dengan design
+   yang kamu letak disamping kanan, terlihat sangat tidak klop".
+
+   Sebabnya memang itu: pitanya cuma di SATU tepi. Pada kain songket
+   sungguhan, tumpal ada di KEDUA ujung — sehelai kain yang cuma
+   bertepi di satu sisi terbaca sebagai potongan, bukan sebagai kain.
+   Ditambah pita kedua di tepi kanan, dan keduanya diberi garis emas
+   di sisi dalamnya supaya terbaca sebagai tepi tenun yang menjepit
+   fotonya, bukan sebagai balok yang ditempel. */
+.cover-tenun{
+  border-right:1px solid var(--line);
+  box-shadow:1px 0 0 rgba(220,179,92,.35);
+}
+#cover .cover-tenun-kanan,
+#cover::after{
+  content:'';
+  position:absolute;right:0;top:0;bottom:0;left:auto;
+  width:26px;
+  background-image:var(--kisi);
+  background-size:56px 56px;
+  background-color:var(--paper);
+  border-left:1px solid var(--line);
+  box-shadow:-1px 0 0 rgba(220,179,92,.35);
+  opacity:.85;
+  z-index:2;pointer-events:none;
+  transition:opacity .7s ease;
+}
+#cover.is-opening::after{opacity:0;}
