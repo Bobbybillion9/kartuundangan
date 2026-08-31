@@ -74,6 +74,20 @@
 
   /* --- aset ornamen bersama --- */
   --orn-xi:url('/templates/_ornamen/xi-ganda-emas.webp');
+  --cn-angpao:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='164' viewBox='0 0 120 164'%3E%3Crect x='8' y='8' width='104' height='148' rx='5' fill='rgba(178,58,46,.10)' stroke='%238A6C2A' stroke-width='1.6'/%3E%3Cpath d='M8 52C30 62 90 62 112 52' fill='none' stroke='%238A6C2A' stroke-width='1.3'/%3E%3Cg fill='none' stroke='%238A6C2A' stroke-width='1.5'%3E%3Ccircle cx='60' cy='92' r='24'/%3E%3Cpath d='M48 80H72M48 104H72M60 74V110M52 86H68M52 98H68'/%3E%3C/g%3E%3Cg fill='none' stroke='%238A6C2A' stroke-width='1.2' opacity='.8'%3E%3Cpath d='M22 24C30 18 40 18 46 24M74 24C80 18 90 18 98 24'/%3E%3Cpath d='M22 140H98'/%3E%3C/g%3E%3C/svg%3E");
+  --cn-lentera:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='none' stroke='%238A6C2A' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M52 6V22M128 6V40'/%3E%3Cg%3E%3Cpath d='M30 22H74M34 30H70'/%3E%3Cpath d='M52 30C30 30 22 46 22 62C22 78 30 94 52 94C74 94 82 78 82 62C82 46 74 30 52 30Z'/%3E%3Cpath d='M52 30V94M36 33C30 46 30 78 36 91M68 33C74 46 74 78 68 91'/%3E%3Cpath d='M34 94H70M38 102H66'/%3E%3Cpath d='M46 102V122M52 102V130M58 102V122'/%3E%3C/g%3E%3Cg opacity='.8'%3E%3Cpath d='M110 40H146M114 47H142'/%3E%3Cpath d='M128 47C112 47 106 59 106 71C106 83 112 95 128 95C144 95 150 83 150 71C150 59 144 47 128 47Z'/%3E%3Cpath d='M128 47V95M116 50C111 60 111 82 116 92M140 50C145 60 145 82 140 92'/%3E%3Cpath d='M114 95H142M118 102H138'/%3E%3Cpath d='M122 102V118M128 102V126M134 102V118'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  --cn-kipas:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='128' viewBox='0 0 200 128'%3E%3Cg fill='none' stroke='%238A6C2A' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M100 116L182.7 85.9M100 116L167.4 59.4M100 116L144.0 39.8M100 116L115.3 29.3M100 116L84.7 29.3M100 116L56.0 39.8M100 116L32.6 59.4M100 116L17.3 85.9'/%3E%3Cpath d='M12 116A88 88 0 0 1 188 116'/%3E%3Cpath d='M40 116A60 60 0 0 1 160 116'/%3E%3Cpath d='M64 116A36 36 0 0 1 136 116'/%3E%3C/g%3E%3Cg fill='%238A6C2A'%3E%3Ccircle cx='100' cy='116' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  --cn-petasan:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='104' viewBox='0 0 140 104'%3E%3Cpath d='M6 20C30 10 110 10 134 20' fill='none' stroke='%238A6C2A' stroke-width='1.4'/%3E%3Crect x='18' y='34' width='14' height='46' rx='3' fill='rgba(178,58,46,.10)' stroke='%238A6C2A' stroke-width='1.3'/%3E%3Cpath d='M25 34V22' stroke='%238A6C2A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M20 48H30M20 66H30' stroke='%238A6C2A' stroke-width='1' opacity='.75' fill='none'/%3E%3Crect x='40' y='50' width='14' height='46' rx='3' fill='rgba(178,58,46,.10)' stroke='%238A6C2A' stroke-width='1.3'/%3E%3Cpath d='M47 50V38' stroke='%238A6C2A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M42 64H52M42 82H52' stroke='%238A6C2A' stroke-width='1' opacity='.75' fill='none'/%3E%3Crect x='62' y='34' width='14' height='46' rx='3' fill='rgba(178,58,46,.10)' stroke='%238A6C2A' stroke-width='1.3'/%3E%3Cpath d='M69 34V22' stroke='%238A6C2A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M64 48H74M64 66H74' stroke='%238A6C2A' stroke-width='1' opacity='.75' fill='none'/%3E%3Crect x='84' y='50' width='14' height='46' rx='3' fill='rgba(178,58,46,.10)' stroke='%238A6C2A' stroke-width='1.3'/%3E%3Cpath d='M91 50V38' stroke='%238A6C2A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M86 64H96M86 82H96' stroke='%238A6C2A' stroke-width='1' opacity='.75' fill='none'/%3E%3Crect x='106' y='34' width='14' height='46' rx='3' fill='rgba(178,58,46,.10)' stroke='%238A6C2A' stroke-width='1.3'/%3E%3Cpath d='M113 34V22' stroke='%238A6C2A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M108 48H118M108 66H118' stroke='%238A6C2A' stroke-width='1' opacity='.75' fill='none'/%3E%3C/svg%3E");
+  /* Bingkainya digambar hampir selebar viewBox-nya. Percobaan pertama
+     memberi margin 7% di dalam SVG, dan karena background-size:100% 100%
+     margin itu ikut melar — bingkainya jadi lebih sempit daripada teks
+     yang seharusnya dibingkainya. */
+  --cn-kartuse:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='120' viewBox='0 0 200 120'%3E%3Crect x='3' y='3' width='194' height='114' rx='3' fill='none' stroke='%238A6C2A' stroke-width='1.6'/%3E%3Crect x='9' y='9' width='182' height='102' rx='2' fill='none' stroke='%238A6C2A' stroke-width='.8' opacity='.55'/%3E%3Crect x='166' y='84' width='24' height='24' rx='2' fill='%23B23A2E'/%3E%3Cg fill='none' stroke='%23FFFFFF' stroke-width='1.5' opacity='.9'%3E%3Cpath d='M171 90H185M171 96H185M171 102H185M178 88V104'/%3E%3C/g%3E%3C/svg%3E");
+  --cn-cincin:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cpath d='M92 14C118 26 132 48 130 74C128 104 104 128 72 130C40 132 14 108 10 78C6 46 28 18 60 12' fill='none' stroke='%238A6C2A' stroke-width='4.5' stroke-linecap='round'/%3E%3Cpath d='M96 18C116 30 126 50 124 72' fill='none' stroke='%238A6C2A' stroke-width='1.2' opacity='.45' stroke-linecap='round'/%3E%3C/svg%3E");
+  --cn-hero:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cpath d='M92 14C118 26 132 48 130 74C128 104 104 128 72 130C40 132 14 108 10 78C6 46 28 18 60 12' fill='none' stroke='%238A6C2A' stroke-width='4.5' stroke-linecap='round'/%3E%3Cpath d='M96 18C116 30 126 50 124 72' fill='none' stroke='%238A6C2A' stroke-width='1.2' opacity='.45' stroke-linecap='round'/%3E%3C/svg%3E");
+  --pembatas-a:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cpath d='M8 17C60 9 90 22 130 15C170 8 200 21 252 13' fill='none' stroke='%238A6C2A' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M8 21C60 14 90 26 130 19C170 12 200 25 252 17' fill='none' stroke='%238A6C2A' stroke-width='.9' stroke-linecap='round' opacity='.5'/%3E%3C/svg%3E");
+  --pembatas-b:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cg fill='none' stroke='%238A6C2A' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M6 15H108M152 15H254'/%3E%3C/g%3E%3Crect x='116' y='3' width='24' height='24' rx='2' fill='%23B23A2E'/%3E%3Cg fill='none' stroke='%23FFFFFF' stroke-width='1.4' opacity='.85'%3E%3Cpath d='M122 9H134M122 15H134M122 21H134M128 7V23'/%3E%3C/g%3E%3C/svg%3E");
+  --pembatas-c:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%238A6C2A' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M6 17H104M156 17H254'/%3E%3Cpath d='M112 17H148M118 13V21M130 11V23M142 13V21'/%3E%3Cpath d='M104 17C108 10 114 8 118 10M156 17C152 10 146 8 142 10'/%3E%3C/g%3E%3C/svg%3E");
   --orn-awan:url('/templates/_ornamen/awan-cina-emas.webp');
   --orn-lentera:url('/templates/_ornamen/lentera-cina-emas.webp');
   --orn-peoni:url('/templates/_ornamen/peoni-emas.webp');
@@ -723,3 +737,188 @@ section{position:relative;padding:var(--s6) var(--s4);}
   *{transition:none !important;animation:none !important;}
   .particles{display:none;}
 }
+
+
+/* ============================================================
+   ORNAMEN KHAS TIONGHOA & PEMBATAS BERGILIRAN  (2026-08-31)
+   ------------------------------------------------------------
+   Permintaan user: ornamen tiap pembatas dibuat bervariasi, dan
+   ditambahkan benda-benda khas Tionghoa (angpao, lentera, kipas,
+   petasan). Semuanya digambar, tidak ada berkas gambar baru — ornamen
+   hasil foto membawa warna dan pencahayaannya sendiri, dan tiga tema
+   Tionghoa di katalog ini paletnya berbeda jauh.
+
+   LETAKNYA dipilih dari MAKNA, bukan dari ruang yang kebetulan kosong:
+     angpao  -> Tanda Kasih  (amplop merah memang benda pemberi hadiah)
+     petasan -> Kehadiran    (dinyalakan saat rombongan datang)
+     kipas   -> Ucapan & Doa (dibuka saat menyapa)
+     lentera -> Penutup      (lampion di malam terakhir perayaan)
+   ============================================================ */
+.nz-divider,.divider-ornament{
+  display:block;
+  width:min(240px,66%);
+  height:34px;
+  background-image:var(--pembatas-a);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  margin:0 auto;
+}
+.nz-divider-line,.nz-divider-gem{display:none;}
+.divider-ornament path,.divider-ornament circle,.divider-ornament rect{display:none;}
+#mempelai .nz-divider,#mempelai .divider-ornament,
+#galeri   .nz-divider,#galeri   .divider-ornament,
+#penutup  .nz-divider,#penutup  .divider-ornament{background-image:var(--pembatas-b);}
+#countdown .nz-divider,#countdown .divider-ornament,
+#ucapan    .nz-divider,#ucapan    .divider-ornament,
+#hadiah    .nz-divider,#hadiah    .divider-ornament{background-image:var(--pembatas-c);height:40px;}
+
+/* --- benda-benda khas, semuanya LATAR: tidak boleh menutupi satu
+       huruf pun. Versi pertama ornamen di tema lain sempat menimpa
+       kalimat penutup sampai sulit dibaca. --- */
+#hadiah,#rsvp,#ucapan,#penutup{position:relative;overflow:hidden;}
+#hadiah > *,#rsvp > *,#ucapan > *,#penutup > *{position:relative;z-index:1;}
+#hadiah::after,#rsvp::after,#ucapan::after,#penutup::after{
+  content:'';
+  position:absolute;
+  pointer-events:none;
+  background-size:contain;
+  background-repeat:no-repeat;
+  z-index:0;
+}
+#hadiah::after{
+  right:-18px;top:var(--s5);
+  width:104px;height:142px;
+  transform:rotate(9deg);
+  background-image:var(--cn-angpao);
+  opacity:.2;
+}
+#rsvp::after{
+  left:-14px;bottom:var(--s4);
+  width:118px;height:88px;
+  transform:rotate(-6deg);
+  background-image:var(--cn-petasan);
+  opacity:.16;
+}
+#ucapan::after{
+  right:-22px;bottom:var(--s4);
+  width:168px;height:108px;
+  background-image:var(--cn-kipas);
+  opacity:.16;
+}
+#penutup::after{
+  left:50%;bottom:-10px;
+  width:190px;height:190px;
+  transform:translateX(-50%);
+  background-image:var(--cn-lentera);
+  opacity:.16;
+}
+
+/* --- BINGKAI SAMPUL: kartu aksara + cincin inisial --- */
+.cover-lafaz{
+  position:relative;
+  display:inline-block;
+  /* letter-spacing pada aksara Mandarin menambah satu ruang KOSONG di
+     ujung kanan baris, dan kotak elemennya ikut memuat ruang itu. Kalau
+     bingkainya dipasang seukuran kotak, ia jadi bergeser ke kanan
+     terhadap teksnya — sudah terjadi dan langsung terlihat. Ruang itu
+     dibatalkan dengan text-indent sebesar letter-spacing-nya. */
+  letter-spacing:.14em;
+  text-indent:.14em;
+  padding:26px 34px;
+  z-index:1;
+}
+.cover-lafaz::before{
+  content:'';
+  position:absolute;
+  inset:-10px -16px;
+  z-index:-1;
+  background-image:var(--cn-kartuse);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  opacity:.92;
+  filter:drop-shadow(0 3px 10px rgba(0,0,0,.4));
+}
+/* Cincin ornamen di sekeliling inisial. SVG cincin polos bawaannya
+   disembunyikan, bukan dihapus dari markup, supaya struktur tema ini
+   tetap sebangun dengan tema lain. */
+.monogram-ring{display:none;}
+.cover-monogram::before{
+  content:'';
+  position:absolute;
+  inset:-12px;
+  background-image:var(--cn-cincin);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  pointer-events:none;
+}
+
+/* --- BINGKAI FOTO UTAMA (permintaan user nomor 8) --- */
+#fotoUtama{position:relative;}
+.hero-photo{overflow:visible;}
+.hero-photo-img,.hero-photo-empty,.hero-photo-fade{border-radius:inherit;}
+.hero-photo::before{
+  content:'';
+  position:absolute;
+  inset:-20px;
+  background-image:var(--cn-hero);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  pointer-events:none;
+  z-index:3;
+}
+
+/* ---- ANIMASI BUKA SAMPUL DIGANTI: TINTA MELUBER ----
+   Permintaan user, dan khusus tema ini "jangan sama dengan design tema
+   yang sebelumnya". Sebelumnya dua panel berpapasan tegak — gerakan
+   yang tidak menyebut apa pun tentang temanya sendiri.
+
+   Sekarang setetes tinta jatuh di tengah sampul lalu meluber sampai
+   menghapus seluruh bidangnya. Itu gerakan yang cuma masuk akal di
+   tema bernama Tinta Emas, dan tidak bisa dipakai ulang tema lain
+   tanpa terlihat meminjam.
+
+   Tetesnya memakai .cover-garis-tegak — elemen yang sudah ada di
+   markup dan tugas lamanya (garis emas di garis temu dua panel) hilang
+   bersama gerakan lama. Tidak ada markup baru yang perlu disalin ke
+   tema mana pun. */
+#cover .cover-panel-kiri,
+#cover .cover-panel-kanan{
+  transition:opacity .55s ease .5s;
+}
+#cover.is-opening .cover-panel-kiri,
+#cover.is-opening .cover-panel-kanan{
+  /* Geseran tegak bawaan DIBATALKAN — dua gerakan pada properti yang
+     sama saling menutupi dan yang terlihat cuma kedutan. */
+  transform:none;
+  opacity:0;
+}
+#cover .cover-garis-tegak{
+  left:50%;top:50%;
+  width:120px;height:120px;
+  margin:0;
+  transform:translate(-50%,-50%) scale(0);
+  background:radial-gradient(circle at 42% 38%,#3A3D3E 0%,#26292A 58%,#16191A 100%);
+  /* Tepi tidak bulat sempurna: tinta yang tumpah tidak pernah bulat.
+     Empat jari-jari yang berbeda cukup untuk membuatnya terbaca
+     sebagai noda, bukan sebagai lingkaran. */
+  border-radius:58% 42% 47% 53% / 44% 56% 44% 56%;
+  opacity:0;
+  filter:blur(.4px);
+  transition:transform 1.05s cubic-bezier(.5,0,.2,1),opacity .3s ease;
+  z-index:4;
+}
+#cover.is-opening .cover-garis-tegak{
+  transform:translate(-50%,-50%) scale(9) rotate(28deg);
+  opacity:1;
+}
+
+/* ---- SATU AKSEN MERAH SEGEL, DAN CUMA SATU ----
+   Tema ini janjinya putih tulang, tinta arang, satu garis emas. Merah
+   segel ditambahkan sebagai TITIK, bukan bidang: satu cap di pembatas
+   dan satu di kartu aksara sampul. Lebih dari itu akan mengubahnya jadi
+   tema merah, dan tema merah di kategori ini sudah ada namanya
+   (Shuangxi Merah). */
+.kal-lembar{border-color:rgba(168,134,58,.34);}
+.kal-bulan{background:rgba(38,41,42,.06);color:#26292A;}

@@ -60,6 +60,16 @@
 
   /* --- aset ornamen bersama --- */
   --orn-xi:url('/templates/_ornamen/xi-ganda-emas.webp');
+  --cn-angpao:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='164' viewBox='0 0 120 164'%3E%3Crect x='8' y='8' width='104' height='148' rx='5' fill='%238E1F29' stroke='%23F0D08A' stroke-width='1.6'/%3E%3Cpath d='M8 52C30 62 90 62 112 52' fill='none' stroke='%23F0D08A' stroke-width='1.3'/%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.5'%3E%3Ccircle cx='60' cy='92' r='24'/%3E%3Cpath d='M48 80H72M48 104H72M60 74V110M52 86H68M52 98H68'/%3E%3C/g%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.2' opacity='.8'%3E%3Cpath d='M22 24C30 18 40 18 46 24M74 24C80 18 90 18 98 24'/%3E%3Cpath d='M22 140H98'/%3E%3C/g%3E%3C/svg%3E");
+  --cn-lentera:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M52 6V22M128 6V40'/%3E%3Cg%3E%3Cpath d='M30 22H74M34 30H70'/%3E%3Cpath d='M52 30C30 30 22 46 22 62C22 78 30 94 52 94C74 94 82 78 82 62C82 46 74 30 52 30Z'/%3E%3Cpath d='M52 30V94M36 33C30 46 30 78 36 91M68 33C74 46 74 78 68 91'/%3E%3Cpath d='M34 94H70M38 102H66'/%3E%3Cpath d='M46 102V122M52 102V130M58 102V122'/%3E%3C/g%3E%3Cg opacity='.8'%3E%3Cpath d='M110 40H146M114 47H142'/%3E%3Cpath d='M128 47C112 47 106 59 106 71C106 83 112 95 128 95C144 95 150 83 150 71C150 59 144 47 128 47Z'/%3E%3Cpath d='M128 47V95M116 50C111 60 111 82 116 92M140 50C145 60 145 82 140 92'/%3E%3Cpath d='M114 95H142M118 102H138'/%3E%3Cpath d='M122 102V118M128 102V126M134 102V118'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  --cn-kipas:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='128' viewBox='0 0 200 128'%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M100 116L182.7 85.9M100 116L167.4 59.4M100 116L144.0 39.8M100 116L115.3 29.3M100 116L84.7 29.3M100 116L56.0 39.8M100 116L32.6 59.4M100 116L17.3 85.9'/%3E%3Cpath d='M12 116A88 88 0 0 1 188 116'/%3E%3Cpath d='M40 116A60 60 0 0 1 160 116'/%3E%3Cpath d='M64 116A36 36 0 0 1 136 116'/%3E%3C/g%3E%3Cg fill='%23F0D08A'%3E%3Ccircle cx='100' cy='116' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  --cn-petasan:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='104' viewBox='0 0 140 104'%3E%3Cpath d='M6 20C30 10 110 10 134 20' fill='none' stroke='%23F0D08A' stroke-width='1.4'/%3E%3Crect x='18' y='34' width='14' height='46' rx='3' fill='%238E1F29' stroke='%23F0D08A' stroke-width='1.3'/%3E%3Cpath d='M25 34V22' stroke='%23F0D08A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M20 48H30M20 66H30' stroke='%23F0D08A' stroke-width='1' opacity='.75' fill='none'/%3E%3Crect x='40' y='50' width='14' height='46' rx='3' fill='%238E1F29' stroke='%23F0D08A' stroke-width='1.3'/%3E%3Cpath d='M47 50V38' stroke='%23F0D08A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M42 64H52M42 82H52' stroke='%23F0D08A' stroke-width='1' opacity='.75' fill='none'/%3E%3Crect x='62' y='34' width='14' height='46' rx='3' fill='%238E1F29' stroke='%23F0D08A' stroke-width='1.3'/%3E%3Cpath d='M69 34V22' stroke='%23F0D08A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M64 48H74M64 66H74' stroke='%23F0D08A' stroke-width='1' opacity='.75' fill='none'/%3E%3Crect x='84' y='50' width='14' height='46' rx='3' fill='%238E1F29' stroke='%23F0D08A' stroke-width='1.3'/%3E%3Cpath d='M91 50V38' stroke='%23F0D08A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M86 64H96M86 82H96' stroke='%23F0D08A' stroke-width='1' opacity='.75' fill='none'/%3E%3Crect x='106' y='34' width='14' height='46' rx='3' fill='%238E1F29' stroke='%23F0D08A' stroke-width='1.3'/%3E%3Cpath d='M113 34V22' stroke='%23F0D08A' stroke-width='1.1' fill='none'/%3E%3Cpath d='M108 48H118M108 66H118' stroke='%23F0D08A' stroke-width='1' opacity='.75' fill='none'/%3E%3C/svg%3E");
+  --cn-kartuse:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='150' viewBox='0 0 200 150'%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.5'%3E%3Cpath d='M40 20H160C172 20 180 28 180 40V110C180 122 172 130 160 130H40C28 130 20 122 20 110V40C20 28 28 20 40 20Z'/%3E%3Cpath d='M46 28H154C164 28 170 34 170 44V106C170 116 164 122 154 122H46C36 122 30 116 30 106V44C30 34 36 28 46 28Z' opacity='.55'/%3E%3Cpath d='M100 20V6M100 130V144'/%3E%3Cpath d='M88 6C92 0 108 0 112 6C116 12 108 16 100 14C92 16 84 12 88 6Z'/%3E%3Cpath d='M88 144C92 150 108 150 112 144C116 138 108 134 100 136C92 134 84 138 88 144Z'/%3E%3Cpath d='M20 60C10 62 6 72 12 78C6 84 10 94 20 92'/%3E%3Cpath d='M180 60C190 62 194 72 188 78C194 84 190 94 180 92'/%3E%3C/g%3E%3C/svg%3E");
+  --cn-cincin:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.5'%3E%3Ccircle cx='70' cy='70' r='66'/%3E%3Ccircle cx='70' cy='70' r='60' stroke-width='.9' opacity='.6'/%3E%3Cpath d='M70 4V14M70 126V136M4 70H14M126 70H136'/%3E%3Cpath d='M46 46L54 54M94 46L86 54M46 94L54 86M94 94L86 86' opacity='.7'/%3E%3C/g%3E%3C/svg%3E");
+  --cn-hero:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.5'%3E%3Ccircle cx='70' cy='70' r='66'/%3E%3Ccircle cx='70' cy='70' r='60' stroke-width='.9' opacity='.6'/%3E%3Cpath d='M70 4V14M70 126V136M4 70H14M126 70H136'/%3E%3Cpath d='M46 46L54 54M94 46L86 54M46 94L54 86M94 94L86 86' opacity='.7'/%3E%3C/g%3E%3C/svg%3E");
+  --pembatas-a:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M6 17H92M168 17H254'/%3E%3Cpath d='M92 17C92 9 100 5 106 9C110 3 122 3 124 11C132 8 138 14 134 20C138 26 130 31 124 27C120 33 108 32 106 25C100 29 92 25 92 17Z'/%3E%3Cpath d='M134 17C140 12 150 12 156 17'/%3E%3C/g%3E%3Ccircle cx='163' cy='17' r='2' fill='%23F0D08A'/%3E%3C/svg%3E");
+  --pembatas-b:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.2'%3E%3Cpath d='M6 17H98M162 17H254' stroke-linecap='round'/%3E%3Ccircle cx='112' cy='17' r='11'/%3E%3Crect x='107' y='12' width='10' height='10'/%3E%3Ccircle cx='148' cy='17' r='11'/%3E%3Crect x='143' y='12' width='10' height='10'/%3E%3Ccircle cx='130' cy='17' r='14'/%3E%3Crect x='124' y='11' width='12' height='12'/%3E%3C/g%3E%3C/svg%3E");
+  --pembatas-c:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='40' viewBox='0 0 260 40'%3E%3Cg fill='none' stroke='%23F0D08A' stroke-width='1.15' stroke-linecap='round'%3E%3Cpath d='M6 10H112M148 10H254'/%3E%3Cpath d='M120 10H140'/%3E%3Cpath d='M123 10C117 16 117 28 123 33H137C143 28 143 16 137 10'/%3E%3Cpath d='M124 16H136M124 27H136'/%3E%3Cpath d='M127 33V38M133 33V38'/%3E%3C/g%3E%3C/svg%3E");
   --orn-awan:url('/templates/_ornamen/awan-cina-emas.webp');
   --orn-lentera:url('/templates/_ornamen/lentera-cina-emas.webp');
   --orn-peoni:url('/templates/_ornamen/peoni-emas.webp');
@@ -685,4 +695,180 @@ section{position:relative;padding:var(--s6) var(--s4);}
   html{scroll-behavior:auto;}
   *{transition:none !important;animation:none !important;}
   .particles{display:none;}
+}
+
+
+/* ============================================================
+   ORNAMEN KHAS TIONGHOA & PEMBATAS BERGILIRAN  (2026-08-31)
+   ------------------------------------------------------------
+   Permintaan user: ornamen tiap pembatas dibuat bervariasi, dan
+   ditambahkan benda-benda khas Tionghoa (angpao, lentera, kipas,
+   petasan). Semuanya digambar, tidak ada berkas gambar baru — ornamen
+   hasil foto membawa warna dan pencahayaannya sendiri, dan tiga tema
+   Tionghoa di katalog ini paletnya berbeda jauh.
+
+   LETAKNYA dipilih dari MAKNA, bukan dari ruang yang kebetulan kosong:
+     angpao  -> Tanda Kasih  (amplop merah memang benda pemberi hadiah)
+     petasan -> Kehadiran    (dinyalakan saat rombongan datang)
+     kipas   -> Ucapan & Doa (dibuka saat menyapa)
+     lentera -> Penutup      (lampion di malam terakhir perayaan)
+   ============================================================ */
+.nz-divider,.divider-ornament{
+  display:block;
+  width:min(240px,66%);
+  height:34px;
+  background-image:var(--pembatas-a);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  margin:0 auto;
+}
+.nz-divider-line,.nz-divider-gem{display:none;}
+.divider-ornament path,.divider-ornament circle,.divider-ornament rect{display:none;}
+#mempelai .nz-divider,#mempelai .divider-ornament,
+#galeri   .nz-divider,#galeri   .divider-ornament,
+#penutup  .nz-divider,#penutup  .divider-ornament{background-image:var(--pembatas-b);}
+#countdown .nz-divider,#countdown .divider-ornament,
+#ucapan    .nz-divider,#ucapan    .divider-ornament,
+#hadiah    .nz-divider,#hadiah    .divider-ornament{background-image:var(--pembatas-c);height:40px;}
+
+/* --- benda-benda khas, semuanya LATAR: tidak boleh menutupi satu
+       huruf pun. Versi pertama ornamen di tema lain sempat menimpa
+       kalimat penutup sampai sulit dibaca. --- */
+#hadiah,#rsvp,#ucapan,#penutup{position:relative;overflow:hidden;}
+#hadiah > *,#rsvp > *,#ucapan > *,#penutup > *{position:relative;z-index:1;}
+#hadiah::after,#rsvp::after,#ucapan::after,#penutup::after{
+  content:'';
+  position:absolute;
+  pointer-events:none;
+  background-size:contain;
+  background-repeat:no-repeat;
+  z-index:0;
+}
+#hadiah::after{
+  right:-18px;top:var(--s5);
+  width:104px;height:142px;
+  transform:rotate(9deg);
+  background-image:var(--cn-angpao);
+  opacity:.34;
+}
+#rsvp::after{
+  left:-14px;bottom:var(--s4);
+  width:118px;height:88px;
+  transform:rotate(-6deg);
+  background-image:var(--cn-petasan);
+  opacity:.26;
+}
+#ucapan::after{
+  right:-22px;bottom:var(--s4);
+  width:168px;height:108px;
+  background-image:var(--cn-kipas);
+  opacity:.26;
+}
+#penutup::after{
+  left:50%;bottom:-10px;
+  width:190px;height:190px;
+  transform:translateX(-50%);
+  background-image:var(--cn-lentera);
+  opacity:.26;
+}
+
+/* --- BINGKAI SAMPUL: kartu aksara + cincin inisial --- */
+.cover-lafaz{
+  position:relative;
+  display:inline-block;
+  padding:18px 46px;
+  z-index:1;
+}
+.cover-lafaz::before{
+  content:'';
+  position:absolute;
+  inset:-6px -10px;
+  z-index:-1;
+  background-image:var(--cn-kartuse);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  opacity:.92;
+  filter:drop-shadow(0 3px 10px rgba(0,0,0,.4));
+}
+/* Cincin ornamen di sekeliling inisial. SVG cincin polos bawaannya
+   disembunyikan, bukan dihapus dari markup, supaya struktur tema ini
+   tetap sebangun dengan tema lain. */
+.monogram-ring{display:none;}
+.cover-monogram::before{
+  content:'';
+  position:absolute;
+  inset:-12px;
+  background-image:var(--cn-cincin);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  pointer-events:none;
+}
+
+/* --- BINGKAI FOTO UTAMA (permintaan user nomor 8) --- */
+#fotoUtama{position:relative;}
+.hero-photo{overflow:visible;}
+.hero-photo-img,.hero-photo-empty,.hero-photo-fade{border-radius:inherit;}
+.hero-photo::before{
+  content:'';
+  position:absolute;
+  inset:-16px;
+  background-image:var(--cn-hero);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  pointer-events:none;
+  z-index:3;
+}
+
+/* ---- MOTIF KOTAK-KOTAK DI SAMPUL DIBUANG (2026-08-31) ----
+   Keluhan user: "motif kotak-kotak pada sampul dihilangkan, karena itu
+   menggangu background foto yang terlihat". Benar: kisi jendela adalah
+   identitas tema ini, tapi di SAMPUL ia terhampar persis di atas foto
+   mempelai — dan foto sampul adalah satu-satunya hal yang dijual layar
+   pertama. Kisinya tetap hidup di seluruh bagian lain undangan.
+   Dibuang hanya saat ADA foto sampul; tanpa foto, kisinya justru yang
+   menyelamatkan sampul dari jadi bidang merah kosong. */
+#cover.has-sampul .cover-kisi{opacity:0;}
+
+/* ---- ANIMASI BUKA SAMPUL DIGANTI: GERBANG BULAN MENGATUP ----
+   Permintaan user. Sebelumnya sampulnya menggulung ke atas — gerakan
+   yang sekarang jadi milik tahap amplop (surat naik keluar), jadi dua
+   gerakan berurutan yang arahnya sama persis. Sekarang sampulnya
+   mengatup lewat lingkaran gerbang bulan, bentuk pengatur tema ini,
+   sampai habis di titik tengah.
+   clip-path pada lingkaran DAPAT ditransisikan selama kedua nilainya
+   sama-sama circle() dengan satuan yang sama. */
+#cover .cover-foto,#cover .cover-kisi{
+  /* 78%, bukan 150%. Jari-jari persen pada circle() dihitung terhadap
+     diagonal kotak acuan; pada 150% dua pertiga pertama animasinya
+     terjadi DI LUAR layar dan yang terlihat cuma sampul yang tiba-tiba
+     hilang. 78% sudah cukup menutupi sudut terjauh bidang, jadi seluruh
+     rentang gerakannya terlihat. */
+  clip-path:circle(78% at 50% 45%);
+  transition:clip-path 1.15s cubic-bezier(.7,0,.25,1),opacity .5s ease .7s;
+}
+#cover.is-opening .cover-foto,
+#cover.is-opening .cover-kisi{
+  /* transform:scaleY(0) bawaan DIBATALKAN — dua properti yang
+     menganimasikan bentuk yang sama membuat gerakannya saling menutupi
+     dan yang terlihat cuma kedutan. */
+  transform:none;
+  clip-path:circle(0% at 50% 45%);
+  opacity:0;
+}
+/* Batang gulungan tidak lagi masuk akal pada gerakan mengatup. */
+#cover .cover-gulung{transition:opacity .45s ease;}
+#cover.is-opening .cover-gulung{transform:none;opacity:0;}
+
+/* ---- LEBIH BANYAK EMAS (permintaan user nomor 6) ---- */
+.kal-lembar{border-color:rgba(217,174,85,.45);}
+.kal-bulan{background:rgba(217,174,85,.16);color:#F0D08A;}
+.galeri-item{position:relative;}
+.galeri-item::after{
+  content:'';
+  position:absolute;
+  left:14%;right:14%;bottom:-3px;height:2px;
+  background:linear-gradient(to right,rgba(217,174,85,0),#D9AE55 24%,#D9AE55 76%,rgba(217,174,85,0));
+  pointer-events:none;
 }
