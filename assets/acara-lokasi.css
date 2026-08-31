@@ -27,23 +27,46 @@
    ============================================================ */
 
 /* ------------------------------------------------------------
-   1. LEMBAR KALENDER
-   Bentuknya kalender dinding sobek: pita bulan di kepala, dua lubang
-   ring, angka besar, lalu nama hari. Dipilih karena itu satu-satunya
-   bentuk "tanggal" yang langsung terbaca tanpa perlu dijelaskan, di
-   budaya mana pun — dan kelima belas tema di katalog ini berasal dari
-   lima budaya yang berbeda.
+   1. LEMBAR BULAN — kisi satu bulan penuh, hari-H ditandai
+   ------------------------------------------------------------
+   Bentuknya diambil dari tujuh gambar acuan yang dikirim user
+   (_ref/kal/). Ketujuhnya sepakat pada satu hal: yang digambar bukan
+   angka tanggalnya saja, melainkan SATU BULAN PENUH dengan hari-H
+   ditandai — dilingkari, dihati, atau dicoret pena.
+
+   Itu mengatakan sesuatu yang angka tunggal tidak katakan: hari-H
+   duduk di antara hari-hari biasa di sekitarnya, jadi tamu langsung
+   melihat itu hari apa dan minggu ke berapa — persis pertanyaan yang
+   ia ajukan ke dirinya sendiri saat memutuskan bisa datang atau tidak.
+
+   TIAP TEMA WAJIB TERLIHAT BERBEDA. Perintah user. Karena itu hampir
+   semua yang menentukan rupanya adalah variabel, dan kedua belas tema
+   menyetelnya sendiri-sendiri: bentuk pelatnya, jenis huruf judulnya,
+   panjang nama harinya (satu huruf / tiga huruf), dan yang paling
+   terlihat — BENTUK PENANDA hari-H (lingkaran pena, hati, belah
+   ketupat, oktagon, gunungan, lingkaran kuas).
+
+   Kisinya dibangun assets/acara-lokasi.js, bukan ditulis di markup:
+   letak tanggal 1 pada baris pertama berbeda tiap bulan.
    ------------------------------------------------------------ */
 .kal {
   display: block;
-  margin: 10px 0 8px;
-  /* Noir Dore menata .event-card sebagai grid beraerah
-     ("ikon nama" / "ikon tanggal" / "ikon waktu") dan dulu memberi
-     grid-area:tanggal ke .event-date. Elemen itu sekarang terbungkus
-     .kal, jadi areanya harus dipegang pembungkusnya. Di tema lain yang
-     kartunya bukan grid, deklarasi ini diabaikan browser — jadi aman
-     ditulis untuk semua. */
-  grid-area: tanggal;
+  margin: 12px 0 10px;
+  /* Kartu acara di beberapa tema adalah GRID dua kolom (ikon | teks),
+     dan .kal yang jatuh ke kolom teks selebar 1fr membuat kisi tujuh
+     kolomnya menyembul keluar kartu — sudah terjadi di Bordeaux: nama
+     harinya berdempet jadi satu kata dan kolom Sabtu terpotong tepi
+     kartu. Kalendernya karena itu selalu mengambil SELURUH lebar
+     kartu, di baris sendiri.
+
+     min-width:0 wajib menyertainya: anak grid bawaannya min-width:auto,
+     yang menolak menyusut di bawah lebar isinya — jadi tanpa ini
+     kisinya tetap meluber walau sudah sebaris penuh.
+
+     Di tema yang kartunya BUKAN grid, kedua deklarasi ini diabaikan
+     browser. Aman ditulis untuk semua. */
+  grid-column: 1 / -1;
+  min-width: 0;
 }
 
 /* Teks tanggal aslinya. Tetap di DOM dan tetap dibacakan pembaca layar
@@ -61,96 +84,178 @@
   border: 0;
 }
 
-.kal-lembar {
-  position: relative;
-  /* currentColor di dalam lembar harus warna teks di atas --card, bukan
-     warna teks section — lembarnya punya latar sendiri. */
+/* KARTU ACARA DITUMPUK, TIDAK BERSEBELAHAN.
+   Kedua belas tema menata .event-list sebagai dua kolom. Kisi tujuh
+   kolom di dalam kolom selebar 165px membuat satu selnya tinggal 22px:
+   angkanya masih terbaca, tapi penanda hari-H — yang justru satu-
+   satunya alasan kalender ini ada — menyusut jadi titik. Ditumpuk,
+   tiap kalender dapat lebar penuh, dan dua kartu acara bertumpuk
+   adalah susunan yang normal pada undangan pernikahan. */
+#acara .event-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--s4, 24px);
+}
+#acara .event-list > .event-card {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.kal-kisi {
+  display: block;
+  max-width: var(--kal-lebar, 320px);
+  margin: 0 auto;
+  padding: var(--kal-padding, 15px 14px 13px);
+  /* currentColor di dalam pelat harus warna teks di atas --card, bukan
+     warna teks section — pelatnya punya latar sendiri. */
   color: var(--ink, #222);
-  display: inline-block;
-  min-width: 116px;
-  padding: 0 0 9px;
-  border: 1px solid var(--line, rgba(0, 0, 0, .18));
-  border-radius: var(--r-md, 4px);
-  background: var(--card, #fff);
-  box-shadow: 0 10px 24px -18px rgba(0, 0, 0, .55);
+  background: var(--kal-alas, var(--card, #fff));
+  background-image: var(--kal-alas-pola, none);
+  border: var(--kal-bingkai, 1px solid var(--line, rgba(0, 0, 0, .18)));
+  border-radius: var(--kal-radius, var(--r-md, 4px));
+  clip-path: var(--kal-clip, none);
+  box-shadow: var(--kal-bayang, 0 14px 30px -24px rgba(0, 0, 0, .5));
   text-align: center;
-  overflow: hidden;
 }
 
-/* Pita bulan. Latar aksen TEMBUS PANDANG di atas --card, bukan --rose
-   pekat: --rose berbalik terang/gelap antar tema, jadi teks di atasnya
-   akan lolos di separuh katalog dan gagal di separuhnya lagi. */
-.kal-bulan {
+.kal-kepala {
   display: block;
-  padding: 5px 14px 4px;
-  background: var(--rose-tint, rgba(0, 0, 0, .07));
-  border-bottom: 1px solid var(--line-soft, rgba(0, 0, 0, .1));
-  color: var(--rose-dark, #8A6730);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .24em;
-  text-transform: uppercase;
-  line-height: 1.6;
+  margin-bottom: var(--kal-kepala-jarak, 11px);
+  padding-bottom: var(--kal-kepala-garis-jarak, 9px);
+  border-bottom: var(--kal-kepala-garis, 1px solid var(--line-soft, rgba(0, 0, 0, .1)));
 }
 
-/* Dua lubang ring — inilah yang membuat kotak ini terbaca sebagai
-   LEMBAR KALENDER dan bukan sekadar kartu bernomor. */
-.kal-lembar::before,
-.kal-lembar::after {
-  content: '';
-  position: absolute;
-  top: 9px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--paper, #f4f1ea);
-  border: 1px solid var(--line, rgba(0, 0, 0, .18));
-}
-.kal-lembar::before { left: 12px; }
-.kal-lembar::after  { right: 12px; }
-
-.kal-tgl {
+.kal-judul-bulan {
   display: block;
-  padding-top: 6px;
-  font-size: 40px;
-  line-height: 1;
-  font-weight: 600;
-  color: var(--ink, #222);
-  font-variant-numeric: lining-nums;
+  font-family: var(--kal-judul-font, inherit);
+  font-size: var(--kal-judul-ukuran, 17px);
+  font-weight: var(--kal-judul-tebal, 500);
+  font-style: var(--kal-judul-miring, normal);
+  line-height: 1.15;
+  letter-spacing: var(--kal-judul-spasi, .2em);
+  text-transform: var(--kal-judul-huruf, uppercase);
+  /* Aksen TEMBUS PANDANG atau token --rose-dark, tidak pernah --rose
+     pekat dengan teks putih di atasnya: --rose berbalik terang/gelap
+     antar tema, jadi pasangan itu akan lolos di separuh katalog dan
+     gagal di separuhnya lagi. */
+  color: var(--kal-judul-warna, var(--rose-dark, #8A6730));
 }
 
-.kal-hari {
+.kal-judul-tahun {
   display: block;
   margin-top: 3px;
   font-size: 9.5px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
+  letter-spacing: .34em;
   /* --ink-mid, bukan --ink-soft: di tujuh tema gelap --ink-soft turun
-     ke sekitar 2,5:1 di atas --card dan nama harinya nyaris hilang.
-     --ink-mid tetap jelas subordinat terhadap angkanya. */
+     ke sekitar 2,5:1 di atas --card dan tahunnya nyaris hilang. */
   color: var(--ink-mid, #666);
 }
 
-/* Tahun duduk DI LUAR lembarnya, seperti tulisan tangan di bawah
-   kalender. Kalau ikut masuk ke dalam, lembarnya jadi empat baris dan
-   angka tanggalnya kehilangan dominasi — padahal itu yang dicari mata.
-
-   Warnanya currentColor, BUKAN --ink-soft. Beberapa tema mengecat
-   section Acara dengan bidang berwarna sendiri (Nur Zamrud: zamrud
-   pekat) lalu menimpa warna teks di dalamnya. Token global --ink-soft
-   dihitung untuk kertas terang, jadi di atas bidang itu ia praktis
-   hilang — sudah terjadi. currentColor selalu benar karena ia mengambil
-   warna yang sudah dipilih section itu sendiri. */
-.kal-tahun {
-  display: block;
-  margin-top: 6px;
-  font-size: 10px;
-  letter-spacing: .34em;
-  color: currentColor;
-  opacity: .6;
+.kal-petak {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: center;
+  justify-items: center;
+  row-gap: var(--kal-celah, 1px);
 }
 
-.kal-kosong .kal-tgl { opacity: .35; }
+.kal-nama-hari {
+  font-size: 8.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--kal-hari-warna, var(--rose-dark, #8A6730));
+  padding-bottom: 6px;
+  opacity: .9;
+}
+
+.kal-sel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  font-size: var(--kal-angka-ukuran, 12.5px);
+  line-height: 1;
+  color: var(--ink, #222);
+  /* tabular-nums supaya kolomnya benar-benar lurus; tanpa itu angka 1
+     jauh lebih sempit dan kisinya terlihat goyah. */
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* Tanggal bulan sebelum & sesudahnya. Diredupkan, tidak dihapus:
+   kisi yang sudut-sudutnya kosong terbaca seperti kalender yang gagal
+   dimuat, dan kalender cetak sungguhan selalu mengisinya. */
+.kal-luar { opacity: .26; }
+
+.kal-tandai {
+  color: var(--kal-tanda-tinta, var(--ink, #222));
+  font-weight: 600;
+}
+.kal-tandai-angka {
+  position: relative;
+  z-index: 1;
+}
+
+/* PENANDA HARI-H — sumbu yang paling terlihat membedakan kedua belas
+   kalender. Satu elemen, tujuh variabel; tiap tema memilih bentuknya
+   sendiri (lingkaran pena, hati, belah ketupat, oktagon, gunungan,
+   kubah, lingkaran kuas).
+
+   inset dalam PERSEN, bukan px: selnya persegi (aspect-ratio:1) dan
+   ukurannya ikut lebar layar, jadi persen menjaga perbandingan penanda
+   terhadap angkanya tetap sama di HP sempit maupun lebar. */
+.kal-tandai::before {
+  content: '';
+  position: absolute;
+  inset: var(--kal-tanda-inset, 4%);
+  background: var(--kal-tanda-latar, transparent);
+  background-image: var(--kal-tanda-gambar, none);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: var(--kal-tanda-garis, 0);
+  border-radius: var(--kal-tanda-radius, 0);
+  clip-path: var(--kal-tanda-clip, none);
+  transform: var(--kal-tanda-putar, none);
+  pointer-events: none;
+}
+
+/* Baris kaki: tanggal lengkap dengan huruf. Kisi saja tidak cukup —
+   tamu yang melihat angka 14 dilingkari masih harus menghitung sendiri
+   itu hari apa, dan nama harinya adalah yang paling sering ditanyakan
+   ulang lewat WhatsApp. */
+.kal-kaki {
+  margin: var(--kal-kaki-jarak, 11px) 0 0;
+  padding-top: var(--kal-kaki-garis-jarak, 9px);
+  border-top: var(--kal-kepala-garis, 1px solid var(--line-soft, rgba(0, 0, 0, .1)));
+  font-size: 9.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-mid, #666);
+}
+
+/* Kemunculan KEDUA sebuah tanggal (akad dan resepsi di hari yang
+   sama). Satu baris, bukan kisi kedua yang identik. Dibuat setenang
+   mungkin: yang penting di kartu ini jam dan tempatnya, bukan
+   tanggalnya lagi. */
+.kal-ringkas {
+  margin: 0;
+  font-size: 12.5px;
+  letter-spacing: .1em;
+  color: var(--ink-mid, #666);
+}
+
+/* Tanggal belum diisi. Kisi satu bulan yang isinya karangan lebih
+   menyesatkan daripada satu baris jujur, jadi kalendernya memang tidak
+   digambar sama sekali. */
+.kal-belum {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: var(--ink-soft, #888);
+  opacity: .8;
+}
 
 /* ------------------------------------------------------------
    2. DENAH LOKASI
@@ -234,11 +339,12 @@
    lembarnya dikecilkan proporsional, bukan dibiarkan terjepit.
    ------------------------------------------------------------ */
 @media (max-width: 420px) {
-  .kal-lembar { min-width: 100px; }
-  .kal-tgl { font-size: 34px; }
+  .kal-kisi { padding: 12px 10px 11px; }
+  .kal-sel { font-size: 12px; }
+  .kal-judul-bulan { font-size: 15px; }
   .peta-kompas { width: 28px; height: 28px; top: 12px; right: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .kal-lembar { box-shadow: none; }
+  .kal-kisi { box-shadow: none; }
 }

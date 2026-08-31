@@ -1,0 +1,277 @@
+/* ============================================================
+   FOTO PENUH — bingkai dilepas, foto mengisi bentuknya
+   ------------------------------------------------------------
+   Modul bersama DUA BELAS TEMA PAKET PRO. Dimuat SESUDAH style.css
+   milik tema; urutan muat yang menentukan, karena isinya memang
+   menimpa aturan foto milik tema.
+
+   Ketiga tema Elegan Klasik (paket Standar) TIDAK memuat berkas ini.
+   Permintaan user berlaku untuk paket Pro saja, dan tema Standar
+   sengaja dikembalikan ke rupa sebelum revisi terakhir.
+
+   KENAPA BERKAS INI ADA
+   ---------------------
+   Sampai 2026-08-31 setiap foto di dua belas tema Pro duduk di dalam
+   bingkai emas: cincin 3px pada sembilan tema, ukiran hasil foto pada
+   Blanc Royale & Noir Dore, dan cincin ornamen pada foto utama tema
+   Chinese. Hasilnya sama di semuanya — yang pertama terbaca adalah
+   bingkainya, dan wajah mempelai jadi isian kecil di tengah. Pada HP
+   390px foto mempelai tinggal ~150px, dan bingkainya memakan belasan
+   persen dari itu.
+
+   Kata user: "tidak usah pake frame, foto diletakkan full, lalu kita
+   mainkan gaya frame di bawah foto ataupun gradasi style."
+
+   Jadi yang dikerjakan berkas ini persis itu:
+     1. bingkai/cincin dilepas — foto memenuhi bentuknya sampai tepi
+     2. foto utama dibuat MELEBAR PENUH sampai tepi layar
+     3. "bingkai"-nya pindah KE BAWAH foto: kaki gradasi tempat foto
+        melebur ke halaman, lalu monogram/nama yang duduk di kakinya
+
+   BENTUK BUKAAN TIDAK DISENTUH
+   ----------------------------
+   Bentuk (mihrab, kipas, gerbang bulan, gunungan, oktagon, ...) adalah
+   satu dari tiga sumbu yang membuat lima belas tema tidak saling
+   menyerupai — lihat memori project_peta_jalan. Menyamakan semuanya
+   jadi persegi akan membuat dua belas tema Pro terasa satu tema dengan
+   dua belas warna. Yang dilepas cuma cincin emasnya; bentuknya justru
+   dipindah ke WADAH supaya foto bisa mengisinya penuh.
+
+   Karena bentuk itu milik tema, berkas ini TIDAK menebak: ia membaca
+   --fp-bentuk dari tema. Tema Pro WAJIB menyetel keenam variabel di
+   bawah. tools/cek-tema.js memeriksanya, karena tema yang lupa tidak
+   akan memberi error apa pun — fotonya cuma diam-diam jadi persegi.
+
+   VARIABEL YANG DIBACA (disetel di :root milik tema)
+   -------------------------------------------------
+     --fp-bentuk        clip-path bukaan foto mempelai
+     --fp-radius        border-radius bukaan foto mempelai — beberapa
+                        tema membentuk bukaannya dengan radius, bukan
+                        clip-path (kubah, kipas, lingkaran), dan
+                        keduanya harus tetap bisa dipakai
+     --fp-galeri-radius --fp-hero-radius   sama untuk galeri & foto utama
+     --fp-rasio         aspect-ratio foto mempelai (mis. 3 / 4)
+     --fp-galeri-bentuk clip-path petak galeri
+     --fp-hero-bentuk   clip-path foto utama (none = persegi penuh)
+     --fp-hero-rasio    aspect-ratio foto utama
+     --fp-kaki          WARNA halaman di kaki foto — gradasi berakhir
+                        di warna ini, jadi foto benar-benar melebur.
+                        Salah warna di sini langsung terlihat: yang
+                        muncul balok kabut yang tidak menyambung ke
+                        apa pun.
+     --fp-kaki-tinggi   tinggi kaki gradasi FOTO UTAMA, bawaan 44%
+     --fp-kaki-mempelai tinggi kaki gradasi FOTO MEMPELAI, bawaan 30%.
+                        Sengaja terpisah dan jauh lebih pendek: foto
+                        mempelai cuma selebar setengah layar, dan kaki
+                        setinggi 44% di sana memakan badan orangnya,
+                        bukan cuma latar di bawah kakinya.
+     --fp-kosong        warna kotak foto saat belum ada fotonya
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. FOTO UTAMA — melebar penuh sampai tepi layar
+   ------------------------------------------------------------
+   Section-nya dinolkan padding kiri/kanannya, bukan fotonya yang
+   diberi margin negatif: margin negatif harus tahu berapa padding
+   induknya, dan angka itu berbeda di dua belas tema.
+   ------------------------------------------------------------ */
+#fotoUtama {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#fotoUtama .hero-photo {
+  position: relative !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  aspect-ratio: var(--fp-hero-rasio, 3 / 4) !important;
+  border: 0 !important;
+  border-radius: var(--fp-hero-radius, 0) !important;
+  clip-path: var(--fp-hero-bentuk, none) !important;
+  overflow: hidden !important;
+  background: var(--fp-kosong, rgba(128, 128, 128, .16)) !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Cincin emas & gigi renda di tepi foto utama. Keduanya digambar
+   sebagai pseudo-element di berbagai tema; dimatikan berdua sekaligus
+   supaya tidak ada tema yang tertinggal membawa bingkainya sendiri. */
+#fotoUtama .hero-photo::before,
+#fotoUtama .hero-photo::after {
+  content: none !important;
+}
+
+#fotoUtama .hero-photo-img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center 28% !important;
+  border-radius: 0 !important;
+  clip-path: none !important;
+  z-index: 1 !important;
+}
+
+/* Keadaan kosong tetap mengisi penuh — kalau ia masih memakai inset:4px
+   peninggalan cincin, yang muncul garis tipis warna lain di tepi. */
+#fotoUtama .hero-photo-empty {
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 0 !important;
+  clip-path: none !important;
+  z-index: 1 !important;
+}
+
+/* KAKI GRADASI. Elemen ini sudah ada di markup kedua belas tema
+   (.hero-photo-fade) — tidak ada markup baru yang perlu ditambahkan,
+   jadi tidak ada tema yang bisa ketinggalan. Inilah "gaya di bawah
+   foto" yang diminta user: foto tidak dipotong garis, ia menghilang
+   ke dalam warna halaman, dan monogram di bawahnya duduk di batas itu. */
+#fotoUtama .hero-photo-fade {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  inset: auto 0 0 0 !important;
+  height: var(--fp-kaki-tinggi, 44%) !important;
+  background: linear-gradient(
+    to top,
+    var(--fp-kaki, rgba(0, 0, 0, .72)) 0%,
+    color-mix(in srgb, var(--fp-kaki, rgba(0, 0, 0, .72)) 55%, transparent) 42%,
+    transparent 100%) !important;
+  border-radius: 0 !important;
+  clip-path: none !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+/* ------------------------------------------------------------
+   2. FOTO MEMPELAI — bentuknya pindah ke wadah, cincin dilepas
+   ------------------------------------------------------------ */
+#mempelai .photo-placeholder {
+  position: relative !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  aspect-ratio: var(--fp-rasio, 3 / 4) !important;
+  border: 0 !important;
+  border-radius: var(--fp-radius, 0) !important;
+  clip-path: var(--fp-bentuk, none) !important;
+  overflow: hidden !important;
+  background: var(--fp-kosong, rgba(128, 128, 128, .16)) !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Lapis dalam bingkai (cincin 3px pada sembilan tema, alas ukiran pada
+   Blanc Royale & Noir Dore). */
+#mempelai .photo-placeholder::before {
+  content: none !important;
+}
+
+#mempelai .photo-placeholder-img,
+#mempelai .photo-placeholder > img {
+  position: absolute !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center 22% !important;
+  border-radius: 0 !important;
+  clip-path: none !important;
+  z-index: 1 !important;
+}
+
+/* Ikon & keterangan keadaan kosong tetap di tengah bentuknya. */
+#mempelai .photo-placeholder > svg,
+#mempelai .photo-placeholder > span {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Kaki gradasi foto mempelai. ::after dipakai ulang — di Blanc Royale
+   dan Noir Dore ia sebelumnya memuat gambar bingkai ukiran, jadi ia
+   ditulis ulang seluruhnya (bukan cuma ditambahi), supaya tidak ada
+   sisa background-image yang menyembul. */
+#mempelai .photo-placeholder::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: auto 0 0 0 !important;
+  width: auto !important;
+  height: var(--fp-kaki-mempelai, 30%) !important;
+  background: linear-gradient(
+    to top,
+    var(--fp-kaki, rgba(0, 0, 0, .72)) 0%,
+    color-mix(in srgb, var(--fp-kaki, rgba(0, 0, 0, .72)) 50%, transparent) 46%,
+    transparent 100%) !important;
+  background-image: linear-gradient(
+    to top,
+    var(--fp-kaki, rgba(0, 0, 0, .72)) 0%,
+    color-mix(in srgb, var(--fp-kaki, rgba(0, 0, 0, .72)) 50%, transparent) 46%,
+    transparent 100%) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  transform: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+/* ------------------------------------------------------------
+   3. GALERI — petak tanpa cincin
+   ------------------------------------------------------------
+   Tanpa kaki gradasi: di petak sekecil ini gradasi cuma terbaca
+   sebagai noda, dan yang membuat galeri rapi adalah petaknya yang
+   seragam, bukan tiap petak diberi kaki sendiri.
+   ------------------------------------------------------------ */
+#galeri .photo-placeholder {
+  border: 0 !important;
+  border-radius: var(--fp-galeri-radius, 0) !important;
+  clip-path: var(--fp-galeri-bentuk, none) !important;
+  overflow: hidden !important;
+  background: var(--fp-kosong, rgba(128, 128, 128, .16)) !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+#galeri .photo-placeholder::before,
+#galeri .photo-placeholder::after {
+  content: none !important;
+}
+#galeri .photo-placeholder-img,
+#galeri .photo-placeholder > img {
+  position: absolute !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 0 !important;
+  clip-path: none !important;
+  z-index: 1 !important;
+}
+
+/* ------------------------------------------------------------
+   4. Layar lebar
+   Di jendela lebar, foto utama selebar layar jadi terlalu tinggi
+   (rasio 3/4 pada 900px = 1200px). Rasionya dilandaikan, bukan
+   lebarnya dikunci — foto yang tiba-tiba punya pinggiran putih di
+   desktop terbaca seperti kesalahan.
+   ------------------------------------------------------------ */
+@media (min-width: 720px) {
+  #fotoUtama .hero-photo {
+    aspect-ratio: var(--fp-hero-rasio-lebar, 4 / 3) !important;
+  }
+}

@@ -362,6 +362,44 @@ function periksaBerkas(tema, katalog, lap) {
     ? lap.ok('style.css memakai --foto-sampul & .has-sampul')
     : lap.gagal('style.css tidak memakai --foto-sampul/.has-sampul',
         'foto sampul tidak akan pernah tampil; lihat blok "FOTO SAMPUL FULL-BLEED" di tema lain');
+
+  // --- variabel modul bersama yang WAJIB disetel tema ---
+  //
+  // Dua modul (foto-penuh.css & acara-lokasi.css) mengambil seluruh
+  // rupanya dari variabel milik tema, dan keduanya punya nilai bawaan
+  // yang MASUK AKAL — persegi polos, pelat putih. Itu justru yang
+  // berbahaya: tema yang lupa menyetelnya tidak error, tidak kosong,
+  // dan tidak terlihat rusak. Ia cuma diam-diam kehilangan bentuk
+  // yang membedakannya dari sebelas tema lain, dan yang menyadarinya
+  // pertama kali adalah calon pembeli.
+  //
+  // Diperiksa terhadap SELURUH berkas, bukan cuma blok :root pertama:
+  // variabel-variabel ini ditulis di blok :root tersendiri di bagian
+  // bawah style.css, dan regex :root di atas hanya menangkap yang
+  // pertama.
+  const modul = [
+    {
+      berkas: 'foto-penuh.css',
+      wajib: ['--fp-bentuk', '--fp-rasio', '--fp-galeri-bentuk',
+              '--fp-hero-bentuk', '--fp-hero-rasio', '--fp-kaki', '--fp-kosong'],
+      akibat: 'foto mempelai/galeri/utama kehilangan bentuk khas temanya, ' +
+              'dan kaki gradasinya berakhir di warna yang salah'
+    },
+    {
+      berkas: 'acara-lokasi.css',
+      wajib: ['--kal-label', '--kal-judul-font', '--kal-judul-ukuran'],
+      akibat: 'lembar bulannya tampil dengan pelat & penanda bawaan, ' +
+              'sama persis dengan tema lain yang juga lupa menyetelnya'
+    }
+  ];
+  for (const m of modul) {
+    if (!html.includes('assets/' + m.berkas)) continue;
+    const kurang = m.wajib.filter(v => !new RegExp(v.replace(/-/g, '\\-') + '\\s*:').test(css));
+    kurang.length
+      ? lap.gagal(m.berkas + ': ' + kurang.length + ' variabel tema belum disetel',
+          kurang.join(', ') + ' — ' + m.akibat)
+      : lap.ok(m.berkas + ': variabel tema lengkap');
+  }
 }
 
 // Arah sebaliknya: katalog yang menunjuk folder yang tidak ada.

@@ -130,7 +130,15 @@ function skrip(nama, lebarTarget, mutu, potong) {
     }
     const f = path.join(resep.sumberDir, nama);
     if (!fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); return r.end(); }
-    r.writeHead(200, { 'content-type': 'image/jpeg' });
+    // Jenis dari EKSTENSI, bukan dipatok 'image/jpeg'. Folder foto milik
+    // user berisi .png sebanyak .jpg, dan menyajikan PNG dengan label
+    // JPEG berarti bergantung pada penebakan jenis oleh browser —
+    // penebakan yang mati begitu ada satu header aneh, dan matinya
+    // senyap: gambarnya cuma tidak pernah selesai decode.
+    var jenis = /[.]png$/i.test(nama) ? 'image/png'
+              : /[.]webp$/i.test(nama) ? 'image/webp'
+              : 'image/jpeg';
+    r.writeHead(200, { 'content-type': jenis });
     fs.createReadStream(f).pipe(r);
   });
 

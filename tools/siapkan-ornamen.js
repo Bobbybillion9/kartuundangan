@@ -63,6 +63,87 @@ const TUJUAN_DIR = path.join(REPO, 'templates', '_ornamen');
 // lebar aslinya (~736px): memperbesar tidak menambah detail, cuma berat.
 // ============================================================
 const ORNAMEN = [
+  // --- SEGEL LILIN PER TEMA PRO (2026-08-31) ---
+  // Dua belas segel, satu untuk tiap tema berbayar, dipilih dari 31
+  // berkas yang diunduh user. Dasar pemilihannya WARNA tema dan
+  // LAMBANGNYA — bukan mana yang paling bagus sendirian: segel adalah
+  // satu-satunya benda berbentuk di layar pertama, jadi kalau dua tema
+  // memakai segel yang sama, dua layar pertamanya terbaca kembar.
+  // pangkas WAJIB: berkas sumbernya punya margin transparan lebar, dan
+  // background-size:contain akan memakai TINGGI kotak sehingga segelnya
+  // menyusut jauh di dalam kotaknya sendiri.
+  {
+    keluaran: 'segel-pro-blanc.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (5).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'emas bunga — putih-emas Blanc Royale'
+  },
+  {
+    keluaran: 'segel-pro-noir.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (3).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'hitam bermawar emas — hitam-emas Noir Dore'
+  },
+  {
+    keluaran: 'segel-pro-bordeaux.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (27).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'mawar merah tua bercincin ukir — burgundy Bordeaux'
+  },
+  {
+    keluaran: 'segel-pro-zamrud.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (11).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'hijau tua, bulan sabit & bintang emas — Nur Zamrud'
+  },
+  {
+    keluaran: 'segel-pro-lazuardi.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (10).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'merah tua, bulan sabit & bintang — Nur Lazuardi'
+  },
+  {
+    keluaran: 'segel-pro-sakinah.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (6).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'gading polos berbunga — Nur Sakinah'
+  },
+  {
+    keluaran: 'segel-pro-shuangxi.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (31).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'hati merah menyala — Shuangxi Merah'
+  },
+  {
+    keluaran: 'segel-pro-giok.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (12).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'giok kebiruan berbotani — Giok Langit'
+  },
+  {
+    keluaran: 'segel-pro-tinta.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (22).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'kerang emas, paling sunyi — Tinta Emas'
+  },
+  {
+    keluaran: 'segel-pro-sekar.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (23).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'cokelat sogan berbunga — Sekar Jagad'
+  },
+  {
+    keluaran: 'segel-pro-pura.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (14).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'terakota bermawar — Pura Bentar'
+  },
+  {
+    keluaran: 'segel-pro-songket.webp',
+    sumber: 'WAX SEALS/WAX STAMPS (9).png',
+    lebar: 260, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'merah saga bermawar — Songket Saga'
+  },
   // --- latar penuh ---
   {
     keluaran: 'latar-relief-halus.webp',

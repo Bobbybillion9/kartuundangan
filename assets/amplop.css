@@ -1,329 +1,291 @@
 /* ============================================================
-   AMPLOP + WAX SEAL — tahap pembuka bersama untuk tema berornamen
+   AMPLOP LAYAR PENUH + SURAT TERBUKA
    ------------------------------------------------------------
    Dipasangkan dengan assets/amplop.js. Markup-nya DIBUAT skrip itu,
    bukan ditulis di index.html tiap tema — lihat alasannya di sana.
 
-   Cara tema memakai: cukup muat amplop.css + amplop.js, lalu setel
-   variabel di bawah pada :root milik tema. Tidak ada konfigurasi JS.
+   Cara tema memakai: muat amplop.css + amplop.js, lalu setel variabel
+   di bawah pada :root milik tema. Tidak ada konfigurasi lewat JS.
 
-     --amplop-kertas   : gambar/warna permukaan amplop (wajib diisi
-                         tema, kalau tidak amplopnya polos)
-     --amplop-kertas-ukuran / --amplop-kertas-ulang
-                       : untuk tekstur yang berupa POLA BERULANG, bukan
-                         foto. Bawaannya cover+no-repeat, yang benar untuk
-                         foto tekstur tapi meregangkan pola SVG sampai
-                         satu petaknya memenuhi seluruh amplop.
-     --amplop-warna    : warna dasar amplop di belakang teksturnya
-     --amplop-segel    : url() gambar wax seal
-     --amplop-tinta    : warna tulisan di muka amplop
-     --amplop-garis    : warna garis tepi & lipatan
-     --amplop-latar    : warna layar di belakang amplop
+   AMPLOP
+     --amplop-kertas          gambar/pola permukaan amplop (WAJIB —
+                              tools/cek-tema.js menolak amplop polos)
+     --amplop-kertas-ukuran   bawaan cover; untuk pola BERULANG isi
+                              ukuran petaknya (mis. 72px), kalau tidak
+                              satu petak akan diregangkan sepenuh layar
+     --amplop-kertas-ulang    bawaan no-repeat; repeat untuk pola
+     --amplop-warna           warna dasar kertas di belakang teksturnya
+     --amplop-segel           url() gambar segel lilin
+     --amplop-tinta           warna tulisan di muka amplop
+     --amplop-garis           warna garis lipatan
+     --amplop-tutup-gelap     seberapa gelap tutup amplop dibanding
+                              badannya (bawaan .10)
+     --amplop-tutup-bentuk    clip-path SILUET TUTUP. Inilah sumbu yang
+                              membuat kedua belas amplop tidak kembar:
+                              kertas dan segel saja tidak cukup, karena
+                              bentuk tutup adalah satu-satunya GARIS
+                              besar di layar pertama. Bawaan: segitiga
+                              lancip klasik.
+     --amplop-tutup-tinggi    tinggi tutup (bawaan 52%). Dipasangkan
+                              dengan bentuknya — siluet yang sama pada
+                              tinggi berbeda tetap terbaca berbeda.
+     --amplop-lipat-tampil    block/none, garis lipatan X di badan
+     --amplop-halo            lingkaran redup di belakang segel
 
-   Tahap SURAT (ditambahkan 2026-08-31) memakai enam variabel sendiri.
-   Semuanya punya nilai bawaan yang diturunkan dari variabel amplop di
-   atas, jadi tema lama tetap tampil benar tanpa diubah:
+   SURAT (kartu yang naik keluar)
+     --surat-kertas   --surat-tinta   --surat-aksen
+     --surat-garis    --surat-hias    --surat-judul
 
-     --surat-kertas    : warna/gambar permukaan surat
-     --surat-tinta     : warna teks di surat
-     --surat-aksen     : warna inisial, garis, dan hiasan
-     --surat-garis     : warna bingkai tipis di dalam surat
-     --surat-hias      : url() ornamen kecil di atas & bawah surat
-     --surat-judul     : font-family untuk nama mempelai di surat
+   Bawaannya netral supaya amplop tetap masuk akal kalau sebuah tema
+   lupa menyetel salah satunya.
 
-   Nilai bawaan di bawah sengaja netral supaya amplop tetap tampil
-   masuk akal kalau sebuah tema lupa menyetel salah satunya.
+   KENAPA LAYAR PENUH
+   Sampai 2026-08-31 amplopnya berupa kartu kecil melayang di tengah
+   bidang gelap — terbaca sebagai gambar amplop di dalam aplikasi, bukan
+   sebagai amplop yang sedang dipegang. Acuan yang dikirim user: satu
+   layar HP penuh berisi kertas berornamen, segel di tengah, "Tap to
+   open" di bawah. Tidak ada bingkai, tidak ada latar, tidak ada kartu.
    ============================================================ */
 #amplop {
   position: fixed;
   inset: 0;
   /* Sengaja sangat tinggi. Tombol melayang milik tema (musik, kembali
-     ke atas) memakai z-index 140, dan pada percobaan pertama tombol musik
-     tembus melayang DI ATAS amplop — merusak ilusinya seketika. Angka ini
-     harus lebih tinggi daripada apa pun yang dipakai tema mana pun. */
+     ke atas) memakai z-index 140, dan pada percobaan pertama tombol
+     musik tembus melayang DI ATAS amplop — merusak ilusinya seketika.
+     Angka ini harus lebih tinggi daripada apa pun yang dipakai tema. */
   z-index: 9000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: var(--amplop-latar, #1a1714);
-  /* Perspektif dipasang di sini, bukan di kartunya: tutup amplop
-     berputar pada sumbu X, dan tanpa perspektif dari elemen induk
-     putarannya terlihat rata seperti tirai turun, bukan tutup terbuka. */
-  perspective: 1400px;
-  transition: opacity .55s ease, transform .55s ease;
+  overflow: hidden;
+  background: var(--amplop-warna, #EFEAE0);
+  /* Perspektif untuk tutup yang terlipat ke belakang pada sumbu X.
+     Tanpa perspektif, putarannya terlihat rata seperti tirai turun. */
+  perspective: 1200px;
+  transition: opacity .6s ease, transform .6s ease;
 }
 
 #amplop.amplop-pergi {
   opacity: 0;
-  transform: scale(1.06);
+  transform: scale(1.04);
   pointer-events: none;
 }
 
-/* Layar pengganti scroll: selama amplop tampil, halaman di belakangnya
-   tidak boleh ikut tergulir. */
-body.amplop-terkunci {
-  overflow: hidden;
-}
+/* Selama amplop tampil, halaman di belakangnya tidak boleh tergulir. */
+body.amplop-terkunci { overflow: hidden; }
 
-/* ---------- badan amplop ---------- */
-.amplop-kartu {
-  position: relative;
-  width: min(400px, 90vw);
-  aspect-ratio: 1 / 0.68;
-  transform-style: preserve-3d;
-  transition: transform .6s cubic-bezier(.4, 0, .2, 1);
-}
-
-#amplop.amplop-buka .amplop-kartu {
-  transform: translateY(14px);
-}
-
+/* ------------------------------------------------------------
+   1. BADAN — kertas seukuran layar
+   ------------------------------------------------------------ */
 .amplop-badan {
   position: absolute;
   inset: 0;
-  /* WAJIB eksplisit. Surat di dalam amplop bersandar pada z-index untuk
-     bersembunyi; kalau muka amplop tidak punya angka sendiri, urutan DOM
-     yang menentukan dan suratnya terlihat sejak layar pertama. */
-  z-index: 2;
   background-color: var(--amplop-warna, #EFEAE0);
   background-image: var(--amplop-kertas, none);
   background-size: var(--amplop-kertas-ukuran, cover);
   background-repeat: var(--amplop-kertas-ulang, no-repeat);
-  background-position: center;
-  border: 1px solid var(--amplop-garis, rgba(0, 0, 0, .16));
-  border-radius: 2px;
-  box-shadow: 0 26px 60px -28px rgba(0, 0, 0, .75);
-  overflow: hidden;
+  background-position: var(--amplop-kertas-posisi, center);
+  z-index: 1;
 }
 
-/* Dua garis lipatan yang datang dari sudut bawah — inilah yang membuat
-   persegi panjang terbaca sebagai AMPLOP, bukan sekadar kartu. Digambar
-   dengan gradient, bukan gambar, supaya ikut warna tema. */
-.amplop-badan::before,
-.amplop-badan::after {
-  content: '';
+/* Garis lipatan: dua turun dari sudut atas, dua naik dari sudut bawah,
+   semuanya bertemu di titik segel. Inilah yang membuat selembar kertas
+   terbaca sebagai AMPLOP dan bukan sekadar latar bermotif.
+   preserveAspectRatio="none" supaya garisnya selalu menemui sudut layar
+   berapa pun rasionya; vector-effect menjaga tebalnya tidak ikut
+   teregang jadi baji. */
+.amplop-lipat {
   position: absolute;
-  bottom: 0;
-  width: 50%;
-  height: 44%;
-  background: linear-gradient(to top right, transparent 49.6%, var(--amplop-garis, rgba(0, 0, 0, .16)) 49.6%, var(--amplop-garis, rgba(0, 0, 0, .16)) 50.2%, transparent 50.2%);
+  inset: 0;
+  display: var(--amplop-lipat-tampil, block);
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--amplop-garis, rgba(0, 0, 0, .18));
+  stroke-width: 1;
   pointer-events: none;
 }
-.amplop-badan::before { left: 0; }
-.amplop-badan::after  { right: 0; transform: scaleX(-1); }
 
-/* ---------- tulisan di muka amplop ---------- */
-.amplop-tulisan {
+/* HALO di belakang segel. Bukan hiasan: pada beberapa tema kertasnya
+   justru paling terang tepat di tengah (Sekar Jagad) atau justru
+   sewarna dengan segelnya (Nur Sakinah, gading di atas gading), dan
+   segel yang hilang di layar pertama berarti tamu tidak tahu ada yang
+   bisa ditekan. Lingkaran redup ini memisahkan segel dari kertasnya
+   tanpa terbaca sebagai kotak.
+   Bawaannya menggelapkan; tema berkertas gelap menimpanya dengan yang
+   menerangkan. */
+.amplop-halo {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding-bottom: 7%;
-  padding-top: 20px;
-  /* Kabut lembut di belakang tulisan. Tanpa ini, nama tamu duduk di atas
-     tekstur kertas yang ramai dan sulit dibaca — dan justru nama tamulah
-     satu-satunya kalimat di layar pertama. Dibuat variabel supaya tema
-     bersampul gelap bisa memberi kabut gelap. */
-  background: var(--amplop-kabut, linear-gradient(to top, rgba(255,255,255,.72), rgba(255,255,255,0)));
-  text-align: center;
-  padding: 0 18px;
-  color: var(--amplop-tinta, #4A4034);
+  left: 50%;
+  top: 50%;
+  width: var(--amplop-halo-ukuran, 92vw);
+  height: var(--amplop-halo-ukuran, 92vw);
+  transform: translate(-50%, -50%);
   z-index: 2;
+  pointer-events: none;
+  background: var(--amplop-halo,
+    radial-gradient(circle, rgba(0, 0, 0, .13), rgba(0, 0, 0, 0) 66%));
+  transition: opacity .5s ease;
 }
+#amplop.amplop-buka .amplop-halo { opacity: 0; }
 
-#amplop .amplop-kepada {
-  color: var(--amplop-tinta, #4A4034);
-  font-size: 9.5px;
-  letter-spacing: .28em;
-  text-transform: uppercase;
-  opacity: .72;
-  margin-bottom: 5px;
-}
-
-#amplop .amplop-nama-tamu {
-  color: var(--amplop-tinta, #4A4034);
-  font-size: 16px;
-  letter-spacing: .02em;
-  line-height: 1.35;
-}
-
-/* ============================================================
-   SURAT DI DALAM AMPLOP
-   ------------------------------------------------------------
-   Sebelum dibuka ia duduk DI BELAKANG muka amplop (.amplop-badan)
-   dan sedikit dimasukkan ke bawah, jadi benar-benar tidak terlihat —
-   bukan sekadar transparan. Yang menyembunyikannya adalah z-index,
-   maka .amplop-badan WAJIB punya z-index eksplisit; tanpa itu urutan
-   DOM yang menentukan dan suratnya menyembul sejak awal.
-
-   Tiga tahap gerak, dipicu tiga kelas yang dipasang berurutan oleh
-   amplop.js: (tanpa kelas) di dalam -> .amplop-keluar naik ->
-   .amplop-pergi membesar ke arah pembaca sambil memudar.
-   ============================================================ */
-.amplop-surat {
-  position: absolute;
-  left: 6%;
-  right: 6%;
-  top: 5%;
-  bottom: 5%;
-  z-index: 2;
-  background-color: var(--surat-kertas, var(--amplop-warna, #F6F1E6));
-  border: 1px solid var(--surat-garis, var(--amplop-garis, rgba(0,0,0,.16)));
-  border-radius: 2px;
-  box-shadow: 0 10px 26px -14px rgba(0,0,0,.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  /* Mulai sedikit LEBIH DALAM dari amplopnya supaya tepi atasnya pun
-     tidak mengintip di layar sempit. */
-  transform: translateY(9%) scale(.97);
-  transform-origin: center bottom;
-  transition:
-    transform .95s cubic-bezier(.22,.85,.3,1),
-    opacity .55s ease .35s;
-}
-
-#amplop.amplop-keluar .amplop-surat {
-  /* Naik sampai dua pertiga badannya keluar dari amplop, dan MASUK KE
-     DEPAN — sesudah keluar ia harus menutupi muka amplop, bukan
-     tersembunyi lagi di belakangnya. */
-  transform: translateY(-58%) scale(1);
-  z-index: 6;
-  box-shadow: 0 30px 60px -22px rgba(0,0,0,.7);
-}
-
-#amplop.amplop-pergi .amplop-surat {
-  transform: translateY(-58%) scale(2.6);
-  opacity: 0;
-}
-
-/* Semua aturan surat diawali #amplop — dan itu BUKAN gaya penulisan.
-   Stylesheet tema dimuat SESUDAH amplop.css, dan hampir tiap tema punya
-   aturan seluas 'p{color:var(--ink-mid)}'. Tanpa selektor ber-id, warna
-   nama mempelai di surat diambil alih tema dan berubah jadi warna teks
-   pendukungnya — sudah terjadi di Shuangxi Merah: tinta #5A1219 terbaca
-   sebagai krem muda di atas kertas krem, praktis tidak terbaca. */
-#amplop .amplop-surat-isi {
-  text-align: center;
-  padding: 8% 10%;
-  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
-  width: 100%;
-}
-
-/* Ornamen kecil di atas & bawah. Kalau tema tidak menyetel --surat-hias,
-   yang tampil adalah satu garis tipis — bukan kotak kosong. */
-.amplop-surat-hias {
-  display: block;
-  height: 14px;
-  margin: 0 auto 9px;
-  width: 62%;
-  background-image: var(--surat-hias, none);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  border-top: 1px solid var(--surat-garis, var(--amplop-garis, rgba(0,0,0,.2)));
-  opacity: .75;
-}
-.amplop-surat-hias-bawah { margin: 9px auto 0; transform: scaleY(-1); }
-
-#amplop .amplop-surat-eyebrow {
-  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
-  font-size: 8.5px;
-  letter-spacing: .3em;
-  text-transform: uppercase;
-  opacity: .7;
-  margin-bottom: 8px;
-}
-
-#amplop .amplop-surat-inisial {
-  font-family: var(--surat-judul, 'Cormorant Garamond', Georgia, serif);
-  font-size: 26px;
-  line-height: 1;
-  color: var(--surat-aksen, var(--amplop-tinta, #9C7A3C));
-  margin-bottom: 6px;
-}
-.amplop-ini-amp { font-size: .6em; opacity: .6; margin: 0 .18em; }
-
-#amplop .amplop-surat-nama {
-  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
-  font-family: var(--surat-judul, 'Cormorant Garamond', Georgia, serif);
-  font-size: 19px;
-  line-height: 1.25;
-  letter-spacing: .04em;
-  margin-bottom: 5px;
-}
-.amplop-surat-amp { margin: 0 .3em; opacity: .55; }
-
-#amplop .amplop-surat-tanggal {
-  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
-  font-size: 10px;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  opacity: .78;
-}
-
-/* ---------- tutup amplop ---------- */
+/* ------------------------------------------------------------
+   2. TUTUP — segitiga separuh atas yang terlipat ke belakang
+   ------------------------------------------------------------ */
 .amplop-tutup {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 56%;
+  height: var(--amplop-tutup-tinggi, 52%);
   background-color: var(--amplop-warna, #EFEAE0);
   background-image: var(--amplop-kertas, none);
   background-size: var(--amplop-kertas-ukuran, cover);
   background-repeat: var(--amplop-kertas-ulang, no-repeat);
-  background-position: center top;
-  /* Segitiga menghadap ke bawah. */
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background-position: var(--amplop-kertas-posisi, center top);
+  clip-path: var(--amplop-tutup-bentuk, polygon(0 0, 100% 0, 50% 100%));
   transform-origin: top center;
   transform: rotateX(0deg);
-  transition: transform .72s cubic-bezier(.6, 0, .3, 1);
-  /* Tutup harus berada DI ATAS badan sebelum dibuka, dan MASUK KE
-     BELAKANG begitu terbuka — kalau tidak, tutup yang sudah terlipat ke
-     belakang tetap menutupi wajah amplop. */
+  transition: transform .85s cubic-bezier(.62, 0, .3, 1);
+  /* JEJAK, bukan border. Siluet tutup adalah satu-satunya garis besar
+     di layar pertama, dan pada tema berkertas terang tepinya nyaris
+     tidak terlihat karena tutup dan badan memakai kertas yang sama —
+     dua belas amplop yang bentuk tutupnya sudah dibedakan pun jadi
+     tampak seragam. border TIDAK BISA dipakai bersama clip-path (ia
+     mengikuti kotak persegi, sisanya menyembul di luar bentuk), tapi
+     drop-shadow justru menelusuri alpha SESUDAH clip — jadi ia
+     menggambar tepat pada siluetnya. */
+  filter:
+    drop-shadow(0 1px 0 var(--amplop-garis, rgba(0, 0, 0, .22)))
+    drop-shadow(0 6px 14px rgba(0, 0, 0, .22));
+  /* DI ATAS badan sebelum dibuka, dan MASUK KE BELAKANG begitu terbuka
+     — kalau tidak, tutup yang sudah terlipat tetap menutupi mukanya. */
   z-index: 3;
-  filter: brightness(.97);
+  pointer-events: none;
 }
-
+/* Bayangan tipis supaya tutupnya terbaca sebagai lapis kertas yang
+   berbeda, bukan sebagai potongan pada gambar yang sama. */
 .amplop-tutup::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, .06), rgba(0, 0, 0, .14));
+  background: linear-gradient(to bottom,
+    rgba(0, 0, 0, calc(var(--amplop-tutup-gelap, .10) * .35)),
+    rgba(0, 0, 0, var(--amplop-tutup-gelap, .10)));
 }
 
 #amplop.amplop-buka .amplop-tutup {
-  transform: rotateX(-178deg);
-  z-index: 1;
+  transform: rotateX(-172deg);
+  z-index: 0;
 }
 
-/* ---------- wax seal ---------- */
-.amplop-segel {
+/* ------------------------------------------------------------
+   3. MUKA AMPLOP — nama tamu, segel, inisial, judul, petunjuk
+   Satu kolom di tengah layar, persis susunan pada foto acuan.
+   ------------------------------------------------------------ */
+.amplop-isi {
   position: absolute;
-  left: 50%;
-  top: 56%;
-  width: 74px;
-  height: 78px;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8vh 26px;
+  text-align: center;
+  color: var(--amplop-tinta, #4A4034);
+  pointer-events: none;
+  transition: opacity .45s ease;
+}
+#amplop.amplop-keluar .amplop-isi { opacity: 0; }
+
+/* Nama tamu duduk di sepertiga atas, tempat alamat ditulis pada amplop
+   sungguhan — bukan menempel pada segel. */
+.amplop-tulisan {
+  position: absolute;
+  top: 11vh;
+  left: 26px;
+  right: 26px;
+}
+#amplop .amplop-kepada {
+  color: var(--amplop-tinta, #4A4034);
+  font-size: 9.5px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  opacity: .68;
+  margin-bottom: 6px;
+}
+#amplop .amplop-nama-tamu {
+  color: var(--amplop-tinta, #4A4034);
+  font-size: 17px;
+  letter-spacing: .02em;
+  line-height: 1.35;
+}
+
+/* Segel lilin. Ukurannya diikat ke lebar layar (vw) supaya
+   perbandingannya terhadap layar tetap sama di HP kecil maupun besar —
+   angka px membuatnya terlihat besar di HP sempit dan hilang di layar
+   lebar. */
+.amplop-segel {
+  width: clamp(96px, 27vw, 132px);
+  aspect-ratio: 1;
   background-image: var(--amplop-segel, none);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .45));
-  z-index: 4;
-  transition: transform .34s ease, opacity .34s ease;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, .38));
+  transition: transform .4s ease, opacity .4s ease;
 }
-
 #amplop.amplop-buka .amplop-segel {
-  transform: translate(-50%, -50%) scale(1.16) rotate(-9deg);
+  transform: scale(1.18) rotate(-11deg);
   opacity: 0;
 }
 
-/* ---------- tombol & petunjuk ---------- */
-/* Seluruh amplop adalah tombolnya. Wax seal terlalu kecil untuk jadi
+/* Inisial mempelai TIDAK ditaruh di atas segelnya: kedua belas segel
+   sudah punya lambangnya sendiri (mawar, bulan sabit, kerang), dan
+   huruf di atasnya cuma jadi dua benda yang berebut satu lingkaran
+   kecil. Di bawah segel, tepat di tempat tulisan tangan ada pada
+   amplop acuan. */
+#amplop .amplop-inisial {
+  margin-top: 22px;
+  font-family: var(--surat-judul, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(26px, 8vw, 34px);
+  line-height: 1;
+  color: var(--amplop-tinta, #4A4034);
+  transition: opacity .4s ease;
+}
+.amplop-ini-amp { font-size: .58em; opacity: .6; margin: 0 .2em; }
+#amplop.amplop-buka .amplop-inisial { opacity: 0; }
+
+#amplop .amplop-judul {
+  margin-top: 10px;
+  color: var(--amplop-tinta, #4A4034);
+  font-size: 10px;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  opacity: .72;
+}
+
+.amplop-petunjuk {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 13vh;
+  padding: 9px 20px;
+  border: 1px solid var(--amplop-garis, rgba(0, 0, 0, .22));
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--amplop-tinta, #4A4034);
+  opacity: 0;
+  animation: amplopPetunjuk 2.6s ease-in-out .9s infinite;
+}
+@keyframes amplopPetunjuk {
+  0%, 100% { opacity: .58; }
+  50%      { opacity: 1; }
+}
+#amplop.amplop-buka .amplop-petunjuk { animation: none; opacity: 0; }
+
+/* Seluruh layar adalah tombolnya. Segel terlalu kecil untuk jadi
    satu-satunya sasaran sentuh di HP, dan tamu yang tidak paham harus
    menekan apa akan berhenti di layar pertama. */
 .amplop-tombol {
@@ -333,43 +295,124 @@ body.amplop-terkunci {
   border: none;
   background: none;
   cursor: pointer;
-  border-radius: 2px;
 }
 .amplop-tombol:focus-visible {
   outline: 2px solid var(--amplop-tinta, #4A4034);
-  outline-offset: 6px;
+  outline-offset: -8px;
 }
 
-.amplop-petunjuk {
+/* ------------------------------------------------------------
+   4. SURAT — kartu seukuran layar yang naik menutupi amplop
+   Karena amplopnya seukuran layar, yang keluar darinya juga harus
+   seukuran layar; surat kecil yang menyembul dari saku tidak masuk
+   akal begitu tidak ada saku yang terlihat.
+   ------------------------------------------------------------ */
+.amplop-surat {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(100% + 22px);
-  text-align: center;
-  font-size: 10px;
-  letter-spacing: .26em;
-  text-transform: uppercase;
-  color: var(--amplop-tinta, #4A4034);
-  opacity: .0;
-  animation: amplopPetunjuk 2.6s ease-in-out .9s infinite;
-  pointer-events: none;
+  inset: 0;
+  z-index: 2;
+  background-color: var(--surat-kertas, var(--amplop-warna, #F6F1E6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(100%);
+  transition:
+    transform .95s cubic-bezier(.24, .82, .3, 1),
+    opacity .5s ease .4s;
 }
-
-@keyframes amplopPetunjuk {
-  0%, 100% { opacity: .35; }
-  50%      { opacity: .85; }
+#amplop.amplop-keluar .amplop-surat {
+  transform: translateY(0);
+  /* Naik ke DEPAN tutup yang sudah terlipat, supaya ia benar-benar
+     menutupi amplopnya. */
+  z-index: 6;
+  box-shadow: 0 -18px 40px -20px rgba(0, 0, 0, .55);
 }
-
-#amplop.amplop-buka .amplop-petunjuk {
-  animation: none;
+#amplop.amplop-pergi .amplop-surat {
+  transform: translateY(0) scale(1.22);
   opacity: 0;
+}
+
+/* Semua aturan teks surat & muka amplop diawali #amplop — dan itu
+   BUKAN gaya penulisan. Stylesheet tema dimuat SESUDAH amplop.css, dan
+   hampir tiap tema punya aturan seluas 'p{color:var(--ink-mid)}'. Tanpa
+   selektor ber-id, warna nama mempelai di surat diambil alih tema:
+   sudah terjadi di Shuangxi Merah, tinta #5A1219 terbaca krem muda di
+   atas kertas krem. */
+#amplop .amplop-surat-isi {
+  text-align: center;
+  padding: 10% 12%;
+  width: 100%;
+  max-width: 460px;
+  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
+}
+
+/* Ornamen kecil di atas & bawah. Kalau tema tidak menyetel --surat-hias,
+   yang tampil satu garis tipis — bukan kotak kosong. */
+.amplop-surat-hias {
+  display: block;
+  height: 16px;
+  margin: 0 auto 12px;
+  width: 58%;
+  background-image: var(--surat-hias, none);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border-top: 1px solid var(--surat-garis, var(--amplop-garis, rgba(0, 0, 0, .2)));
+  opacity: .75;
+}
+.amplop-surat-hias-bawah { margin: 12px auto 0; transform: scaleY(-1); }
+
+#amplop .amplop-surat-eyebrow {
+  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
+  font-size: 9.5px;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  opacity: .7;
+  margin-bottom: 12px;
+}
+
+#amplop .amplop-surat-inisial {
+  font-family: var(--surat-judul, 'Cormorant Garamond', Georgia, serif);
+  font-size: 34px;
+  line-height: 1;
+  color: var(--surat-aksen, var(--amplop-tinta, #9C7A3C));
+  margin-bottom: 10px;
+}
+
+#amplop .amplop-surat-nama {
+  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
+  font-family: var(--surat-judul, 'Cormorant Garamond', Georgia, serif);
+  font-size: 25px;
+  line-height: 1.25;
+  letter-spacing: .04em;
+  margin-bottom: 8px;
+}
+.amplop-surat-amp { margin: 0 .3em; opacity: .55; }
+
+#amplop .amplop-surat-tanggal {
+  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .78;
+}
+
+/* ------------------------------------------------------------
+   5. Layar pendek
+   Pada HP pendek (atau jendela pratinjau), 11vh dari atas dan bawah
+   membuat nama tamu menabrak segel. Jaraknya dikecilkan, bukan
+   dibiarkan bertumpuk.
+   ------------------------------------------------------------ */
+@media (max-height: 680px) {
+  .amplop-tulisan { top: 7vh; }
+  .amplop-petunjuk { bottom: 7vh; }
+  #amplop .amplop-inisial { margin-top: 16px; }
 }
 
 /* Tamu yang meminta gerakan dikurangi tetap mendapat amplopnya —
    yang dihilangkan cuma gerakannya, bukan tahapannya. */
 @media (prefers-reduced-motion: reduce) {
   #amplop,
-  .amplop-kartu,
   .amplop-tutup,
   .amplop-segel,
   .amplop-surat {
