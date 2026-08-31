@@ -1,0 +1,244 @@
+/* ============================================================
+   KALENDER ACARA + DENAH LOKASI — komponen bersama kelima belas tema
+   ------------------------------------------------------------
+   Dipasangkan dengan assets/acara-lokasi.js (yang mengisi angkanya).
+
+   KENAPA SATU BERKAS UNTUK LIMA BELAS TEMA
+   Kelima belas tema memakai NAMA TOKEN yang sama persis di :root-nya
+   (--card, --ink, --rose, --line, --s3, --r-md, ...) karena
+   applyPalette() di render-undangan.js menimpa nama-nama itu. Jadi satu
+   komponen yang HANYA memakai token — tidak satu pun warna mati — akan
+   otomatis mengikuti palet tiap tema, termasuk saat pemilik undangan
+   mengganti paletnya sendiri.
+
+   JEBAKAN YANG SUDAH TERCATAT DAN SENGAJA DIHINDARI DI SINI
+   - Token warna BERBALIK di tema gelap: --ivory di tema terang adalah
+     kertas, di tema gelap justru biru pekat; --rose-dark di tema terang
+     lebih GELAP, di tema gelap lebih MUDA. Karena itu tidak ada satu pun
+     pasangan "warna aksen + teks putih" di berkas ini. Yang dipakai
+     selalu pasangan yang aman di kedua arah: teks --ink / --rose-dark di
+     atas permukaan --card, dan bidang aksen hanya sebagai --rose-tint
+     yang tembus pandang di atas --card.
+   - Berkas ini dimuat SESUDAH style.css tiap tema, jadi untuk elemen
+     yang namanya sudah dipakai tema (.event-date) dipakai selektor dua
+     kelas (.kal .kal-sumber) supaya pasti menang.
+   - Bentuk SVG tanpa fill memakai HITAM bawaan; semua svg di markupnya
+     menyebut fill secara eksplisit.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. LEMBAR KALENDER
+   Bentuknya kalender dinding sobek: pita bulan di kepala, dua lubang
+   ring, angka besar, lalu nama hari. Dipilih karena itu satu-satunya
+   bentuk "tanggal" yang langsung terbaca tanpa perlu dijelaskan, di
+   budaya mana pun — dan kelima belas tema di katalog ini berasal dari
+   lima budaya yang berbeda.
+   ------------------------------------------------------------ */
+.kal {
+  display: block;
+  margin: 10px 0 8px;
+  /* Noir Dore menata .event-card sebagai grid beraerah
+     ("ikon nama" / "ikon tanggal" / "ikon waktu") dan dulu memberi
+     grid-area:tanggal ke .event-date. Elemen itu sekarang terbungkus
+     .kal, jadi areanya harus dipegang pembungkusnya. Di tema lain yang
+     kartunya bukan grid, deklarasi ini diabaikan browser — jadi aman
+     ditulis untuk semua. */
+  grid-area: tanggal;
+}
+
+/* Teks tanggal aslinya. Tetap di DOM dan tetap dibacakan pembaca layar
+   (kalendernya sendiri aria-hidden), tapi tidak menempati ruang.
+   Perender dan tools/cek-tema.js karena itu tidak melihat perubahan. */
+.kal .kal-sumber {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.kal-lembar {
+  position: relative;
+  /* currentColor di dalam lembar harus warna teks di atas --card, bukan
+     warna teks section — lembarnya punya latar sendiri. */
+  color: var(--ink, #222);
+  display: inline-block;
+  min-width: 116px;
+  padding: 0 0 9px;
+  border: 1px solid var(--line, rgba(0, 0, 0, .18));
+  border-radius: var(--r-md, 4px);
+  background: var(--card, #fff);
+  box-shadow: 0 10px 24px -18px rgba(0, 0, 0, .55);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Pita bulan. Latar aksen TEMBUS PANDANG di atas --card, bukan --rose
+   pekat: --rose berbalik terang/gelap antar tema, jadi teks di atasnya
+   akan lolos di separuh katalog dan gagal di separuhnya lagi. */
+.kal-bulan {
+  display: block;
+  padding: 5px 14px 4px;
+  background: var(--rose-tint, rgba(0, 0, 0, .07));
+  border-bottom: 1px solid var(--line-soft, rgba(0, 0, 0, .1));
+  color: var(--rose-dark, #8A6730);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+
+/* Dua lubang ring — inilah yang membuat kotak ini terbaca sebagai
+   LEMBAR KALENDER dan bukan sekadar kartu bernomor. */
+.kal-lembar::before,
+.kal-lembar::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--paper, #f4f1ea);
+  border: 1px solid var(--line, rgba(0, 0, 0, .18));
+}
+.kal-lembar::before { left: 12px; }
+.kal-lembar::after  { right: 12px; }
+
+.kal-tgl {
+  display: block;
+  padding-top: 6px;
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--ink, #222);
+  font-variant-numeric: lining-nums;
+}
+
+.kal-hari {
+  display: block;
+  margin-top: 3px;
+  font-size: 9.5px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  /* --ink-mid, bukan --ink-soft: di tujuh tema gelap --ink-soft turun
+     ke sekitar 2,5:1 di atas --card dan nama harinya nyaris hilang.
+     --ink-mid tetap jelas subordinat terhadap angkanya. */
+  color: var(--ink-mid, #666);
+}
+
+/* Tahun duduk DI LUAR lembarnya, seperti tulisan tangan di bawah
+   kalender. Kalau ikut masuk ke dalam, lembarnya jadi empat baris dan
+   angka tanggalnya kehilangan dominasi — padahal itu yang dicari mata.
+
+   Warnanya currentColor, BUKAN --ink-soft. Beberapa tema mengecat
+   section Acara dengan bidang berwarna sendiri (Nur Zamrud: zamrud
+   pekat) lalu menimpa warna teks di dalamnya. Token global --ink-soft
+   dihitung untuk kertas terang, jadi di atas bidang itu ia praktis
+   hilang — sudah terjadi. currentColor selalu benar karena ia mengambil
+   warna yang sudah dipilih section itu sendiri. */
+.kal-tahun {
+  display: block;
+  margin-top: 6px;
+  font-size: 10px;
+  letter-spacing: .34em;
+  color: currentColor;
+  opacity: .6;
+}
+
+.kal-kosong .kal-tgl { opacity: .35; }
+
+/* ------------------------------------------------------------
+   2. DENAH LOKASI
+   Bukan peta sungguhan — denah bergaya: petak blok kota, dua jalan yang
+   bersilangan, satu rute putus-putus dari titik berangkat ke pin
+   tujuan, dan mawar kompas di sudut. Menggantikan dua baris alamat
+   telanjang yang sebelumnya berdiri sendiri.
+   ------------------------------------------------------------ */
+.peta {
+  position: relative;
+  max-width: 340px;
+  margin: 0 auto var(--s3, 20px);
+  padding: 12px 12px 10px;
+  border: 1px solid var(--line, rgba(0, 0, 0, .18));
+  border-radius: var(--r-md, 4px);
+  background: var(--card, #fff);
+  box-shadow: 0 14px 30px -24px rgba(0, 0, 0, .5);
+}
+
+/* Sudut-sudut potong: empat garis pendek di keempat sudut, meniru
+   bingkai lembar peta lama. Digambar dengan gradient supaya ikut warna
+   tema tanpa gambar tambahan. */
+.peta::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px dashed var(--line-soft, rgba(0, 0, 0, .12));
+  border-radius: calc(var(--r-md, 4px) - 2px);
+  pointer-events: none;
+}
+
+.peta-denah {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--ink-mid, #555);
+}
+
+/* Mawar kompas menumpang di sudut kanan atas denah. Ukurannya sengaja
+   kecil: ia penanda arah, bukan hiasan utama. */
+.peta-kompas {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  color: var(--rose-dark, #8A6730);
+  opacity: .85;
+}
+.peta-kompas svg { width: 100%; height: 100%; display: block; }
+
+/* Keterangan denah. Sebelumnya diletakkan absolut di sudut kiri bawah
+   plat dan langsung tertindih jalan yang digambar di situ — di denah,
+   ruang kosong yang terlihat aman belum tentu kosong. Sekarang ia baris
+   sendiri di bawah gambarnya. */
+.peta-jarak {
+  display: block;
+  margin-top: 6px;
+  text-align: right;
+  padding-right: 2px;
+  font-size: 8px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink-soft, #888);
+  opacity: .8;
+}
+
+.peta-eyebrow {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--rose-dark, #8A6730);
+  margin-bottom: 6px;
+}
+
+/* ------------------------------------------------------------
+   3. Penyesuaian layar sempit
+   Dua kartu acara bersebelahan di HP membuat lembar kalendernya
+   menyusut sampai angkanya tidak lagi dominan. Di bawah 420px
+   lembarnya dikecilkan proporsional, bukan dibiarkan terjepit.
+   ------------------------------------------------------------ */
+@media (max-width: 420px) {
+  .kal-lembar { min-width: 100px; }
+  .kal-tgl { font-size: 34px; }
+  .peta-kompas { width: 28px; height: 28px; top: 12px; right: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kal-lembar { box-shadow: none; }
+}
