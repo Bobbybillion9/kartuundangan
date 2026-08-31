@@ -336,7 +336,11 @@ section{position:relative;padding:var(--s6) var(--s4);}
   color:var(--wine);font-weight:600;margin-bottom:var(--s2);
 }
 .eyebrow::before,.eyebrow::after{content:'';width:16px;height:1px;background:currentColor;opacity:.45;}
-.section-title{font-size:clamp(18px,5.2vw,23px);letter-spacing:.06em;margin-bottom:var(--s2);}
+/* text-align WAJIB disebut di sini. Semua section lain menengahkan
+   judulnya lewat pembungkus <div class="center"> di markup, tapi
+   #countdown tidak punya pembungkus itu — jadi judulnya rata kiri
+   sendirian di antara sepuluh judul yang rata tengah. */
+.section-title{font-size:clamp(18px,5.2vw,23px);letter-spacing:.06em;margin-bottom:var(--s2);text-align:center;}
 .section-lead{max-width:340px;margin:0 auto;font-size:14.5px;}
 .center{text-align:center;}
 
@@ -481,8 +485,8 @@ section{position:relative;padding:var(--s6) var(--s4);}
   opacity:.9;
   pointer-events:none;
 }
-.cover-sheet::before{top:0;left:0;background-position:left top;}
-.cover-sheet::after{top:0;right:0;transform:scaleX(-1);background-position:left top;}
+.cover-sheet::before{top:0;left:0;transform:scaleY(-1);background-position:left top;}
+.cover-sheet::after{top:0;right:0;transform:scale(-1,-1);background-position:left top;}
 /* Dua sudut bawah menumpang di .cover-tepi — satu elemen cuma punya
    ::before dan ::after, jadi empat sudut butuh dua elemen. */
 .cover-tepi{position:absolute;inset:0;z-index:2;pointer-events:none;}
@@ -495,8 +499,8 @@ section{position:relative;padding:var(--s6) var(--s4);}
   background-repeat:no-repeat;
   opacity:.9;
 }
-.cover-tepi::before{bottom:0;left:0;transform:scaleY(-1);background-position:left top;}
-.cover-tepi::after{bottom:0;right:0;transform:scale(-1,-1);background-position:left top;}
+.cover-tepi::before{bottom:0;left:0;background-position:left top;}
+.cover-tepi::after{bottom:0;right:0;transform:scaleX(-1);background-position:left top;}
 
 /* Juntai tirai beludru merah di puncak sampul — tanda tangan tema ini,
    dan penyambung ke amplop merah di tahap sebelumnya. */
@@ -524,7 +528,11 @@ section{position:relative;padding:var(--s6) var(--s4);}
      pendek daripada layar HP sungguhan (390x844), dan di situ tirainya
      menutupi seperempat sampul sampai memotong baris nama tamu.
      Karena itu ada batas terhadap TINGGI sampul, bukan cuma lebar. */
-  max-height:26%;
+  /* 26% -> 14%. Tirai setinggi seperempat sampul menutupi tepat bagian
+     foto tempat orang menaruh wajah, dan tidak ada foto sampul yang
+     selamat dari itu. Dilaporkan user sebagai "menutupi wajah dalam
+     foto", dan memang begitu. */
+  max-height:14%;
   background-image:var(--orn-tirai);
   /* `100% 100%` = gambar MENGIKUTI kotak, jadi ia boleh sedikit
      termampatkan tegak pada sampul yang pendek. Itu pilihan sadar
@@ -544,7 +552,14 @@ section{position:relative;padding:var(--s6) var(--s4);}
   /* DI BAWAH ornamen sudut (z-index:2), di atas foto sampul (auto).
      Kalau ia di atas sudut, kedua ukiran atas tertutup separuh. */
   z-index:1;
-  opacity:.92;
+  /* Kaki tirai dilarutkan ke dalam foto. Tanpa ini, batas bawahnya
+     tetap satu garis tegas dan yang terbaca adalah pita merah yang
+     ditempel, bukan kain yang menjuntai. Kalau browser tamu tidak
+     mendukung mask, yang hilang cuma pelarutannya — tirainya tetap
+     tampil utuh, jadi ini penurunan mutu yang aman. */
+  -webkit-mask-image:linear-gradient(to bottom,#000 34%,rgba(0,0,0,.35) 76%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 34%,rgba(0,0,0,.35) 76%,transparent 100%);
+  opacity:.82;
   pointer-events:none;
 }
 
@@ -1248,19 +1263,37 @@ section{position:relative;padding:var(--s6) var(--s4);}
      sebagai noda pucat di belakang kalimat penutup. Sudah terjadi, dan
      kelihatan seperti bug rendering. Yang dibutuhkan di sini cuma bidang
      burgundy yang dalam — jadi gradasi, bukan gambar. */
+  background-image:none;
+  /* clip-path DIPINDAH ke ::after. Di elemennya sendiri ia ikut memotong
+     ::before — dan ::before itulah segel lilinnya. */
+  isolation:isolate;
+  color:#F3E4C6;
+}
+/* Lembar burgundy-nya sendiri. Terpisah dari section supaya tepi
+   sobeknya memotong kertas saja. */
+#penutup::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background-color:var(--wine-dark);
   background-image:
     radial-gradient(120% 80% at 50% 0%,rgba(120,26,50,.55) 0%,rgba(58,10,23,0) 62%),
     linear-gradient(180deg,#4A0E1D 0%,#330814 100%);
   clip-path:var(--tepi-sobek);
-  color:#F3E4C6;
+  pointer-events:none;
 }
 /* Segel lilin merah menunggangi batas atas bidang — benda yang menutup
    surat, diletakkan tepat di tempat suratnya berakhir. */
 #penutup::before{
   content:'';
   position:absolute;
-  top:-8px;left:50%;
-  width:66px;height:66px;
+  /* -8px dulu membuat segelnya separuh berada di luar section dan
+     separuh dipotong tepi sobek. Sekarang tepi sobek tidak lagi
+     memotongnya, jadi ia boleh benar-benar menunggangi batas: -26px
+     menaruh sekitar sepertiga segel di atas kertas. */
+  top:-26px;left:50%;
+  width:76px;height:76px;
   transform:translateX(-50%);
   background-image:var(--orn-segel);
   background-size:contain;
@@ -1384,4 +1417,72 @@ section{position:relative;padding:var(--s6) var(--s4);}
 @keyframes foilSapu{
   0%{background-position:0% 50%;}
   100%{background-position:240% 50%;}
+}
+
+
+/* ============================================================
+   17. SELOTIP KERTAS & PITA  (ditambahkan 2026-08-31)
+   ------------------------------------------------------------
+   Permintaan user: karena temanya "pas foto", tambahkan lem selotip /
+   pita supaya lebih terasa album yang ditempel tangan.
+
+   Tiga hal yang menentukan apakah selotip terbaca sebagai selotip:
+   1) TEMBUS PANDANG. Selotip pekat terbaca sebagai stiker.
+   2) TEPI BERGERIGI di kedua ujung, bukan potongan lurus — itu yang
+      membedakan selotip kertas yang disobek dari pita plastik.
+   3) MIRING sedikit dan TIDAK sama sudutnya di tiap foto. Selotip yang
+      lurus sempurna terbaca sebagai elemen antarmuka, bukan benda.
+   ============================================================ */
+.galeri-item{position:relative;overflow:visible;}
+.galeri-item > *{position:relative;z-index:0;}
+/* SATU selotip per foto, bukan dua. Dua selotip per foto berarti dua
+   belas strip di satu kisi enam foto, dan yang terbaca bukan album
+   ditempel tangan melainkan kisi yang penuh coretan. */
+.galeri-item::before{
+  content:'';
+  position:absolute;
+  width:54px;height:16px;
+  z-index:3;
+  pointer-events:none;
+  /* Warnanya washi BURGUNDY, bukan kertas krem. Percobaan pertama
+     memakai krem tembus pandang dan hasilnya tidak terlihat sama
+     sekali: bingkai polaroid-nya #FFFDF6 dan lembarnya gading, jadi
+     selotip krem di atas krem cuma jadi kabut. Yang dibutuhkan justru
+     kontras — di album sungguhan pun selotip selalu terlihat.
+     Serat diagonalnya yang membuatnya terbaca sebagai KERTAS washi
+     dan bukan pita plastik. */
+  background:
+    repeating-linear-gradient(135deg,rgba(255,255,255,.20) 0 5px,rgba(255,255,255,0) 5px 11px),
+    linear-gradient(180deg,rgba(142,34,60,.26),rgba(96,16,34,.19));
+  border-top:1px solid rgba(96,16,34,.34);
+  border-bottom:1px solid rgba(96,16,34,.34);
+  box-shadow:0 2px 6px -3px rgba(58,10,23,.5);
+  /* Ujung kiri & kanan disobek: dua deret gigi pada sumbu mendatar. */
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 5px,#000 calc(100% - 5px),transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 5px,#000 calc(100% - 5px),transparent 100%);
+  opacity:.85;
+}
+.galeri-item::before{top:-7px;left:-11px;transform:rotate(-8deg);}
+/* Sudut miringnya diselang-seling supaya tidak ada dua foto yang
+   selotipnya sama persis — itu yang membuatnya terbaca ditempel tangan. */
+.galeri-item:nth-child(2n)::before{transform:rotate(7deg);left:auto;right:-11px;}
+.galeri-item:nth-child(3n)::before{transform:rotate(-13deg);top:auto;bottom:-7px;}
+.galeri-item:nth-child(5n)::before{transform:rotate(9deg);left:auto;right:-11px;top:auto;bottom:-7px;}
+
+/* PITA di puncak foto utama. Satu simpul kecil, bukan pita besar:
+   yang dijual section ini adalah fotonya. */
+.hero-photo-wrap,#fotoUtama{position:relative;}
+#fotoUtama .hero-photo::before{
+  content:'';
+  position:absolute;
+  top:-16px;left:50%;
+  width:96px;height:44px;
+  transform:translateX(-50%);
+  z-index:4;
+  pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='44' viewBox='0 0 96 44'%3E%3Cg fill='none' stroke='%23A9803A' stroke-width='1.4'%3E%3Cpath d='M48 22C48 22 30 6 20 12C10 18 22 32 34 27C42 24 48 22 48 22Z' fill='%236E1226'/%3E%3Cpath d='M48 22C48 22 66 6 76 12C86 18 74 32 62 27C54 24 48 22 48 22Z' fill='%236E1226'/%3E%3Cpath d='M44 24L32 42M52 24L64 42' stroke-linecap='round'/%3E%3Ccircle cx='48' cy='22' r='5' fill='%238A1730'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  filter:drop-shadow(0 3px 5px rgba(35,6,14,.5));
 }

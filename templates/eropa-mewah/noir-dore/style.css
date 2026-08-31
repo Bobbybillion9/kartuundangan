@@ -62,6 +62,22 @@
   --orn-sudut:url('/templates/_ornamen/sudut-baroque-b.webp');
 
   /* --- tahap amplop (assets/amplop.css membaca variabel ini) --- */
+  /* --- ORNAMEN ART DECO milik Noir Dore sendiri ---
+     Lihat catatan panjang di blok 15 soal kenapa tema ini berpindah
+     dari rococo ke deco. Digambar, bukan foto: identitas kategori
+     "ukiran emas hasil foto" tetap dipegang bingkai & latarnya.
+     '#' pada warna WAJIB ditulis %23 di dalam data-URI. */
+  --deco-lingkar:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23C9A44B'%3E%3Ccircle cx='100' cy='100' r='95' stroke-width='1.5'/%3E%3Ccircle cx='100' cy='100' r='86' stroke-width='1' opacity='.55'/%3E%3Cpath d='M186.0 100.0L195.0 100.0M185.3 111.2L194.2 112.4M183.1 122.3L191.8 124.6M179.5 132.9L187.8 136.4M174.5 143.0L182.3 147.5M168.2 152.4L175.4 157.8M160.8 160.8L167.2 167.2M152.4 168.2L157.8 175.4M143.0 174.5L147.5 182.3M132.9 179.5L136.4 187.8M122.3 183.1L124.6 191.8M111.2 185.3L112.4 194.2M100.0 186.0L100.0 195.0M88.8 185.3L87.6 194.2M77.7 183.1L75.4 191.8M67.1 179.5L63.6 187.8M57.0 174.5L52.5 182.3M47.6 168.2L42.2 175.4M39.2 160.8L32.8 167.2M31.8 152.4L24.6 157.8M25.5 143.0L17.7 147.5M20.5 132.9L12.2 136.4M16.9 122.3L8.2 124.6M14.7 111.2L5.8 112.4M14.0 100.0L5.0 100.0M14.7 88.8L5.8 87.6M16.9 77.7L8.2 75.4M20.5 67.1L12.2 63.6M25.5 57.0L17.7 52.5M31.8 47.6L24.6 42.2M39.2 39.2L32.8 32.8M47.6 31.8L42.2 24.6M57.0 25.5L52.5 17.7M67.1 20.5L63.6 12.2M77.7 16.9L75.4 8.2M88.8 14.7L87.6 5.8M100.0 14.0L100.0 5.0M111.2 14.7L112.4 5.8M122.3 16.9L124.6 8.2M132.9 20.5L136.4 12.2M143.0 25.5L147.5 17.7M152.4 31.8L157.8 24.6M160.8 39.2L167.2 32.8M168.2 47.6L175.4 42.2M174.5 57.0L182.3 52.5M179.5 67.1L187.8 63.6M183.1 77.7L191.8 75.4M185.3 88.8L194.2 87.6' stroke-width='.8' opacity='.4'/%3E%3Ccircle cx='100' cy='100' r='70' stroke-width='1.6'/%3E%3Ccircle cx='100' cy='100' r='66' stroke-width='.8' opacity='.5'/%3E%3C/g%3E%3Cg transform='translate(100 22) rotate(0)'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.1'%3E%3Cpath d='M0 0L11.3 -6.5M0 0L6.5 -11.3M0 0L0.0 -13.0M0 0L-6.5 -11.3M0 0L-11.3 -6.5'/%3E%3Cpath d='M-13 0A13 13 0 0 1 13 0'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(100 178) rotate(180)'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.1'%3E%3Cpath d='M0 0L11.3 -6.5M0 0L6.5 -11.3M0 0L0.0 -13.0M0 0L-6.5 -11.3M0 0L-11.3 -6.5'/%3E%3Cpath d='M-13 0A13 13 0 0 1 13 0'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(22 100) rotate(-90)'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.1'%3E%3Cpath d='M0 0L11.3 -6.5M0 0L6.5 -11.3M0 0L0.0 -13.0M0 0L-6.5 -11.3M0 0L-11.3 -6.5'/%3E%3Cpath d='M-13 0A13 13 0 0 1 13 0'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(178 100) rotate(90)'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.1'%3E%3Cpath d='M0 0L11.3 -6.5M0 0L6.5 -11.3M0 0L0.0 -13.0M0 0L-6.5 -11.3M0 0L-11.3 -6.5'/%3E%3Cpath d='M-13 0A13 13 0 0 1 13 0'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  --deco-bingkai-oval:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='250' viewBox='0 0 200 250'%3E%3Cg fill='none' stroke='%23C9A44B'%3E%3Cellipse cx='100' cy='125' rx='87' ry='113' stroke-width='1.8'/%3E%3Cellipse cx='100' cy='125' rx='93' ry='119' stroke-width='1' opacity='.55'/%3E%3Cpath d='M100 6L108 13L100 20L92 13Z' stroke-width='1.4'/%3E%3Cpath d='M100 230L108 237L100 244L92 237Z' stroke-width='1.4'/%3E%3Cpath d='M84 12H70M116 12H130' stroke-width='1' opacity='.6'/%3E%3Cpath d='M84 238H70M116 238H130' stroke-width='1' opacity='.6'/%3E%3Cpath d='M7 108V142M193 108V142' stroke-width='2.2'/%3E%3Cpath d='M13 116V134M187 116V134' stroke-width='1' opacity='.6'/%3E%3C/g%3E%3Cg fill='%23C9A44B'%3E%3Ccircle cx='100' cy='13' r='2'/%3E%3Ccircle cx='100' cy='237' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  --deco-medali:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23C9A44B'%3E%3Ccircle cx='100' cy='100' r='90' stroke-width='1.6'/%3E%3Ccircle cx='100' cy='100' r='98.4' stroke-width='1.1' opacity='.5'/%3E%3Cpath d='M191.5 100.0L197.0 100.0M190.1 115.9L195.5 116.8M186.0 131.3L191.2 133.2M179.2 145.8L184.0 148.5M170.1 158.8L174.3 162.4M158.8 170.1L162.4 174.3M145.8 179.2L148.5 184.0M131.3 186.0L133.2 191.2M115.9 190.1L116.8 195.5M100.0 191.5L100.0 197.0M84.1 190.1L83.2 195.5M68.7 186.0L66.8 191.2M54.3 179.2L51.5 184.0M41.2 170.1L37.6 174.3M29.9 158.8L25.7 162.4M20.8 145.8L16.0 148.5M14.0 131.3L8.8 133.2M9.9 115.9L4.5 116.8M8.5 100.0L3.0 100.0M9.9 84.1L4.5 83.2M14.0 68.7L8.8 66.8M20.8 54.2L16.0 51.5M29.9 41.2L25.7 37.6M41.2 29.9L37.6 25.7M54.2 20.8L51.5 16.0M68.7 14.0L66.8 8.8M84.1 9.9L83.2 4.5M100.0 8.5L100.0 3.0M115.9 9.9L116.8 4.5M131.3 14.0L133.2 8.8M145.8 20.8L148.5 16.0M158.8 29.9L162.4 25.7M170.1 41.2L174.3 37.6M179.2 54.2L184.0 51.5M186.0 68.7L191.2 66.8M190.1 84.1L195.5 83.2' stroke-width='.9' opacity='.45'/%3E%3C/g%3E%3Cg fill='%23C9A44B'%3E%3Cpath d='M100 85.6L107 94.5L100 103.4L93 94.5Z' transform='translate(0 -90)'/%3E%3Cpath d='M100 85.6L107 94.5L100 103.4L93 94.5Z' transform='translate(0 90)'/%3E%3Cpath d='M85.6 100L94.5 107L103.4 100L94.5 93Z' transform='translate(-90 0)'/%3E%3Cpath d='M85.6 100L94.5 107L103.4 100L94.5 93Z' transform='translate(90 0)'/%3E%3C/g%3E%3C/svg%3E");
+  --deco-kipas:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='132' viewBox='0 0 240 132'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M120 124L208.9 100.2M120 124L199.7 78.0M120 124L185.1 58.9M120 124L166.0 44.3M120 124L143.8 35.1M120 124L120.0 32.0M120 124L96.2 35.1M120 124L74.0 44.3M120 124L54.9 58.9M120 124L40.3 78.0M120 124L31.1 100.2'/%3E%3Cpath d='M28 124A92 92 0 0 1 212 124'/%3E%3Cpath d='M58 124A62 62 0 0 1 182 124'/%3E%3Cpath d='M86 124A34 34 0 0 1 154 124'/%3E%3C/g%3E%3Cg fill='%23C9A44B'%3E%3Ccircle cx='120' cy='124' r='4.5'/%3E%3Cpath d='M120 6L127 20L120 34L113 20Z'/%3E%3C/g%3E%3C/svg%3E");
+  --deco-jam:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.5'%3E%3Cpath d='M100 14L136 29L151 65L151 100L136 136L100 151L64 136L49 100L49 65L64 29Z'/%3E%3Ccircle cx='100' cy='83' r='52'/%3E%3Ccircle cx='100' cy='83' r='44'/%3E%3C/g%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M100 39V49M100 117V127M56 83H66M134 83H144'/%3E%3C/g%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.1' stroke-linecap='round' opacity='.7'%3E%3Cpath d='M100 55V60M100 106V111M72 83H77M123 83H128M80 63L84 67M116 99L120 103M120 63L116 67M84 99L80 103'/%3E%3C/g%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M100 83L100 58M100 83L118 93'/%3E%3C/g%3E%3Ccircle cx='100' cy='83' r='3.4' fill='%23C9A44B'/%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.3' stroke-linecap='round' opacity='.85'%3E%3Cpath d='M62 158H138M70 168H130M80 178H120M88 188H112'/%3E%3C/g%3E%3C/svg%3E");
+  --deco-salam:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='112' viewBox='0 0 160 112'%3E%3Cg transform='translate(80 4)'%3E%3Cg fill='%23C9A44B' opacity='.95'%3E%3Cg transform='translate(-26 0)'%3E%3Cpath d='M0 96L-10 89L-5 81Z'/%3E%3Cpath d='M0 83L-12.4 76L-6.2 68Z'/%3E%3Cpath d='M0 70L-14.8 63L-7.4 55Z'/%3E%3Cpath d='M0 57L-17.2 50L-8.6 42Z'/%3E%3Cpath d='M0 44L-19.6 37L-9.8 29Z'/%3E%3Cpath d='M0 31L-22 24L-11 16Z'/%3E%3Cpath d='M0 18L-24.4 11L-12.2 3Z'/%3E%3C/g%3E%3Cg transform='translate(26 0)'%3E%3Cpath d='M0 96L10 89L5 81Z'/%3E%3Cpath d='M0 83L12.4 76L6.2 68Z'/%3E%3Cpath d='M0 70L14.8 63L7.4 55Z'/%3E%3Cpath d='M0 57L17.2 50L8.6 42Z'/%3E%3Cpath d='M0 44L19.6 37L9.8 29Z'/%3E%3Cpath d='M0 31L22 24L11 16Z'/%3E%3Cpath d='M0 18L24.4 11L12.2 3Z'/%3E%3C/g%3E%3C/g%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M-26 100C-26 62 -14 34 0 20C14 34 26 62 26 100'/%3E%3Cpath d='M-12 104H12'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  --deco-gerbang:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='130' viewBox='0 0 200 130'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M100 126L167.1 94.7M100 126L158.3 80.4M100 126L146.6 68.5M100 126L132.4 59.5M100 126L116.6 53.9M100 126L100.0 52.0M100 126L83.4 53.9M100 126L67.6 59.5M100 126L53.4 68.5M100 126L41.7 80.4M100 126L32.9 94.7' opacity='.55'/%3E%3Cpath d='M22 126V70L38 70V50L56 50V34L78 34V20H122V34L144 34V50L162 50V70L178 70V126'/%3E%3Cpath d='M44 126V78L58 78V60L74 60V46H126V60L142 60V78L156 78V126'/%3E%3C/g%3E%3Cg fill='%23C9A44B'%3E%3Cpath d='M100 2L107 14L100 26L93 14Z'/%3E%3C/g%3E%3C/svg%3E");
+  --deco-garis-wajik:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.3' stroke-linecap='round'%3E%3Cpath d='M6 17H96M164 17H254'/%3E%3Cpath d='M6 13H60M200 13H254' opacity='.5'/%3E%3Cpath d='M6 21H60M200 21H254' opacity='.5'/%3E%3Cpath d='M130 3L146 17L130 31L114 17Z'/%3E%3Cpath d='M130 9L140 17L130 25L120 17Z'/%3E%3Cpath d='M104 17L96 11M104 17L96 23M156 17L164 11M156 17L164 23'/%3E%3C/g%3E%3Cg fill='%23C9A44B'%3E%3Ccircle cx='130' cy='17' r='2.2'/%3E%3C/g%3E%3C/svg%3E");
+  --deco-garis-sinar:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='40' viewBox='0 0 260 40'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.3' stroke-linecap='round'%3E%3Cpath d='M4 30H92M168 30H256'/%3E%3Cpath d='M130 32L152.5 19.0M130 32L146.7 12.1M130 32L138.9 7.6M130 32L130.0 6.0M130 32L121.1 7.6M130 32L113.3 12.1M130 32L107.5 19.0'/%3E%3Cpath d='M104 32A26 26 0 0 1 156 32'/%3E%3Cpath d='M114 32A16 16 0 0 1 146 32' opacity='.6'/%3E%3C/g%3E%3Cg fill='%23C9A44B'%3E%3Ccircle cx='130' cy='32' r='2.6'/%3E%3C/g%3E%3C/svg%3E");
+  --deco-garis-undak:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1.3' stroke-linecap='round'%3E%3Cpath d='M4 24H100M160 24H256'/%3E%3Cpath d='M100 24V16H112V9H130V4H130V9H148V16H160V24'/%3E%3Cpath d='M116 24V19H144V24' opacity='.6'/%3E%3C/g%3E%3Cg fill='%23C9A44B'%3E%3Crect x='127' y='1' width='6' height='6' transform='rotate(45 130 4)'/%3E%3C/g%3E%3C/svg%3E");
+
   --amplop-latar:#0B0A09;
   --amplop-warna:#1C1815;
   --amplop-kertas:var(--orn-plaster);
@@ -507,19 +523,47 @@ section{position:relative;padding:var(--s6) var(--s4);}
    lebarnya di bawah. */
 .hero-photo{
   border-radius:50%;
-  width:min(86%,340px);
+  width:min(80%,318px);
   height:auto;
   aspect-ratio:1;
   min-height:0;
   max-height:none;
-  margin:var(--s5) auto 0;
+  /* Jarak atas ditambah: cincin medali menjorok 26px keluar lingkaran,
+     dan pada jarak lama ia menabrak tepi bawah sampul. */
+  margin:calc(var(--s5) + 22px) auto 0;
   border:1px solid var(--line);
   box-shadow:0 0 0 7px rgba(201,164,75,.10), 0 26px 60px -30px #000;
+  /* WAJIB visible, kalau tidak cincin medali di ::after ikut terpotong
+     lingkaran fotonya sendiri dan tidak terlihat sama sekali. Fotonya
+     tetap terpotong bulat lewat border-radius pada <img>-nya. */
+  overflow:visible;
 }
+/* MEDALI. Foto bulat tanpa apa pun di sekelilingnya terbaca sebagai
+   foto yang belum selesai dipasang, bukan sebagai medali — persis
+   keluhan yang masuk. Cincin rangkap + gerigi + empat wajik penjuru
+   memberinya tepi. */
+.hero-photo::before{
+  content:'';
+  position:absolute;
+  inset:-26px;
+  background-image:var(--deco-medali);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  pointer-events:none;
+  z-index:2;
+}
+/* Isi lingkaran harus dipotong sendiri sekarang, karena wadahnya tidak
+   lagi memotong apa pun. */
+.hero-photo-img,
+.hero-photo-empty,
+.hero-photo-fade{border-radius:50%;}
 /* Tepi bergelombang milik Blanc Royale tidak dipakai: gelombang di
    sepanjang garis lurus, dan di sini tepinya lingkaran. */
 .hero-photo::after{content:none;}
-#fotoUtama{padding-top:0;}
+/* Cincin medali menjorok 26px keluar lingkaran foto ke SEGALA arah,
+   termasuk ke atas. Dengan padding-top:0 sisi atasnya terpotong tepi
+   section dan cincinnya terbaca seperti gambar yang gagal dimuat. */
+#fotoUtama{padding-top:34px;}
 .hero-photo-empty{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
@@ -552,8 +596,15 @@ section{position:relative;padding:var(--s6) var(--s4);}
 .hero-monogram{
   position:relative;
   z-index:3;
-  width:172px;height:172px;
-  margin:-86px auto 0;
+  /* Diperbesar dari 172px atas permintaan user: pada ukuran lama
+     inisialnya duduk di rongga lingkaran sulur yang lapang, jadi
+     hurufnya terbaca jauh lebih kecil daripada kotaknya sendiri dan
+     hilang di atas foto. Margin negatifnya ikut setengah lebarnya. */
+  width:224px;height:224px;
+  /* Setengah lebar akan menaruh monogram tepat di tengah tepi bawah
+     foto; pada ukuran 224px itu berarti ia menelan sepertiga foto.
+     Digeser turun supaya cuma puncaknya yang menumpang. */
+  margin:-78px auto 0;
   display:flex;align-items:center;justify-content:center;
   filter:drop-shadow(0 5px 10px rgba(43,38,32,.16));
 }
@@ -565,7 +616,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
   content:'';
   position:absolute;
   inset:0;
-  background-image:url('/templates/_ornamen/lingkar-sulur-emas.webp');
+  background-image:var(--deco-lingkar);
   background-size:contain;
   background-position:center;
   background-repeat:no-repeat;
@@ -585,10 +636,10 @@ section{position:relative;padding:var(--s6) var(--s4);}
      gelap dan setengah tembus: di atas foto, cakram pekat akan terlihat
      seperti tambalan. */
   left:50%;top:50%;
-  width:74%;aspect-ratio:1;
+  width:66%;aspect-ratio:1;
   transform:translate(-50%,-50%);
   border-radius:50%;
-  background:rgba(12,11,10,.82);
+  background:rgba(12,11,10,.78);
   z-index:0;
 }
 /* SVG dua cincin lamanya disembunyikan, bukan dihapus dari markup,
@@ -619,7 +670,10 @@ section{position:relative;padding:var(--s6) var(--s4);}
   z-index:2;
   font-family:'Great Vibes',cursive;
   font-weight:400;
-  font-size:34px;
+  /* 34px -> 50px. Great Vibes bertubuh kecil untuk ukuran nominalnya
+     (huruf besarnya cuma sekitar setengah tinggi baris), jadi angka
+     yang terlihat wajar di alat ukur tetap terbaca kecil di layar. */
+  font-size:50px;
   line-height:1;
   color:var(--gold-dark);
   opacity:0;
@@ -642,7 +696,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
   content:'';
   position:absolute;
   left:50%;top:50%;
-  width:1px;height:30px;
+  width:1px;height:44px;
   transform:translate(-50%,-50%);
   background:var(--gold);
   opacity:.5;
@@ -1148,7 +1202,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
   height:50px;
   flex:none;
   background:none;
-  background-image:url('/templates/_ornamen/garis-a.webp');
+  background-image:var(--deco-garis-wajik);
   background-size:contain;
   background-position:center;
   background-repeat:no-repeat;
@@ -1165,10 +1219,10 @@ section{position:relative;padding:var(--s6) var(--s4);}
    kedua tema langsung terasa kembar. */
 #mempelai .divider-ornament,
 #galeri   .divider-ornament,
-#penutup  .divider-ornament{background-image:url('/templates/_ornamen/garis-d.webp');height:56px;}
+#penutup  .divider-ornament{background-image:var(--deco-garis-sinar);height:44px;}
 #acara    .divider-ornament,
 #rsvp     .divider-ornament,
-#hadiah   .divider-ornament{background-image:url('/templates/_ornamen/garis-b.webp');height:60px;}
+#hadiah   .divider-ornament{background-image:var(--deco-garis-undak);height:38px;}
 /* Di panel gelap, ornamen garis emas perlu sedikit dicerahkan. */
 /* Di panel TERANG ornamen garis emas tidak perlu dicerahkan; justru
    sedikit digelapkan supaya tidak pucat di atas kertas. */
@@ -1247,7 +1301,11 @@ section{position:relative;padding:var(--s6) var(--s4);}
   position:relative;
   width:100%;
   max-width:none;
-  aspect-ratio:440 / 551;
+  /* 200/250, mengikuti bingkai oval yang digambar sendiri (lihat
+     --deco-bingkai-oval). Sebelumnya 440/551 mengikuti berkas foto
+     bingkai PERSEGI, dan di antara persegi itu dan foto elips di
+     dalamnya tersisa bidang hitam selebar hampir sepertiga kartu. */
+  aspect-ratio:200 / 250;
   margin:0 0 var(--s3);
   border:0;
   border-radius:0;
@@ -1259,8 +1317,8 @@ section{position:relative;padding:var(--s6) var(--s4);}
 .couple-card .photo-placeholder::before{
   content:'';
   position:absolute;
-  left:18.5%;top:20.5%;
-  width:63%;height:59%;
+  left:8%;top:6%;
+  width:84%;height:88%;
   border-radius:50%;
   background:var(--gold-tint);
   z-index:0;
@@ -1272,10 +1330,10 @@ section{position:relative;padding:var(--s6) var(--s4);}
    inset yang sama: 100 - 2x14,5 = 71 dan 100 - 2x14 = 72. */
 .couple-card .photo-placeholder > img{
   position:absolute;
-  left:18.5%;
-  top:20.5%;
-  width:63%;
-  height:59%;
+  left:8%;
+  top:6%;
+  width:84%;
+  height:88%;
   border-radius:50%;
   object-fit:cover;
   z-index:1;
@@ -1293,7 +1351,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
   content:'';
   position:absolute;
   inset:0;
-  background-image:url('/templates/_ornamen/bingkai-oval-emas.webp');
+  background-image:var(--deco-bingkai-oval);
   background-size:100% 100%;
   background-repeat:no-repeat;
   pointer-events:none;
@@ -1700,8 +1758,10 @@ section{position:relative;padding:var(--s6) var(--s4);}
 .couple-card .photo-placeholder::after{
   content:'';
   position:absolute;
-  inset:-13px -11px;
-  background-image:url('/templates/_ornamen/bingkai-klasik-emas.webp');
+  /* inset:0, bukan menjorok keluar: bingkai oval ini digambar tepat
+     seukuran kotaknya. */
+  inset:0;
+  background-image:var(--deco-bingkai-oval);
   background-size:100% 100%;
   background-repeat:no-repeat;
   pointer-events:none;
@@ -1744,21 +1804,17 @@ section{position:relative;padding:var(--s6) var(--s4);}
   left:50%;
   top:calc(100% + 14px);
   width:210px;height:210px;
-  transform:translateX(-50%) rotate(180deg);
-  background-image:url('/templates/_ornamen/bebas-jam-rococo.webp');
+  transform:translateX(-50%);
+  background-image:var(--deco-jam);
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center top;
   opacity:.5;
   pointer-events:none;
   z-index:-1;
-  /* Gambar sumbernya memang terpotong di satu sisi; sesudah diputar
-     180 derajat potongan itu jatuh di ATAS dan terbaca sebagai garis
-     lurus yang kaku. Dilembutkan dengan gradasi. Kalau browser tidak
-     mendukung mask, ornamennya tetap tampil utuh — cuma tepinya kembali
-     tegas, jadi ini penurunan mutu yang aman. */
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 16%);
-  mask-image:linear-gradient(to bottom,transparent 0%,#000 16%);
+  /* Mask peredam tepi yang dulu ada di sini dibuang bersama foto jam
+     rococo: ia menambal potongan pada gambar sumbernya, dan gambar
+     deco yang menggantikannya digambar utuh. */
 }
 /* Ruang untuk jam yang kini menjuntai ke bawah. */
 #countdown{padding-bottom:calc(var(--s7) + 96px);}
@@ -1769,9 +1825,9 @@ section{position:relative;padding:var(--s6) var(--s4);}
   position:absolute;
   left:50%;
   top:var(--s5);
-  width:84px;height:150px;
-  transform:translateX(-50%) rotate(-14deg);
-  background-image:url('/templates/_ornamen/bebas-bulu-emas.webp');
+  width:150px;height:105px;
+  transform:translateX(-50%);
+  background-image:var(--deco-salam);
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center;
@@ -1796,7 +1852,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
   top:calc(100% + 18px);
   width:132px;height:132px;
   transform:translateX(-50%);
-  background-image:url('/templates/_ornamen/bebas-burung-emas.webp');
+  background-image:var(--deco-gerbang);
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center;
@@ -1846,9 +1902,9 @@ section{position:relative;padding:var(--s6) var(--s4);}
      (305x154 -> 1,98). Angka sebelumnya menebak bentuk tegak, padahal
      margin transparan gambar sumbernya yang tinggi, bukan angsanya —
      akibatnya angsanya menyusut jauh di dalam kotaknya. */
-  width:min(280px,74%);height:141px;
+  width:min(260px,72%);height:143px;
   transform:translateX(-50%);
-  background-image:url('/templates/_ornamen/bebas-angsa-hati.webp');
+  background-image:var(--deco-kipas);
   background-size:contain;
   background-repeat:no-repeat;
   background-position:center;
