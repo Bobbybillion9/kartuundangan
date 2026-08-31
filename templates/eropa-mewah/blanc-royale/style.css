@@ -55,6 +55,18 @@
   --amplop-segel:url('/templates/_ornamen/segel-emas-bunga.webp');
   --amplop-tinta:#5B5348;
   --amplop-garis:rgba(138,103,48,.34);
+
+  /* --- tahap SURAT (assets/amplop.css membaca variabel ini) ---
+     Surat yang naik keluar dari amplop. Warnanya sengaja BERLAWANAN
+     dengan badan amplop: kalau amplopnya gelap suratnya kertas terang,
+     dan sebaliknya. Kalau keduanya sewarna, surat yang keluar tidak
+     terbaca sebagai benda baru — cuma seperti amplopnya melar. */
+  --surat-kertas:#FCF9F2;
+  --surat-tinta:#3E382F;
+  --surat-aksen:#8A6730;
+  --surat-garis:rgba(138,103,48,.40);
+  --surat-hias:url('/templates/_ornamen/garis-a.webp');
+  --surat-judul:'Cormorant Garamond',Georgia,serif;
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}

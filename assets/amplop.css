@@ -9,11 +9,27 @@
 
      --amplop-kertas   : gambar/warna permukaan amplop (wajib diisi
                          tema, kalau tidak amplopnya polos)
+     --amplop-kertas-ukuran / --amplop-kertas-ulang
+                       : untuk tekstur yang berupa POLA BERULANG, bukan
+                         foto. Bawaannya cover+no-repeat, yang benar untuk
+                         foto tekstur tapi meregangkan pola SVG sampai
+                         satu petaknya memenuhi seluruh amplop.
      --amplop-warna    : warna dasar amplop di belakang teksturnya
      --amplop-segel    : url() gambar wax seal
      --amplop-tinta    : warna tulisan di muka amplop
      --amplop-garis    : warna garis tepi & lipatan
      --amplop-latar    : warna layar di belakang amplop
+
+   Tahap SURAT (ditambahkan 2026-08-31) memakai enam variabel sendiri.
+   Semuanya punya nilai bawaan yang diturunkan dari variabel amplop di
+   atas, jadi tema lama tetap tampil benar tanpa diubah:
+
+     --surat-kertas    : warna/gambar permukaan surat
+     --surat-tinta     : warna teks di surat
+     --surat-aksen     : warna inisial, garis, dan hiasan
+     --surat-garis     : warna bingkai tipis di dalam surat
+     --surat-hias      : url() ornamen kecil di atas & bawah surat
+     --surat-judul     : font-family untuk nama mempelai di surat
 
    Nilai bawaan di bawah sengaja netral supaya amplop tetap tampil
    masuk akal kalau sebuah tema lupa menyetel salah satunya.
@@ -66,9 +82,14 @@ body.amplop-terkunci {
 .amplop-badan {
   position: absolute;
   inset: 0;
+  /* WAJIB eksplisit. Surat di dalam amplop bersandar pada z-index untuk
+     bersembunyi; kalau muka amplop tidak punya angka sendiri, urutan DOM
+     yang menentukan dan suratnya terlihat sejak layar pertama. */
+  z-index: 2;
   background-color: var(--amplop-warna, #EFEAE0);
   background-image: var(--amplop-kertas, none);
-  background-size: cover;
+  background-size: var(--amplop-kertas-ukuran, cover);
+  background-repeat: var(--amplop-kertas-ulang, no-repeat);
   background-position: center;
   border: 1px solid var(--amplop-garis, rgba(0, 0, 0, .16));
   border-radius: 2px;
@@ -111,7 +132,8 @@ body.amplop-terkunci {
   z-index: 2;
 }
 
-.amplop-kepada {
+#amplop .amplop-kepada {
+  color: var(--amplop-tinta, #4A4034);
   font-size: 9.5px;
   letter-spacing: .28em;
   text-transform: uppercase;
@@ -119,10 +141,127 @@ body.amplop-terkunci {
   margin-bottom: 5px;
 }
 
-.amplop-nama-tamu {
+#amplop .amplop-nama-tamu {
+  color: var(--amplop-tinta, #4A4034);
   font-size: 16px;
   letter-spacing: .02em;
   line-height: 1.35;
+}
+
+/* ============================================================
+   SURAT DI DALAM AMPLOP
+   ------------------------------------------------------------
+   Sebelum dibuka ia duduk DI BELAKANG muka amplop (.amplop-badan)
+   dan sedikit dimasukkan ke bawah, jadi benar-benar tidak terlihat —
+   bukan sekadar transparan. Yang menyembunyikannya adalah z-index,
+   maka .amplop-badan WAJIB punya z-index eksplisit; tanpa itu urutan
+   DOM yang menentukan dan suratnya menyembul sejak awal.
+
+   Tiga tahap gerak, dipicu tiga kelas yang dipasang berurutan oleh
+   amplop.js: (tanpa kelas) di dalam -> .amplop-keluar naik ->
+   .amplop-pergi membesar ke arah pembaca sambil memudar.
+   ============================================================ */
+.amplop-surat {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 5%;
+  bottom: 5%;
+  z-index: 2;
+  background-color: var(--surat-kertas, var(--amplop-warna, #F6F1E6));
+  border: 1px solid var(--surat-garis, var(--amplop-garis, rgba(0,0,0,.16)));
+  border-radius: 2px;
+  box-shadow: 0 10px 26px -14px rgba(0,0,0,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Mulai sedikit LEBIH DALAM dari amplopnya supaya tepi atasnya pun
+     tidak mengintip di layar sempit. */
+  transform: translateY(9%) scale(.97);
+  transform-origin: center bottom;
+  transition:
+    transform .95s cubic-bezier(.22,.85,.3,1),
+    opacity .55s ease .35s;
+}
+
+#amplop.amplop-keluar .amplop-surat {
+  /* Naik sampai dua pertiga badannya keluar dari amplop, dan MASUK KE
+     DEPAN — sesudah keluar ia harus menutupi muka amplop, bukan
+     tersembunyi lagi di belakangnya. */
+  transform: translateY(-58%) scale(1);
+  z-index: 6;
+  box-shadow: 0 30px 60px -22px rgba(0,0,0,.7);
+}
+
+#amplop.amplop-pergi .amplop-surat {
+  transform: translateY(-58%) scale(2.6);
+  opacity: 0;
+}
+
+/* Semua aturan surat diawali #amplop — dan itu BUKAN gaya penulisan.
+   Stylesheet tema dimuat SESUDAH amplop.css, dan hampir tiap tema punya
+   aturan seluas 'p{color:var(--ink-mid)}'. Tanpa selektor ber-id, warna
+   nama mempelai di surat diambil alih tema dan berubah jadi warna teks
+   pendukungnya — sudah terjadi di Shuangxi Merah: tinta #5A1219 terbaca
+   sebagai krem muda di atas kertas krem, praktis tidak terbaca. */
+#amplop .amplop-surat-isi {
+  text-align: center;
+  padding: 8% 10%;
+  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
+  width: 100%;
+}
+
+/* Ornamen kecil di atas & bawah. Kalau tema tidak menyetel --surat-hias,
+   yang tampil adalah satu garis tipis — bukan kotak kosong. */
+.amplop-surat-hias {
+  display: block;
+  height: 14px;
+  margin: 0 auto 9px;
+  width: 62%;
+  background-image: var(--surat-hias, none);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border-top: 1px solid var(--surat-garis, var(--amplop-garis, rgba(0,0,0,.2)));
+  opacity: .75;
+}
+.amplop-surat-hias-bawah { margin: 9px auto 0; transform: scaleY(-1); }
+
+#amplop .amplop-surat-eyebrow {
+  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
+  font-size: 8.5px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  opacity: .7;
+  margin-bottom: 8px;
+}
+
+#amplop .amplop-surat-inisial {
+  font-family: var(--surat-judul, 'Cormorant Garamond', Georgia, serif);
+  font-size: 26px;
+  line-height: 1;
+  color: var(--surat-aksen, var(--amplop-tinta, #9C7A3C));
+  margin-bottom: 6px;
+}
+.amplop-ini-amp { font-size: .6em; opacity: .6; margin: 0 .18em; }
+
+#amplop .amplop-surat-nama {
+  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
+  font-family: var(--surat-judul, 'Cormorant Garamond', Georgia, serif);
+  font-size: 19px;
+  line-height: 1.25;
+  letter-spacing: .04em;
+  margin-bottom: 5px;
+}
+.amplop-surat-amp { margin: 0 .3em; opacity: .55; }
+
+#amplop .amplop-surat-tanggal {
+  color: var(--surat-tinta, var(--amplop-tinta, #4A4034));
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  opacity: .78;
 }
 
 /* ---------- tutup amplop ---------- */
@@ -134,7 +273,8 @@ body.amplop-terkunci {
   height: 56%;
   background-color: var(--amplop-warna, #EFEAE0);
   background-image: var(--amplop-kertas, none);
-  background-size: cover;
+  background-size: var(--amplop-kertas-ukuran, cover);
+  background-repeat: var(--amplop-kertas-ulang, no-repeat);
   background-position: center top;
   /* Segitiga menghadap ke bawah. */
   clip-path: polygon(0 0, 100% 0, 50% 100%);
@@ -231,7 +371,8 @@ body.amplop-terkunci {
   #amplop,
   .amplop-kartu,
   .amplop-tutup,
-  .amplop-segel {
+  .amplop-segel,
+  .amplop-surat {
     transition-duration: .01ms;
   }
   .amplop-petunjuk { animation: none; opacity: .6; }

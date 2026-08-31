@@ -66,6 +66,34 @@
   --orn-garis:url('/templates/_ornamen/garis-cina-emas.webp');
   --orn-lingkar:url('/templates/_ornamen/lingkar-awan-emas.webp');
   --orn-bingkai:url('/templates/_ornamen/bingkai-merah-lentera.webp');
+
+  /* --- tahap AMPLOP (assets/amplop.css membaca variabel ini) ---
+     Path url() di sini WAJIB absolut dari root: url() di dalam custom
+     property diselesaikan relatif terhadap berkas CSS yang MEMAKAINYA
+     (assets/amplop.css), bukan yang menulisnya. Path relatif akan 404
+     tanpa satu pun pesan di layar. */
+  --amplop-latar:#3D080D;
+  --amplop-warna:#8E1F29;
+  /* kisi jendela Tionghoa — motif yang sama dengan undangannya */
+  --amplop-kertas:var(--kisi);
+  --amplop-kertas-ukuran:56px;
+  --amplop-kertas-ulang:repeat;
+  --amplop-segel:url('/templates/_ornamen/xi-ganda-emas.webp');
+  --amplop-tinta:#F6E4B8;
+  --amplop-garis:rgba(217,174,85,.45);
+  --amplop-kabut:linear-gradient(to top,rgba(61,8,13,.85),rgba(61,8,13,0));
+
+  /* --- tahap SURAT (assets/amplop.css membaca variabel ini) ---
+     Surat yang naik keluar dari amplop. Warnanya sengaja BERLAWANAN
+     dengan badan amplop: kalau amplopnya gelap suratnya kertas terang,
+     dan sebaliknya. Kalau keduanya sewarna, surat yang keluar tidak
+     terbaca sebagai benda baru — cuma seperti amplopnya melar. */
+  --surat-kertas:#F7EFE0;
+  --surat-tinta:#5A1219;
+  --surat-aksen:#A87C25;
+  --surat-garis:rgba(168,124,37,.45);
+  --surat-hias:url('/templates/_ornamen/garis-cina-emas.webp');
+  --surat-judul:'Cormorant Garamond',Georgia,serif;
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}

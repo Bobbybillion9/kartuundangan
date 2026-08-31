@@ -71,6 +71,18 @@
   /* Kabut di belakang nama tamu harus GELAP di sini, bukan terang —
      nilai bawaannya putih dan akan jadi balok pucat di amplop hitam. */
   --amplop-kabut:linear-gradient(to top,rgba(10,9,8,.82),rgba(10,9,8,0));
+
+  /* --- tahap SURAT (assets/amplop.css membaca variabel ini) ---
+     Surat yang naik keluar dari amplop. Warnanya sengaja BERLAWANAN
+     dengan badan amplop: kalau amplopnya gelap suratnya kertas terang,
+     dan sebaliknya. Kalau keduanya sewarna, surat yang keluar tidak
+     terbaca sebagai benda baru — cuma seperti amplopnya melar. */
+  --surat-kertas:#14120F;
+  --surat-tinta:#EFE0BA;
+  --surat-aksen:#E4CB90;
+  --surat-garis:rgba(201,164,75,.45);
+  --surat-hias:url('/templates/_ornamen/garis-d.webp');
+  --surat-judul:'Cormorant Garamond',Georgia,serif;
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}

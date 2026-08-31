@@ -122,6 +122,18 @@
   /* Kabut di belakang nama tamu harus GELAP di sini, bukan terang —
      nilai bawaannya putih dan akan jadi balok pucat di amplop burgundy. */
   --amplop-kabut:linear-gradient(to top,rgba(26,4,10,.82),rgba(26,4,10,0));
+
+  /* --- tahap SURAT (assets/amplop.css membaca variabel ini) ---
+     Surat yang naik keluar dari amplop. Warnanya sengaja BERLAWANAN
+     dengan badan amplop: kalau amplopnya gelap suratnya kertas terang,
+     dan sebaliknya. Kalau keduanya sewarna, surat yang keluar tidak
+     terbaca sebagai benda baru — cuma seperti amplopnya melar. */
+  --surat-kertas:#F3E8D4;
+  --surat-tinta:#5E1226;
+  --surat-aksen:#9C6B2A;
+  --surat-garis:rgba(158,107,42,.45);
+  --surat-hias:url('/templates/_ornamen/fleur-de-lis-emas.webp');
+  --surat-judul:'Cormorant Garamond',Georgia,serif;
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}

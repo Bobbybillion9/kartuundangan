@@ -96,6 +96,31 @@
   --orn-renda:url('/templates/_ornamen/sudut-renda-islami.webp');
   --orn-lingkar:url('/templates/_ornamen/lingkar-kaligrafi-emas.webp');
   --orn-segel:url('/templates/_ornamen/segel-bulan-hijau.webp');
+
+  /* --- tahap AMPLOP (assets/amplop.css membaca variabel ini) ---
+     Path url() di sini WAJIB absolut dari root: url() di dalam custom
+     property diselesaikan relatif terhadap berkas CSS yang MEMAKAINYA
+     (assets/amplop.css), bukan yang menulisnya. Path relatif akan 404
+     tanpa satu pun pesan di layar. */
+  --amplop-latar:#072019;
+  --amplop-warna:#EFE7D3;
+  --amplop-kertas:url('/templates/_ornamen/latar-mihrab-lembut.webp');
+  --amplop-segel:url('/templates/_ornamen/segel-bulan-hijau.webp');
+  --amplop-tinta:#0E4A3C;
+  --amplop-garis:rgba(176,138,52,.42);
+  --amplop-kabut:linear-gradient(to top,rgba(246,241,227,.9),rgba(246,241,227,0));
+
+  /* --- tahap SURAT (assets/amplop.css membaca variabel ini) ---
+     Surat yang naik keluar dari amplop. Warnanya sengaja BERLAWANAN
+     dengan badan amplop: kalau amplopnya gelap suratnya kertas terang,
+     dan sebaliknya. Kalau keduanya sewarna, surat yang keluar tidak
+     terbaca sebagai benda baru — cuma seperti amplopnya melar. */
+  --surat-kertas:#FBF7EC;
+  --surat-tinta:#1E332B;
+  --surat-aksen:#0E4A3C;
+  --surat-garis:rgba(176,138,52,.45);
+  --surat-hias:url('/templates/_ornamen/garis-islami-emas.webp');
+  --surat-judul:'Cormorant Garamond',Georgia,serif;
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}
