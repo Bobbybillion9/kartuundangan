@@ -92,6 +92,14 @@
 
   /* --- aset ornamen bersama --- */
   --orn-arch:url('/templates/_ornamen/arch-mihrab-emas.webp');
+  /* Lengkung POLOS untuk bingkai sampul. Yang berukir dipakai di
+     bagian Acara, tempat tidak ada teks yang harus dibaca di
+     atasnya. */
+  --orn-arch-polos:url('/templates/_ornamen/arch-mihrab-polos.webp');
+  --gulungan:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='96' viewBox='0 0 360 96'%3E%3Cdefs%3E%3ClinearGradient id='k' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23F7F0DC' stop-opacity='.97'/%3E%3Cstop offset='.5' stop-color='%23F7F0DC' stop-opacity='1'/%3E%3Cstop offset='1' stop-color='%23F7F0DC' stop-opacity='.93'/%3E%3C/linearGradient%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23D9C89A'/%3E%3Cstop offset='.35' stop-color='%23F7F0DC'/%3E%3Cstop offset='.72' stop-color='%23F7F0DC'/%3E%3Cstop offset='1' stop-color='%23D9C89A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M42 20C90 14 270 14 318 20L318 76C270 82 90 82 42 76Z' fill='url(%23k)'/%3E%3Cpath d='M42 20C90 14 270 14 318 20' fill='none' stroke='%23B08A34' stroke-width='1'/%3E%3Cpath d='M42 76C90 82 270 82 318 76' fill='none' stroke='%23B08A34' stroke-width='1'/%3E%3Cg%3E%3Crect x='18' y='12' width='26' height='72' rx='13' fill='url(%23g)' stroke='%23B08A34' stroke-width='1'/%3E%3Crect x='316' y='12' width='26' height='72' rx='13' fill='url(%23g)' stroke='%23B08A34' stroke-width='1'/%3E%3Cpath d='M31 26V70M329 26V70' stroke='%23B08A34' stroke-width='.8' opacity='.55'/%3E%3C/g%3E%3Cpath d='M6 40C6 32 12 30 18 32M6 56C6 64 12 66 18 64' fill='none' stroke='%23B08A34' stroke-width='1' opacity='.7'/%3E%3Cpath d='M354 40C354 32 348 30 342 32M354 56C354 64 348 66 342 64' fill='none' stroke='%23B08A34' stroke-width='1' opacity='.7'/%3E%3C/svg%3E");
+  --pembatas-a:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cg fill='none' stroke='%23E8D9A8' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M6 15H104M156 15H254'/%3E%3Cpath d='M112 15L130 3L148 15L130 27Z'/%3E%3Cpath d='M118 15L130 8L142 15L130 22Z'/%3E%3Cpath d='M104 15L112 11M104 15L112 19M156 15L148 11M156 15L148 19'/%3E%3C/g%3E%3Ccircle cx='130' cy='15' r='1.8' fill='%23E8D9A8'/%3E%3C/svg%3E");
+  --pembatas-b:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cg fill='none' stroke='%23E8D9A8' stroke-width='1.1'%3E%3Cpath d='M4 15H86M174 15H256' stroke-linecap='round'/%3E%3Cpath d='M96 15L106 6L116 15L106 24Z'/%3E%3Cpath d='M116 15L130 4L144 15L130 26Z'/%3E%3Cpath d='M144 15L154 6L164 15L154 24Z'/%3E%3C/g%3E%3Cg fill='%23E8D9A8' opacity='.8'%3E%3Ccircle cx='90' cy='15' r='1.6'/%3E%3Ccircle cx='170' cy='15' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  --pembatas-c:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='40' viewBox='0 0 260 40'%3E%3Cg fill='none' stroke='%23E8D9A8' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M6 12H112M148 12H254'/%3E%3Cpath d='M130 3V8'/%3E%3Cpath d='M122 8H138'/%3E%3Cpath d='M124 8L120 20C120 28 124 33 130 33C136 33 140 28 140 20L136 8'/%3E%3Cpath d='M122 20H138'/%3E%3Cpath d='M127 33L130 37L133 33'/%3E%3C/g%3E%3Ccircle cx='130' cy='14' r='2' fill='%23E8D9A8' opacity='.75'/%3E%3C/svg%3E");
   --orn-kubah:url('/templates/_ornamen/kubah-islami-emas.webp');
   --orn-renda:url('/templates/_ornamen/sudut-renda-islami.webp');
   --orn-lingkar:url('/templates/_ornamen/lingkar-kaligrafi-emas.webp');
@@ -393,19 +401,29 @@ section{position:relative;padding:var(--s6) var(--s4);}
      tepat di atas monogram dan keduanya saling menimpa. Di 58% puncaknya
      lolos di bawah monogram dan nama mempelai duduk di dalam lengkung —
      yang memang tujuannya. */
-  top:58%;
-  width:min(348px,92%);
+  /* 58% -> 54%: dengan lengkung polos yang tepinya lebih tipis, ia
+     boleh naik lagi sehingga kakinya berdiri di bawah tombol, bukan
+     terpotong di tengah nama. */
+  top:54%;
+  width:min(322px,88%);
   /* 498x501 -> praktis bujur sangkar. Tingginya dikunci lewat
      aspect-ratio, bukan persen, supaya lengkungnya tidak pernah
      termampatkan pada layar pendek. */
   aspect-ratio:498 / 501;
   transform:translate(-50%,-50%);
-  background-image:var(--orn-arch);
+  /* Lengkung POLOS, bukan yang berukir.
+     Yang berukir motifnya rapat dan penuh warna, dan ia duduk persis di
+     belakang nama mempelai — dua benda berebut ruang yang sama, dan
+     yang kalah selalu tulisannya. Dilaporkan user: "terlihat sangat
+     menyatu dengan font nya, sehingga tulisan tidak begitu terlihat
+     jelas". Lengkung polos tetap memberi bentuk gapura tanpa satu pun
+     motif yang bersaing dengan huruf. */
+  background-image:var(--orn-arch-polos);
   background-size:contain;
   background-position:center;
   background-repeat:no-repeat;
   z-index:2;
-  opacity:.92;
+  opacity:.7;
   pointer-events:none;
 }
 /* Lantai untuk arch. Tanpa ini kedua kakinya berhenti menggantung di
@@ -420,6 +438,17 @@ section{position:relative;padding:var(--s6) var(--s4);}
     rgba(232,217,168,0),rgba(232,217,168,.7),rgba(232,217,168,0));
 }
 
+/* Kabut lembut di belakang blok teks sampul. Foto sampul diunggah
+   pemilik undangan dan bisa seterang apa pun; tanpa kabut ini,
+   keterbacaan nama mempelai bergantung pada kebetulan. */
+#cover.has-sampul .cover-content::before{
+  content:'';
+  position:absolute;
+  left:0;right:0;top:18%;bottom:10%;
+  background:radial-gradient(62% 46% at 50% 52%,rgba(9,48,38,.62) 0%,rgba(9,48,38,0) 78%);
+  z-index:-1;
+  pointer-events:none;
+}
 .cover-content{
   position:relative;
   z-index:3;
@@ -1017,3 +1046,103 @@ section{position:relative;padding:var(--s6) var(--s4);}
   *{transition:none !important;animation:none !important;}
   .particles{display:none;}
 }
+
+/* ---- GULUNGAN KERTAS DI BELAKANG LAFAZ (2026-08-31) ----
+   Lihat catatan lengkapnya di scratchpad/islami.js. Ringkasnya: lafaz
+   ditulis di atas foto sampul yang isinya berubah-ubah, jadi tanpa
+   bidang sendiri keterbacaannya bergantung pada kebetulan.
+
+   Warna tintanya DIKUNCI gelap di kedua keadaan (dengan dan tanpa foto
+   sampul). Tanpa ini, aturan '#cover.has-sampul .cover-lafaz{color:...}'
+   yang sudah ada akan mengubahnya jadi krem muda — krem di atas
+   perkamen krem, dan lafaznya hilang justru sesudah diberi bidang. */
+.cover-lafaz{
+  position:relative;
+  display:inline-block;
+  padding:20px 46px 22px;
+  margin-left:auto;margin-right:auto;
+  max-width:min(360px,94%);
+  z-index:1;
+}
+.cover-lafaz::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background-image:var(--gulungan);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));
+}
+.cover-lafaz,
+#cover.has-sampul .cover-lafaz{color:#0E4A3C;opacity:1;}
+
+/* ---- TIGA MOTIF PEMBATAS BERGILIRAN (2026-08-31) ----
+   Sebelumnya satu motif dipakai di sepuluh section. Pembatas adalah hal
+   yang paling sering terlihat saat menggulir; satu motif sembilan kali
+   membuat seluruh halaman terasa satu layar yang diulang.
+   Giliran ditulis PER-SECTION, bukan dengan nth-child, supaya tetap
+   benar walaupun urutan section suatu saat ditukar. */
+.nz-divider{
+  display:block;
+  width:min(240px,66%);
+  height:34px;
+  background-image:var(--pembatas-a);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  margin:0 auto;
+}
+.nz-divider-line,.nz-divider-gem{display:none;}
+#mempelai .nz-divider,
+#galeri   .nz-divider,
+#penutup  .nz-divider{background-image:var(--pembatas-b);}
+#countdown .nz-divider,
+#ucapan    .nz-divider,
+#hadiah    .nz-divider{background-image:var(--pembatas-c);height:44px;}
+
+/* ---- LEBIH BANYAK ZAMRUD (2026-08-31) ----
+   Permintaan user: "tambahkan ornamen atau sesuatu yang berwarna hijau
+   tua seperti tema yang telah dibuat, agar lebih hidup tampilannya".
+
+   Yang ditambahkan bukan blok hijau baru — satu bidang zamrud sudah
+   dipegang bagian Acara, dan menambah bidang kedua akan melemahkannya.
+   Yang ditambahkan adalah zamrud sebagai AKSEN pada tiga tempat yang
+   selama ini emas semua: pita bulan di lembar kalender, batang pemisah
+   pembuka, dan pita di kaki tiap kartu galeri. */
+#acara .kal-bulan{
+  background:rgba(14,74,60,.14);
+  color:#0B3A2F;
+}
+.kal-lembar{border-color:rgba(14,74,60,.32);}
+
+/* Pita zamrud tipis di kaki tiap foto galeri — pengikat, bukan bingkai. */
+.galeri-item{position:relative;}
+.galeri-item::after{
+  content:'';
+  position:absolute;
+  left:12%;right:12%;bottom:-4px;
+  height:3px;
+  background:linear-gradient(to right,
+    rgba(14,74,60,0),var(--zamrud) 22%,var(--zamrud) 78%,rgba(14,74,60,0));
+  border-radius:2px;
+  pointer-events:none;
+}
+
+/* Kubah zamrud membayang di kaki bagian Penutup — ornamen --orn-kubah
+   sudah ada di :root dan baru dipakai sekali. */
+#penutup{position:relative;overflow:hidden;}
+#penutup::after{
+  content:'';
+  position:absolute;
+  left:50%;bottom:-30px;
+  width:230px;height:230px;
+  transform:translateX(-50%);
+  background-image:var(--orn-kubah);
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  opacity:.16;
+  pointer-events:none;
+}
+#penutup .credit{position:relative;z-index:1;}

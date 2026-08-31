@@ -71,6 +71,10 @@
 
   /* --- aset ornamen bersama --- */
   --orn-garis:url('/templates/_ornamen/garis-islami-emas.webp');
+  --gulungan:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='96' viewBox='0 0 360 96'%3E%3Cdefs%3E%3ClinearGradient id='k' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FFFCF5' stop-opacity='.97'/%3E%3Cstop offset='.5' stop-color='%23FFFCF5' stop-opacity='1'/%3E%3Cstop offset='1' stop-color='%23FFFCF5' stop-opacity='.93'/%3E%3C/linearGradient%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23E3D6BC'/%3E%3Cstop offset='.35' stop-color='%23FFFCF5'/%3E%3Cstop offset='.72' stop-color='%23FFFCF5'/%3E%3Cstop offset='1' stop-color='%23E3D6BC'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M42 20C90 14 270 14 318 20L318 76C270 82 90 82 42 76Z' fill='url(%23k)'/%3E%3Cpath d='M42 20C90 14 270 14 318 20' fill='none' stroke='%239C7A3C' stroke-width='1'/%3E%3Cpath d='M42 76C90 82 270 82 318 76' fill='none' stroke='%239C7A3C' stroke-width='1'/%3E%3Cg%3E%3Crect x='18' y='12' width='26' height='72' rx='13' fill='url(%23g)' stroke='%239C7A3C' stroke-width='1'/%3E%3Crect x='316' y='12' width='26' height='72' rx='13' fill='url(%23g)' stroke='%239C7A3C' stroke-width='1'/%3E%3Cpath d='M31 26V70M329 26V70' stroke='%239C7A3C' stroke-width='.8' opacity='.55'/%3E%3C/g%3E%3Cpath d='M6 40C6 32 12 30 18 32M6 56C6 64 12 66 18 64' fill='none' stroke='%239C7A3C' stroke-width='1' opacity='.7'/%3E%3Cpath d='M354 40C354 32 348 30 342 32M354 56C354 64 348 66 342 64' fill='none' stroke='%239C7A3C' stroke-width='1' opacity='.7'/%3E%3C/svg%3E");
+  --pembatas-a:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cg fill='none' stroke='%239C7A3C' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M6 15H104M156 15H254'/%3E%3Cpath d='M112 15L130 3L148 15L130 27Z'/%3E%3Cpath d='M118 15L130 8L142 15L130 22Z'/%3E%3Cpath d='M104 15L112 11M104 15L112 19M156 15L148 11M156 15L148 19'/%3E%3C/g%3E%3Ccircle cx='130' cy='15' r='1.8' fill='%239C7A3C'/%3E%3C/svg%3E");
+  --pembatas-b:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cg fill='none' stroke='%239C7A3C' stroke-width='1.1'%3E%3Cpath d='M4 15H86M174 15H256' stroke-linecap='round'/%3E%3Cpath d='M96 15L106 6L116 15L106 24Z'/%3E%3Cpath d='M116 15L130 4L144 15L130 26Z'/%3E%3Cpath d='M144 15L154 6L164 15L154 24Z'/%3E%3C/g%3E%3Cg fill='%239C7A3C' opacity='.8'%3E%3Ccircle cx='90' cy='15' r='1.6'/%3E%3Ccircle cx='170' cy='15' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  --pembatas-c:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='40' viewBox='0 0 260 40'%3E%3Cg fill='none' stroke='%239C7A3C' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M6 12H112M148 12H254'/%3E%3Cpath d='M130 3V8'/%3E%3Cpath d='M122 8H138'/%3E%3Cpath d='M124 8L120 20C120 28 124 33 130 33C136 33 140 28 140 20L136 8'/%3E%3Cpath d='M122 20H138'/%3E%3Cpath d='M127 33L130 37L133 33'/%3E%3C/g%3E%3Ccircle cx='130' cy='14' r='2' fill='%239C7A3C' opacity='.75'/%3E%3C/svg%3E");
   --orn-lingkar:url('/templates/_ornamen/lingkar-kaligrafi-emas.webp');
   --orn-arch:url('/templates/_ornamen/arch-mihrab-polos.webp');
   --orn-sudut:url('/templates/_ornamen/sudut-geometris-emas.webp');
@@ -708,4 +712,133 @@ section{position:relative;padding:var(--s7) var(--s5);}
   html{scroll-behavior:auto;}
   *{transition:none !important;animation:none !important;}
   .particles{display:none;}
+}
+
+/* ---- GULUNGAN KERTAS DI BELAKANG LAFAZ (2026-08-31) ----
+   Lihat catatan lengkapnya di scratchpad/islami.js. Ringkasnya: lafaz
+   ditulis di atas foto sampul yang isinya berubah-ubah, jadi tanpa
+   bidang sendiri keterbacaannya bergantung pada kebetulan.
+
+   Warna tintanya DIKUNCI gelap di kedua keadaan (dengan dan tanpa foto
+   sampul). Tanpa ini, aturan '#cover.has-sampul .cover-lafaz{color:...}'
+   yang sudah ada akan mengubahnya jadi krem muda — krem di atas
+   perkamen krem, dan lafaznya hilang justru sesudah diberi bidang. */
+.cover-lafaz{
+  position:relative;
+  display:inline-block;
+  padding:20px 46px 22px;
+  margin-left:auto;margin-right:auto;
+  max-width:min(360px,94%);
+  z-index:1;
+}
+.cover-lafaz::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background-image:var(--gulungan);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));
+}
+.cover-lafaz,
+#cover.has-sampul .cover-lafaz{color:#33291F;opacity:1;}
+
+/* ---- TIGA MOTIF PEMBATAS BERGILIRAN (2026-08-31) ----
+   Sebelumnya satu motif dipakai di sepuluh section. Pembatas adalah hal
+   yang paling sering terlihat saat menggulir; satu motif sembilan kali
+   membuat seluruh halaman terasa satu layar yang diulang.
+   Giliran ditulis PER-SECTION, bukan dengan nth-child, supaya tetap
+   benar walaupun urutan section suatu saat ditukar. */
+.nz-divider{
+  display:block;
+  width:min(240px,66%);
+  height:32px;
+  background-image:var(--pembatas-a);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  margin:0 auto;
+}
+.nz-divider-line,.nz-divider-gem{display:none;}
+#mempelai .nz-divider,
+#galeri   .nz-divider,
+#penutup  .nz-divider{background-image:var(--pembatas-b);}
+#countdown .nz-divider,
+#ucapan    .nz-divider,
+#hadiah    .nz-divider{background-image:var(--pembatas-c);height:44px;}
+
+/* ---- LATAR TIDAK LAGI POLOS (2026-08-31) ----
+   Keluhan user: "design overall background terlalu polos dan kosong,
+   coba di tambahkan sentuhan ornamen menghiasi templete ini lagi, dan
+   kombinasi warna lagi".
+
+   Tema ini memang sengaja yang paling lapang di kategorinya — itu arti
+   "sakinah". Yang ditambahkan karena itu bukan ornamen yang ramai,
+   melainkan STRUKTUR: pita kisi mashrabiya di kepala tiap section,
+   lengkung mihrab yang membayang di kaki bagian Pembuka & Penutup, dan
+   satu pita tanah liat tipis yang memisahkan section dari section.
+   Tanah liat sudah jadi warna kedua tema ini (bidang Pembuka), jadi ini
+   memperkuat kombinasi yang sudah ada, bukan menambah warna baru.
+
+   Pola WAJIB diredam lapisan warna di atasnya, bukan opacity: opacity
+   meredupkan seluruh isi wadah termasuk teksnya. */
+#pembuka,#mempelai,#acara,#countdown,#galeri,#rsvp,#ucapan,#hadiah,#penutup{
+  position:relative;
+}
+/* Pita kisi mashrabiya selebar section di kepala tiap bagian. */
+#mempelai::before,#acara::before,#countdown::before,
+#galeri::before,#rsvp::before,#ucapan::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:86px;
+  z-index:0;
+  pointer-events:none;
+  background-image:var(--mashrabiya);
+  background-size:48px 48px;
+  opacity:.42;
+  -webkit-mask-image:linear-gradient(to bottom,#000,transparent);
+  mask-image:linear-gradient(to bottom,#000,transparent);
+}
+#mempelai > *,#acara > *,#countdown > *,
+#galeri > *,#rsvp > *,#ucapan > *{position:relative;z-index:1;}
+
+/* Lengkung mihrab membayang di kaki Pembuka dan Penutup — --orn-arch
+   sudah ada di :root dan baru dipakai sekali. */
+#pembuka::after,#penutup::after{
+  content:'';
+  position:absolute;
+  left:50%;bottom:0;
+  width:min(280px,72%);
+  aspect-ratio:1;
+  transform:translateX(-50%);
+  background-image:var(--orn-arch);
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  opacity:.14;
+  z-index:0;
+  pointer-events:none;
+}
+#pembuka > *,#penutup > *{position:relative;z-index:1;}
+
+/* Pita tanah liat tipis sebagai jahitan antar bagian. Tanah liat sudah
+   jadi warna kedua tema ini; ini memperkuatnya, bukan menambah warna. */
+#mempelai,#countdown,#galeri,#ucapan{
+  border-top:2px solid rgba(156,82,56,.16);
+}
+#acara .kal-bulan{background:rgba(156,82,56,.13);color:#7A3D28;}
+.kal-lembar{border-color:rgba(156,82,56,.26);}
+
+/* Kabut lembut di belakang blok teks sampul. Foto sampul diunggah
+   pemilik undangan dan bisa seterang apa pun; tanpa kabut ini,
+   keterbacaan nama mempelai bergantung pada kebetulan. */
+#cover.has-sampul .cover-content::before{
+  content:'';
+  position:absolute;
+  left:0;right:0;top:16%;bottom:8%;
+  background:radial-gradient(64% 48% at 50% 52%,rgba(51,41,31,.5) 0%,rgba(0,0,0,0) 78%);
+  z-index:-1;
+  pointer-events:none;
 }

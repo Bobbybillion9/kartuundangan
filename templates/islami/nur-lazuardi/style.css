@@ -80,6 +80,13 @@
 
   /* --- aset ornamen bersama --- */
   --orn-medali:url('/templates/_ornamen/bintang-navy-emas.webp');
+  /* Kisi oktagon samar — tekstur bidang, bukan motif baru: bentuk
+     oktagon sudah jadi identitas tema ini di semua bukaan fotonya. */
+  --kisi-oktagon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23D2AC57' stroke-width='1' opacity='.34'%3E%3Cpath d='M21 0H51L72 21V51L51 72H21L0 51V21Z'/%3E%3Cpath d='M30 21H42L51 30V42L42 51H30L21 42V30Z'/%3E%3C/g%3E%3C/svg%3E");
+  --gulungan:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='96' viewBox='0 0 360 96'%3E%3Cdefs%3E%3ClinearGradient id='k' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23F4EEDE' stop-opacity='.97'/%3E%3Cstop offset='.5' stop-color='%23F4EEDE' stop-opacity='1'/%3E%3Cstop offset='1' stop-color='%23F4EEDE' stop-opacity='.93'/%3E%3C/linearGradient%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23D8CBA6'/%3E%3Cstop offset='.35' stop-color='%23F4EEDE'/%3E%3Cstop offset='.72' stop-color='%23F4EEDE'/%3E%3Cstop offset='1' stop-color='%23D8CBA6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M42 20C90 14 270 14 318 20L318 76C270 82 90 82 42 76Z' fill='url(%23k)'/%3E%3Cpath d='M42 20C90 14 270 14 318 20' fill='none' stroke='%23A6822F' stroke-width='1'/%3E%3Cpath d='M42 76C90 82 270 82 318 76' fill='none' stroke='%23A6822F' stroke-width='1'/%3E%3Cg%3E%3Crect x='18' y='12' width='26' height='72' rx='13' fill='url(%23g)' stroke='%23A6822F' stroke-width='1'/%3E%3Crect x='316' y='12' width='26' height='72' rx='13' fill='url(%23g)' stroke='%23A6822F' stroke-width='1'/%3E%3Cpath d='M31 26V70M329 26V70' stroke='%23A6822F' stroke-width='.8' opacity='.55'/%3E%3C/g%3E%3Cpath d='M6 40C6 32 12 30 18 32M6 56C6 64 12 66 18 64' fill='none' stroke='%23A6822F' stroke-width='1' opacity='.7'/%3E%3Cpath d='M354 40C354 32 348 30 342 32M354 56C354 64 348 66 342 64' fill='none' stroke='%23A6822F' stroke-width='1' opacity='.7'/%3E%3C/svg%3E");
+  --pembatas-a:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cg fill='none' stroke='%23F2E3B8' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M6 15H104M156 15H254'/%3E%3Cpath d='M112 15L130 3L148 15L130 27Z'/%3E%3Cpath d='M118 15L130 8L142 15L130 22Z'/%3E%3Cpath d='M104 15L112 11M104 15L112 19M156 15L148 11M156 15L148 19'/%3E%3C/g%3E%3Ccircle cx='130' cy='15' r='1.8' fill='%23F2E3B8'/%3E%3C/svg%3E");
+  --pembatas-b:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cg fill='none' stroke='%23F2E3B8' stroke-width='1.1'%3E%3Cpath d='M4 15H86M174 15H256' stroke-linecap='round'/%3E%3Cpath d='M96 15L106 6L116 15L106 24Z'/%3E%3Cpath d='M116 15L130 4L144 15L130 26Z'/%3E%3Cpath d='M144 15L154 6L164 15L154 24Z'/%3E%3C/g%3E%3Cg fill='%23F2E3B8' opacity='.8'%3E%3Ccircle cx='90' cy='15' r='1.6'/%3E%3Ccircle cx='170' cy='15' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  --pembatas-c:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='40' viewBox='0 0 260 40'%3E%3Cg fill='none' stroke='%23F2E3B8' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M6 12H112M148 12H254'/%3E%3Cpath d='M130 3V8'/%3E%3Cpath d='M122 8H138'/%3E%3Cpath d='M124 8L120 20C120 28 124 33 130 33C136 33 140 28 140 20L136 8'/%3E%3Cpath d='M122 20H138'/%3E%3Cpath d='M127 33L130 37L133 33'/%3E%3C/g%3E%3Ccircle cx='130' cy='14' r='2' fill='%23F2E3B8' opacity='.75'/%3E%3C/svg%3E");
   --orn-garis:url('/templates/_ornamen/garis-islami-emas.webp');
   --orn-lingkar:url('/templates/_ornamen/lingkar-medali-emas.webp');
   --orn-sudut:url('/templates/_ornamen/sudut-geometris-emas.webp');
@@ -290,7 +297,9 @@ section{position:relative;padding:var(--s6) var(--s4);}
 .cover-medali{
   position:absolute;
   left:50%;top:50%;
-  width:min(380px,96%);
+  /* Dikecilkan supaya ia jadi latar MONOGRAM, bukan latar seluruh blok
+     teks. Bintang selebar 96% sampul mustahil tidak menabrak sesuatu. */
+  width:min(300px,80%);
   aspect-ratio:1;
   transform:translate(-50%,-50%) scale(1) rotate(0deg);
   background-image:var(--orn-medali);
@@ -301,7 +310,14 @@ section{position:relative;padding:var(--s6) var(--s4);}
      Pernikahan", dan kedua baris itu jadi tidak terbaca. Di sini ia
      WATERMARK: bentuknya masih terbaca, tapi tidak pernah bersaing
      dengan teks di depannya. Kemegahannya muncul saat ia MEMBESAR. */
-  opacity:.22;
+  /* .22 -> .11, dan hanya di atas foto sampul ia diturunkan lagi.
+     Pada .22 medalinya masih terbaca sebagai motif utuh yang duduk
+     persis di belakang sapaan tamu, "Undangan Pernikahan", DAN nama
+     mempelai sekaligus. Dilaporkan user: "motif ornamen yang berada di
+     sampul terlihat bertabrakan dengan tulisan yang ada". Kemegahannya
+     tetap muncul saat ia MEMBESAR waktu sampul dibuka — di situ tidak
+     ada teks yang harus dibaca. */
+  opacity:.11;
   z-index:2;
   pointer-events:none;
   /* Berputar sangat pelan selama sampul diam — cukup untuk terbaca
@@ -348,8 +364,26 @@ section{position:relative;padding:var(--s6) var(--s4);}
 .monogram-letters{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;gap:1px;
-  font-family:'Amiri',serif;font-size:29px;color:var(--champagne);
+  /* 29px -> 23px. Pada 29px "A & S" nyaris menyentuh cincinnya di kiri
+     dan kanan, dan huruf yang menempel garis terbaca sebagai dua benda
+     yang bertabrakan, bukan satu monogram. Dilaporkan user persis
+     begitu. Cincinnya sendiri tidak dibesarkan — memperbesar cincin
+     akan mendorong seluruh blok teks sampul turun. */
+  font-family:'Amiri',serif;font-size:23px;color:var(--champagne);
 }
+/* Cakram gelap tipis di dalam cincin: memisahkan huruf dari medali
+   bintang yang lewat di belakangnya. */
+.cover-monogram::before{
+  content:'';
+  position:absolute;
+  left:50%;top:50%;
+  width:78%;aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:rgba(6,14,32,.55);
+  z-index:0;
+}
+.monogram-ring,.monogram-letters{z-index:1;}
 .monogram-letters .mono-sep{font-size:.6em;opacity:.7;margin:0 2px;}
 
 .cover-guest{font-size:12.5px;color:rgba(242,227,184,.66);letter-spacing:.06em;margin-bottom:var(--s4);}
@@ -764,7 +798,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
   .cover-content{padding:var(--s4) var(--s4);}
   .cover-lafaz{font-size:16px;margin-bottom:var(--s2);}
   .cover-monogram{width:82px;height:82px;margin-bottom:var(--s2);}
-  .monogram-letters{font-size:23px;}
+  .monogram-letters{font-size:19px;}
   .cover-guest{margin-bottom:var(--s3);}
   .cover-eyebrow{margin-bottom:var(--s2);}
   .cover-names{font-size:clamp(27px,8.4vw,34px);}
@@ -786,4 +820,136 @@ section{position:relative;padding:var(--s6) var(--s4);}
   html{scroll-behavior:auto;}
   *{transition:none !important;animation:none !important;}
   .particles{display:none;}
+}
+
+/* ---- GULUNGAN KERTAS DI BELAKANG LAFAZ (2026-08-31) ----
+   Lihat catatan lengkapnya di scratchpad/islami.js. Ringkasnya: lafaz
+   ditulis di atas foto sampul yang isinya berubah-ubah, jadi tanpa
+   bidang sendiri keterbacaannya bergantung pada kebetulan.
+
+   Warna tintanya DIKUNCI gelap di kedua keadaan (dengan dan tanpa foto
+   sampul). Tanpa ini, aturan '#cover.has-sampul .cover-lafaz{color:...}'
+   yang sudah ada akan mengubahnya jadi krem muda — krem di atas
+   perkamen krem, dan lafaznya hilang justru sesudah diberi bidang. */
+.cover-lafaz{
+  position:relative;
+  display:inline-block;
+  padding:20px 46px 22px;
+  margin-left:auto;margin-right:auto;
+  max-width:min(360px,94%);
+  z-index:1;
+}
+.cover-lafaz::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background-image:var(--gulungan);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));
+}
+.cover-lafaz,
+#cover.has-sampul .cover-lafaz{color:#243250;opacity:1;}
+
+/* ---- TIGA MOTIF PEMBATAS BERGILIRAN (2026-08-31) ----
+   Sebelumnya satu motif dipakai di sepuluh section. Pembatas adalah hal
+   yang paling sering terlihat saat menggulir; satu motif sembilan kali
+   membuat seluruh halaman terasa satu layar yang diulang.
+   Giliran ditulis PER-SECTION, bukan dengan nth-child, supaya tetap
+   benar walaupun urutan section suatu saat ditukar. */
+.nz-divider{
+  display:block;
+  width:min(240px,66%);
+  height:34px;
+  background-image:var(--pembatas-a);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  margin:0 auto;
+}
+.nz-divider-line,.nz-divider-gem{display:none;}
+#mempelai .nz-divider,
+#galeri   .nz-divider,
+#penutup  .nz-divider{background-image:var(--pembatas-b);}
+#countdown .nz-divider,
+#ucapan    .nz-divider,
+#hadiah    .nz-divider{background-image:var(--pembatas-c);height:44px;}
+
+/* ---- LATAR TIDAK LAGI POLOS (2026-08-31) ----
+   Keluhan user: "design overall background terlalu polos dan kosong".
+   Memang: seluruh halaman ini bidang lazuardi rata dengan taburan
+   bintang yang sangat samar, dan tidak ada satu pun bidang yang
+   berbeda dari bidang di sebelahnya.
+
+   Yang ditambahkan TIGA lapis, semuanya di BAWAH teks:
+   1) kisi oktagon samar sebagai tekstur bidang — bahasa geometri yang
+      sudah jadi identitas tema ini, bukan motif baru
+   2) sudut geometris emas di dua sudut berseberangan tiap section
+      (--orn-sudut sudah ada di :root dan belum pernah dipakai)
+   3) pendar hangat di kepala tiap section supaya bidangnya tidak rata
+      dari atas ke bawah
+
+   Pola latar WAJIB diredam lapisan warna DI ATASNYA, bukan opacity —
+   opacity meredupkan seluruh isi wadah termasuk teksnya. */
+#pembuka,#mempelai,#acara,#countdown,#galeri,#rsvp,#ucapan,#penutup{
+  position:relative;
+}
+#pembuka::before,#mempelai::before,#acara::before,#countdown::before,
+#galeri::before,#rsvp::before,#ucapan::before,#penutup::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-image:var(--kisi-oktagon);
+  background-size:72px 72px;
+  opacity:.5;
+  -webkit-mask-image:radial-gradient(120% 80% at 50% 0%,#000 0%,transparent 72%);
+  mask-image:radial-gradient(120% 80% at 50% 0%,#000 0%,transparent 72%);
+}
+#pembuka > *,#mempelai > *,#acara > *,#countdown > *,
+#galeri > *,#rsvp > *,#ucapan > *,#penutup > *{position:relative;z-index:1;}
+
+/* Sudut geometris emas, dua sudut berseberangan. */
+#mempelai::after,#galeri::after,#ucapan::after{
+  content:'';
+  position:absolute;
+  top:10px;right:10px;
+  width:76px;height:76px;
+  background-image:var(--orn-sudut);
+  background-size:contain;
+  background-repeat:no-repeat;
+  /* Dicerahkan: ornamen emas pada opasitas rendah di atas lazuardi
+     pekat terbaca ABU, bukan emas. Sudah terjadi. */
+  filter:brightness(1.5) saturate(1.15);
+  opacity:.42;
+  pointer-events:none;
+  z-index:0;
+}
+#pembuka::after,#countdown::after,#rsvp::after{
+  content:'';
+  position:absolute;
+  bottom:10px;left:10px;
+  width:76px;height:76px;
+  transform:scale(-1,-1);
+  background-image:var(--orn-sudut);
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter:brightness(1.5) saturate(1.15);
+  opacity:.42;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* Kabut lembut di belakang blok teks sampul. Foto sampul diunggah
+   pemilik undangan dan bisa seterang apa pun; tanpa kabut ini,
+   keterbacaan nama mempelai bergantung pada kebetulan. */
+#cover.has-sampul .cover-content::before{
+  content:'';
+  position:absolute;
+  left:0;right:0;top:16%;bottom:8%;
+  background:radial-gradient(64% 48% at 50% 52%,rgba(6,14,32,.62) 0%,rgba(0,0,0,0) 78%);
+  z-index:-1;
+  pointer-events:none;
 }
