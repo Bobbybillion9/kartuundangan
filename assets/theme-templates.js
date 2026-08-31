@@ -7,6 +7,13 @@
 // (templates/pratinjau.html?tema=id) dan thumbnail-nya tetap benar.
 // "kategori" dipakai untuk pengelompokan tampilan di grid, terpisah
 // dari struktur folder fisiknya.
+// "tier" menentukan paket harga tema ini ('standar' / 'pro'), dan
+// dibaca kartu tema untuk menampilkan angkanya. Ini SALINAN TAMPILAN
+// saja — nominal yang benar-benar ditagih ditentukan ulang di server
+// dari kategori_desain milik undangan (lihat api/_lib/tema-tier.js).
+// Kalau tier di sini diubah, ubah juga aturan di berkas server itu;
+// keduanya sengaja tidak bisa berbagi berkas karena project ini tanpa
+// build step, sama seperti pasangan pricing-plans.js / harga.js.
 // "ringkas" adalah keterangan pendek yang ditulis DI ATAS foto di kartu
 // tema — ruangnya cuma satu-dua baris, jadi isinya harus ciri yang
 // membedakan tema ini dari dua tema lain, bukan kalimat pemasaran.
@@ -16,6 +23,7 @@ window.THEME_TEMPLATES = [
     id: 'elegan-klasik/sage-rose',
     name: 'Sage Rose',
     kategori: 'Elegan Klasik',
+    tier: 'standar',
     desc: 'Nuansa dusty rose & sage yang lembut, foto utama berbentuk kubah, dan monogram bertinta emas yang menggambar diri saat dibuka.',
     ringkas: 'Dusty rose & sage · sampul terbelah dua pintu',
     thumb: 'templates/elegan-klasik/sage-rose/assets/thumbnail.jpg'
@@ -24,6 +32,7 @@ window.THEME_TEMPLATES = [
     id: 'elegan-klasik/ivory-gold',
     name: 'Ivory Gold',
     kategori: 'Elegan Klasik',
+    tier: 'standar',
     desc: 'Nuansa ivory & emas tua yang formal, motif garis tipis cincin bertaut dan hati kecil, dan tirai emas yang terbuka ke atas saat undangan dibuka.',
     ringkas: 'Ivory & emas tua · tirai yang terbuka ke atas',
     thumb: 'templates/elegan-klasik/ivory-gold/assets/thumbnail.jpg'
@@ -32,6 +41,7 @@ window.THEME_TEMPLATES = [
     id: 'elegan-klasik/emerald-dusk',
     name: 'Emerald Dusk',
     kategori: 'Elegan Klasik',
+    tier: 'standar',
     desc: 'Nuansa resepsi malam: latar hijau zamrud pekat, emas berkilau lembut, dan sampul yang menyingkap dari gelap lewat cahaya hangat yang melebar dari tengah.',
     ringkas: 'Zamrud malam & emas · disingkap oleh cahaya',
     thumb: 'templates/elegan-klasik/emerald-dusk/assets/thumbnail.jpg'
@@ -40,6 +50,7 @@ window.THEME_TEMPLATES = [
     id: 'eropa-mewah/blanc-royale',
     name: 'Blanc Royale',
     kategori: 'Eropa Mewah',
+    tier: 'pro',
     desc: 'Kertas relief putih bercetak timbul dengan ukiran emas antik di keempat sudut sampul. Dibuka dari amplop bersegel lilin emas terlebih dahulu, baru sampulnya, baru undangannya.',
     ringkas: 'Relief putih & ukiran emas · dibuka dari amplop bersegel',
     thumb: 'templates/eropa-mewah/blanc-royale/assets/thumbnail.jpg'
@@ -48,6 +59,7 @@ window.THEME_TEMPLATES = [
     id: 'eropa-mewah/noir-dore',
     name: 'Noir Dore',
     kategori: 'Eropa Mewah',
+    tier: 'pro',
     desc: 'Undangan resepsi malam: kertas hitam pekat berdaun emas, foto utama berbentuk medali bulat, mempelai dalam bingkai ukiran oval, dan rangkaian acara yang menurun pada satu garis emas.',
     ringkas: 'Hitam & emas malam · medali bulat & bingkai oval',
     thumb: 'templates/eropa-mewah/noir-dore/assets/thumbnail.jpg'
@@ -56,6 +68,7 @@ window.THEME_TEMPLATES = [
     id: 'eropa-mewah/bordeaux',
     name: 'Bordeaux',
     kategori: 'Eropa Mewah',
+    tier: 'pro',
     desc: 'Undangan yang dibaca seperti surat lama bersegel lilin merah: lembar demi lembar kertas krem bertepi sobek di atas bidang beludru burgundy, foto dipasang berpenjepit sudut emas, acara berupa kartu tiket, dan hitung mundur di atas empat perangko.',
     ringkas: 'Burgundy & kertas sobek · surat bersegel lilin',
     thumb: 'templates/eropa-mewah/bordeaux/assets/thumbnail.jpg'
@@ -64,6 +77,7 @@ window.THEME_TEMPLATES = [
     id: 'islami/nur-zamrud',
     name: 'Nur Zamrud',
     kategori: 'Islami',
+    tier: 'pro',
     desc: 'Undangan pernikahan Muslim dengan kertas gading, geometri emas, dan lengkung mihrab: dibuka dari sepasang daun pintu, memuat basmalah dan QS. Ar-Rum 21, dengan rangkaian acara di atas satu bidang zamrud pekat.',
     ringkas: 'Gading & zamrud · lengkung mihrab & geometri emas',
     thumb: 'templates/islami/nur-zamrud/assets/thumbnail.jpg'
@@ -72,6 +86,7 @@ window.THEME_TEMPLATES = [
     id: 'islami/nur-lazuardi',
     name: 'Nur Lazuardi',
     kategori: 'Islami',
+    tier: 'pro',
     desc: 'Undangan pernikahan Muslim bernuansa malam: biru lazuardi pekat bertabur bintang emas, semua bukaan foto berbentuk oktagon, dan medali bintang delapan yang membesar saat sampul dibuka.',
     ringkas: 'Lazuardi malam & emas · oktagon & bintang delapan',
     thumb: 'templates/islami/nur-lazuardi/assets/thumbnail.jpg'
@@ -80,6 +95,7 @@ window.THEME_TEMPLATES = [
     id: 'islami/nur-sakinah',
     name: 'Nur Sakinah',
     kategori: 'Islami',
+    tier: 'pro',
     desc: 'Undangan pernikahan Muslim yang tenang dan lapang: marmer gading, tanah liat hangat, kisi mashrabiya, dan semua bukaan foto berpuncak kubah membulat. Sampulnya terbelah diagonal saat dibuka.',
     ringkas: 'Gading & tanah liat · kisi mashrabiya & kubah',
     thumb: 'templates/islami/nur-sakinah/assets/thumbnail.jpg'
@@ -88,6 +104,7 @@ window.THEME_TEMPLATES = [
     id: 'cina/shuangxi-merah',
     name: 'Shuangxi Merah',
     kategori: 'Chinese',
+    tier: 'pro',
     desc: 'Undangan pernikahan Tionghoa klasik: merah delima dan emas, aksara 囍 kebahagiaan ganda, kisi jendela, dan semua bukaan foto berbentuk gerbang bulan. Sampulnya menggulung ke atas seperti gulungan gantung.',
     ringkas: 'Merah delima & emas · aksara 囍 & gerbang bulan',
     thumb: 'templates/cina/shuangxi-merah/assets/thumbnail.jpg'
@@ -96,6 +113,7 @@ window.THEME_TEMPLATES = [
     id: 'cina/giok-langit',
     name: 'Giok Langit',
     kategori: 'Chinese',
+    tier: 'pro',
     desc: 'Undangan pernikahan Tionghoa yang lembut: batu giok dan krem, motif retak es, dan semua bukaan foto berbentuk kipas. Sampulnya mengayun membuka seperti satu bilah kipas lipat.',
     ringkas: 'Giok & krem · bentuk kipas & motif retak es',
     thumb: 'templates/cina/giok-langit/assets/thumbnail.jpg'
@@ -104,6 +122,7 @@ window.THEME_TEMPLATES = [
     id: 'cina/tinta-emas',
     name: 'Tinta Emas',
     kategori: 'Chinese',
+    tier: 'pro',
     desc: 'Undangan pernikahan Tionghoa modern yang sepi: putih tulang, tinta arang, dan satu garis emas. Foto berbentuk gulungan tegak, tanpa pola berulang sama sekali, dan ditutup dengan satu bidang tinta pekat.',
     ringkas: 'Putih tulang & tinta arang · gulungan tegak, tanpa pola',
     thumb: 'templates/cina/tinta-emas/assets/thumbnail.jpg'
@@ -112,6 +131,7 @@ window.THEME_TEMPLATES = [
     id: 'adat/sekar-jagad',
     name: 'Sekar Jagad',
     kategori: 'Adat Tradisional',
+    tier: 'pro',
     desc: 'Undangan pernikahan adat Jawa: kertas gading, sogan cokelat batik, dan motif parang. Semua bukaan foto berbentuk gunungan wayang, dan sampulnya dibuka dengan gunungan yang terangkat seperti awal sebuah lakon.',
     ringkas: 'Gading & sogan · gunungan wayang & motif parang',
     thumb: 'templates/adat/sekar-jagad/assets/thumbnail.jpg'
@@ -120,6 +140,7 @@ window.THEME_TEMPLATES = [
     id: 'adat/pura-bentar',
     name: 'Pura Bentar',
     kategori: 'Adat Tradisional',
+    tier: 'pro',
     desc: 'Undangan pernikahan adat Bali: biru malam, emas ukir, dan terakota bata. Semua bukaan foto berbentuk gerbang candi bentar yang berundak, dengan motif tumpal dan satu bidang terakota di galeri.',
     ringkas: 'Biru malam & terakota · candi bentar & motif tumpal',
     thumb: 'templates/adat/pura-bentar/assets/thumbnail.jpg'
@@ -128,6 +149,7 @@ window.THEME_TEMPLATES = [
     id: 'adat/songket-saga',
     name: 'Songket Saga',
     kategori: 'Adat Tradisional',
+    tier: 'pro',
     desc: 'Undangan pernikahan adat Minang-Melayu: merah saga, emas songket, dan motif belah ketupat tenun. Semua bukaan foto berbentuk belah ketupat memanjang, dengan satu bidang krem di bagian Ucapan & Doa.',
     ringkas: 'Merah saga & emas songket · motif belah ketupat',
     thumb: 'templates/adat/songket-saga/assets/thumbnail.jpg'
@@ -145,7 +167,9 @@ window.THEME_TEMPLATES = [
 // fungsi ini; yang boleh berbeda hanya dikirim lewat opts.
 //
 // opts:
-//   harga      : angka rupiah, atau null kalau kartunya tidak menampilkan harga
+//   tampilkanHarga : true kalau kartunya ikut menampilkan harga paket
+//                    temanya. Angkanya TIDAK dikirim dari sini — kartu
+//                    membacanya sendiri dari t.tier + window.paketSatuan().
 //   tombolPakai: { className, teks }  -- tombol "Gunakan"
 //   tombolLihat: { className, teks }  -- tautan "Pratinjau"
 //   basePath   : awalan path untuk thumb & link pratinjau ('' dari root)
@@ -184,10 +208,15 @@ window.renderThemeCard = function (t, opts) {
   nama.className = 'tpl-nama';
   nama.textContent = t.name;
   baris.appendChild(nama);
-  if (opts.harga != null) {
+  // Harga diambil dari paket tema ini sendiri, bukan dikirim pemanggil.
+  // Sejak katalog punya dua tingkat harga, satu angka untuk semua kartu
+  // akan berbohong pada 12 dari 15 tema — dan yang membacanya adalah
+  // orang yang sedang memutuskan mau membayar atau tidak.
+  var paket = window.paketSatuan ? window.paketSatuan(t.tier || 'standar') : null;
+  if (opts.tampilkanHarga && paket) {
     var harga = document.createElement('span');
     harga.className = 'tpl-harga';
-    harga.textContent = 'Rp' + window.formatRupiah(opts.harga);
+    harga.textContent = 'Rp' + window.formatRupiah(paket.harga);
     baris.appendChild(harga);
   }
 
@@ -210,6 +239,13 @@ window.renderThemeCard = function (t, opts) {
   tagKategori.className = 'tpl-tag tpl-tag-kategori';
   tagKategori.textContent = t.kategori;
   tags.appendChild(tagKategori);
+
+  if (paket) {
+    var tagPaket = document.createElement('span');
+    tagPaket.className = 'tpl-tag tpl-tag-paket tpl-tag-paket-' + (t.tier || 'standar');
+    tagPaket.textContent = 'Paket ' + paket.nama;
+    tags.appendChild(tagPaket);
+  }
 
   var aksi = document.createElement('div');
   aksi.className = 'tpl-aksi';

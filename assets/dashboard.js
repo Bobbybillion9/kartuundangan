@@ -361,7 +361,7 @@
   // relatif dari root yang sama, karena app.html juga ada di root.
   function renderThemeTemplateCard(t){
     return window.renderThemeCard(t, {
-      harga: null,
+      tampilkanHarga: false,
       tombolLihat: { teks: 'Pratinjau' },
       tombolPakai: { teks: 'Gunakan Tema' },
       kelasPakai: 'tpl-use-btn'
@@ -1322,17 +1322,22 @@
   // Ini hanya untuk DITAMPILKAN — nominal yang benar-benar ditagih
   // ditentukan ulang di server (api/_lib/harga.js) dan tidak pernah
   // diambil dari browser.
-  function hargaPaketStandar(){
-    var daftar = (window.PRICING_PLANS && window.PRICING_PLANS.satuan) || [];
-    for (var i = 0; i < daftar.length; i++) {
-      if (daftar[i].tersedia) return daftar[i].harga;
-    }
-    return 0;
+  // Paket satu undangan ditentukan oleh TEMA yang dipakainya, bukan oleh
+  // pilihan terpisah: tema Elegan Klasik masuk paket Standar, dua belas
+  // tema lainnya masuk paket Pro. Yang di sini cuma untuk DITAMPILKAN —
+  // server menghitung ulang paket & nominalnya sendiri dari
+  // kategori_desain milik undangan (api/_lib/tema-tier.js), jadi angka
+  // yang diubah dari browser tidak mengubah apa pun yang ditagih.
+  function paketUntukInvitation(inv){
+    var meta = inv ? findTemplateMetaForInvitation(inv) : null;
+    var tier = (meta && meta.tier) || 'standar';
+    return (window.paketSatuan && window.paketSatuan(tier)) || null;
   }
 
   var bayarBtn = document.getElementById('bayarBtn');
   var bayarKartu = document.getElementById('bayarKartu');
   var bayarKartuHarga = document.getElementById('bayarKartuHarga');
+  var bayarKartuPaket = document.getElementById('bayarKartuPaket');
   var bayarLunas = document.getElementById('bayarLunas');
   var bayarNota = document.getElementById('bayarNota');
   var riwayatBayarBlock = document.getElementById('riwayatBayarBlock');
@@ -1580,7 +1585,9 @@
     // dari tab Harga begitu harganya berubah — dan yang membacanya adalah
     // orang yang sedang memutuskan mau membayar atau tidak. Sudah dua kali
     // terjadi di project ini.
-    if (bayarKartuHarga) bayarKartuHarga.textContent = 'Rp' + window.formatRupiah(hargaPaketStandar());
+    var paketIni = paketUntukInvitation(currentInvitation);
+    if (bayarKartuHarga) bayarKartuHarga.textContent = paketIni ? 'Rp' + window.formatRupiah(paketIni.harga) : '—';
+    if (bayarKartuPaket) bayarKartuPaket.textContent = paketIni ? 'Paket ' + paketIni.nama : '';
     if (bayarKartu) bayarKartu.hidden = false;
     // Notanya kosong: keterangan "gratis sampai diaktifkan" sudah jadi
     // bagian kartu itu sendiri, jadi mengulanginya di bawah cuma menambah
@@ -1686,7 +1693,10 @@
       var r = await fetch('/api/bayar/buat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + sesi.access_token },
-        body: JSON.stringify({ invitation_id: currentInvitation.id, tier: 'standar' })
+        // tier TIDAK dikirim: paket ditentukan server dari tema undangan
+        // ini (api/_lib/tema-tier.js). Mengirimnya dari sini berarti
+        // pembeli bisa memilih sendiri mau ditagih paket yang mana.
+        body: JSON.stringify({ invitation_id: currentInvitation.id })
       });
       hasil = await r.json();
       // Server menolak karena undangannya ternyata sudah lunas — itu

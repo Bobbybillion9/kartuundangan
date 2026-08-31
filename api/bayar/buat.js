@@ -7,11 +7,20 @@
 // semuanya ditentukan di sini —
 //   * SIAPA pemanggilnya  -> dibuktikan dari token akses, bukan dari body
 //   * BERAPA nominalnya   -> dari api/_lib/harga.js, bukan dari body
-//   * PAKET apa           -> divalidasi terhadap katalog server
+//   * PAKET apa           -> diturunkan dari TEMA undangannya sendiri
+//                           (api/_lib/tema-tier.js), bukan dari body
 // Kalau salah satu dari tiga hal itu diambil dari body request, orang bisa
 // membayar Rp1 untuk undangan milik orang lain.
+//
+// Catatan soal paket: sampai 2026-08-31 hanya paket Standar yang bisa
+// dibeli, jadi `tier` dari body cuma divalidasi terhadap katalog dan itu
+// cukup — tidak ada paket lain untuk dipilih. Begitu paket Pro ikut
+// dijual, `tier` dari body berarti pembeli tema Pro bisa mengirim
+// tier:'standar' dan membayar Rp40.000 lebih murah. Field itu sekarang
+// DIABAIKAN.
 
 const { ambilPaket } = require('../_lib/harga');
+const { tierUntukKategori } = require('../_lib/tema-tier');
 const { buatSnapToken, JAM_KEDALUWARSA } = require('../_lib/midtrans');
 const { userDariToken, db } = require('../_lib/supabase');
 
@@ -26,7 +35,6 @@ module.exports = async function handler(req, res) {
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     const invitationId = String(body.invitation_id || '');
-    const tierId = String(body.tier || 'standar');
 
     if (!/^[0-9a-f-]{36}$/i.test(invitationId)) {
       return json(res, 400, { pesan: 'Undangan tidak valid.' });
@@ -38,7 +46,7 @@ module.exports = async function handler(req, res) {
     if (!user) return json(res, 401, { pesan: 'Sesi login tidak valid. Silakan masuk lagi.' });
 
     // 2. Undangannya memang miliknya?
-    const rows = await db('invitations?id=eq.' + invitationId + '&select=id,user_id,status,nama_pria_panggilan,nama_wanita_panggilan');
+    const rows = await db('invitations?id=eq.' + invitationId + '&select=id,user_id,status,kategori_desain,nama_pria_panggilan,nama_wanita_panggilan');
     const inv = Array.isArray(rows) ? rows[0] : null;
     if (!inv) return json(res, 404, { pesan: 'Undangan tidak ditemukan.' });
     if (inv.user_id !== user.id) {
@@ -53,8 +61,10 @@ module.exports = async function handler(req, res) {
       return json(res, 409, { pesan: 'Undangan ini sudah dibayar.', sudah_dibayar: true });
     }
 
-    // 4. Harga dari server.
-    const paket = ambilPaket(tierId);
+    // 4. Paket DAN harga dari server. Paketnya diturunkan dari kategori
+    //    tema yang dipakai undangan ini, bukan dari apa pun yang dikirim
+    //    browser.
+    const paket = ambilPaket(tierUntukKategori(inv.kategori_desain));
     if (!paket) return json(res, 400, { pesan: 'Paket ini belum tersedia untuk dibeli.' });
 
     // 4b. SUDAH PUNYA TAGIHAN YANG MASIH HIDUP? Pakai lagi, jangan buat baru.

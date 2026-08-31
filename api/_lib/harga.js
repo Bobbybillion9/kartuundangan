@@ -6,6 +6,11 @@
 // Kalau api/bayar/buat.js menerima "amount" dari body request, siapa pun
 // bisa membayar Rp1 lalu mendapat undangan aktif.
 //
+// Sejak ada DUA paket yang bisa dibeli, "paket mana" sama rawannya dengan
+// "berapa nominalnya" — dan karena itu juga tidak lagi diambil dari body.
+// Paketnya diturunkan dari tema undangan yang bersangkutan; lihat
+// api/_lib/tema-tier.js.
+//
 // Angka di sini WAJIB dijaga sama dengan assets/pricing-plans.js. Keduanya
 // tidak bisa berbagi berkas karena yang satu dimuat sebagai <script> di
 // browser (menempel ke window) dan yang satu lagi modul CommonJS di
@@ -17,10 +22,18 @@ const PAKET = {
     id: 'standar',
     nama: 'Standar',
     harga: 49000,
-    // Hanya paket yang benar-benar bisa dibeli yang boleh ada di sini.
-    // Pro/Premium/berlangganan masih "Segera Hadir" di katalog tampilan,
-    // jadi sengaja TIDAK didaftarkan — supaya permintaan pembayaran untuk
-    // paket yang belum ada langsung ditolak, bukan diproses diam-diam.
+    // Hanya paket yang benar-benar bisa dibeli yang boleh ada di sini
+    // dengan tersedia:true. Permintaan pembayaran untuk paket yang belum
+    // ada langsung ditolak, bukan diproses diam-diam.
+    tersedia: true
+  },
+  pro: {
+    id: 'pro',
+    nama: 'Pro',
+    harga: 89000,
+    // Dibuka 2026-08-31 bersamaan dengan dua belas tema di kategori
+    // Eropa Mewah, Islami, Chinese, dan Adat Tradisional. Undangan yang
+    // memakai tema di kategori itu ditagih paket ini.
     tersedia: true
   }
 };

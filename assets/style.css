@@ -178,6 +178,17 @@
     .tpl-tag{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
   }
   .tpl-tag[hidden]{display:none;}
+  /* Lencana paket. Warnanya TETAP, bukan var(--accent) — kartu tema
+     duduk di atas foto sampul tema yang bisa terang atau gelap, dan
+     token aksen sendiri berbalik terang/gelap antar tema situs (lihat
+     catatan token warna di memori project). Yang dibutuhkan di sini
+     adalah dua warna yang selalu sama di mana pun kartunya muncul. */
+  .tpl-tag-paket-standar{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.26);}
+  .tpl-tag-paket-pro{
+    background:linear-gradient(135deg,#C9962F,#E7C06A 55%,#B07E22);
+    border-color:rgba(255,255,255,.45);color:#2A1B06;
+    text-shadow:0 1px 0 rgba(255,255,255,.35);
+  }
 
   .tpl-aksi{display:flex;gap:8px;}
   .tpl-ikon{width:17px;height:17px;flex-shrink:0;display:none;}
@@ -230,6 +241,29 @@
   }
   .path-card-email:hover{background:rgba(255,255,255,.55);}
   html[data-theme="dark"] .path-card-email:hover{background:rgba(255,255,255,.08);}
+  /* ---- Bidang "Rancangan khusus" di section Dibuatin Admin ----
+     Dua kolom di layar lebar (teks + aksi yang menempel di kanan), satu
+     kolom di HP. Latarnya lebih pekat dari .path-card supaya terbaca
+     sebagai penawaran yang berbeda jenisnya, bukan kartu ketiga. */
+  .khusus-band{
+    margin-top:var(--s4);
+    display:grid;grid-template-columns:1.6fr .9fr;gap:var(--s5);
+    align-items:center;
+    padding:var(--s5);
+    border-radius:var(--r-lg);
+    border:1px solid var(--accent-tint);
+    background:
+      radial-gradient(circle at 88% 0%,var(--accent-tint),transparent 60%),
+      var(--card);
+    box-shadow:0 24px 60px -46px rgba(90,60,40,.65);
+  }
+  .khusus-band h3{margin:0 0 8px;}
+  .khusus-band > .khusus-teks > p{font-size:14px;margin:0 0 var(--s3);}
+  .khusus-list{margin-bottom:var(--s3);}
+  .khusus-nota{font-size:13px;color:var(--ink-soft);border-left:2px solid var(--accent-tint);padding-left:12px;margin:0;}
+  .khusus-aksi{display:flex;flex-direction:column;gap:10px;}
+  .khusus-tag{background:var(--accent-tint);}
+
   .tag{display:inline-block;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;background:var(--card);color:var(--accent-dark);padding:5px 14px;border-radius:var(--r-full);font-weight:600;margin-bottom:var(--s2);align-self:flex-start;}
   .path-card h3{margin-bottom:6px;}
   .path-card > p{font-size:14px;margin-bottom:var(--s3);}
@@ -313,6 +347,20 @@
   .foot-col li{padding:5px 0;font-size:13.5px;color:var(--ink-mid);}
   .foot-col li a:hover{color:var(--accent-dark);}
   .foot-about p{font-size:13.5px;margin-top:var(--s2);max-width:290px;}
+  /* Kontak lengkap di kolom pertama footer. Barisnya memakai grid dua
+     kolom (ikon + isi) supaya baris alamat yang jatuh ke dua baris tetap
+     rata terhadap ikonnya — dengan flex, teks baris kedua akan menggantung
+     di bawah ikon. */
+  .foot-kontak{list-style:none;margin:var(--s3) 0 0;padding:0;display:flex;flex-direction:column;gap:10px;max-width:290px;}
+  .foot-kontak li{display:grid;grid-template-columns:26px 1fr;align-items:start;gap:9px;padding:0;font-size:13.5px;line-height:1.5;color:var(--ink-mid);}
+  .foot-kontak-ikon{
+    width:26px;height:26px;border-radius:8px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--accent-tint);color:var(--accent-dark);
+  }
+  .foot-kontak-ikon svg{width:14px;height:14px;}
+  .foot-kontak a{color:inherit;overflow-wrap:anywhere;}
+  .foot-kontak a:hover{color:var(--accent-dark);}
   /* ---------- metode pembayaran di footer ----------
      Tujuannya kepercayaan, bukan hiasan: orang perlu tahu bisa bayar
      pakai apa SEBELUM mendaftar, bukan baru saat popup terbuka. Karena
@@ -595,6 +643,12 @@
   .bayar-kartu-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);}
   .bayar-kartu-label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-dark);font-weight:600;margin-bottom:6px;}
   .bayar-kartu-harga{font-family:'Fraunces',serif;font-size:34px;line-height:1.1;font-weight:600;color:var(--ink);margin:0;}
+  .bayar-kartu-paket{
+    display:inline-block;margin-top:6px;padding:3px 10px;border-radius:999px;
+    background:var(--accent-tint);color:var(--accent-dark);
+    font-size:11.5px;font-weight:700;letter-spacing:.04em;
+  }
+  .bayar-kartu-paket:empty{display:none;}
   .bayar-kartu-sekali{font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
   .bayar-kartu-ikon{flex-shrink:0;width:42px;height:42px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;background:var(--accent-tint);color:var(--accent-dark);}
   .bayar-kartu-ikon svg{width:21px;height:21px;}
@@ -971,15 +1025,12 @@
     .tpl-ringkas{font-size:10.5px;line-height:1.4;margin-bottom:7px;
       /* Dipangkas dua baris supaya tinggi isi seragam di kisi sempit */
       display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-    /* Tag kategori disembunyikan di HP. Sekarang ketiga tema sama-sama
-       "Elegan Klasik", jadi barisnya tidak membedakan apa pun — sementara
-       ruang di kartu sesempit ini justru yang paling mahal. Muncul lagi
-       sendiri di layar lebar. */
-    .tpl-tag-kategori{display:none;}
-    /* Barisnya kosong di HP: kategori disembunyikan dan penanda pemakai
-       sudah dibuang, jadi tidak ada jarak yang perlu disisakan untuk baris
-       yang tidak menggambar apa pun. */
-    .tpl-tags{gap:4px;margin-bottom:0;}
+    /* Tag kategori DULU disembunyikan di HP karena ketiga tema sama-sama
+       "Elegan Klasik" sehingga barisnya tidak membedakan apa pun.
+       Katalognya sekarang lima kategori dan DUA tingkat harga, jadi baris
+       inilah yang paling menentukan pilihan — dikembalikan, dengan ukuran
+       yang lebih kecil. */
+    .tpl-tags{gap:4px;margin-bottom:8px;}
     .tpl-tag{font-size:9.5px;padding:3px 7px;}
 
     /* Aksi jadi SEBARIS, bukan bertumpuk. Dua tombol selebar kartu yang
@@ -995,6 +1046,7 @@
     .final-cta{padding:var(--s5) var(--s3);}
     .tier-desc{min-height:auto;}
     .foot-grid{grid-template-columns:1fr 1fr;gap:var(--s4) var(--s3);}
+    .khusus-band{grid-template-columns:1fr;gap:var(--s4);}
     body{padding-bottom:0;}
     .sticky-cta.show ~ footer{padding-bottom:var(--s6);}
   }
@@ -1023,6 +1075,7 @@
     .modal-overlay{padding:var(--s2);}
     .modal-card{padding:var(--s4) var(--s3) var(--s3);}
     .foot-grid{grid-template-columns:1fr;gap:var(--s3);margin-bottom:var(--s4);}
+    .khusus-band{padding:var(--s4);gap:var(--s4);}
     .foot-bottom{flex-direction:column;align-items:flex-start;}
     .price-amount .num{font-size:27px;}
     .faq-item summary{font-size:15px;gap:var(--s2);}

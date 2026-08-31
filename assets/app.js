@@ -547,23 +547,12 @@
   // begitu berhasil masuk (lihat listener 'ku:session' di bawah).
   var PENDING_RETURN_KEY = 'ku-pending-return';
 
-  // Harga paket yang benar-benar bisa dibeli, diambil dari katalog
-  // assets/pricing-plans.js. Dipakai kartu tema supaya angkanya tidak
-  // pernah berbeda dari section Harga di halaman yang sama.
-  function hargaPaketStandar(){
-    var daftar = (window.PRICING_PLANS && window.PRICING_PLANS.satuan) || [];
-    for (var i = 0; i < daftar.length; i++) {
-      if (daftar[i].tersedia) return daftar[i].harga;
-    }
-    return 0;
-  }
-
   // Kartu tema dibangun perender bersama di assets/theme-templates.js —
   // halaman ini dan tab Template Tema di dashboard dulu punya salinan
   // markup masing-masing dan sempat berbeda tanpa alasan.
   function renderLandingThemeCard(t){
     return window.renderThemeCard(t, {
-      harga: hargaPaketStandar(),
+      tampilkanHarga: true,
       tombolLihat: { teks: 'Pratinjau' },
       tombolPakai: { teks: 'Gunakan Tema' },
       kelasPakai: 'landing-tpl-use-btn'

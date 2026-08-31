@@ -20,7 +20,7 @@ window.PRICING_PLANS = {
       harga: 49000,
       tersedia: true,
       fitur: [
-        'Undangan digital, pilihan 3 desain',
+        '3 desain kategori Elegan Klasik',
         'Pilihan palet warna',
         'Foto mempelai & galeri foto',
         'Hitung mundur hari-H',
@@ -34,12 +34,15 @@ window.PRICING_PLANS = {
     {
       id: 'pro',
       nama: 'Pro',
-      deskripsi: 'Untuk yang ingin tampil lebih personal',
+      deskripsi: 'Tema premium bertema budaya, dengan animasi surat',
       harga: 89000,
-      tersedia: false,
+      tersedia: true,
+      sorot: true,
       fitur: [
         'Semua fitur Standar',
-        'Tanpa watermark Kartu Undangan',
+        '12 desain premium: Eropa Mewah, Islami, Chinese, Adat Tradisional',
+        'Animasi surat dibuka dari amplop bersegel lilin',
+        'Ornamen asli per budaya, bukan sekadar ganti warna',
         'Musik latar undangan',
         'Link personal per tamu',
         'Dukungan prioritas via WhatsApp'
@@ -91,6 +94,18 @@ window.PRICING_PLANS = {
   ]
 };
 
+// Cari satu paket satuan berdasarkan id ('standar' / 'pro' / ...).
+// Dipakai kartu tema (assets/theme-templates.js) untuk menampilkan harga
+// tema yang bersangkutan — supaya angka di kartu tema mustahil berbeda
+// dari angka di section Harga pada halaman yang sama.
+window.paketSatuan = function paketSatuan(id){
+  var daftar = (window.PRICING_PLANS && window.PRICING_PLANS.satuan) || [];
+  for (var i = 0; i < daftar.length; i++) {
+    if (daftar[i].id === id) return daftar[i];
+  }
+  return null;
+};
+
 window.formatRupiah = function formatRupiah(n){
   return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
@@ -108,13 +123,22 @@ window.formatRupiah = function formatRupiah(n){
 // di sini.
 window.renderPriceCard = function renderPriceCard(plan, renderAvailableAction){
   var card = document.createElement('div');
-  card.className = 'price-card' + (plan.tersedia ? ' popular' : ' soon');
+  // "popular" (border aksen + pita) sekarang mengikuti plan.sorot, BUKAN
+  // plan.tersedia. Sejak paket Pro ikut dijual ada dua paket tersedia
+  // sekaligus, dan menyoroti keduanya membuat sorotannya tidak menunjuk
+  // apa-apa. Yang disorot satu: paket yang dipakai mayoritas tema.
+  card.className = 'price-card' + (plan.sorot ? ' popular' : '') + (plan.tersedia ? '' : ' soon');
 
   if (!plan.tersedia) {
     var badge = document.createElement('span');
     badge.className = 'pop-badge badge-soon';
     badge.textContent = 'Segera Hadir';
     card.appendChild(badge);
+  } else if (plan.sorot) {
+    var badgeSorot = document.createElement('span');
+    badgeSorot.className = 'pop-badge';
+    badgeSorot.textContent = '12 dari 15 tema';
+    card.appendChild(badgeSorot);
   }
 
   var name = document.createElement('div');
