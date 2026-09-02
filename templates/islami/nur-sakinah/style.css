@@ -75,6 +75,11 @@
   --pembatas-a:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cg fill='none' stroke='%239C7A3C' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M6 15H104M156 15H254'/%3E%3Cpath d='M112 15L130 3L148 15L130 27Z'/%3E%3Cpath d='M118 15L130 8L142 15L130 22Z'/%3E%3Cpath d='M104 15L112 11M104 15L112 19M156 15L148 11M156 15L148 19'/%3E%3C/g%3E%3Ccircle cx='130' cy='15' r='1.8' fill='%239C7A3C'/%3E%3C/svg%3E");
   --pembatas-b:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='30' viewBox='0 0 260 30'%3E%3Cg fill='none' stroke='%239C7A3C' stroke-width='1.1'%3E%3Cpath d='M4 15H86M174 15H256' stroke-linecap='round'/%3E%3Cpath d='M96 15L106 6L116 15L106 24Z'/%3E%3Cpath d='M116 15L130 4L144 15L130 26Z'/%3E%3Cpath d='M144 15L154 6L164 15L154 24Z'/%3E%3C/g%3E%3Cg fill='%239C7A3C' opacity='.8'%3E%3Ccircle cx='90' cy='15' r='1.6'/%3E%3Ccircle cx='170' cy='15' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
   --pembatas-c:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='40' viewBox='0 0 260 40'%3E%3Cg fill='none' stroke='%239C7A3C' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M6 12H112M148 12H254'/%3E%3Cpath d='M130 3V8'/%3E%3Cpath d='M122 8H138'/%3E%3Cpath d='M124 8L120 20C120 28 124 33 130 33C136 33 140 28 140 20L136 8'/%3E%3Cpath d='M122 20H138'/%3E%3Cpath d='M127 33L130 37L133 33'/%3E%3C/g%3E%3Ccircle cx='130' cy='14' r='2' fill='%239C7A3C' opacity='.75'/%3E%3C/svg%3E");
+  /* TIGA MOTIF TAMBAHAN 2026-09-02 — lihat blok "PEMBATAS" di akhir
+     berkas untuk pembagian per-section-nya. */
+  --pembatas-d:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%239C7A3C' stroke-width='1.15' stroke-linecap='round'%3E%3Cpath d='M6 17H104M156 17H254'/%3E%3Cpath d='M104 17L112 13M104 17L112 21M156 17L148 13M156 17L148 21'/%3E%3C/g%3E%3Cpath fill='%239C7A3C' d='M128 4A13 13 0 1 0 128 30A16 16 0 0 1 128 4Z'/%3E%3Cpath fill='%239C7A3C' d='M141 9L143.1 13.3L147.8 14L144.4 17.3L145.2 22L141 19.8L136.8 22L137.6 17.3L134.2 14L138.9 13.3Z'/%3E%3C/svg%3E");
+  --pembatas-e:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%239C7A3C' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 26H96M164 26H254'/%3E%3Cpath d='M101 26V29C101 20 105.95 15.05 110 15.05C114.05 15.05 119 20 119 29V26'/%3E%3Cpath d='M118 26V26C118 14 124.6 7.3999999999999995 130 7.3999999999999995C135.4 7.3999999999999995 142 14 142 26V26'/%3E%3Cpath d='M141 26V29C141 20 145.95 15.05 150 15.05C154.05 15.05 159 20 159 29V26'/%3E%3Cpath d='M96 26H164' opacity='.45'/%3E%3C/g%3E%3Ccircle cx='130' cy='6' r='1.8' fill='%239C7A3C'/%3E%3C/svg%3E");
+  --pembatas-f:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='34' viewBox='0 0 260 34'%3E%3Cg fill='none' stroke='%239C7A3C' stroke-width='1.1' stroke-linecap='round'%3E%3Cpath d='M6 17H106M154 17H254'/%3E%3Crect x='121' y='8' width='18' height='18'/%3E%3Crect x='121' y='8' width='18' height='18' transform='rotate(45 130 17)'/%3E%3Cpath d='M106 17L112 13M106 17L112 21M154 17L148 13M154 17L148 21' opacity='.8'/%3E%3C/g%3E%3Ccircle cx='130' cy='17' r='2.2' fill='%239C7A3C'/%3E%3C/svg%3E");
   --orn-lingkar:url('/templates/_ornamen/lingkar-kaligrafi-emas.webp');
   --orn-arch:url('/templates/_ornamen/arch-mihrab-polos.webp');
   --orn-sudut:url('/templates/_ornamen/sudut-geometris-emas.webp');
@@ -893,3 +898,433 @@ section{position:relative;padding:var(--s7) var(--s5);}
   --kal-tanda-radius:999px 999px 34% 34%;
   --kal-tanda-inset:0%;
 }
+
+/* ============================================================
+   20. MASUKAN USER 2026-09-02 — TUJUH BUTIR UNTUK NUR SAKINAH
+   ------------------------------------------------------------
+   Identitas warna yang user tetapkan: oranye/terakota, mode TERANG.
+   ============================================================ */
+
+/* --- 20a. LATAR AMPLOP & LATAR SURAT: foto Islami sungguhan ---
+   Perintah user: "ganti background animasi buka surat dengan foto
+   background yang berkualitas dan tidak buram."
+
+   Amplopnya dulu memakai `latar-plaster-daun.webp` — tekstur plaster
+   Eropa yang dipinjam dari Blanc Royale. Ia tidak buram, tapi ia juga
+   tidak Islami dan tidak oranye: pada tema yang identitasnya terakota,
+   yang muncul justru bidang krem netral.
+
+   Sekarang dua berkas dari pilihan user sendiri:
+     amplop -> bingkai lentera & ranting cokelat-emas mengelilingi
+               bidang krem (bidang krem itu yang jadi tempat nama tamu
+               dan segel duduk)
+     surat  -> krem dengan mandala emas & pita kaligrafi di tepi kanan,
+               dipasang `fixed` sebagai latar seluruh surat
+   Keduanya di-encode pada 736px, lebar asli sumbernya — 1,55 piksel
+   berkas per piksel CSS pada 390x844, tepat di ambang
+   tools/cek-ketajaman.js. */
+:root{
+  --amplop-kertas:url('/templates/_ornamen/latar-islami-oren-gerbang.webp');
+  --amplop-kertas-ukuran:cover;
+  --amplop-kertas-ulang:no-repeat;
+  --amplop-kertas-posisi:center;
+  --amplop-latar:#3B2415;
+}
+/* Latar surat. `fixed` supaya ia selalu tampil satu layar penuh pada
+   ukurannya sendiri — tanpa itu ia direntangkan sepanjang halaman
+   belasan ribu piksel dan berubah jadi kabut. Lapisan krem DI ATASNYA,
+   bukan opacity: opacity pada wadah ikut meredupkan seluruh isinya. */
+.invitation{
+  background-image:
+    linear-gradient(rgba(246,241,231,.88),rgba(246,241,231,.88)),
+    url('/templates/_ornamen/latar-islami-oren.webp');
+  background-size:100% 100%,cover;
+  background-position:center,center top;
+  background-repeat:no-repeat,no-repeat;
+  background-attachment:scroll,fixed;
+}
+
+/* --- 20b. SAMPUL: cincin dilepas, blok nama rata KIRI ---
+   Perintah user: "hapus frame yang berlebihan pada cover, mainkan style
+   penempatan kalimat dan variasi font dan background style."
+
+   Yang dilepas cincin daun di sekeliling monogram — sesudah itu tidak
+   ada lagi bingkai apa pun di sampul ini.
+
+   Susunannya sengaja dibedakan dari dua tema Islami lain: di sini
+   seluruh blok turun ke kaki dan RATA KIRI, dengan garis terakota tegak
+   sebagai sumbunya. Zamrud memakai blok rata tengah di kaki, Lazuardi
+   blok rata tengah di sepertiga atas. Ketiganya masih memakai markup
+   yang sama persis. */
+.monogram-ring{display:none;}
+.cover-monogram{width:auto;height:auto;margin-bottom:var(--s2);}
+.monogram-letters{
+  position:relative;
+  inset:auto;
+  font-size:19px;
+  letter-spacing:.14em;
+}
+.cover-content{
+  justify-content:flex-end;
+  align-items:flex-start;
+  text-align:left;
+  padding-bottom:var(--s6);
+  padding-left:var(--s5);
+}
+/* Sumbu terakota tegak di tepi kiri blok. Ia yang membuat teks rata
+   kiri terbaca sebagai susunan yang disengaja, bukan sebagai teks yang
+   lupa dipusatkan. */
+.cover-content > .cover-eyebrow,
+.cover-content > .cover-names,
+.cover-content > .cover-date,
+.cover-content > .cover-guest,
+.cover-content > .cover-monogram{
+  padding-left:var(--s3);
+  border-left:1px solid rgba(156,82,56,.34);
+  align-self:stretch;
+}
+.cover-guest{margin-bottom:var(--s3);}
+.cover-eyebrow{font-size:10px;letter-spacing:.44em;margin-bottom:var(--s2);}
+.cover-names{
+  font-size:clamp(36px,11.5vw,48px);
+  line-height:1.14;
+  margin-bottom:var(--s2);
+}
+.cover-names .amp{display:inline;font-size:.42em;margin:0 6px;}
+.cover-date{
+  font-size:11px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  margin-bottom:var(--s4);
+}
+/* Lafaz basmalah dipatok di kepala layar, lepas dari blok nama. */
+.cover-lafaz{
+  position:absolute;
+  top:var(--s5);
+  left:var(--s4);right:var(--s4);
+  margin-bottom:0;
+}
+@media(max-height:640px){
+  .cover-lafaz{top:var(--s3);}
+  .cover-content{padding-bottom:var(--s4);}
+  .cover-names{font-size:clamp(30px,10vw,40px);}
+}
+
+/* --- 20c. FOTO PALING ATAS: penuh ke tepi, lebih tinggi, berkaki renda ---
+   Perintah user: "dibuat agak lebar ke bawah lagi agar foto terlihat
+   luas, dan juga foto full sampai ke atas, jangan sisakan space, lalu
+   kamu berkreasi frame bawah fotonya."
+
+   Rasio 3/4 -> 5/8, padding atas dinolkan (di tema ini var(--s7) = 80px
+   kertas kosong, yang paling tebal dari ketiga tema Islami), dan kaki
+   fotonya diberi PITA RENDA MASHRABIYA — deret lingkaran bersinggungan,
+   motif kisi kayu jendela yang sudah jadi identitas tema ini.
+
+   Siluet potong lama dilepas: siluetnya membuat tepi bawah foto naik di
+   kiri-kanan sementara pita digambar pada garis lurus paling bawah. */
+:root{
+  --fp-hero-rasio:5 / 8;
+  --fp-hero-bentuk:none;
+}
+#fotoUtama{padding-top:0;position:relative;}
+#fotoUtama::after{
+  content:'';
+  position:absolute;
+  left:0;right:0;
+  top:0;
+  /* Kotak setinggi FOTO; pitanya dilukis di kakinya. Persen pada
+     `padding-bottom` dihitung dari LEBAR blok penampung — `top` dalam
+     persen dihitung dari TINGGI dan akan mendarat di section lain. */
+  height:0;
+  padding-bottom:160%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='26' viewBox='0 0 48 26'%3E%3Cpath d='M0 26V13A13 13 0 0 1 24 6A13 13 0 0 1 48 13V26Z' fill='%23F6F1E7'/%3E%3Cpath d='M0 13A13 13 0 0 1 24 6A13 13 0 0 1 48 13' fill='none' stroke='%239C7A3C' stroke-width='1.3' opacity='.8'/%3E%3Ccircle cx='24' cy='17' r='2.2' fill='none' stroke='%239C5238' stroke-width='1' opacity='.7'/%3E%3C/svg%3E");
+  background-size:48px 26px;
+  background-repeat:repeat-x;
+  background-position:center bottom;
+  z-index:3;
+  pointer-events:none;
+}
+@media(min-width:720px){
+  #fotoUtama::after{padding-bottom:75%;}
+}
+
+/* --- 20d. PANEL AYAT: halaman mushaf beriluminasi ---
+   Perintah user: "bagian isian surat QS AR-RUM : 21, karena ini adalah
+   salah satu AYAT Al-Qur'an, coba variasikan seperti design surat pada
+   ayat tersebut yang klasik dan menawan."
+
+   Sebelumnya ayatnya cuma paragraf miring di tengah kertas — tidak ada
+   apa pun yang membedakannya dari kalimat undangan di bawahnya,
+   padahal isinya firman.
+
+   Bentuknya KUBAH: lengkung bulat yang sudah jadi bentuk tema ini
+   (--kubah dipakai bukaan foto, petak galeri, dan pelat kalender).
+   Bingkai emas rangkap di dalamnya — tebal di luar, garis rambut di
+   sebelahnya, persis cara halaman mushaf cetak dibingkai. Di sini
+   `border` boleh dipakai karena bentuknya border-radius, BUKAN
+   clip-path. */
+.mushaf{
+  position:relative;
+  max-width:340px;
+  margin:0 auto var(--s5);
+  padding:var(--s6) var(--s4) var(--s5);
+  background:var(--card);
+  border:1.5px solid var(--gold);
+  border-radius:999px 999px var(--r-lg) var(--r-lg);
+  box-shadow:0 18px 40px -28px rgba(60,42,26,.4);
+}
+.mushaf::before{
+  content:'';
+  position:absolute;
+  inset:5px;
+  border:1px solid var(--gold);
+  border-radius:999px 999px var(--r-sm) var(--r-sm);
+  opacity:.42;
+  pointer-events:none;
+}
+/* Renda mashrabiya tipis di kaki panel — penutup halaman. */
+.mushaf::after{
+  content:'';
+  position:absolute;
+  left:14px;right:14px;bottom:10px;
+  height:10px;
+  background-image:var(--mashrabiya);
+  background-size:24px 24px;
+  background-position:center;
+  opacity:.5;
+  pointer-events:none;
+}
+.ayat-arab{
+  font-family:'Amiri',serif;
+  /* 2,15: harakat digambar DI ATAS dan DI BAWAH garis huruf, jadi baris
+     yang rapat membuat fathah baris bawah menyentuh kasrah baris atas. */
+  line-height:2.15;
+  font-size:clamp(17px,4.8vw,20px);
+  color:var(--liat-tua);
+  text-align:center;
+  margin:0 0 var(--s3);
+}
+.ayat-arab::after{
+  content:'';
+  display:block;
+  width:64px;height:1px;
+  margin:var(--s3) auto 0;
+  background:var(--gold);
+  opacity:.5;
+}
+.mushaf .quote{
+  font-size:14px;
+  line-height:1.85;
+  margin:0 0 var(--s2);
+  max-width:none;
+}
+.mushaf .quote-rujukan{
+  font-size:10px;
+  letter-spacing:.26em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin:0 0 var(--s3);
+}
+
+/* --- 20e. ACARA: satu kartu berkubah, dua acara ---
+   Perintah user: "AKAD NIKAH DAN RESEPSI bisa dikombinasikan stylenya,
+   coba dipikirkan caranya, tidak kaku designnya."
+
+   Yang kaku sebelumnya: dua kartu bergaris atas yang identik, masing-
+   masing dengan kubah kecil menunggangi garisnya. Dua penanda yang sama
+   berurutan terbaca sebagai daftar, bukan sebagai susunan acara.
+
+   Sekarang SATU kartu berkubah yang memuat keduanya, dipisah ornamen
+   hilal. Kubah kecilnya tinggal SATU — di kepala kartu. */
+#acara .event-list{
+  gap:0;
+  position:relative;
+  margin-top:var(--s6);
+  padding:var(--s5) var(--s4) var(--s4);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:999px 999px var(--r-lg) var(--r-lg);
+  box-shadow:0 16px 34px -26px rgba(60,42,26,.35);
+}
+/* Kubah kecil menunggangi kepala KARTU, bukan tiap acara. */
+#acara .event-list::before{
+  content:'';
+  position:absolute;left:50%;top:-13px;
+  width:26px;height:26px;
+  transform:translateX(-50%);
+  background:var(--ivory);
+  border:1px solid var(--line);
+  border-radius:999px 999px 0 0;
+  border-bottom:none;
+}
+#acara .event-card{
+  border-top:0;
+  border-radius:0;
+  padding:0;
+}
+#acara .event-card::before{content:none;}
+#acara .event-card + .event-card{
+  margin-top:var(--s4);
+  padding-top:var(--s5);
+}
+#acara .event-card + .event-card::before{
+  content:'';
+  position:absolute;
+  left:50%;top:0;
+  width:min(200px,72%);height:30px;
+  transform:translateX(-50%);
+  background-image:var(--pembatas-d);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  opacity:.8;
+  background-color:transparent;
+  border:0;
+  border-radius:0;
+}
+
+/* --- 20f. PLAT LOKASI menggantikan denah ---
+   Perintah user: "hapus konsep peta/denah pada surat, diganti dengan
+   memainkan elemen yang identik dengan Islami, namun tetap elegan."
+
+   PAPAN NAMA PINTU MASUK berkubah, dengan renda mashrabiya di kakinya.
+   Zamrud memakai mihrab runcing, Lazuardi oktagon; ketiganya karena itu
+   tetap terbaca berbeda pada bagian yang sama. */
+.plat-lokasi{
+  position:relative;
+  max-width:320px;
+  margin:0 auto var(--s4);
+  padding:var(--s5) var(--s4) var(--s4);
+  background:var(--liat);
+  border-radius:999px 999px var(--r-lg) var(--r-lg);
+  box-shadow:0 18px 34px -24px rgba(60,42,26,.5);
+}
+.plat-lokasi::before{
+  content:'';
+  position:absolute;
+  inset:6px;
+  border:1px solid rgba(255,250,240,.42);
+  border-radius:999px 999px var(--r-sm) var(--r-sm);
+  pointer-events:none;
+}
+.plat-lokasi .peta-eyebrow{
+  font-size:9.5px;
+  letter-spacing:.3em;
+  color:rgba(255,250,240,.78);
+  margin-bottom:var(--s2);
+}
+.plat-lokasi .venue-name{
+  font-family:'Amiri',serif;
+  font-size:clamp(17px,4.8vw,20px);
+  line-height:1.35;
+  color:#FFFAF0;
+  margin-bottom:8px;
+}
+.plat-lokasi .venue-name::after{
+  content:'';
+  display:block;
+  width:42px;height:1px;
+  margin:10px auto 0;
+  background:#FFFAF0;
+  opacity:.5;
+}
+.plat-lokasi .venue-address{
+  font-size:13px;
+  color:rgba(255,250,240,.8);
+  margin:0;
+  max-width:none;
+}
+
+/* --- 20g. PEMBATAS: enam motif, bukan tiga ---
+   Perintah user: "ornamen antar pembatas masih kurang kaya akan
+   variasi." Ketiga motif barunya (--pembatas-d/e/f) ada di :root;
+   alasannya ditulis di sana. Pembagiannya PER-SECTION, bukan nth-child,
+   supaya tetap benar walau urutan section ditukar. */
+#pembuka   .nz-divider{background-image:var(--pembatas-a);}
+#mempelai  .nz-divider{background-image:var(--pembatas-e);}
+#acara     .nz-divider{background-image:var(--pembatas-f);}
+#countdown .nz-divider{background-image:var(--pembatas-c);}
+#galeri    .nz-divider{background-image:var(--pembatas-b);}
+#rsvp      .nz-divider{background-image:var(--pembatas-d);}
+#ucapan    .nz-divider{background-image:var(--pembatas-e);}
+#hadiah    .nz-divider{background-image:var(--pembatas-c);}
+#penutup   .nz-divider{background-image:var(--pembatas-f);}
+
+/* --- 20h. PERBAIKAN SESUDAH DILIHAT ---
+   Tiga hal yang cuma muncul setelah panelnya dipotret, bukan dari
+   membaca kodenya. */
+
+/* 1. #pembuka di tema ini adalah bidang TERAKOTA, dan blok lama
+   menyetel `#pembuka p{color:...}` ke warna terang supaya terbaca di
+   atasnya. Panel mushaf membawa KERTAS KRIM sendiri ke dalam bidang
+   itu — jadi terjemahan ayatnya jadi krem di atas krem dan hilang sama
+   sekali. Tidak ada error; tulisannya cuma tidak ada.
+   Warnanya karena itu ditulis ulang di dalam panel. */
+.mushaf .quote,
+#pembuka .mushaf .quote{color:var(--ink-mid);}
+.mushaf .ayat-arab,
+#pembuka .mushaf .ayat-arab{color:var(--liat-tua);}
+.mushaf .quote-rujukan,
+#pembuka .mushaf .quote-rujukan{color:var(--gold);}
+
+/* 2. Renda mashrabiya di kaki panel DILEPAS. Teranya 48px berisi
+   lingkaran yang saling memotong; dipotong jadi pita setinggi 10px yang
+   terlihat bukan renda melainkan deretan segi empat kecil. Motif yang
+   dibuat untuk BIDANG tidak bisa dipakai sebagai PITA hanya dengan
+   mengecilkan kotaknya. */
+.mushaf::after{content:none;}
+
+/* 3. Kubah plat lokasi: 999px pada kotak yang LEBAR membuat radiusnya
+   dibatasi setengah lebar — yang tergambar setengah lingkaran penuh,
+   dan teks di dalamnya terjepit di sepertiga bawah. Radius elips
+   memisahkan lengkung mendatar dari tingginya. */
+.plat-lokasi{
+  border-radius:50% 50% var(--r-lg) var(--r-lg) / 68px 68px var(--r-lg) var(--r-lg);
+  padding-top:var(--s6);
+}
+.plat-lokasi::before{
+  border-radius:50% 50% var(--r-sm) var(--r-sm) / 62px 62px var(--r-sm) var(--r-sm);
+}
+
+/* Pelat kalender di dalam kartu acara gabungan: bentuk kubahnya
+   dilepas. Kartunya sendiri sudah berkubah, dan kubah di dalam kubah
+   membuat keduanya saling meniru tanpa ada yang menang. Kisi & garisnya
+   tetap; yang dilepas cuma bentuk dan bayangannya. */
+#acara .kal-kisi{
+  border-radius:0;
+  box-shadow:none;
+  background:none;
+  max-width:280px;
+}
+
+/* Tombol "Ketuk untuk membuka" diberi alas.
+   Latar amplop yang baru membawa gambar Al-Quran di atas rehal persis
+   di kaki layar — tempat tombol itu berdiri — dan hurufnya jadi
+   bertumpuk dengan sampul kitab dan tasbih.
+
+   Percobaan pertama memperkuat --amplop-kabut. Itu tidak berpengaruh
+   sama sekali, dan sebabnya pantas dicatat: --amplop-kabut DISETEL oleh
+   kelima belas tema tapi TIDAK PERNAH DIBACA assets/amplop.css. Ia
+   variabel mati. Mengubahnya terlihat seperti perbaikan yang gagal,
+   padahal tidak ada yang membacanya.
+
+   Menggeser latarnya juga tidak bisa: gambar 736x1308 lebih LEBAR dari
+   rasio layar, jadi background-size:cover memangkasnya MENDATAR dan
+   nilai tegak background-position tidak dipakai sama sekali.
+
+   Yang bekerja: alas pada tombolnya sendiri. amplop.css tidak menyetel
+   `background` pada .amplop-petunjuk, jadi deklarasi dari berkas tema
+   ini menang walau dimuat lebih dulu. */
+.amplop-petunjuk{
+  background:rgba(250,245,236,.90);
+  box-shadow:0 2px 14px rgba(250,245,236,.9);
+}
+
+/* Garis belah DILEPAS. Ia jahitan antara dua daun sampul yang bergeser
+   diagonal saat dibuka — dan selama sampul masih diam, yang terlihat
+   cuma satu garis rambut melintang dari sudut ke sudut, menembus foto
+   DAN nama mempelai. Pola yang sama sudah ditemukan di Blanc Royale
+   (.curtain-seam): elemen jahitan yang berguna saat bergerak, tapi
+   terbaca sebagai coretan saat diam.
+   Gerak membelahnya tetap terbaca dari fotonya sendiri yang terbelah. */
+.cover-garis-belah{display:none;}

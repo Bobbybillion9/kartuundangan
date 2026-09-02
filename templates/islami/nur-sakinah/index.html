@@ -168,8 +168,20 @@
            yang lazim pada undangan pernikahan Muslim di Indonesia:
            salam -> ayat -> maksud mengundang. -->
       <p class="salam" data-rv="text" style="--d:1">Assalamu'alaikum Warahmatullahi Wabarakatuh</p>
-      <p class="quote" data-rv="text" style="--d:2">Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya di antaramu rasa kasih dan sayang.</p>
-      <p class="quote-rujukan" data-rv="text" style="--d:3">QS. Ar-Rum : 21</p>
+      <!-- PANEL MUSHAF. Ayat Al-Qur'an dibingkai seperti satu halaman
+           mushaf beriluminasi: teks Arab, terjemahan, lalu rujukan
+           suratnya. Bingkai & ornamennya digambar style.css tiap tema
+           lewat .mushaf (lihat blok "PANEL AYAT"), jadi bentuknya beda
+           di ketiga tema walau markupnya sama.
+           CATATAN UNTUK YANG MENYENTUH INI: teks Arab di bawah adalah
+           ayat Al-Qur'an. Jangan pernah "merapikan" spasi, harakat, atau
+           tanda waqaf-nya untuk alasan tata letak — perbaiki tata
+           letaknya di CSS. -->
+      <div class="mushaf" data-rv="text" style="--d:2">
+        <p class="ayat-arab" lang="ar" dir="rtl">وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ</p>
+        <p class="quote" data-rv="text" style="--d:3">Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan hidup dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya di antaramu rasa kasih dan sayang.</p>
+        <p class="quote-rujukan" data-rv="text" style="--d:4">QS. Ar-Rum : 21</p>
+      </div>
       <p class="opening-text center" data-slot="kalimat_pembuka" data-rv="text" style="--d:4">Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami. Merupakan suatu kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
     </section>
 
@@ -265,46 +277,23 @@
       </div>
 
       <div class="venue" data-rv="text" style="--d:5">
-      <!-- DENAH LOKASI. Menggantikan dua baris alamat telanjang.
-           Bukan peta sungguhan (kita tidak punya koordinatnya sampai
-           user mengisi link maps): denah bergaya yang memberi bagian
-           ini bentuk, dengan tombol yang tetap membuka peta asli. -->
-      <div class="peta" aria-hidden="true">
-        <svg class="peta-denah" viewBox="0 0 320 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g stroke="currentColor" fill="none" opacity=".22">
-            <rect x="14" y="16" width="74" height="44" rx="2" stroke-width="1"/>
-            <rect x="14" y="86" width="74" height="48" rx="2" stroke-width="1"/>
-            <rect x="126" y="16" width="96" height="34" rx="2" stroke-width="1"/>
-            <rect x="126" y="100" width="60" height="34" rx="2" stroke-width="1"/>
-            <rect x="240" y="86" width="66" height="48" rx="2" stroke-width="1"/>
-          </g>
-          <g stroke="currentColor" fill="none" opacity=".38" stroke-width="7" stroke-linecap="round">
-            <path d="M104 4V146"/>
-            <path d="M4 73H316"/>
-          </g>
-          <g stroke="currentColor" fill="none" opacity=".9" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="5 5">
-            <path d="M40 132C40 108 74 104 104 104C140 104 152 92 152 73C152 54 176 46 206 46"/>
-          </g>
-          <circle cx="40" cy="132" r="4" fill="currentColor" opacity=".55"/>
-          <g transform="translate(206 46)">
-            <path d="M0 -26C-8 -26 -14 -20 -14 -12C-14 -3 0 12 0 12C0 12 14 -3 14 -12C14 -20 8 -26 0 -26Z" fill="currentColor" opacity=".92"/>
-            <circle cx="0" cy="-13" r="4.6" fill="var(--card,#fff)"/>
-          </g>
-        </svg>
-        <span class="peta-kompas">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="24" cy="24" r="21" stroke="currentColor" stroke-width="1.2" fill="none"/>
-            <circle cx="24" cy="24" r="15" stroke="currentColor" stroke-width=".8" fill="none" opacity=".5"/>
-            <path d="M24 6L28.5 21.5L24 24L19.5 21.5Z" fill="currentColor"/>
-            <path d="M24 42L19.5 26.5L24 24L28.5 26.5Z" fill="currentColor" opacity=".35"/>
-            <path d="M24 2V6M24 42V46M2 24H6M42 24H46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span class="peta-jarak">Denah menuju lokasi</span>
-      </div>
-      <p class="peta-eyebrow">Lokasi Acara</p>
-        <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
-        <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
+      <!-- Denah lokasi bergaya DIHAPUS 2026-09-02 atas perintah user
+           ("hapus konsep peta/denah pada surat"). Ia memang bukan peta —
+           koordinatnya tidak kita punya sampai user mengisi link maps —
+           jadi yang tergambar jalan karangan, dan di undangan pernikahan
+           itu terbaca sebagai pengisi ruang. Penggantinya PLAT LOKASI di
+           style.css tiap tema: benda yang sama maknanya (papan nama di
+           pintu masuk), tapi bentuknya diambil dari perbendaharaan
+           Islami masing-masing tema — mihrab, oktagon, mashrabiya. -->
+        <!-- PLAT LOKASI. Wadah ini yang diberi bentuk & latar oleh
+             style.css tiap tema. Tombol Petunjuk Arah sengaja DI LUAR
+             plat: ia perbuatan, bukan keterangan, dan di dalam plat ia
+             terbaca sebagai bagian dari papan namanya. -->
+        <div class="plat-lokasi">
+          <p class="peta-eyebrow">Lokasi Acara</p>
+          <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
+          <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
+        </div>
         <a class="btn-outline" data-slot="lokasi_maps_url" href="https://www.google.com/maps/search/?api=1&query=Gedung+Serbaguna+Bale+Asri+Jl+Melati+No+21+Bandung" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           Petunjuk Arah
