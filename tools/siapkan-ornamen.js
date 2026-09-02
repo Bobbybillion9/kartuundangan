@@ -163,12 +163,16 @@ const ORNAMEN = [
     lebar: 736, mutu: 0.7,
     catatan: 'bingkai timbul bermotif renda, punya bidang kosong di tengah'
   },
-  {
-    keluaran: 'latar-hitam-emas.webp',
-    sumber: 'BACKGROUND FULL ORNAMENT/REGULAR/847239748695884284.jpg',
-    lebar: 736, mutu: 0.72,
-    catatan: 'hitam pekat dengan botani emas di tepi kiri — untuk tema malam'
-  },
+  // latar-hitam-emas.webp DIHAPUS 2026-09-02 atas perintah user
+  // ("background yang kamu pakai sekarang terlihat buram"). Sumbernya
+  // 736x1104 — dan itu ukuran ASLINYA, jadi menaikkan `lebar` tidak
+  // menolong sama sekali: skrip ini tidak pernah memperbesar. Dipakai
+  // background-size:cover pada 390x844 ia dilukis 562x844, yaitu 1,31
+  // piksel berkas per piksel CSS. SELURUH folder latar milik user
+  // berhenti di 736px, jadi tidak ada foto pengganti yang bisa tajam.
+  // Noir Dore sekarang memakai POLA SVG yang digambar sendiri di
+  // :root-nya — tajam di DPI berapa pun dan 1,2 KB. Lihat catatan
+  // panjang di templates/eropa-mewah/noir-dore/style.css.
   {
     keluaran: 'latar-burgundy-kertas.webp',
     sumber: 'BACKGROUND FULL ORNAMENT/REGULAR/872783602825743437.jpg',
@@ -246,7 +250,10 @@ const ORNAMEN = [
   {
     keluaran: 'bebas-jam-rococo.webp',
     sumber: 'FREE ORNAMENT/1030409589791219572-removebg-preview.png',
-    lebar: 320, mutu: 0.9, alpha: true,
+    // 320 -> 441 (ukuran asli sumbernya) 2026-09-02. Pada 320 ia dilukis
+    // 164x210 di Blanc Royale — cuma 1,96 piksel berkas per piksel CSS,
+    // yaitu lebih rendah daripada layar HP 2x, apalagi 3x.
+    lebar: 441, mutu: 0.9, alpha: true,
     catatan: 'jam rococo emas — untuk bagian Hitung Mundur'
   },
 
@@ -273,7 +280,9 @@ const ORNAMEN = [
   {
     keluaran: 'monogram-lingkar-emas.webp',
     sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/WEDDIN_1-removebg-preview.png',
-    lebar: 420, mutu: 0.9, alpha: true,
+    // 420 -> 500 (ukuran asli sumbernya) 2026-09-02: dilukis 246px di
+    // Blanc Royale, jadi 420px cuma 1,71x — terlihat lunak di HP.
+    lebar: 500, mutu: 0.9, alpha: true,
     catatan: 'lingkaran emas bermahkota — latar monogram inisial'
   },
   {
@@ -294,7 +303,11 @@ const ORNAMEN = [
     // Dipangkas: gambar sumbernya punya margin transparan lebar, dan
     // dengan background-size:contain margin itu ikut dihitung sehingga
     // angsanya menyusut jauh di dalam kotaknya.
-    lebar: 380, mutu: 0.9, alpha: true, pangkas: true,
+    // 380 -> 420 (ukuran asli sumbernya) 2026-09-02. Sesudah dipangkas
+    // hasilnya cuma 305px sementara Blanc Royale melukisnya 279px — 1,09x,
+    // praktis diperbesar begitu layarnya 2x. Ini yang paling parah dari
+    // seluruh daftar sesudah garis-d.
+    lebar: 420, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'dua angsa berhadapan membentuk hati — penutup bagian galeri'
   },
 
@@ -302,27 +315,27 @@ const ORNAMEN = [
   {
     keluaran: 'garis-a.webp',
     sumber: 'LINE ORNAMENT/37647346881472345.jpg',
-    lebar: 560, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    lebar: 736, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
     catatan: 'garis tipis dengan sulur kecil di tengah — pembatas paling tenang'
   },
   {
     keluaran: 'garis-b.webp',
     sumber: 'LINE ORNAMENT/884816658062299109.jpg',
-    lebar: 560, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    lebar: 736, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
     catatan: 'sulur baroque penuh — pembatas paling ramai'
   },
   {
     keluaran: 'garis-c.webp',
     sumber: 'LINE ORNAMENT/Gold Line Divider Ornament, Divider, Line Dividers, Line PNG Transparent Clipart Image and PSD File for Free Download.jpg',
-    lebar: 560, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    lebar: 736, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
     catatan: 'garis halus bermotif tengah kecil — pembatas sedang'
   },
-  {
-    keluaran: 'garis-d.webp',
-    sumber: 'LINE ORNAMENT/Яндекс Картинки_ поиск изображений в интернете, поиск по картинке.jpg',
-    lebar: 560, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
-    catatan: 'sulur baroque tebal & mengalir — pembatas untuk tema gelap'
-  },
+  // garis-d.webp DIHAPUS 2026-09-01 atas perintah user ("ornamen yang
+  // terlihat sangat buram"). Sumbernya cuma 480x237 dan sudah paling
+  // kecil di seluruh daftar ini: dipakai selebar 352px pada layar 3x
+  // DPI ia diperbesar 2,2 kali, dan hasilnya benar-benar terlihat kabur.
+  // Warnanya juga emas JINGGA, yang di sebelah emas dingin tema Noir
+  // Dore terbaca sebagai bahan yang berbeda. Penggantinya di bawah.
 
   // --- bingkai & lingkaran untuk tema kedua eropa-mewah ---
   {
@@ -388,7 +401,9 @@ const ORNAMEN = [
   {
     keluaran: 'mahkota-bunga-emas.webp',
     sumber: 'FREE ORNAMENT/957155727076148201-removebg-preview.png',
-    lebar: 300, mutu: 0.9, alpha: true, pangkas: true,
+    // 300 -> 375 (ukuran asli sumbernya) 2026-09-02: dipakai ketiga tema
+    // Adat pada 150px, jadi 300px sesudah pangkas cuma 1,91x.
+    lebar: 375, mutu: 0.9, alpha: true, pangkas: true,
     // Disiapkan untuk Bordeaux lalu TIDAK jadi dipakai: sesudah dilihat
     // hasilnya, mahkota ini bergaya gunungan/Jawa, bukan Eropa. Dibiarkan
     // di sini karena kategori "Adat Tradisional" nanti justru mencarinya.
@@ -421,16 +436,69 @@ const ORNAMEN = [
     warnai: { gelap: '#7A5C1C', terang: '#E8CE90' },
     catatan: 'lengkung kubah bermotif titik, sumbernya navy — mahkota bagian'
   },
+  // --- LATAR ISLAMI PILIHAN USER (2026-09-02) ---
+  // User menyiapkan sendiri 14 gambar di folder ISLAMIC dan MENAMAI ULANG
+  // semuanya menurut warna ("ISLAMIC GREEN BACKGROUND (2).jpg"), lalu
+  // menulis: "kamu boleh berkreasi yang mana lebih cocok, sudah saya
+  // rename sesuai dengan warna dan kecocokannya, tinggal kamu eksekusi".
+  //
+  // Kelimanya dipilih dengan MATA dari lembar kontak, bukan dari nama
+  // berkasnya — nama file di folder itu tidak menggambarkan isinya, dan
+  // yang membedakan "latar yang tenang di belakang teks" dari "latar yang
+  // berebut dengan teks" cuma bisa dilihat.
+  //
+  // Dua peran yang berbeda, dan pemilihannya mengikuti peran itu:
+  //   - LATAR SURAT  -> harus TENANG: motifnya besar, tidak ada garis
+  //     halus yang menuntut ketajaman, dan ada bidang kosong tempat teks
+  //     duduk. Dipakai penuh layar di belakang seluruh isi surat.
+  //   - LATAR GERBANG -> boleh RAMAI: dipakai HANYA di tahap amplop yang
+  //     tidak membawa teks panjang, jadi ukiran padatnya justru dicari.
+  //
+  // Semuanya di-encode pada LEBAR ASLI sumbernya (736px). Menurunkannya
+  // seperti latar lain (675/700px) akan langsung menabrak keluhan user
+  // yang baru saja soal latar buram: pada 390x844 dengan background-size
+  // cover, gambar 736x1308 dilukis 475px lebar — 1,55 piksel berkas per
+  // piksel CSS. Itu batas yang masih diterima tools/cek-ketajaman.js,
+  // dan tidak ada ruang untuk dikecilkan lagi.
   {
-    keluaran: 'latar-mihrab-lembut.webp',
-    sumber: 'BACKGROUND FULL ORNAMENT/ISLAMIC/292522938312851282.jpg',
-    lebar: 700, mutu: 0.72,
-    // Disiapkan untuk Nur Zamrud lalu tidak jadi dipakai: temanya
-    // memakai jaring girih yang digambar SVG, dan dua latar bermotif
-    // bertumpuk saling berebut. Dibiarkan karena tema Islami ke-2/ke-3
-    // (yang tidak memakai girih) justru mencarinya. BUKAN aset yatim.
-    catatan: 'siluet arch mihrab pada kertas bertekstur — cadangan untuk tema Islami berikutnya, belum dipakai'
+    keluaran: 'latar-islami-hijau.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/ISLAMIC/ISLAMIC GREEN BACKGROUND (2).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'hijau zamrud + geometri emas di kepala, lengkung krem lebar di tengah — amplop & sampul Nur Zamrud'
   },
+  // latar-islami-navy.webp (ISLAMIC BLUE BACKGROUND (3)) DIBUANG lagi
+  // pada hari yang sama: gambarnya paling tenang dari keempat pilihan
+  // biru, tapi sumbernya cuma 640x1139 dan dengan background-size:cover
+  // pada 390x844 ia dilukis 474px — 1,35 piksel berkas per piksel CSS,
+  // di BAWAH ambang tools/cek-ketajaman.js dan persis serapat latar
+  // hitam Noir Dore yang baru saja ditolak user karena buram. Nur
+  // Lazuardi memakai latar-islami-navy-gerbang.webp (736x1308 -> 1,55).
+  {
+    keluaran: 'latar-islami-navy-gerbang.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/ISLAMIC/ISLAMIC BLUE BACKGROUND (2).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'gerbang ukir emas di atas navy, berlentera & berbintang — amplop Nur Lazuardi'
+  },
+  {
+    keluaran: 'latar-islami-oren.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/ISLAMIC/ISLAMIC ORANGE BACKGROUND (6).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'krem dengan mandala emas & pita kaligrafi di tepi kanan — LATAR SURAT Nur Sakinah'
+  },
+  {
+    keluaran: 'latar-islami-oren-gerbang.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/ISLAMIC/ISLAMIC ORANGE BACKGROUND (2).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'bingkai lentera & ranting cokelat-emas mengelilingi bidang krem — amplop Nur Sakinah'
+  },
+  // latar-mihrab-lembut.webp DIHAPUS 2026-09-02 atas perintah user
+  // ("ganti background animasi buka surat dengan foto background yang
+  // berkualitas dan tidak buram, hapus file yang buram"). Ia memang pucat
+  // dan berkabut — abu kebiruan — dan pada Nur Zamrud, yang identitasnya
+  // HIJAU TUA, ia bahkan tidak membawa warna temanya sama sekali.
+  // Sumbernya juga sudah tidak ada: user mengganti seluruh isi folder
+  // ISLAMIC dengan 14 gambar baru yang dinamai menurut warna.
+  // Penggantinya latar-islami-hijau.webp di atas.
   {
     keluaran: 'segel-bulan-hijau.webp',
     sumber: 'WAX SEALS/WAX STAMPS (11).png',
@@ -507,7 +575,10 @@ const ORNAMEN = [
   {
     keluaran: 'lentera-cina-emas.webp',
     sumber: 'UNDUHAN CLAUDE/lentera-cina-emas.png',
-    lebar: 300, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    // 300 -> 360 (ukuran asli sumbernya) 2026-09-02. Sumbernya memang
+    // cuma 360px; sesudah dipangkas hasilnya ~140px, jadi batas pakainya
+    // TETAP sekitar 70px CSS. Jangan dipakai lebih besar dari itu.
+    lebar: 360, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
     catatan: 'lentera gantung emas berumbai — sumbernya cuma 360px, jangan dipakai lebih besar dari ~200px'
   },
   {
