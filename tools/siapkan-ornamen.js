@@ -645,6 +645,31 @@ const ORNAMEN = [
     sumber: 'FREE ORNAMENT/ornamen_bali-removebg-preview.png',
     lebar: 340, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'ornamen ukir Bali emas melingkar — ikon tema Bali'
+  },
+
+  // --- latar Tionghoa, 2026-09-03 ---
+  // Diminta user untuk Tinta Emas: amplopnya sebelumnya hitam polos
+  // (sekadar --amplop-warna + satu gradasi cahaya) dan terbaca sebagai
+  // layar mati, bukan sebagai amplop. Keduanya emas di atas hitam —
+  // sewarna dengan janji tema itu — dan dipilih dari 31 berkas milik
+  // user atas dua sifat yang tidak kelihatan dari thumbnail:
+  //   (13) TENGAHNYA KOSONG, jadi segel lilin di tengah layar tidak
+  //        jatuh di atas ornamen apa pun.
+  //   (2)  cincin ukirnya BERADA DI TENGAH horizontal, jadi ia bisa
+  //        dipakai sebagai gerbang bulan yang membingkai nama gedung.
+  // 736px pada layar 390 CSS = 1,88 piksel berkas per piksel CSS, di
+  // atas ambang tools/cek-ketajaman.js.
+  {
+    keluaran: 'latar-cina-ranting-emas.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE BLACK BACKGROUND (13).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'arang dengan ranting sakura emas di kepala & ombak emas di kaki, tengah kosong — amplop Tinta Emas'
+  },
+  {
+    keluaran: 'latar-cina-gerbang-bulan.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE BLACK BACKGROUND (2).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'cincin ukir emas berisi siluet gunung di atas hitam, awan emas di kaki — gerbang bulan lokasi Tinta Emas'
   }
 ];
 

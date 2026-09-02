@@ -23,6 +23,13 @@
 // pada baris pertama berbeda tiap bulan, dan jumlah harinya juga. Itu
 // sebabnya seluruh isi kalender dibangun di sini.
 //
+// SATU PENGECUALIAN, 2026-09-03: Tinta Emas. User mengirim acuan
+// khusus untuk tema itu — lembar ALMANAK Tionghoa (pita bulan, satu
+// angka besar, sepasang bait tegak mengapitnya). Itu bukan kisi bulan
+// yang diberi warna lain, jadi ia dibuat sebagai bentuk kedua yang
+// dipilih lewat --kal-rupa:almanak. Bawaannya tetap kisi; sebelas tema
+// Pro lain tidak berubah satu piksel pun.
+//
 // Kelima belas tema TIDAK memakainya lagi — hanya dua belas tema PRO.
 // Ketiga tema Elegan Klasik (paket Standar) dikembalikan ke rupa
 // sebelumnya atas permintaan user dan tidak memuat berkas ini.
@@ -60,6 +67,17 @@
   var HARI_PANJANG = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
   var HARI_PENDEK  = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
   var HARI_HURUF   = ['M', 'S', 'S', 'R', 'K', 'J', 'S'];
+
+  // Bulan & hari dalam aksara Han. Dipakai HANYA oleh tema yang
+  // menyalakan --kal-han:1 (sejauh ini Tinta Emas): pada tema Eropa
+  // atau Islami aksara ini tidak menerangkan apa pun, ia cuma dekorasi
+  // dari budaya lain.
+  var HAN_BULAN = ['一月', '二月', '三月', '四月',
+                   '五月', '六月', '七月', '八月',
+                   '九月', '十月', '十一月', '十二月'];
+  var HAN_HARI  = ['星期日', '星期一', '星期二',
+                   '星期三', '星期四', '星期五',
+                   '星期六'];
 
   // "Sabtu, 14 Maret 2026" -> { hari, tgl, bulan, bulanIdx, tahun }
   //
@@ -158,6 +176,68 @@
     return kisi;
   }
 
+  // Nilai sebuah custom property sebagai teks bersih. getPropertyValue
+  // mengembalikan tanda kutipnya kalau tema menulisnya sebagai string
+  // ('永结同心'), dan tanda kutip itu ikut tercetak di layar
+  // kalau tidak dibuang.
+  function varTeks(el, nama) {
+    var v = '';
+    try { v = getComputedStyle(el).getPropertyValue(nama); } catch (e) { return ''; }
+    v = String(v || '').trim();
+    if ((v.charAt(0) === '"' && v.slice(-1) === '"') ||
+        (v.charAt(0) === "'" && v.slice(-1) === "'")) v = v.slice(1, -1);
+    return v;
+  }
+
+  // ALMANAK — bentuk KEDUA, dipilih tema lewat --kal-rupa:almanak.
+  //
+  // Kisi satu bulan penuh tetap bawaannya dan tetap dipakai sebelas
+  // tema Pro lain. Yang satu ini ada karena user mengirim acuan khusus
+  // untuk Tinta Emas: lembar almanak Tionghoa — pita bulan di kepala,
+  // satu angka besar, sepasang bait ucapan tegak mengapitnya, nama hari
+  // di kaki. Bentuk itu bukan variasi gaya dari kisi bulan, ia benda
+  // yang berbeda, jadi ia tidak bisa dibuat dengan menyetel variabel
+  // pada kisi.
+  //
+  // Aksara Han hanya ikut kalau tema menyalakan --kal-han:1, dan bait
+  // ucapannya datang dari --kal-bait-kiri/--kal-bait-kanan — supaya
+  // modul ini tidak pernah menaruh aksara Mandarin di tema yang bukan
+  // Tionghoa.
+  function bangunAlmanak(kal, d) {
+    var akar = el('div', 'kal-alm');
+    akar.setAttribute('aria-hidden', 'true');
+
+    var pakaiHan = varTeks(kal, '--kal-han') === '1';
+
+    var kepala = el('div', 'kal-alm-kepala');
+    kepala.append(el('span', 'kal-alm-tahun', String(d.tahun)),
+                  el('span', 'kal-alm-bulan', d.bulan));
+    if (pakaiHan) kepala.appendChild(el('span', 'kal-alm-han', HAN_BULAN[d.bulanIdx]));
+    akar.appendChild(kepala);
+
+    var badan = el('div', 'kal-alm-badan');
+    var kiri = varTeks(kal, '--kal-bait-kiri');
+    var kanan = varTeks(kal, '--kal-bait-kanan');
+    // Bait selalu DIBUAT, walau kosong: dua kolom sisi yang lebarnya
+    // sama menjaga angka besarnya tetap di tengah optik: kalau salah
+    // satunya hilang dari DOM, angkanya bergeser dan tidak ada yang
+    // memberi tahu.
+    badan.appendChild(el('span', 'kal-alm-bait kal-alm-bait-kiri', kiri));
+    badan.appendChild(el('span', 'kal-alm-angka', String(d.tgl)));
+    badan.appendChild(el('span', 'kal-alm-bait kal-alm-bait-kanan', kanan));
+    akar.appendChild(badan);
+
+    var kaki = el('p', 'kal-alm-kaki');
+    kaki.appendChild(el('span', 'kal-alm-hari', d.hari));
+    if (pakaiHan) {
+      var idxHari = HARI_PANJANG.indexOf(d.hari);
+      if (idxHari >= 0) kaki.appendChild(el('span', 'kal-alm-han', HAN_HARI[idxHari]));
+    }
+    akar.appendChild(kaki);
+
+    return akar;
+  }
+
   function teksSlot(kal) {
     var s = kal.querySelector('.kal-sumber');
     return s ? String(s.textContent || '').trim() : '';
@@ -198,6 +278,8 @@
     if (lamaKosong) lamaKosong.parentNode.removeChild(lamaKosong);
     var lamaRingkas = kal.querySelector('.kal-ringkas');
     if (lamaRingkas) lamaRingkas.parentNode.removeChild(lamaRingkas);
+    var lamaAlm = kal.querySelector('.kal-alm');
+    if (lamaAlm) lamaAlm.parentNode.removeChild(lamaAlm);
 
     if (!d) {
       kal.classList.add('kal-kosong');
@@ -219,7 +301,9 @@
     }
 
     kal.classList.remove('kal-ulang');
-    kal.appendChild(bangunKisi(kal, d));
+    kal.appendChild(varTeks(kal, '--kal-rupa') === 'almanak'
+      ? bangunAlmanak(kal, d)
+      : bangunKisi(kal, d));
   }
 
   function segarkanSemua(akar) {

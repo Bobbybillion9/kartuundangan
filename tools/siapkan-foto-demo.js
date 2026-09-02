@@ -36,12 +36,27 @@
  *     "musikDari": "emerald-dusk",          // set yang musiknya disalin
  *     "berkas": {
  *       "sampul":   { "dari": "cina-sampul.jpg" },
+ *       "sampul2":  { "dari": "x.png", "kotak": [0.1, 0, 0.78, 1] },
  *       "utama":    { "dari": "cina-pasangan.jpg" },
  *       "pria":     { "dari": "cina-pasangan.jpg", "potong": "kanan" },
  *       "wanita":   { "dari": "cina-pasangan.jpg", "potong": "kiri" },
  *       "galeri-1": { "dari": "cina-galeri-1.jpg" }
  *     }
  *   }
+ *
+ * "kotak" (pilihan): [x, y, lebar, tinggi] dalam PECAHAN 0..1 dari
+ * ukuran sumbernya, dipotong SEBELUM diperkecil. Ada karena foto stok
+ * sering membawa kolom aksara atau tanda air di kedua tepinya —
+ * pada foto sampul Tionghoa, dua kolom teks vertikal milik fotografer
+ * berdiri persis di tempat undangan ini menaruh inskripsinya sendiri,
+ * dan hasilnya dua tulisan bertumpuk yang tidak ada hubungannya.
+ * Memperbesar foto lewat CSS bukan gantinya: itu akan ikut memotong
+ * foto milik SETIAP pasangan yang memakai tema ini, bukan cuma yang
+ * contoh.
+ *
+ * Yang sudah dipakai: sampul Tinta Emas, dari MEMPELAI/"CHINESSE
+ * STYLE (1).png", kotak [0.12, 0, 0.71, 1] — membuang kolom aksara
+ * di kedua tepi berikut tanda air fotografernya.
  */
 const fs = require('fs');
 const path = require('path');
@@ -65,12 +80,23 @@ function kirim(s, id, m, p) {
   });
 }
 
-function skrip(nama, lebarTarget, mutu, potong) {
+function skrip(nama, lebarTarget, mutu, potong, kotak) {
   return `(async()=>{
     const img = new Image();
     img.src = ${JSON.stringify('/' + encodeURIComponent(nama))};
     await img.decode();
     let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+
+    // Kotak potong manual, dalam pecahan ukuran sumber. Dijalankan
+    // LEBIH DULU supaya "potong kiri/kanan" di bawah bekerja pada
+    // bidang yang sudah dibersihkan tepinya, bukan pada foto asli.
+    const kotak = ${JSON.stringify(kotak || null)};
+    if (kotak) {
+      sx = Math.round(img.naturalWidth * kotak[0]);
+      sy = Math.round(img.naturalHeight * kotak[1]);
+      sw = Math.round(img.naturalWidth * kotak[2]);
+      sh = Math.round(img.naturalHeight * kotak[3]);
+    }
 
     // Potong separuh kiri/kanan untuk foto mempelai.
     //
@@ -84,14 +110,15 @@ function skrip(nama, lebarTarget, mutu, potong) {
     // Tingginya diambil dari SEPERTIGA ATAS, bukan tengah: pada foto
     // orang, memotong dari tengah memenggal kepala.
     if (${JSON.stringify(!!potong)}) {
-      sw = Math.round(img.naturalWidth * 0.46);
-      sx = ${JSON.stringify(potong)} === 'kanan'
-        ? Math.round(img.naturalWidth * 0.48)
-        : Math.round(img.naturalWidth * 0.06);
-      if (sx + sw > img.naturalWidth) sx = img.naturalWidth - sw;
-      sh = Math.min(img.naturalHeight, Math.round(sw * 4 / 3));
-      sy = Math.round(img.naturalHeight * 0.13);
-      if (sy + sh > img.naturalHeight) sy = img.naturalHeight - sh;
+      const bx = sx, by = sy, bw = sw, bh = sh;
+      sw = Math.round(bw * 0.46);
+      sx = bx + (${JSON.stringify(potong)} === 'kanan'
+        ? Math.round(bw * 0.48)
+        : Math.round(bw * 0.06));
+      if (sx + sw > bx + bw) sx = bx + bw - sw;
+      sh = Math.min(bh, Math.round(sw * 4 / 3));
+      sy = by + Math.round(bh * 0.13);
+      if (sy + sh > by + bh) sy = by + bh - sh;
     }
 
     const skala = Math.min(1, ${lebarTarget} / sw);
@@ -158,7 +185,7 @@ function skrip(nama, lebarTarget, mutu, potong) {
       const jenis = keluaran.startsWith('galeri') ? 'galeri' : keluaran;
       const lebar = LEBAR[jenis] || 800;
       const hasil = await cdp('Runtime.evaluate', {
-        expression: skrip(o.dari, lebar, MUTU, o.potong),
+        expression: skrip(o.dari, lebar, MUTU, o.potong, o.kotak),
         awaitPromise: true, returnByValue: true
       });
       const dataUrl = hasil.result && hasil.result.value;

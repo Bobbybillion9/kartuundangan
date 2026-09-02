@@ -980,3 +980,663 @@ section{position:relative;padding:var(--s6) var(--s4);}
   --kal-tanda-gambar:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M21.8 5.4C13.2 1.2 3.6 6.6 3.6 15.7c0 8.1 6.7 12.8 12.9 12.1 6.7-.8 11.6-6 11.1-12.9-.3-4.1-2.7-7.2-5.8-8.8' fill='none' stroke='%232B2B2B' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   --kal-tanda-inset:-8%;
 }
+
+/* ============================================================
+   REVISI TINTA EMAS — 2026-09-03
+   ------------------------------------------------------------
+   Enam permintaan user, dan lima di antaranya menunjuk hal yang sama:
+   tema ini dibuat SEPI dengan sengaja, dan di beberapa tempat sepinya
+   sudah berubah jadi KOSONG. Amplopnya hitam polos, foto utamanya
+   persegi tanpa bahasa Tionghoa apa pun, dan bagian lokasinya berisi
+   denah jalan karangan yang tidak menerangkan apa-apa.
+
+   Yang diperbaiki di sini menambah BENDA, bukan menambah pola: satu
+   kertas berornamen untuk amplop, satu jendela bulan untuk foto, satu
+   gerbang bulan untuk lokasi, satu lembar almanak untuk tanggal. Janji
+   temanya — tidak ada satu pun pola berulang — tetap dipegang.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. AMPLOP — kertas berornamen, bukan bidang hitam
+   ------------------------------------------------------------
+   Sebelumnya --amplop-kertas cuma satu gradasi cahaya di atas #26292A,
+   dan hasilnya persis yang dikeluhkan user: "cuma hitam polos". Bukan
+   soal selera — pada layar pertama sebuah undangan, bidang gelap tanpa
+   apa pun terbaca sebagai HALAMAN YANG BELUM SELESAI DIMUAT, dan tamu
+   yang mengira begitu akan menunggu, bukan menekan.
+
+   Latar yang dipakai dipilih dari 31 berkas milik user karena
+   TENGAHNYA KOSONG: ranting sakura emas di kepala, ombak emas di kaki,
+   dan bidang lapang di antaranya — persis tempat segel lilin duduk.
+   Latar berornamen penuh akan membuat segelnya hilang di dalam motif.
+   ------------------------------------------------------------ */
+:root{
+  --amplop-warna:#14161A;
+  --amplop-kertas:url('/templates/_ornamen/latar-cina-ranting-emas.webp');
+  --amplop-kertas-ukuran:cover;
+  --amplop-kertas-posisi:center;
+  --amplop-kertas-ulang:no-repeat;
+
+  /* Tutup RUYI — tepi bawahnya bergelombang awan, bukan segitiga.
+     Bentuk lama polygon(0 0,100% 0,100% 100%,0 100%) adalah persegi
+     penuh: ia tidak menggambar tutup apa pun, cuma memisahkan 38%
+     bidang atas dengan garis lurus yang tidak menyebut apa-apa. */
+  --amplop-tutup-bentuk:polygon(
+    0 0, 100% 0, 100% 56%,
+    92% 56%, 88% 69%, 79% 71%, 74% 60%,
+    63% 64%, 57% 78%, 50% 86%, 43% 78%, 37% 64%,
+    26% 60%, 21% 71%, 12% 69%, 8% 56%, 0 56%);
+  --amplop-tutup-tinggi:46%;
+  --amplop-tutup-gelap:.42;
+
+  /* Garis lipat tetap MATI. Ia digambar sebagai X dari sudut ke sudut,
+     dan di atas kertas bergambar ia terbaca seperti goresan pada
+     fotonya, bukan seperti lipatan kertas. */
+  --amplop-lipat-tampil:none;
+
+  /* "Kepada Yth. / Tamu Undangan" DIMATIKAN atas permintaan user:
+     kalimat itu sudah ada di sampul (.cover-guest), dan dua layar
+     berturut-turut yang membuka dengan kalimat sama terbaca seperti
+     salah cetak. */
+  --amplop-tulisan-tampil:none;
+
+  --amplop-halo:radial-gradient(circle,rgba(231,220,182,.22),rgba(231,220,182,0) 58%);
+  --amplop-tinta:#EFE3BC;
+  --amplop-garis:rgba(201,166,90,.62);
+  --amplop-kabut:linear-gradient(to top,rgba(16,18,19,.85),rgba(16,18,19,0));
+
+  /* SURAT yang naik keluar. Putih murni #FFFFFF adalah kilatan terang
+     di antara dua layar gelap (amplop hitam -> sampul berfoto gelap),
+     dan mata pembacanya menyipit tepat di tengah adegan. Diganti
+     kertas gading hangat, dengan pembatas emas Tionghoa di kepala &
+     kakinya supaya ia terbaca sebagai SURAT, bukan sebagai layar
+     kosong yang sedang lewat. */
+  --surat-kertas:#F4EEDC;
+  --surat-tinta:#26292A;
+  --surat-aksen:#8A6C2A;
+  --surat-garis:rgba(168,134,58,.42);
+  --surat-hias:url('/templates/_ornamen/garis-cina-emas.webp');
+}
+
+/* Bingkai emas tipis di dalam surat — satu garis, sejauh 14px dari
+   tepi, seperti garis cetak pada kartu undangan sungguhan. */
+#amplop .amplop-surat{
+  box-shadow:inset 0 0 0 13px var(--surat-kertas),
+             inset 0 0 0 15px rgba(168,134,58,.55);
+}
+
+/* ------------------------------------------------------------
+   2. SAMPUL — bingkai dibuang, susunannya yang bekerja
+   ------------------------------------------------------------
+   Permintaan user: "hapus frame yang berlebihan pada sampul/cover,
+   mainkan style penempatan kalimat dan variasi font dan background
+   style".
+
+   Dua bingkai dibuang: kartu bergaris di sekeliling 永结同心, dan
+   cincin ornamen di sekeliling inisial. Keduanya melakukan pekerjaan
+   yang sama — memberi tahu mata di mana harus berhenti — dan dua
+   benda yang mengerjakan satu hal saling melemahkan.
+
+   Penggantinya bukan bingkai lain melainkan LETAK: aksaranya berdiri
+   TEGAK di tepi kanan, tempat inskripsi ditulis pada lukisan gulung
+   Tionghoa, dan inisialnya jadi CAP MERAH kecil — tanda tangan
+   pelukis. Keduanya perbendaharaan yang sama, dan tidak satu pun
+   berupa kotak.
+   ------------------------------------------------------------ */
+.cover-lafaz::before{content:none;}
+.cover-monogram::before{content:none;}
+
+.cover-lafaz{
+  position:absolute;
+  top:clamp(52px,11vh,104px);
+  right:clamp(18px,7vw,34px);
+  margin:0;
+  padding:0 0 0 14px;
+  writing-mode:vertical-rl;
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:clamp(24px,6.6vw,30px);
+  line-height:1;
+  /* letter-spacing pada writing-mode tegak menambah ruang di ujung
+     BAWAH baris, bukan kanan — text-indent membatalkannya di sumbu
+     yang benar tanpa perlu tahu arahnya. */
+  letter-spacing:.2em;
+  text-indent:.2em;
+  color:var(--champagne);
+  text-shadow:0 2px 12px rgba(0,0,0,.65);
+  z-index:4;
+}
+/* Garis tinta tegak di sisi aksara — pengganti bingkai. Satu garis
+   sudah cukup memberi tahu mata bahwa ini inskripsi, bukan judul. */
+.cover-lafaz::after{
+  content:'';
+  position:absolute;left:0;top:2px;bottom:2px;width:1px;
+  background:linear-gradient(to bottom,
+    rgba(201,166,90,0),rgba(201,166,90,.85) 20%,rgba(201,166,90,.85) 80%,rgba(201,166,90,0));
+}
+#cover.has-sampul .cover-lafaz{color:#F1E4BC;}
+
+/* CAP MERAH — inisial mempelai sebagai segel pelukis. Persegi, bukan
+   lingkaran: cap Tionghoa memang persegi, dan bentuknya jadi satu-
+   satunya sudut tajam di sampul yang seluruhnya bulat & lembut.
+   Markup .cover-monogram dan .mono-a/.mono-b DIPERTAHANKAN apa adanya
+   — tools/cek-tema.js mengganti nama mempelai lalu memastikan kedua
+   huruf itu benar-benar berubah. */
+.cover-monogram{
+  width:56px;height:56px;
+  margin:0 auto var(--s3);
+  background:linear-gradient(168deg,#A5241E 0%,#8C1A17 58%,#761412 100%);
+  border-radius:3px;
+  box-shadow:0 10px 22px -12px rgba(0,0,0,.85),
+             inset 0 0 0 1px rgba(255,255,255,.14);
+}
+.monogram-letters,
+#cover.has-sampul .monogram-letters{
+  color:#F6EBD2;
+  font-size:20px;
+  letter-spacing:.02em;
+}
+.monogram-letters .mono-sep{opacity:.62;}
+
+/* Nama mempelai: satu-satunya suara keras di sampul, jadi ia yang
+   diberi ruang. Ampersand-nya turun jadi garis emas tipis + huruf
+   kecil — sebelumnya sebesar setengah nama dan ikut berebut perhatian. */
+.cover-names{
+  font-size:clamp(30px,9.6vw,42px);
+  line-height:1.22;
+  letter-spacing:.06em;
+}
+.cover-names .amp{
+  display:block;
+  position:relative;
+  font-size:.34em;
+  color:var(--champagne);
+  margin:10px 0 8px;
+  opacity:.9;
+}
+.cover-names .amp::before,
+.cover-names .amp::after{
+  content:'';
+  position:absolute;top:50%;width:34px;height:1px;
+  background:linear-gradient(to right,rgba(201,166,90,0),rgba(201,166,90,.8));
+}
+.cover-names .amp::before{right:calc(50% + 18px);}
+.cover-names .amp::after{left:calc(50% + 18px);transform:scaleX(-1);}
+
+.cover-eyebrow{font-size:10.5px;letter-spacing:.42em;}
+.cover-date{
+  font-size:13px;letter-spacing:.26em;text-transform:uppercase;
+  margin-bottom:var(--s5);
+}
+
+/* LATAR SAMPUL — sepasang awan emas di kaki layar, satu-satunya
+   ornamen yang tersisa di sini. Diletakkan di KAKI, bukan di kepala:
+   kepala sudah dipakai inskripsi tegak, dan ornamen di kedua ujung
+   akan mengurung fotonya kembali jadi bingkai — hal yang baru saja
+   dibuang. */
+#cover::before,#cover::after{
+  content:'';
+  position:absolute;bottom:-10px;
+  width:150px;height:88px;
+  background-image:var(--orn-awan);
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:bottom center;
+  opacity:.32;
+  pointer-events:none;
+  /* 2 = di atas kedua panel foto (z-index 1), di bawah .cover-content
+     (z-index 3). Awan yang naik ke atas teks akan mengaburkan tanggal. */
+  z-index:2;
+}
+#cover::before{left:-34px;}
+#cover::after{right:-34px;transform:scaleX(-1);}
+
+/* ------------------------------------------------------------
+   3. FOTO UTAMA — JENDELA BULAN (yuèliàng mén)
+   ------------------------------------------------------------
+   Permintaan user: "frame foto H1 dalam surat tinta emas, bagian
+   paling atas ganti dengan frame bingkai Chinese style seperti golden
+   window circle".
+
+   Bukaan bundar di tembok taman Tionghoa. Yang membuatnya terbaca
+   sebagai JENDELA dan bukan sekadar foto bulat adalah dua hal:
+   sepasang cincin emas yang mengelilinginya (kusen), dan satu garis
+   emas yang lewat di belakangnya sampai ke tepi layar (tembok). Tanpa
+   garis itu, lingkarannya melayang.
+
+   Perbandingannya diubah 3/4 -> 1/1 supaya foto benar-benar mengisi
+   lingkarannya; --fp-hero-rasio-lebar ikut, kalau tidak foto ini
+   kembali jadi elips di layar lebar.
+   ------------------------------------------------------------ */
+:root{
+  --fp-hero-bentuk:none;
+  --fp-hero-radius:50%;
+  --fp-hero-rasio:1 / 1;
+  --fp-hero-rasio-lebar:1 / 1;
+}
+
+#fotoUtama{padding-top:var(--s6);padding-bottom:var(--s5);}
+
+.jendela-bulan{
+  position:relative;
+  width:min(300px,74%);
+  margin:0 auto;
+}
+
+/* TEMBOK — satu garis emas melewati jendela sampai ke luar layar.
+   Lebarnya 100vw, bukan 100%: ia harus keluar dari kolom fotonya,
+   kalau tidak ia berhenti di tepi lingkaran dan terbaca sebagai
+   coretan, bukan sebagai bidang yang ditembus. */
+.jendela-dinding{
+  position:absolute;left:50%;top:50%;
+  width:100vw;height:1px;
+  transform:translate(-50%,-50%);
+  /* Perhentian gradasi dalam PIKSEL, bukan persen. Dengan persen,
+     bagian yang pekat (26%-74%) jatuh persis di belakang lingkaran
+     fotonya, dan yang tersisa terlihat di kiri-kanan justru ujung
+     yang sudah memudar jadi nol — garisnya ada di DOM, lebarnya
+     benar, dan tetap tidak terlihat sama sekali. Sudah terjadi. */
+  background:linear-gradient(to right,
+    rgba(168,134,58,0) 0,rgba(168,134,58,.55) 22px,
+    rgba(168,134,58,.55) calc(100% - 22px),rgba(168,134,58,0) 100%);
+  pointer-events:none;
+}
+
+/* KUSEN — dua cincin. box-shadow inset, bukan dua elemen: yang kedua
+   harus selalu sejajar dengan yang pertama, dan dua elemen yang
+   ukurannya dihitung terpisah akan meleset sepersekian piksel di
+   lebar layar tertentu. */
+.jendela-cincin{
+  position:absolute;inset:-13px;
+  border-radius:50%;
+  border:1.5px solid rgba(168,134,58,.85);
+  box-shadow:inset 0 0 0 6px var(--ivory),
+             inset 0 0 0 7px rgba(168,134,58,.5);
+  pointer-events:none;
+}
+
+/* Awan emas menempel di kusen pada dua sudut berlawanan — jendela
+   yang terletak di antara awan, bukan lingkaran yang ditempeli
+   ornamen di keempat sisinya. */
+.jendela-awan{
+  position:absolute;
+  width:104px;height:56px;
+  background-image:var(--orn-awan);
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  opacity:.85;
+  pointer-events:none;
+}
+.jendela-awan-a{left:-40px;top:4%;transform:rotate(-8deg);}
+.jendela-awan-b{right:-40px;bottom:2%;transform:scaleX(-1) rotate(-8deg);}
+
+/* Kaki gradasi milik foto-penuh.css dimatikan: ia dibuat untuk foto
+   yang melebar penuh dan menghilang ke warna halaman. Di dalam
+   lingkaran ia jadi separuh bawah yang kabur tanpa sebab. */
+#fotoUtama .hero-photo-fade{display:none;}
+
+/* Monogram di bawah jendela: cincin awannya DIBUANG. Dua cincin
+   bertumpuk (kusen jendela + cincin monogram) yang berjarak 30px
+   membuat halaman ini terbaca seperti dua lingkaran yang berebut,
+   bukan seperti satu jendela. Yang tersisa inisial emas di antara dua
+   garis tinta — sama tenangnya dengan pembatas antar bagian. */
+.hero-monogram{
+  width:auto;height:auto;
+  margin:var(--s4) auto 0;
+  background-image:none;
+  background-color:transparent;
+  border-radius:0;
+  box-shadow:none;
+  gap:14px;
+}
+.hero-monogram::before,.hero-monogram::after{
+  content:'';
+  width:clamp(28px,9vw,46px);height:1px;
+  background:rgba(168,134,58,.55);
+}
+.hero-monogram-letters{font-size:20px;letter-spacing:.08em;}
+
+/* ------------------------------------------------------------
+   4. TANGGAL ACARA — LEMBAR ALMANAK
+   ------------------------------------------------------------
+   User mengirim acuan khusus untuk tema ini: lembar almanak Tionghoa
+   — pita bulan di kepala, SATU angka besar, sepasang bait ucapan
+   tegak mengapitnya, nama hari di kaki.
+
+   Kisi satu bulan penuh (bawaan assets/acara-lokasi.js) tetap dipakai
+   sebelas tema Pro lain; tema ini memilih bentuk kedua lewat
+   --kal-rupa:almanak. Baitnya datang dari --kal-bait-* supaya modul
+   bersama itu tidak pernah menaruh aksara Mandarin di tema yang bukan
+   Tionghoa.
+
+   Baitnya BUKAN hiasan acak: 永结同心 "selamanya diikat sehati" dan
+   百年好合 "seratus tahun rukun bersama" adalah dua ucapan pernikahan
+   Tionghoa yang paling lazim, dan yang pertama sudah jadi kalimat
+   pembuka tema ini sejak awal.
+   ------------------------------------------------------------ */
+:root{
+  --kal-rupa:almanak;
+  --kal-han:1;
+  --kal-bait-kiri:'永结同心';
+  --kal-bait-kanan:'百年好合';
+
+  --kal-alm-bingkai:1px solid rgba(168,134,58,.5);
+  --kal-alm-alas:#FFFFFF;
+  --kal-alm-padding:0 0 14px;
+  --kal-alm-kepala-alas:rgba(168,134,58,.09);
+  --kal-alm-kepala-garis:1px solid rgba(168,134,58,.5);
+  --kal-alm-kepala-warna:#26292A;
+  --kal-alm-kepala-ukuran:12px;
+  --kal-alm-kepala-padding:9px 10px 8px;
+  --kal-alm-han-warna:#8C1A17;
+  --kal-alm-angka-font:'Cinzel',Georgia,serif;
+  --kal-alm-angka-ukuran:clamp(72px,25vw,104px);
+  --kal-alm-angka-tebal:500;
+  --kal-alm-angka-warna:#26292A;
+  --kal-alm-bait-warna:#8A6C2A;
+  --kal-alm-bait-ukuran:12.5px;
+  --kal-alm-bait-kabur:.9;
+  --kal-alm-kaki-warna:#5B6163;
+}
+
+/* Kartu acara meminjamkan bingkainya ke almanak. Dua bingkai
+   bersarang — garis kartu di luar, garis almanak di dalam, berjarak
+   satu padding — adalah persis "frame berlebihan" yang dikeluhkan
+   user di sampul; tidak ada gunanya membuangnya di sana lalu
+   membuatnya lagi di sini. */
+.event-card:has(.kal-alm){border:0;padding:0;background:transparent;box-shadow:none;}
+.event-card:has(.kal-alm) .event-icon{margin-top:var(--s3);}
+.kal-alm{box-shadow:0 18px 34px -26px rgba(38,41,42,.55);}
+
+/* ------------------------------------------------------------
+   5. LOKASI — GERBANG BULAN
+   ------------------------------------------------------------
+   Permintaan user: "hapus konsep peta/denah pada surat, diganti
+   dengan memainkan elemen yang identik dengan chinese style".
+
+   Denahnya memang tidak pernah menerangkan apa pun — ia gambar jalan
+   karangan; yang benar-benar menunjukkan jalan adalah tombol Petunjuk
+   Arah di bawahnya, dan tombol itu tetap ada.
+
+   Gantinya bukaan bundar di tembok taman Tionghoa, tempat orang
+   melangkah MASUK, dengan nama gedung di dalamnya. Bentuknya sengaja
+   sekeluarga dengan jendela bulan di kepala undangan: lingkaran emas
+   yang ditembus satu garis tembok. Dua kali bentuk yang sama membuat
+   sebuah bahasa; tiga bentuk berbeda cuma membuat keramaian.
+   ------------------------------------------------------------ */
+.gerbang-bulan{
+  position:relative;
+  width:min(300px,84%);
+  aspect-ratio:1;
+  margin:var(--s2) auto var(--s4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background-color:#14161A;
+  background-image:url('/templates/_ornamen/latar-cina-gerbang-bulan.webp');
+  background-size:190% auto;
+  /* Cincin ukir pada sumbernya duduk di sepertiga atas gambar. Tanpa
+     pergeseran ini yang tampak di dalam gerbang cuma langit hitam. */
+  background-position:center 18%;
+  box-shadow:0 0 0 1.5px rgba(168,134,58,.85),
+             0 0 0 7px var(--ivory),
+             0 0 0 8px rgba(168,134,58,.5),
+             0 26px 46px -26px rgba(20,22,22,.6);
+}
+.gerbang-garis{
+  position:absolute;left:50%;top:50%;
+  width:100vw;height:1px;
+  transform:translate(-50%,-50%);
+  /* Perhentian dalam piksel, alasan sama dengan .jendela-dinding. */
+  background:linear-gradient(to right,
+    rgba(168,134,58,0) 0,rgba(168,134,58,.48) 22px,
+    rgba(168,134,58,.48) calc(100% - 22px),rgba(168,134,58,0) 100%);
+  z-index:-1;
+  pointer-events:none;
+}
+.gerbang-bulan .plat-lokasi{
+  position:relative;
+  z-index:1;
+  padding:0 14%;
+  text-align:center;
+}
+/* Teks di dalam gerbang berdiri di atas bidang GELAP: seluruh
+   warnanya wajib ditulis ulang. Token --ink & --ink-mid di tema ini
+   arang di atas gading — di sini ia hilang tanpa memberi error. */
+.gerbang-bulan .peta-eyebrow{
+  font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;
+  color:rgba(239,230,196,.72);
+  margin-bottom:10px;
+}
+.gerbang-bulan .venue-name{
+  font-family:'Cinzel',Georgia,serif;
+  font-size:16px;line-height:1.45;letter-spacing:.04em;
+  color:#F1E4BC;
+  margin-bottom:8px;
+  text-shadow:0 2px 10px rgba(0,0,0,.6);
+}
+.gerbang-bulan .venue-address{
+  font-size:12.5px;line-height:1.6;
+  color:rgba(239,230,196,.72);
+  margin-bottom:0;
+  text-shadow:0 2px 10px rgba(0,0,0,.6);
+}
+
+/* ------------------------------------------------------------
+   6. PENUTUP — bidang arang jadi kertas berornamen
+   ------------------------------------------------------------
+   User menyediakan satu folder latar Tionghoa "yang bisa dipakai di
+   dalam surat". Isi surat tema ini gading dari kepala sampai kaki dan
+   HARUS tetap begitu — latar emas-di-atas-hitam di belakang paragraf
+   gading akan mengubah Tinta Emas jadi tema gelap, dan tema gelap di
+   kategori ini sudah ada namanya.
+
+   Satu-satunya bidang yang memang sudah gelap sejak awal adalah
+   #penutup ("dibuka dari kertas putih, ditutup dengan tinta pekat").
+   Di sanalah latarnya dipakai — mengganti arang rata dengan kertas
+   yang benar-benar bergambar, tanpa menggeser satu pun warna teks
+   yang sudah ditulis untuk bidang gelap.
+
+   Latarnya SAMA dengan amplop, dan itu disengaja: undangan ini dibuka
+   dari selembar kertas berombak emas dan ditutup dengan kertas yang
+   sama. Yang di tengah gading; kedua ujungnya sepasang.
+   ------------------------------------------------------------ */
+#penutup{
+  background-image:url('/templates/_ornamen/latar-cina-ranting-emas.webp');
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+/* Kabut arang di atas gambarnya. Tanpa ini ranting emas di kepala
+   latar jatuh tepat di belakang kalimat penutup, dan kalimat itu —
+   satu-satunya kalimat yang ditulis mempelai sendiri — jadi paling
+   sulit dibaca di seluruh undangan. */
+#penutup::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,
+    rgba(20,22,24,.62) 0%,rgba(20,22,24,.86) 46%,rgba(20,22,24,.94) 100%);
+  /* Lentera gantung warisan aturan lama dibatalkan di sini: latar
+     baru sudah membawa ranting & ombaknya sendiri, dan lentera di
+     atasnya jadi ornamen ketiga di satu bidang. Shorthand background
+     di atas SUDAH mengosongkan background-image-nya — menulis
+     background-image:none sesudahnya justru menghapus gradasi yang
+     baru saja dipasang. */
+  width:auto;height:auto;
+  opacity:1;
+  z-index:0;
+}
+
+/* ------------------------------------------------------------
+   PERBAIKAN SESUDAH MELIHAT HASILNYA
+   ------------------------------------------------------------ */
+
+/* TUTUP AMPLOP tidak boleh menyalin kertasnya. Badan amplop memakai
+   background-size:cover pada kotak SELURUH LAYAR; tutupnya memakai
+   nilai yang sama pada kotak setinggi 46% — jadi gambar yang sama
+   diskalakan dua kali berbeda, dan tutupnya terbaca sebagai bidang
+   asing yang ditempel di atas, bukan sebagai lipatan kertas yang
+   sama. Yang benar untuk kertas bergambar: tutupnya TEMBUS PANDANG,
+   sehingga ranting emas di baliknya tetap terlihat menerusi
+   lipatannya. */
+#amplop .amplop-tutup{
+  background-image:linear-gradient(180deg,
+    rgba(18,20,24,.30) 0%,rgba(18,20,24,.52) 62%,rgba(18,20,24,.62) 100%);
+  background-size:cover;
+  background-position:center;
+}
+:root{--amplop-tutup-gelap:.06;}
+
+/* Bingkai ganda kartu acara ikut dibuang di kartu beralmanak — ia
+   digambar ::before, jadi border:0 saja tidak menghapusnya. */
+.event-card:has(.kal-alm)::before{content:none;}
+
+/* GERBANG BULAN: cincin ukir pada gambarnya dijadikan rim gerbangnya
+   sendiri. Ukuran & letak di bawah bukan angka coba-coba — cincin itu
+   menempati kira-kira 84% lebar sumber dengan pusat di 24% tingginya,
+   dan kedua nilai ini yang membawa pusat itu ke pusat panel. Rim emas
+   buatan sendiri karena itu dilepas: dua cincin sepusat yang berjarak
+   beberapa piksel terbaca sebagai kesalahan cetak. */
+.gerbang-bulan{
+  background-size:112% auto;
+  background-position:center -14%;
+  box-shadow:0 0 0 6px var(--ivory),
+             0 0 0 7px rgba(168,134,58,.45),
+             0 26px 46px -26px rgba(20,22,22,.6);
+}
+
+/* Latar amplop digeser ke kanan. background-size:cover pada layar
+   390x844 memotong 173px lebar dari gambar 736x1104, dan dengan
+   posisi tengah yang terbuang justru ranting emas di sudut kanan
+   atas — satu-satunya ornamen di separuh atas layar. */
+:root{
+  --amplop-kertas-posisi:70% center;
+  --amplop-tutup-tinggi:36%;
+}
+#amplop .amplop-tutup{
+  background-image:linear-gradient(180deg,
+    rgba(18,20,24,.16) 0%,rgba(18,20,24,.34) 62%,rgba(18,20,24,.46) 100%);
+}
+
+/* GERBANG BULAN — angka final, dipilih dengan membandingkan enam
+   pasangan ukuran/posisi berdampingan. Pada nilai ini cincin ukirnya
+   utuh dan sepusat dengan panelnya. */
+.gerbang-bulan{
+  background-size:117% auto;
+  background-position:50% 40%;
+}
+/* Bidang dalam gerbang berisi siluet gunung & bunga; nama gedung
+   duduk tepat di atasnya. Vignette lembut ini yang memisahkan
+   keduanya — tanpa itu garis gunung memotong barisan huruf. */
+.gerbang-bulan .plat-lokasi::before{
+  content:'';
+  position:absolute;left:-10%;right:-10%;top:-14%;bottom:-14%;
+  border-radius:50%;
+  background:radial-gradient(closest-side,rgba(12,14,16,.78),rgba(12,14,16,0));
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* Tutup amplop WAJIB ikut mengosongkan background-color-nya.
+   assets/amplop.css menyetel background-color:var(--amplop-warna) pada
+   tutup, dan warna itu PEKAT — mengganti background-image saja dengan
+   gradasi tembus pandang tidak membuat apa pun tembus: yang terlihat
+   tetap satu bidang hitam berbentuk awan di sepertiga atas layar.
+   Sudah terjadi, dan dari luar terlihat seperti gradasinya tidak
+   dipasang sama sekali. */
+#amplop .amplop-tutup{background-color:transparent;}
+
+/* ------------------------------------------------------------
+   KARTU ACARA BERALMANAK — SATU LEMBAR, BUKAN TIGA LAPIS
+   ------------------------------------------------------------
+   Percobaan pertama membuang bingkai kartunya supaya almanak tidak
+   duduk di dalam bingkai kedua. Hasilnya kartu itu pecah jadi tiga
+   potong yang tidak saling menempel: ikon & nama acara di atas kertas
+   gading, lembar putih almanak di tengah, lalu jam acara kembali di
+   gading. Acuan yang dikirim user justru sebaliknya — SATU lembar
+   berisi semuanya.
+
+   Jadi yang dibuang bukan bingkai kartunya melainkan bingkai
+   almanaknya: kartu tetap kertas putih bergaris emas, dan almanak
+   menyumbang pita bulannya saja ke dalam kartu itu.
+   ------------------------------------------------------------ */
+.event-card:has(.kal-alm){
+  border:1px solid var(--rose);
+  background:var(--card);
+  padding:var(--s4) var(--s3) var(--s3);
+  box-shadow:none;
+}
+.event-card:has(.kal-alm)::before{
+  content:'';
+  inset:5px;
+  border:1px solid rgba(217,174,85,.42);
+}
+.event-card:has(.kal-alm) .event-icon{margin-top:0;}
+.kal-alm{box-shadow:none;}
+:root{
+  --kal-alm-bingkai:0;
+  --kal-alm-alas:transparent;
+  --kal-alm-padding:0;
+  /* Pita bulan tetap punya garis di ATAS dan bawahnya — itu yang
+     membuatnya terbaca sebagai pita, bukan sebagai baris pertama. */
+  --kal-alm-kepala-garis:1px solid rgba(168,134,58,.45);
+}
+.kal-alm-kepala{border-top:1px solid rgba(168,134,58,.45);}
+
+/* "Ketuk untuk membuka" dinaikkan. Bawaannya bottom:13vh, dan pada
+   kertas ini 13vh jatuh tepat di atas ombak emas — huruf beroutline
+   tipis di atas motif serapat itu tidak terbaca sama sekali. */
+#amplop .amplop-petunjuk{
+  bottom:22vh;
+  text-shadow:0 2px 10px rgba(12,14,16,.9);
+}
+
+/* Nama gedung dikecilkan & diberi ruang: pada 16px baris pertamanya
+   menyentuh tepi dalam cincin ukir, dan huruf yang bersinggungan
+   dengan ornamen terbaca sebagai kesalahan cetak. */
+.gerbang-bulan .plat-lokasi{padding:0 17%;}
+.gerbang-bulan .venue-name{font-size:15px;}
+
+/* ------------------------------------------------------------
+   SUSUNAN SAMPUL: TEKS TURUN KE KAKI
+   ------------------------------------------------------------
+   Permintaan user "mainkan penempatan kalimat" di sampul. Susunan
+   lama menengahkan seluruh tumpukan teks secara tegak, dan pada foto
+   POTRET — yang wajahnya selalu di separuh atas — itu berarti nama
+   tamu dan kalimat sapaan jatuh tepat di atas wajah kedua mempelai.
+   Bukan cuma soal rupa: huruf di atas kulit dan kain bermotif adalah
+   bidang dengan kontras paling tidak menentu di seluruh foto.
+
+   Teksnya karena itu turun ke kaki, tempat gradasi gelap paling
+   pekat, dan wajah dibiarkan terbuka. Berlaku untuk foto siapa pun
+   yang memakai tema ini, bukan cuma foto contoh.
+   ------------------------------------------------------------ */
+#cover .cover-content{
+  justify-content:flex-end;
+  padding-bottom:var(--s6);
+}
+/* Inskripsi tegak & cap merah tetap di kepala: keduanya sudah
+   position:absolute / margin sendiri, jadi keduanya tidak ikut turun.
+   Cap merah dipindah ke kepala bersama inskripsinya — di kaki ia
+   berdesakan dengan nama mempelai. */
+#cover .cover-monogram{
+  position:absolute;
+  top:clamp(52px,11vh,104px);
+  left:clamp(18px,7vw,34px);
+  margin:0;
+  z-index:4;
+}
+/* Gradasi foto sampul digelapkan di KAKI dan diringankan di kepala,
+   mengikuti pindahnya teks. Ditulis di kedua lapisan foto: .cover-foto
+   dipakai sebelum animasi, .panel-foto dipakai selama animasi, dan
+   yang terlewat akan berkedip berubah terang tepat saat sampul
+   dibuka. */
+.cover-foto::after,
+.panel-foto::after{
+  background:linear-gradient(180deg,
+    rgba(20,22,22,.42) 0%,
+    rgba(20,22,22,.16) 30%,
+    rgba(20,22,22,.62) 66%,
+    rgba(20,22,22,.90) 100%);
+}

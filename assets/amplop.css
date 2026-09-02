@@ -30,6 +30,12 @@
                               dengan bentuknya — siluet yang sama pada
                               tinggi berbeda tetap terbaca berbeda.
      --amplop-lipat-tampil    block/none, garis lipatan X di badan
+     --amplop-tulisan-tampil  block/none, baris "Kepada Yth. <nama tamu>"
+                              di sepertiga atas amplop. Tema yang sudah
+                              menuliskan sapaan itu di SAMPULNYA
+                              mematikannya di sini — dua kali kalimat
+                              yang sama, dua layar berturut-turut,
+                              terbaca seperti salah cetak.
      --amplop-halo            lingkaran redup di belakang segel
 
    SURAT (kartu yang naik keluar)
@@ -199,6 +205,7 @@ body.amplop-terkunci { overflow: hidden; }
 /* Nama tamu duduk di sepertiga atas, tempat alamat ditulis pada amplop
    sungguhan — bukan menempel pada segel. */
 .amplop-tulisan {
+  display: var(--amplop-tulisan-tampil, block);
   position: absolute;
   top: 11vh;
   left: 26px;
