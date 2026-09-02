@@ -116,6 +116,12 @@
           <circle class="ring-draw ring-l" cx="43" cy="60" r="34"/>
           <circle class="ring-draw ring-r" cx="77" cy="60" r="34"/>
         </svg>
+        <!-- SAYAP UKIRAN di kiri-kanan medali, menunggangi lengkung kaki-->
+        <!-- foto. Elemen kosong dan aria-hidden: yang menggambar kedua-->
+        <!-- sayapnya ::before/::after di style.css, karena satu ukiran-->
+        <!-- sudut yang sama harus DICERMINKAN untuk sisi kirinya, dan-->
+        <!-- transform hanya bisa dipasang per elemen. -->
+        <span class="hero-sayap" aria-hidden="true"></span>
         <span class="hero-monogram-letters">
           <span class="mono-a" id="monoLetterA">A</span><span class="mono-sep">&amp;</span><span class="mono-b" id="monoLetterB">S</span>
         </span>
@@ -236,46 +242,23 @@
       </div>
 
       <div class="venue" data-rv="text" style="--d:6">
-      <!-- DENAH LOKASI. Menggantikan dua baris alamat telanjang.
-           Bukan peta sungguhan (kita tidak punya koordinatnya sampai
-           user mengisi link maps): denah bergaya yang memberi bagian
-           ini bentuk, dengan tombol yang tetap membuka peta asli. -->
-      <div class="peta" aria-hidden="true">
-        <svg class="peta-denah" viewBox="0 0 320 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g stroke="currentColor" fill="none" opacity=".22">
-            <rect x="14" y="16" width="74" height="44" rx="2" stroke-width="1"/>
-            <rect x="14" y="86" width="74" height="48" rx="2" stroke-width="1"/>
-            <rect x="126" y="16" width="96" height="34" rx="2" stroke-width="1"/>
-            <rect x="126" y="100" width="60" height="34" rx="2" stroke-width="1"/>
-            <rect x="240" y="86" width="66" height="48" rx="2" stroke-width="1"/>
-          </g>
-          <g stroke="currentColor" fill="none" opacity=".38" stroke-width="7" stroke-linecap="round">
-            <path d="M104 4V146"/>
-            <path d="M4 73H316"/>
-          </g>
-          <g stroke="currentColor" fill="none" opacity=".9" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="5 5">
-            <path d="M40 132C40 108 74 104 104 104C140 104 152 92 152 73C152 54 176 46 206 46"/>
-          </g>
-          <circle cx="40" cy="132" r="4" fill="currentColor" opacity=".55"/>
-          <g transform="translate(206 46)">
-            <path d="M0 -26C-8 -26 -14 -20 -14 -12C-14 -3 0 12 0 12C0 12 14 -3 14 -12C14 -20 8 -26 0 -26Z" fill="currentColor" opacity=".92"/>
-            <circle cx="0" cy="-13" r="4.6" fill="var(--card,#fff)"/>
-          </g>
-        </svg>
-        <span class="peta-kompas">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="24" cy="24" r="21" stroke="currentColor" stroke-width="1.2" fill="none"/>
-            <circle cx="24" cy="24" r="15" stroke="currentColor" stroke-width=".8" fill="none" opacity=".5"/>
-            <path d="M24 6L28.5 21.5L24 24L19.5 21.5Z" fill="currentColor"/>
-            <path d="M24 42L19.5 26.5L24 24L28.5 26.5Z" fill="currentColor" opacity=".35"/>
-            <path d="M24 2V6M24 42V46M2 24H6M42 24H46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span class="peta-jarak">Denah menuju lokasi</span>
-      </div>
-      <p class="peta-eyebrow">Lokasi Acara</p>
-        <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
-        <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
+      <!-- Denah lokasi bergaya DIHAPUS 2026-09-01 atas perintah user
+           (“sangat tidak cocok”). Ia memang bukan peta sungguhan — kita
+           tidak punya koordinatnya sampai user mengisi link maps — dan
+           gambar jalan karangan di undangan pernikahan terbaca sebagai
+           pengisi ruang. Penggantinya PLAT LOKASI di style.css tiap tema:
+           bentuknya beda di tiap tema, tapi ketiganya benda yang sama
+           maknanya — papan nama di pintu masuk tempat acara. -->
+        <!-- PLAT LOKASI. Wadah ini yang diberi bentuk & latar oleh
+             style.css tiap tema (papan nama di pintu masuk). Tombol
+             Petunjuk Arah sengaja DI LUAR plat: ia perbuatan, bukan
+             keterangan, dan di dalam plat ia terbaca sebagai bagian
+             dari papan namanya. -->
+        <div class="plat-lokasi">
+        <p class="peta-eyebrow">Lokasi Acara</p>
+          <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
+          <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
+        </div>
         <a class="btn-outline" data-slot="lokasi_maps_url" href="https://www.google.com/maps/search/?api=1&query=Gedung+Serbaguna+Bale+Asri+Jl+Melati+No+21+Bandung" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           Petunjuk Arah
@@ -313,6 +296,14 @@
       </div>
       <p class="countdown-msg" id="countdownMsg" hidden></p>
     </section>
+
+    <!-- PITA SUTRA — gelap -> gading, membuka galeri.
+         Bukan hiasan yang ditaruh di ruang kosong: ia MENUTUP batas
+         antara bidang gelap dan bidang gading, supaya perpindahannya
+         terbaca sebagai kain yang melintas, bukan sebagai potongan
+         lurus. Bentuk & warnanya di style.css (blok PITA SUTRA);
+         elemennya sengaja kosong dan aria-hidden. -->
+    <div class="pita-sutra pita-turun" aria-hidden="true"></div>
 
     <!-- 6a. GALERI MOMEN -->
     <section id="galeri" data-reveal>
@@ -371,6 +362,14 @@
         </button>
       </div>
     </section>
+
+    <!-- PITA SUTRA — gading -> gelap, menutup galeri.
+         Bukan hiasan yang ditaruh di ruang kosong: ia MENUTUP batas
+         antara bidang gelap dan bidang gading, supaya perpindahannya
+         terbaca sebagai kain yang melintas, bukan sebagai potongan
+         lurus. Bentuk & warnanya di style.css (blok PITA SUTRA);
+         elemennya sengaja kosong dan aria-hidden. -->
+    <div class="pita-sutra pita-naik" aria-hidden="true"></div>
 
     <!-- 6b. KONFIRMASI KEHADIRAN -->
     <section id="rsvp" data-reveal>
@@ -464,6 +463,14 @@
       </div>
     </section>
 
+    <!-- PITA SUTRA — gelap -> gading; segel lilin #hadiah::after mendarat di atas pita ini.
+         Bukan hiasan yang ditaruh di ruang kosong: ia MENUTUP batas
+         antara bidang gelap dan bidang gading, supaya perpindahannya
+         terbaca sebagai kain yang melintas, bukan sebagai potongan
+         lurus. Bentuk & warnanya di style.css (blok PITA SUTRA);
+         elemennya sengaja kosong dan aria-hidden. -->
+    <div class="pita-sutra pita-turun" aria-hidden="true"></div>
+
     <!-- 6d. TANDA KASIH -->
     <section id="hadiah" data-reveal>
       <div class="section-divider" data-rv="draw" style="--d:0">
@@ -548,6 +555,14 @@
         <p class="form-msg" id="hadiahMsg" aria-live="polite"></p>
       </form>
     </section>
+
+    <!-- PITA SUTRA — gading -> gelap, menutup Tanda Kasih.
+         Bukan hiasan yang ditaruh di ruang kosong: ia MENUTUP batas
+         antara bidang gelap dan bidang gading, supaya perpindahannya
+         terbaca sebagai kain yang melintas, bukan sebagai potongan
+         lurus. Bentuk & warnanya di style.css (blok PITA SUTRA);
+         elemennya sengaja kosong dan aria-hidden. -->
+    <div class="pita-sutra pita-naik" aria-hidden="true"></div>
 
     <!-- 7. PENUTUP -->
     <section id="penutup" data-reveal>

@@ -57,8 +57,43 @@
      /assets/ dan mendarat di /_ornamen/ yang tidak ada — gambarnya
      hilang tanpa satu pun pesan di layar, hanya 404 di konsol.
      Path absolut menghapus seluruh persoalan itu. */
-  --orn-latar:url('/templates/_ornamen/latar-hitam-emas.webp');
-  --orn-plaster:url('/templates/_ornamen/latar-hitam-emas.webp');
+  /* LATAR: POLA SVG, BUKAN FOTO. Diganti 2026-09-02 atas perintah user
+     ("background yang kamu pakai sekarang terlihat buram, saya mau pakai
+     background yang proper dan berkualitas").
+
+     Ia benar, dan sebabnya tidak bisa diperbaiki dengan berkas lain:
+     latar-hitam-emas.webp cuma 736x1104 — itu ukuran ASLI sumbernya di
+     folder user, dan tools/siapkan-ornamen.js tidak pernah memperbesar.
+     Dengan background-size:cover pada layar 390x844 ia dilukis 562x844,
+     jadi 1,31 piksel berkas per piksel CSS. Di HP 3x DPI itu berarti
+     diperbesar lebih dari dua kali. SELURUH folder latar milik user
+     berhenti di 736px, jadi tidak ada foto latar mana pun yang bisa
+     tajam di sini.
+
+     Penggantinya digambar, bukan difoto: kisi belah ketupat art-deco
+     dengan kipas dan kuncup wajik, sebagai SVG data-URI. Tiga
+     akibatnya, dan ketiganya yang diminta user:
+       - TAJAM di DPI berapa pun — SVG diraster browser pada resolusi
+         perangkat, jadi tidak ada ukuran layar yang membuatnya buram;
+       - 1,2 KB, bukan 95 KB — dan tidak ada permintaan jaringan sama
+         sekali karena ia menyatu di berkas CSS;
+       - warnanya PERSIS emas tema ini (#C9A44B), bukan emas foto orang
+         lain yang harus ditutup lapisan hitam 80% supaya cocok.
+
+     Teranya 120x120 dan MENYAMBUNG di keempat tepi: kisinya dua berkas
+     garis diagonal berjarak 60px, jadi tiap garis yang keluar di satu
+     tepi masuk lagi persis di tepi seberangnya, dan kuncup di tepi
+     digambar utuh supaya separuhnya bertemu separuh tera sebelahnya.
+     Skrip yang membangunnya ada di riwayat sesi; kalau polanya mau
+     diubah, yang diubah angka opacity di dalam data-URI ini.
+
+     KARENA IA POLA BERULANG, tiap tempat yang memakainya WAJIB memakai
+     background-size:120px 120px + background-repeat:repeat. Dengan
+     background-size:cover (bawaan lama) satu tera diregangkan sepenuh
+     layar dan yang terlihat cuma dua garis raksasa — tanpa error apa pun. */
+  --orn-latar:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1' opacity='.10'%3E%3Cpath d='M60 0L0 60M120 0L0 120M120 60L60 120'/%3E%3Cpath d='M0 60L60 0M0 0L120 120M60 120L120 60'/%3E%3C/g%3E%3Cg fill='none' stroke='%23C9A44B' stroke-width='1' stroke-linecap='round' opacity='.17'%3E%3Cg transform='rotate(0 30 30)'%3E%3Cpath d='M30 30L20.0 30.0M30 30L22.9 22.9M30 30L30.0 20.0M30 30L37.1 22.9M30 30L40.0 30.0'/%3E%3Cpath d='M20 30A10 10 0 0 1 40 30'/%3E%3C/g%3E%3Cg transform='rotate(180 90 90)'%3E%3Cpath d='M90 90L80.0 90.0M90 90L82.9 82.9M90 90L90.0 80.0M90 90L97.1 82.9M90 90L100.0 90.0'/%3E%3Cpath d='M80 90A10 10 0 0 1 100 90'/%3E%3C/g%3E%3C/g%3E%3Cg fill='%23C9A44B' opacity='.16'%3E%3Cpath d='M0 -3.2L3.2 0L0 3.2L-3.2 0Z'/%3E%3Cpath d='M60 -3.2L63.2 0L60 3.2L56.8 0Z'/%3E%3Cpath d='M120 -3.2L123.2 0L120 3.2L116.8 0Z'/%3E%3Cpath d='M0 56.8L3.2 60L0 63.2L-3.2 60Z'/%3E%3Cpath d='M60 56.8L63.2 60L60 63.2L56.8 60Z'/%3E%3Cpath d='M120 56.8L123.2 60L120 63.2L116.8 60Z'/%3E%3Cpath d='M0 116.8L3.2 120L0 123.2L-3.2 120Z'/%3E%3Cpath d='M60 116.8L63.2 120L60 123.2L56.8 120Z'/%3E%3Cpath d='M120 116.8L123.2 120L120 123.2L116.8 120Z'/%3E%3C/g%3E%3C/svg%3E");
+  --orn-plaster:var(--orn-latar);
+  --orn-latar-ukuran:120px 120px;
   --orn-sudut:url('/templates/_ornamen/sudut-baroque-b.webp');
 
   /* --- tahap amplop (assets/amplop.css membaca variabel ini) --- */
@@ -81,6 +116,10 @@
   --amplop-latar:#0B0A09;
   --amplop-warna:#1C1815;
   --amplop-kertas:var(--orn-plaster);
+  /* WAJIB kedua-duanya: amplop.css bawaannya cover + no-repeat, dan pola
+     berulang yang di-cover akan terlihat sebagai dua garis raksasa. */
+  --amplop-kertas-ukuran:var(--orn-latar-ukuran);
+  --amplop-kertas-ulang:repeat;
   --amplop-segel:url('/templates/_ornamen/segel-pro-noir.webp');
   /* Tutup BERUNDAK ART DECO — bahasa yang sama dengan medali dan
      bingkai oval di dalamnya, dan sekaligus yang paling menjauhkannya
@@ -103,7 +142,8 @@
   --surat-tinta:#EFE0BA;
   --surat-aksen:#E4CB90;
   --surat-garis:rgba(201,164,75,.45);
-  --surat-hias:url('/templates/_ornamen/garis-d.webp');
+  /* garis-d dihapus dari repo 2026-09-01 (buram, 480x237). */
+  --surat-hias:url('/templates/_ornamen/garis-a.webp');
   --surat-judul:'Cormorant Garamond',Georgia,serif;
 }
 
@@ -152,30 +192,27 @@ img{max-width:100%;display:block;}
 .invitation{
   position:relative;
   background-color:var(--paper);
-  /* Tekstur relief kertas, bukan gradasi warna. Sengaja background-
-     attachment:fixed dan background-size:cover: gambarnya cuma 675px,
-     dan kalau dibiarkan merentang sepanjang halaman (belasan ribu piksel)
-     ia melar jadi buram. Dengan fixed, ia selalu tampil satu layar penuh
-     pada ukuran aslinya. Lapisan putih tipis di atasnya menahan tekstur
-     supaya tetap jadi LATAR — tanpa itu, teks di atasnya sulit dibaca. */
-  background-image:
-    linear-gradient(rgba(18,17,16,.80),rgba(18,17,16,.80)),
-    var(--orn-latar);
-  background-size:cover,cover;
-  background-position:center,center;
-  background-attachment:fixed,fixed;
+  /* Lapisan hitam 80% DILEPAS bersama foto latarnya: pola SVG sudah
+     membawa opacity-nya sendiri di dalam gambar, jadi menumpuk lapisan
+     lagi di atasnya cuma memadamkannya.
+     background-attachment juga kembali ke bawaan (scroll): 'fixed' dulu
+     dipakai supaya foto latar tidak melar sepanjang halaman belasan ribu
+     piksel — pola berulang tidak punya persoalan itu, dan 'fixed' pada
+     latar berulang membuat gulir di HP tersendat. */
+  background-image:var(--orn-latar);
+  background-size:var(--orn-latar-ukuran);
+  background-repeat:repeat;
+  background-position:center top;
   overflow:hidden;
 }
 
 @media(min-width:640px){
   body{
     background-color:var(--ivory);
-    background-image:
-      linear-gradient(rgba(6,6,5,.72),rgba(6,6,5,.72)),
-      var(--orn-latar);
-    background-size:cover,cover;
-    background-position:center,center;
-    background-repeat:no-repeat,no-repeat;
+    background-image:var(--orn-latar);
+    background-size:var(--orn-latar-ukuran);
+    background-repeat:repeat;
+    background-position:center top;
     min-height:100vh;
     padding:var(--s6) var(--s3);
     display:flex;
@@ -388,14 +425,16 @@ section{position:relative;padding:var(--s6) var(--s4);}
   top:0;
   background-color:var(--paper);
   background-image:var(--orn-plaster);
-  background-size:cover;
+  background-size:var(--orn-latar-ukuran);
+  background-repeat:repeat;
   background-position:center top;
 }
 .cover-curtain-bottom{
   bottom:0;
   background-color:var(--paper);
   background-image:var(--orn-plaster);
-  background-size:cover;
+  background-size:var(--orn-latar-ukuran);
+  background-repeat:repeat;
   background-position:center bottom;
   transition-delay:.05s;
 }
@@ -606,7 +645,11 @@ section{position:relative;padding:var(--s6) var(--s4);}
      inisialnya duduk di rongga lingkaran sulur yang lapang, jadi
      hurufnya terbaca jauh lebih kecil daripada kotaknya sendiri dan
      hilang di atas foto. Margin negatifnya ikut setengah lebarnya. */
-  width:224px;height:224px;
+  /* Dikecilkan dari 224px pada revisi blok 18: sejak ada sayap ukiran
+     yang melebar 352px, medali seukuran itu jadi bidang gelap terbesar
+     di halaman dan sayapnya cuma terbaca sebagai sisa di kiri-kanan.
+     Yang harus dominan di acuan user adalah ukirannya. */
+  width:186px;height:186px;
   /* Setengah lebar akan menaruh monogram tepat di tengah tepi bawah
      foto; pada ukuran 224px itu berarti ia menelan sepertiga foto.
      Digeser turun supaya cuma puncaknya yang menumpang. */
@@ -642,10 +685,16 @@ section{position:relative;padding:var(--s6) var(--s4);}
      gelap dan setengah tembus: di atas foto, cakram pekat akan terlihat
      seperti tambalan. */
   left:50%;top:50%;
-  width:66%;aspect-ratio:1;
+  /* Diperbesar 66% -> 84% dan dipekatkan pada revisi blok 18. Sejak ada
+     sayap ukiran DI BELAKANG medali, cincin selebar 186px yang cakramnya
+     cuma 123px meninggalkan gelang tembus pandang selebar 30px di tiap
+     sisi — dan ujung sayapnya terlihat menembus dari sana, tepat di
+     sebelah inisial. Cakram yang lebih besar menutupnya; pekatnya boleh
+     naik karena sekarang ia duduk di bidang gelap, bukan di atas foto. */
+  width:84%;aspect-ratio:1;
   transform:translate(-50%,-50%);
   border-radius:50%;
-  background:rgba(12,11,10,.78);
+  background:rgba(12,11,10,.9);
   z-index:0;
 }
 /* SVG dua cincin lamanya disembunyikan, bukan dihapus dari markup,
@@ -1953,10 +2002,24 @@ section{position:relative;padding:var(--s6) var(--s4);}
   --fp-rasio:3 / 4;
   --fp-galeri-bentuk:none;
   --fp-galeri-radius:3px;
-  /* Kaki bertingkat: siluet yang sama dengan tutup amplopnya. */
-  --fp-hero-bentuk:polygon(0 0,100% 0,100% 88%,72% 88%,64% 100%,36% 100%,28% 88%,0 88%);
-  --fp-hero-radius:0;
-  --fp-hero-rasio:3 / 4;
+  /* Kaki bertingkat DIGANTI LENGKUNG TURUN — acuan user
+     (NOIR DORE PREFERENSI FRAME FOTO PALING ATAS SURAT.jpg). Lihat
+     blok 18 di akhir berkas untuk alasan lengkapnya. Dua jari-jari
+     mendatar 50% berjumlah 100%, jadi keduanya bertemu di tengah dan
+     yang terbentuk satu setengah-elips, bukan dua sudut membulat. */
+  --fp-hero-bentuk:none;
+  --fp-hero-radius:0 0 50% 50% / 0 0 84px 84px;
+  /* 3/4 -> 5/8, 2026-09-02. Perintah user untuk KETIGA tema Eropa
+     Mewah: "foto H1 dibuat agak lebar ke bawah lagi, agar foto
+     terlihat luas." Yang bertambah TINGGINYA, bukan lebarnya —
+     fotonya sudah melebar penuh ke tepi layar sejak foto-penuh.css.
+     Pada 390px lebar: 520px -> 624px, jadi ia mengisi tiga perempat
+     layar HP dan terbaca sebagai satu bidang, bukan sebagai gambar
+     yang ditempel di kepala surat.
+     object-position foto-nya tetap `center 28%` (foto-penuh.css),
+     jadi yang bertambah terlihat adalah bagian BAWAH foto — badan
+     pasangan, bukan langit di atas kepalanya. */
+  --fp-hero-rasio:5 / 8;
   --fp-kaki:#1A1715;
   /* Lebih pendek daripada tema terang. Kaki gradasi ke warna GELAP
      menutup fotonya jauh lebih cepat daripada kaki ke warna krem —
@@ -1988,4 +2051,641 @@ section{position:relative;padding:var(--s6) var(--s4);}
      sisi yang tergambar tanpa elemen tambahan. */
   --kal-tanda-latar:linear-gradient(var(--gold,#C4A05A) 0 1.5px,transparent 1.5px calc(100% - 1.5px),var(--gold,#C4A05A) calc(100% - 1.5px) 100%);
   --kal-tanda-inset:16% 8%;
+}
+
+/* ============================================================
+   17. PITA SUTRA + BIDANG GADING KEDUA
+   ------------------------------------------------------------
+   KENAPA BLOK INI ADA
+
+   Sebelum revisi ini halaman ini hitam dari atas sampai bawah dengan
+   SATU sisipan gading (Tanda Kasih). Bagus, tapi konsekuensinya: dari
+   sembilan bagian, delapan terlihat sama — dan satu-satunya perpindahan
+   bidang yang ada dipotong dengan garis lurus mendatar.
+
+   Acuan user (NOIR DORE PREFERENSI DESIGN DALAM SURAT.jpg) menyelesaikan
+   dua hal itu sekaligus dengan satu benda: bidang gelap dan bidang
+   terang berganti beberapa kali, dan batas antar keduanya selalu
+   ditutup SEHELAI KAIN yang melintas bergelombang. Isi dan paletnya
+   tidak ikut disalin — hanya perangkat itu.
+
+   KENAPA SUTRA, DAN KENAPA DI TEMA INI
+
+   Noir Dore adalah tema resepsi malam berdasi hitam. Kain sutra emas
+   yang melintang adalah benda yang memang ada di ruangannya: selempang,
+   pita kursi pengantin, pita pengikat undangan. Ia juga menjawab satu
+   hal yang selama ini dipaksakan — segel lilin di batas Tanda Kasih
+   dulu menempel pada garis lurus; sekarang ia mendarat DI ATAS PITA,
+   dan itu justru cara segel lilin dipakai sungguhan: dicapkan pada pita
+   yang mengikat surat.
+
+   SUSUNANNYA
+
+     ... gelap ...
+     ~ pita ~   Galeri Momen  (gading, BARU)   ~ pita ~
+     ... gelap ...
+     ~ pita + segel ~  Tanda Kasih (gading)    ~ pita ~
+     ... gelap ...
+
+   KENAPA PITANYA ELEMEN SENDIRI, BUKAN MASK PADA SECTION-NYA
+
+   Percobaan yang benar-benar dipertimbangkan adalah memberi tepi
+   bergelombang lewat mask-image pada #hadiah. Itu MERUSAK segelnya:
+   segel digambar #hadiah::after pada top:-34px, di LUAR kotak
+   section — dan mask memotong tepat di kotak itu, jadi segelnya hilang
+   sama sekali tanpa satu pun error. Pita sebagai elemen kosong
+   tersendiri tidak punya masalah itu, dan sebagai bonus ia benda yang
+   bisa diberi kilau sutra sungguhan.
+   ============================================================ */
+
+.pita-sutra{
+  position:relative;
+  /* Menunggangi batas: setengah tingginya masuk ke bidang atas,
+     setengahnya ke bidang bawah. Tanpa margin negatif ini ia cuma jadi
+     jalur kosong DI ANTARA dua bidang, dan batas lurusnya justru
+     bertambah dua. */
+  height:78px;
+  margin:-39px 0;
+  z-index:4;
+  pointer-events:none;
+  /* Kilau sutra: terang di puncak lipatan, gelap di lekukannya.
+     Sudutnya 168deg (nyaris mendatar) supaya kilaunya membaca sebagai
+     cahaya yang jatuh di sepanjang kain, bukan sebagai gradasi tegak. */
+  background:linear-gradient(168deg,
+    #2A2113 0%,
+    #8A6B2C 14%,
+    #E8D29A 30%,
+    #C4A05A 44%,
+    #6E5624 60%,
+    #D8BC7A 78%,
+    #9A7A34 90%,
+    #241C10 100%);
+  /* Bentuk kainnya. preserveAspectRatio='none' WAJIB: tanpa itu SVG
+     mempertahankan rasio dan pita hanya terisi di tengah layar. */
+  -webkit-mask-size:100% 100%;
+  mask-size:100% 100%;
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+  filter:drop-shadow(0 6px 12px rgba(0,0,0,.55));
+}
+
+/* Dua arah gelombang, dan keduanya dipakai berselang-seling. Satu
+   bentuk yang sama empat kali membuat pitanya terbaca sebagai motif
+   yang diulang, bukan sebagai sehelai kain yang melintas. */
+.pita-turun{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 24' preserveAspectRatio='none'%3E%3Cpath d='M0 5 C 18 -3 30 11 48 6 C 66 1 78 14 100 3 L 100 16 C 78 27 66 14 48 19 C 30 24 18 10 0 18 Z' fill='%23000'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 24' preserveAspectRatio='none'%3E%3Cpath d='M0 5 C 18 -3 30 11 48 6 C 66 1 78 14 100 3 L 100 16 C 78 27 66 14 48 19 C 30 24 18 10 0 18 Z' fill='%23000'/%3E%3C/svg%3E");
+}
+.pita-naik{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 24' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C 22 14 34 1 52 6 C 70 11 82 -3 100 5 L 100 18 C 82 10 70 24 52 19 C 34 14 22 27 0 16 Z' fill='%23000'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 24' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C 22 14 34 1 52 6 C 70 11 82 -3 100 5 L 100 18 C 82 10 70 24 52 19 C 34 14 22 27 0 16 Z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+/* Segel lilin di batas Tanda Kasih harus berada DI ATAS pitanya, bukan
+   di belakang. Pita ber-z-index 4; tanpa baris ini segelnya tenggelam
+   separuh dan terbaca seperti gambar yang salah tumpuk. */
+#hadiah::after{z-index:5;top:-52px;}
+
+/* ------------------------------------------------------------
+   17b. GALERI — bidang GADING kedua
+   Dipilih galeri, bukan bagian lain, karena dua alasan yang keduanya
+   soal isi: (1) foto kenangan adalah satu-satunya bagian yang isinya
+   sudah berwarna sendiri, jadi bidang terang tidak perlu menulis ulang
+   selusin warna teks seperti #hadiah — risikonya paling kecil; dan
+   (2) di acuan user, bidang terang memang bidang yang memuat foto.
+   ------------------------------------------------------------ */
+#galeri{
+  background-color:#F3EDE0;
+  background-image:
+    linear-gradient(rgba(243,237,224,.90),rgba(243,237,224,.90)),
+    url('/templates/_ornamen/latar-relief-halus.webp');
+  background-size:cover;
+  background-position:center;
+  color:#2B2620;
+  /* Ruang di kepala & kaki supaya pita yang menunggangi batas tidak
+     menutupi ornamen sudut mozaik maupun angsanya. */
+  padding-top:calc(var(--s7) + 12px);
+}
+#galeri::before{color:#8A6730;opacity:.09;}
+#galeri .eyebrow{color:rgba(43,38,32,.62);}
+#galeri .eyebrow::before,#galeri .eyebrow::after{background:currentColor;opacity:.5;}
+#galeri .section-title{color:#2B2620;}
+#galeri p,#galeri .section-lead{color:rgba(43,38,32,.74);}
+#galeri .section-divider::before,#galeri .section-divider::after{
+  background:linear-gradient(to right,rgba(138,103,48,0),rgba(138,103,48,.7),rgba(138,103,48,0));
+}
+/* Ornamen emas di tema ini digambar untuk latar hitam. Di atas gading
+   ia terlalu terang dan hilang; digelapkan, bukan diganti. */
+#galeri .divider-ornament{filter:brightness(.8) saturate(1.15);opacity:1;}
+
+/* ------------------------------------------------------------
+   17c. FOIL EMAS PADA JUDUL DI BIDANG GADING
+   Judul tema ini berfoil emas. Foil adalah cahaya yang dipantulkan
+   kertas GELAP; di atas gading ia jadi huruf pucat yang nyaris tak
+   terbaca. Karena itu judul di kedua bidang gading memakai tinta
+   pekat, bukan foil. Aturan ini sudah ada untuk #hadiah — di sini ia
+   diperluas ke #galeri, dan disebut ulang supaya yang menambah bidang
+   gading ketiga tahu bahwa daftarnya ada dua tempat.
+   ------------------------------------------------------------ */
+#galeri .section-title,
+#hadiah .section-title{
+  background-image:none;
+  -webkit-background-clip:border-box;
+  background-clip:border-box;
+  color:#2B2620;
+  /* -webkit-text-fill-color WAJIB ikut dibatalkan. Ia MENANG atas
+     color, jadi menyetel color saja tidak mengubah apa pun dan
+     judulnya tetap transparan — persis yang terjadi pada percobaan
+     pertama, dan tidak ada error apa pun yang memberi tahu. */
+  -webkit-text-fill-color:#2B2620;
+  -webkit-text-stroke:0;
+  animation:none;
+  /* Letterpress, bukan foil: di bidang gading judulnya TERCETAK MASUK
+     ke kertas. Ini bukan sekadar tambalan keterbacaan — foil emas
+     memang teknik cetak untuk kertas gelap, dan gading punya
+     tekniknya sendiri. */
+  filter:none;
+  text-shadow:0 1px 0 rgba(255,255,255,.85), 0 -1px 1px rgba(43,38,32,.24);
+}
+
+/* Ruang nafas di kaki tiap bagian yang diikuti pita. Pita ditarik 39px
+   ke ATAS supaya menunggangi batas, dan tanpa tambahan ini ia mendarat
+   di atas baris terakhir isi section — pada Ucapan & Doa kartu terakhir
+   benar-benar tertutup separuh. #galeri tidak disebut: padding kakinya
+   sudah 176px lebih untuk ornamen angsanya. */
+#countdown,#ucapan,#hadiah{padding-bottom:calc(var(--s6) + 34px);}
+
+/* ============================================================
+   18. FOTO PALING ATAS — bingkai emas, lengkung turun, sayap ukiran
+   ------------------------------------------------------------
+   Acuan user: NOIR DORE PREFERENSI FRAME FOTO PALING ATAS SURAT.jpg.
+
+   Tiga hal yang diambil dari acuan itu, dan ketiganya saling bergantung:
+
+     1. GARIS EMAS TIPIS terinset dari tepi kartu, melewati foto di
+        bagian atas dan meneruskan diri ke bidang gelap di bawahnya.
+        Bukan bingkai foto — bingkai KARTU. Itu sebabnya ia dipasang
+        pada #fotoUtama, bukan pada .hero-photo: kalau dipasang pada
+        fotonya, ia berhenti di tepi foto dan yang terbaca cuma "foto
+        yang diberi garis", bukan halaman yang dibingkai.
+     2. TEPI BAWAH FOTO MELENGKUNG TURUN, sehingga kedua sudut bawahnya
+        terbuka dan bidang hitam masuk dari kiri-kanan.
+     3. UKIRAN EMAS BERAT menunggangi titik terendah lengkung itu,
+        melebar ke kiri dan kanan seperti sepasang sayap.
+
+   KENAPA KAKI BERTINGKAT DILEPAS
+
+   Siluet bertingkat (--fp-hero-bentuk yang lama) adalah kutipan dari
+   tutup amplop tema ini, dan itu bagus. Tapi ia dan lengkung acuan
+   menempati SATU tempat yang sama — tepi bawah foto — dan dua siluet
+   pada satu tepi tidak bisa dibaca berbarengan; yang muncul cuma tepi
+   bergerigi yang tidak jelas bentuknya. Kutipan amplopnya tidak hilang:
+   ia masih ada di --kal-clip (pelat kalender bersudut potong) dan di
+   ornamen pembatas --deco-garis-undak.
+
+   KENAPA SAYAPNYA MEMAKAI .hero-monogram-ring
+
+   Medali monogram sudah memakai ::before (cakram gelap) dan ::after
+   (cincin sulur), dan satu elemen cuma punya dua. .hero-monogram-ring
+   adalah <svg> dua-cincin peninggalan Ivory Gold yang sudah lama
+   display:none tapi sengaja dibiarkan di markup supaya struktur tema
+   tetap sebangun. Ia dipakai ulang di sini — jadi TIDAK ADA markup baru,
+   dan tema lain yang menyalin kerangka ini tetap ikut benar.
+   Lingkaran SVG di dalamnya harus tetap disembunyikan; kalau tidak, dua
+   cincin biru-hitam bawaan muncul di belakang ukirannya.
+   ============================================================ */
+
+/* Foto menempel ke tepi atas, seperti di acuan. padding-top:34px yang
+   lama adalah sisa dari masa foto ini masih medali bulat yang cincinnya
+   menjorok ke atas — sejak foto melebar penuh, yang tersisa cuma pita
+   hitam kosong di kepala halaman. */
+#fotoUtama{padding-top:0;}
+
+/* 18a. BINGKAI KARTU */
+#fotoUtama::before{
+  content:'';
+  position:absolute;
+  inset:14px;
+  border:1px solid rgba(201,164,75,.52);
+  pointer-events:none;
+  z-index:4;
+}
+
+/* 18b. SAYAP UKIRAN DI TITIK TERENDAH LENGKUNG
+   ------------------------------------------------------------
+   Percobaan pertama memakai satu berkas garis (garis-d.webp) selebar
+   352px. User menolaknya dengan kata-katanya sendiri: "ornamen yang
+   terlihat sangat buram (bad quality image)". Ia benar, dan sebabnya
+   bisa dihitung: berkas itu cuma 480x237 piksel, jadi pada layar HP
+   3x DPI ia diperbesar 2,2 kali. Berkasnya sudah DIHAPUS dari repo,
+   bukan cuma dilepas dari sini.
+
+   Penggantinya sepasang ukiran sudut baroque (420x420, hasil foto
+   emas sungguhan dengan kilau, bukan siluet rata) yang DICERMINKAN
+   satu sama lain. Dua alasan:
+     - pada lebar tampil ~150px per sisi, berkas 420px masih tajam
+       sampai 2,8x DPI — tidak ada pembesaran sama sekali;
+     - ukiran sudut yang saling dicerminkan PERSIS bentuk ornamen di
+       acuan user: dua sulur yang menyapu keluar dari satu titik
+       tengah, bukan satu pita panjang.
+
+   Butuh elemen sendiri (.hero-sayap di index.html) karena pencerminan
+   hanya bisa lewat transform per elemen, dan .hero-monogram sudah
+   memakai habis ::before (cakram) dan ::after (cincin). */
+.hero-sayap{
+  position:absolute;
+  left:50%;top:50%;
+  width:376px;height:150px;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  /* -1, BUKAN 0. Pada z-index 0 ia seri dengan cakram gelap ::before,
+     dan yang seri diputus urutan DOM — .hero-sayap datang SESUDAH
+     ::before, jadi ukirannya terlukis DI ATAS cakram dan memotong
+     kedua inisial. Aman di -1 karena .hero-monogram punya filter, dan
+     filter membuat stacking context sendiri: ia tidak bisa lolos ke
+     belakang foto. */
+  z-index:-1;
+}
+.hero-sayap::before,
+.hero-sayap::after{
+  content:'';
+  position:absolute;
+  top:50%;
+  width:148px;height:148px;
+  background-image:url('/templates/_ornamen/sudut-baroque-a.webp');
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.6));
+}
+/* Berkas sumbernya bersudut KANAN-BAWAH (lengan tegak di kanan, lengan
+   mendatar di bawah). Sisi kanan karena itu dipakai apa adanya dan
+   sisi kiri dicerminkan mendatar — tanpa itu kedua sayap menghadap ke
+   arah yang sama dan yang terbaca bukan sepasang sayap, melainkan satu
+   ornamen yang tercecer dua kali. */
+.hero-sayap::before{left:0;  transform:translateY(-50%) scaleX(-1);}
+.hero-sayap::after {right:0; transform:translateY(-50%);}
+
+/* .hero-monogram-ring: SVG dua-cincin peninggalan Ivory Gold. Sempat
+   dipakai ulang untuk membawa ukiran sayap; sejak sayapnya pindah ke
+   .hero-sayap ia kembali disembunyikan seperti semula. Elemennya
+   dibiarkan di markup supaya kerangka tema tetap sebangun dengan tema
+   lain. */
+.hero-monogram-ring{display:none;}
+
+/* Medali dinaikkan supaya pusatnya — dan karena itu pusat sayapnya —
+   jatuh tepat di titik terendah lengkung, bukan menggantung di bawahnya. */
+#fotoUtama .hero-monogram{margin-top:-84px;}
+
+/* ============================================================
+   19. SAMPUL — bingkai dilepas, susunan turun ke sudut kiri
+   ------------------------------------------------------------
+   Perintah user sama untuk ketiga tema Eropa Mewah: bingkai dilepas,
+   lebih elegan & minimalis, tulisan harus jelas terbaca, dan
+   peletakan/hurufnya dimainkan. Alasan lengkap kenapa sampul lama
+   bermasalah ditulis di blok yang sama pada Blanc Royale; yang penting
+   di sini: KETIGANYA TIDAK BOLEH DISELESAIKAN DENGAN CARA YANG SAMA.
+
+   Blanc Royale menurunkan teks ke lembar kertas. Kalau tema ini ikut,
+   keduanya kembali jadi satu desain dengan dua warna — persis penyakit
+   yang sedang diobati.
+
+   YANG DIKERJAKAN DI SINI
+
+   Sampul jadi HALAMAN JUDUL BERGAYA TERBITAN: seluruh tulisan turun ke
+   sudut KIRI-BAWAH, rata kiri, dengan satu garis emas TEGAK sebagai
+   sumbunya. Tidak ada satu pun bidang warna baru — yang membuat teks
+   terbaca adalah gradasi gelap yang memang sudah ada di kaki foto
+   (.curtain-foto::after), diperdalam sedikit.
+
+   Kenapa itu benar untuk tema INI: Noir Dore adalah resepsi malam
+   berdasi hitam. Susunan rata kiri dengan sumbu tegak adalah bahasa
+   sampul buku dan undangan gala — formal tanpa harus simetris. Dan
+   karena teksnya turun ke kaki, dua pertiga atas foto dibiarkan utuh:
+   wajah mempelai tidak lagi berbagi tempat dengan namanya sendiri.
+   ============================================================ */
+
+/* --- 19a. semua bingkai & ukiran sudut dilepas --- */
+.cover-curtain-top::before,.cover-curtain-top::after,
+.cover-curtain-bottom::before,.cover-curtain-bottom::after{
+  content:none;
+}
+/* Motif cincin di garis pertemuan tirai ikut dilepas: ia melintang
+   tepat di tengah layar, dan pada sampul yang isinya sudah turun ke
+   kaki ia jadi satu-satunya benda di tengah — terbaca seperti garis
+   yang tertinggal, bukan seperti hiasan. */
+.curtain-seam{display:none;}
+
+/* --- 19b. gradasi kaki diperdalam ---
+   Ini satu-satunya yang membuat teks terbaca di sini; tidak ada bidang
+   warna yang menutupi foto. Kalau angkanya diturunkan, tulisan rata
+   kiri di kaki akan hilang di foto yang kebetulan terang di bawah. */
+.curtain-foto::after{
+  background:linear-gradient(180deg,
+    rgba(10,9,8,.42) 0%,
+    rgba(10,9,8,.14) 30%,
+    rgba(10,9,8,.58) 60%,
+    rgba(10,9,8,.88) 80%,
+    rgba(10,9,8,.97) 100%);
+}
+
+/* --- 19c. susunan rata kiri di kaki --- */
+.cover-content{
+  align-items:flex-start;
+  justify-content:flex-end;
+  text-align:left;
+  padding:var(--s6) var(--s4) var(--s7);
+}
+/* Sumbu emas tegak. ::before dulu dipakai bingkai garis rangkap (blok
+   di atas) — sekarang ia garis ini. Tingginya mengikuti blok teks,
+   bukan layar: dipatok ke kaki, dan memudar ke atas seperti cahaya
+   yang habis. */
+.cover-content::before{
+  content:'';
+  position:absolute;
+  inset:auto auto var(--s7) calc(var(--s4) - 14px);
+  width:1px;height:210px;
+  border:0;
+  outline:0;
+  background:linear-gradient(to top,rgba(201,164,75,.85),rgba(201,164,75,0));
+  z-index:1;
+}
+#cover.has-sampul .cover-content::before{
+  border-color:transparent;
+  outline-color:transparent;
+}
+.cover-content > *{position:relative;z-index:2;}
+
+/* Sapaan dipatok di kepala layar — ia salam, bukan bagian dari blok
+   judul, dan menaruhnya di atas memberi blok judul ruang bernapas. */
+.cover-guest{
+  position:absolute;
+  top:var(--s6);left:var(--s4);right:var(--s4);
+  margin-bottom:0;
+  text-align:left;
+}
+
+/* --- 19d. huruf ---
+   Nama dibesarkan dan dipisah dua baris rata kiri; ampersand jadi
+   kecil dan bergeser masuk, bukan lagi benda di tengah. Tanggalnya
+   naik jadi baris berjarak lebar di ATAS nama — urutan terbalik ini
+   yang membuat susunannya terbaca sebagai halaman judul, bukan sebagai
+   kartu nama. */
+.cover-eyebrow{
+  font-size:10.5px;
+  letter-spacing:.46em;
+  margin-bottom:var(--s2);
+}
+.cover-names{
+  font-size:clamp(40px,13vw,56px);
+  letter-spacing:.01em;
+  line-height:1.0;
+  margin-bottom:var(--s3);
+}
+.cover-names .amp{
+  display:block;
+  font-family:'Pinyon Script',cursive;
+  font-weight:400;
+  font-size:.46em;
+  margin:2px 0 2px 2px;
+}
+.cover-date{
+  font-size:11.5px;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  margin-bottom:var(--s5);
+}
+
+/* --- 19e. tombol: garis emas, bukan balok --- */
+.btn-open{
+  background:none;
+  color:#E6CE93;
+  border:1px solid rgba(201,164,75,.6);
+  border-radius:0;
+  padding:13px 28px;
+  box-shadow:none;
+  font-size:12px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+.btn-open::before{content:none;}
+.btn-open:hover{
+  background:rgba(201,164,75,.16);
+  transform:none;
+  box-shadow:none;
+}
+
+/* --- 19f. layar pendek (potret-tema.js memotret pada 390x585) --- */
+@media(max-height:640px){
+  .cover-content{padding-bottom:var(--s6);}
+  .cover-content::before{bottom:var(--s6);height:170px;}
+  .cover-names{font-size:clamp(34px,11vw,44px);}
+  .cover-date{margin-bottom:var(--s4);}
+  .cover-guest{top:var(--s4);}
+}
+
+/* ============================================================
+   20. MASUKAN USER 2026-09-02 — BINGKAI OVAL, ACARA, LOKASI
+   ------------------------------------------------------------
+   Tiga perintah lepas untuk tema ini (yang keempat — ornamen buram di
+   belakang foto atas — sudah dikerjakan di blok 18b, dan berkas
+   garis-d.webp dihapus dari repo). Ditulis di akhir berkas supaya
+   urutan muatnya pasti menang atas blok 7 (garis waktu acara) dan
+   blok 14 (bingkai foto mempelai).
+   ============================================================ */
+
+/* --- 20a. BINGKAI OVAL EMAS FOTO MEMPELAI — DIPINDAH WADAHNYA ---
+   Perintah user: "berikan frame berbentuk oval dan ke-emasan pada foto
+   mempelai pria dan wanita."
+
+   Bingkainya sebenarnya SUDAH ditulis (blok 14, memakai
+   --deco-bingkai-oval) dan tetap TIDAK PERNAH TERLIHAT. Sebabnya
+   assets/foto-penuh.css — modul bersama yang dimuat SESUDAH berkas ini
+   — memakai `#mempelai .photo-placeholder::after` untuk kaki gradasi
+   foto, dengan `!important`. Satu-satunya pseudo-element yang dipakai
+   bingkai itu diambil alih, dan tidak ada error, tidak ada peringatan:
+   fotonya tetap lonjong, cuma emasnya tidak pernah ada.
+
+   Bingkainya karena itu pindah ke ::after WADAHNYA (.couple-card), yang
+   belum dipakai siapa pun. Foto tetap milik modul bersama; bingkai jadi
+   milik tema. Keduanya tidak lagi berebut elemen yang sama.
+
+   UKURANNYA DIHITUNG, BUKAN DITEBAK, dan semuanya dalam PERSEN LEBAR
+   supaya bingkainya menyusut bersama fotonya di lebar layar mana pun:
+     - berkas SVG-nya 200x250; cincin utamanya rx=87, ry=113
+     - foto (--fp-rasio 3/4) selebar W dan setinggi 4W/3, lonjong penuh
+     - supaya cincin utama JATUH TEPAT di tepi foto:
+         lebar bingkai  F = W / (87/100)  = 114,9% W
+         tinggi bingkai G = (4W/3) / (113/125) = 147,5% W
+     - dan supaya pusatnya berimpit: geser ke atas (G-4W/3)/2 = 7,07% W
+   `padding-bottom` DAN `margin-top` dalam persen sama-sama dihitung
+   dari LEBAR blok penampung — itu yang membuat tinggi & pergeseran
+   tegaknya bisa dikunci ke lebar. `top` tidak bisa: persennya dihitung
+   dari TINGGI, dan tinggi .couple-card ikut panjang nama orang tua. */
+.couple-card::after{
+  content:'';
+  position:absolute;
+  left:-7.47%;
+  top:0;
+  margin-top:-7.07%;
+  width:114.9%;
+  height:0;
+  padding-bottom:147.5%;
+  background-image:var(--deco-bingkai-oval);
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  pointer-events:none;
+  z-index:3;
+}
+/* Cahaya emas tipis di tepi lonjong fotonya sendiri, di bawah bingkai.
+   Tanpa ini foto gelap di atas latar gelap tidak punya tepi sama
+   sekali, dan cincin emas terlihat melayang mengelilingi ruang kosong. */
+.couple-card .photo-placeholder{
+  box-shadow:0 0 0 1px rgba(201,164,75,.28), 0 14px 30px -18px #000;
+}
+
+/* --- 20b. AKAD & RESEPSI: disusun ke tengah ---
+   Perintah user: "akad nikah dan resepsi (h2) information dibikin ke
+   tengah dan bagus."
+
+   Susunan lama: garis waktu tegak di tepi kiri, ornamen duduk di
+   garisnya, tiga baris teks rata kiri di sebelahnya. Begitu lembar
+   kalender masuk, ia mengambil seluruh lebar kartu dan memusatkan
+   dirinya — jadi kalender di sumbu halaman sementara nama acara di
+   sumbu kolom kanan. Dua sumbu dalam satu kartu.
+
+   Sekarang satu sumbu, dan garis waktunya TIDAK DIBUANG melainkan
+   DIPINDAH ke tengah: satu ruas garis emas menurun di antara Akad dan
+   Resepsi. Bacaannya tetap "malam berjalan dari akad ke resepsi", dan
+   sumbu emas tegak itu justru perangkat yang sama dengan sampul tema
+   ini — jadi ia menegaskan tema, bukan menambah bentuk baru. */
+.event-list{display:flex;flex-direction:column;align-items:center;}
+/* Garis waktu di kolom kiri dilepas — penggantinya ruas di tengah. */
+.event-list::before{content:none;}
+.event-card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  grid-template-columns:none;
+  grid-template-areas:none;
+  width:100%;
+  padding:var(--s3) 0;
+  row-gap:0;
+}
+/* grid-area yang tertinggal harus DILUCUTI satu per satu. Di flex,
+   grid-area memang tidak berlaku — tapi align-self:center yang menempel
+   pada .event-icon MASIH berlaku, dan artinya berubah: di flex kolom ia
+   mengatur sumbu MENDATAR. Kebetulan nilainya center, jadi di sini ia
+   justru membantu; di Bordeaux nilainya end/start dan hasilnya nama
+   acara terlempar ke kanan. Ditulis eksplisit supaya tidak bergantung
+   pada kebetulan itu. */
+.event-card .event-icon{
+  order:1;
+  grid-area:auto;
+  align-self:center;
+  width:78px;height:78px;
+  margin:0 0 var(--s2);
+}
+.event-card .event-name{order:2;grid-area:auto;align-self:center;margin-bottom:6px;}
+.event-card .event-time{order:3;grid-area:auto;align-self:center;margin-bottom:var(--s3);}
+.event-card .event-date{order:4;grid-area:auto;align-self:center;margin:0;}
+.event-card .kal{order:4;width:100%;}
+/* Cakram gelap di belakang ornamen tidak diperlukan lagi: ia ada untuk
+   menutup garis emas yang dulu lewat di belakangnya, dan garis itu
+   sudah tidak ada di sana. */
+.event-card .event-icon::before{content:none;}
+/* RUAS SUMBU EMAS di antara dua acara. Digambar pada kartu KEDUA, di
+   ruang padding atasnya — bukan sebagai elemen tersendiri, supaya
+   jumlah acara berapa pun tetap benar: acara ketiga akan membawa
+   ruasnya sendiri, dan acara tunggal tidak menggambar apa pun. */
+.event-card + .event-card{padding-top:var(--s6);}
+.event-card + .event-card::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:0;
+  width:1px;height:34px;
+  margin-left:-.5px;
+  background:linear-gradient(to bottom,transparent,var(--gold) 62%,transparent);
+}
+/* Baris ringkas (akad & resepsi di hari yang sama) ikut ke tengah. */
+.kal-ringkas{text-align:center;}
+
+/* --- 20c. PLAT LOKASI menggantikan denah ---
+   Perintah user: "hapus ilustrasi denah lokasi, sangat tidak cocok."
+   Denah itu memang bukan peta — koordinatnya tidak kita punya sampai
+   user mengisi link maps — jadi yang tergambar jalan karangan.
+
+   Gantinya PAPAN NAMA PINTU MASUK, dan di tema ini papan itu PELAT
+   KUNINGAN TERUKIR: bidang gelap bergaris rambut emas rangkap, dengan
+   mahkota undak art-deco terukir di kepalanya. Bentuknya sengaja
+   PERSEGI — Blanc Royale sudah memakai kubah dan Bordeaux plakat
+   bersudut bulat, jadi ketiga tema Eropa Mewah tetap terbaca berbeda
+   pada bagian yang sama. */
+.plat-lokasi{
+  position:relative;
+  max-width:330px;
+  margin:0 auto var(--s4);
+  padding:var(--s6) var(--s4) var(--s4);
+  background:linear-gradient(168deg,#241E19 0%,#171412 62%,#100E0D 100%);
+  border:1px solid rgba(201,164,75,.46);
+  box-shadow:0 20px 38px -26px #000, inset 0 1px 0 rgba(201,164,75,.16);
+}
+/* Garis rambut kedua. Satu garis terbaca sebagai kotak; dua terbaca
+   sebagai pelat yang diukir — alasan yang sama dengan pelat kalender. */
+.plat-lokasi::before{
+  content:'';
+  position:absolute;
+  inset:6px;
+  border:1px solid rgba(201,164,75,.2);
+  pointer-events:none;
+}
+/* Mahkota undak, DI DALAM pelat. Menunggangi garis atas sempat dicoba
+   supaya terbaca sebagai ukiran yang menembus tepi; yang terlihat
+   justru dua ujung garisnya memotong bingkai di dua titik, dan itu
+   terbaca sebagai kesalahan cetak. */
+.plat-lokasi::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:16px;
+  width:148px;height:20px;
+  transform:translateX(-50%);
+  background-image:var(--deco-garis-undak);
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+  pointer-events:none;
+}
+.plat-lokasi .peta-eyebrow{
+  font-size:9px;
+  letter-spacing:.3em;
+  color:var(--gold);
+  opacity:.8;
+  margin-bottom:var(--s2);
+}
+.plat-lokasi .venue-name{
+  font-family:'Marcellus',Georgia,serif;
+  font-weight:400;
+  text-transform:uppercase;
+  font-size:clamp(14px,4vw,17px);
+  letter-spacing:.08em;
+  line-height:1.4;
+  color:var(--ink);
+  margin-bottom:10px;
+}
+.plat-lokasi .venue-name::after{
+  content:'';
+  display:block;
+  width:42px;height:1px;
+  margin:10px auto 0;
+  background:var(--gold);
+  opacity:.55;
+}
+.plat-lokasi .venue-address{
+  font-size:13px;
+  color:var(--ink-mid);
+  max-width:none;
+  margin:0;
 }

@@ -114,7 +114,13 @@ img{max-width:100%;display:block;}
 /* ---------- layout shell ---------- */
 .invitation{
   position:relative;
-  background-color:var(--paper);
+  /* Sejak revisi "lembar berkubah" (blok 17 di akhir berkas) bidang ini
+     BUKAN lagi kertas tempat teks berdiri — ia jadi PITA PLASTER yang
+     terlihat di sela-sela antar lembar. Kertasnya sekarang milik
+     masing-masing section. Kalau warna di sini dikembalikan ke krem
+     terang, sela antar lembar hilang dan halaman kembali jadi satu
+     bidang rata dari atas sampai bawah. */
+  background-color:#AA9C84;
   /* Tekstur relief kertas, bukan gradasi warna. Sengaja background-
      attachment:fixed dan background-size:cover: gambarnya cuma 675px,
      dan kalau dibiarkan merentang sepanjang halaman (belasan ribu piksel)
@@ -122,8 +128,8 @@ img{max-width:100%;display:block;}
      pada ukuran aslinya. Lapisan putih tipis di atasnya menahan tekstur
      supaya tetap jadi LATAR — tanpa itu, teks di atasnya sulit dibaca. */
   background-image:
-    linear-gradient(rgba(253,251,246,.72),rgba(253,251,246,.72)),
-    var(--orn-latar);
+    linear-gradient(rgba(122,103,74,.55),rgba(122,103,74,.55)),
+    var(--orn-plaster);
   background-size:cover,cover;
   background-position:center,center;
   background-attachment:fixed,fixed;
@@ -1766,7 +1772,14 @@ section{position:relative;padding:var(--s6) var(--s4);}
      (305x154 -> 1,98). Angka sebelumnya menebak bentuk tegak, padahal
      margin transparan gambar sumbernya yang tinggi, bukan angsanya —
      akibatnya angsanya menyusut jauh di dalam kotaknya. */
-  width:min(280px,74%);height:141px;
+  /* 280px -> 200px, 2026-09-02. Berkasnya cuma 337x170 sesudah dipangkas
+     (sumber mentahnya 420px — sudah dipakai habis, skrip ornamen tidak
+     pernah memperbesar), jadi pada 280px ia cuma punya 1,2 piksel berkas
+     per piksel CSS: LEBIH RENDAH daripada garis-d yang ditolak user
+     dengan kata "sangat buram". Pada 200px rasionya 1,7 dan angsanya
+     terbaca sebagai aksen halus, bukan gambar yang diperbesar.
+     Tinggi mengikuti perbandingan gambar (1,982) supaya tidak gepeng. */
+  width:min(200px,56%);height:101px;
   transform:translateX(-50%);
   background-image:url('/templates/_ornamen/bebas-angsa-hati.webp');
   background-size:contain;
@@ -1778,7 +1791,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
 /* Ruang untuk angsa di kaki bagian galeri. Angkanya mengikuti tinggi
    ornamennya (317px) + jarak nafas, supaya ia mengisi jeda menuju bagian
    berikutnya tanpa menempel ke pembatasnya. */
-#galeri{padding-bottom:calc(var(--s6) + 176px);}
+#galeri{padding-bottom:calc(var(--s6) + 132px);}
 
 /* ============================================================
    PENYESUAIAN TERAKHIR — harus berada di AKHIR berkas
@@ -1811,13 +1824,37 @@ section{position:relative;padding:var(--s6) var(--s4);}
   --fp-rasio:3 / 4;
   --fp-galeri-bentuk:none;
   --fp-galeri-radius:0;
-  /* Kaki foto utama bergigi renda — tepi kertas cetak halus, motif yang
-     sama dengan gelombang yang dulu ada di bawah foto ini. */
-  --fp-hero-bentuk:polygon(0 0,100% 0,100% 93%,92% 100%,83% 93%,75% 100%,67% 93%,58% 100%,50% 93%,42% 100%,33% 93%,25% 100%,17% 93%,8% 100%,0 93%);
-  --fp-hero-radius:0;
-  --fp-hero-rasio:3 / 4;
+  /* Gigi renda di kaki foto utama DILEPAS pada revisi "lembar
+     berkubah" (blok 17). Bukan karena jelek, melainkan karena tugasnya
+     sudah diambil alih: yang memisahkan foto dari teks sekarang adalah
+     KUBAH lembar pertama yang menaiki kaki foto ini. Kalau giginya
+     dibiarkan, di bahu kubah akan terlihat dua tepi berbeda yang
+     bertumpuk — dan pembaca membacanya sebagai kesalahan cetak, bukan
+     sebagai dua hiasan. Satu halaman, satu bahasa bentuk. */
+  --fp-hero-bentuk:none;
+  /* TEPI BAWAH MELENGKUNG KE BAWAH — acuan user
+     (BLANK ROYALE PREFERENSI FRAM FOTO PALING ATAS SURAT.jpg).
+     Dua jari-jari mendatar 50% berjumlah 100%, jadi keduanya BERTEMU di
+     tengah dan yang terbentuk satu setengah-elips, bukan dua sudut
+     membulat. Sudut bawah foto terpotong, kertas krem muncul di
+     kiri-kanan, dan monogram menunggangi titik terendahnya. */
+  --fp-hero-radius:0 0 50% 50% / 0 0 76px 76px;
+  /* 3/4 -> 5/8, 2026-09-02. Perintah user untuk KETIGA tema Eropa
+     Mewah: "foto H1 dibuat agak lebar ke bawah lagi, agar foto
+     terlihat luas." Yang bertambah TINGGINYA, bukan lebarnya —
+     fotonya sudah melebar penuh ke tepi layar sejak foto-penuh.css.
+     Pada 390px lebar: 520px -> 624px, jadi ia mengisi tiga perempat
+     layar HP dan terbaca sebagai satu bidang, bukan sebagai gambar
+     yang ditempel di kepala surat.
+     object-position foto-nya tetap `center 28%` (foto-penuh.css),
+     jadi yang bertambah terlihat adalah bagian BAWAH foto — badan
+     pasangan, bukan langit di atas kepalanya. */
+  --fp-hero-rasio:5 / 8;
+  /* WARNA KAKI = warna LEMBAR, bukan warna .invitation. Sejak blok 17
+     yang ada di bawah foto ini bukan lagi latar halaman melainkan
+     kertas lembar pertama. */
   --fp-kaki:#FDFBF6;
-  --fp-kaki-tinggi:46%;
+  --fp-kaki-tinggi:14%;
   --fp-kosong:#EFE7D4;
 }
 
@@ -1842,4 +1879,762 @@ section{position:relative;padding:var(--s6) var(--s4);}
   --kal-tanda-garis:1.4px solid var(--gold,#B08D4E);
   --kal-tanda-radius:50%;
   --kal-tanda-inset:6%;
+}
+
+/* ============================================================
+   17. LEMBAR BERKUBAH — halaman disusun jadi deret kubah
+   ------------------------------------------------------------
+   KENAPA BLOK INI ADA
+
+   Sebelum revisi ini seluruh isi surat berdiri di atas SATU bidang krem
+   dari atas sampai bawah, dan sembilan bagiannya dibuka dengan urutan
+   yang sama persis: ornamen garis, eyebrow, judul. Tidak ada satu pun
+   bagian yang salah — tapi juga tidak ada satu pun titik di mana tamu
+   merasa berpindah babak. Yang membuat undangan cetak kelas atas terasa
+   "diterbitkan" bukan hiasannya, melainkan bahwa halamannya BERGANTI
+   BIDANG.
+
+   Acuan user (BLANC ROYALE PREFERENSI DESIGN DALAM SURAT.jpg) memakai
+   perangkat itu dengan sangat gamblang: pita latar bertekstur, lalu
+   lembar kertas BERKUBAH yang menaikinya, lalu satu bidang pekat, lalu
+   kembali. Isi dan paletnya tidak ikut disalin — hanya susunannya.
+
+   KENAPA KUBAH, DAN KENAPA DI SINI
+
+   Kubahnya bukan bentuk pinjaman. Lengkung katedral sudah jadi bahasa
+   tema ini di tiga tempat: tutup amplopnya (--amplop-tutup-bentuk),
+   bukaan foto mempelai (--fp-radius), dan pelat kalendernya. Menjadikan
+   lengkung yang sama sebagai TEPI ATAS tiap lembar berarti tamu
+   menyusuri satu deret pilar dari sampul sampai tanda tangan — persis
+   rasa berjalan di lorong gereja menuju altar. Itu sebabnya kubahnya
+   dipasang di kepala lembar, bukan di kakinya: pilar dibaca dari
+   bawah ke atas.
+
+   SUSUNANNYA
+
+     (foto utama, lebar penuh)
+     Lembar I    Pembuka + Kedua Mempelai      <- kubah menaiki kaki foto
+     ~ pita plaster ~
+     Lembar II   Rangkaian Acara + Hitung Mundur
+     ~ pita plaster ~
+     Galeri      TANPA lembar — foto duduk langsung di pita plaster,
+                 seperti foto yang dipasang di dinding, bukan di kertas
+     Lembar III  Konfirmasi + Ucapan
+     ~ pita plaster ~
+     Tanda Kasih bidang PEKAT, kubahnya sendiri, segel lilin di puncaknya
+     ~ pita plaster ~
+     Lembar IV   Penutup
+
+   YANG GAMPANG MEMATAHKAN BLOK INI
+
+   - Warna .invitation (blok "layout shell" di atas) sekarang adalah
+     warna PITA, bukan warna kertas. Mengembalikannya ke krem terang
+     membuat sela antar lembar lenyap dan seluruh blok ini tak terlihat
+     bekerja sama sekali, tanpa satu pun error.
+   - Angka bagian Romawi (blok 3) memakai z-index:-1. Begitu section
+     punya latar sendiri, angka itu terlukis DI BELAKANG latarnya dan
+     hilang total. Karena itu ia dinaikkan ke z-index:0 di sini, dan
+     isi section dinaikkan ke z-index:1.
+   - --fp-kaki (blok FOTO PENUH) harus sewarna KERTAS LEMBAR, bukan
+     sewarna .invitation.
+   ============================================================ */
+
+/* --- 17a. urutan lukis: angka Romawi di atas kertas, isi di atas angka --- */
+#pembuka::before,#mempelai::before,#acara::before,#countdown::before,
+#galeri::before,#rsvp::before,#ucapan::before,#hadiah::before{
+  z-index:0;
+}
+section > *{position:relative;z-index:1;}
+
+/* --- 17b. kertas lembar ---
+   Teksturnya relief kertas (bukan plaster seperti pita), diredam
+   lapisan krem di ATASnya — bukan dengan opacity, yang akan ikut
+   memudarkan seluruh isi lembar. */
+#pembuka,#mempelai,#acara,#countdown,#rsvp,#ucapan,#penutup{
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(rgba(253,251,246,.88),rgba(253,251,246,.88)),
+    var(--orn-latar);
+  background-size:cover,cover;
+  background-position:center,center;
+  background-attachment:fixed,fixed;
+  border-left:1px solid var(--line-soft);
+  border-right:1px solid var(--line-soft);
+  margin-left:11px;
+  margin-right:11px;
+  /* Padding samping dikurangi persis sebanyak sela pita yang baru
+     dipakai. Tanpa ini "SARAH AMELIA" pecah jadi dua baris — lembar
+     menyempit 22px, dan nama terpanjang di halaman ini yang pertama
+     patah. */
+  padding-left:var(--s3);
+  padding-right:var(--s3);
+}
+
+/* --- 17c. kubah di kepala tiap lembar ---
+   Jari-jari mendatar 50% membuat lengkungnya membentang selebar lembar
+   (satu kubah), bukan dua sudut membulat di kiri-kanan. Jari-jari
+   tegaknya yang menentukan seberapa tinggi puncaknya. */
+#pembuka,#acara,#rsvp,#hadiah,#penutup{
+  border-top-left-radius:50% 82px;
+  border-top-right-radius:50% 82px;
+  padding-top:calc(var(--s7) + 22px);
+}
+#pembuka,#acara,#rsvp,#penutup{border-top:1px solid var(--line-soft);}
+
+/* Kaki lembar melengkung ke bawah — bayangan kubah berikutnya, dan
+   yang membuat lembarnya terbaca sebagai satu benda utuh, bukan
+   sebagai kertas yang terpotong lurus. */
+#mempelai,#countdown,#ucapan{
+  border-bottom-left-radius:50% 54px;
+  border-bottom-right-radius:50% 54px;
+  border-bottom:1px solid var(--line-soft);
+  padding-bottom:calc(var(--s7) + 18px);
+  margin-bottom:72px;
+}
+
+/* --- 17d. kubah pertama menaiki kaki foto utama ---
+   Angka negatifnya sengaja lebih kecil dari tinggi kubah (82px): yang
+   ditutupi cuma bagian tengahnya, sedangkan di BAHU kubah foto masih
+   mengintip di kiri-kanan. Itu yang membuat lembarnya terbaca "naik ke
+   atas foto", bukan "menempel di bawahnya". */
+#pembuka{
+  margin-top:-58px;
+  z-index:2;
+}
+#fotoUtama{padding-bottom:0;}
+
+/* --- 17e. galeri duduk langsung di pita plaster ---
+   Satu-satunya bagian tanpa kertas. Alasannya bukan variasi: foto
+   kenangan bukan sesuatu yang DICETAK di undangan, ia sesuatu yang
+   DIPASANG — dan di pita plaster mozaiknya terbaca seperti foto di
+   dinding. Ornamen sulur di dua sudutnya (blok 16) justru menguat di
+   sini karena tidak lagi bersaing dengan tepi kertas. */
+#galeri{
+  background:none;
+  border:0;
+  margin-left:0;
+  margin-right:0;
+  margin-bottom:60px;
+}
+#galeri::before{color:var(--gold-dark);opacity:.13;}
+
+/* --- 17f. bidang pekat Tanda Kasih ---
+   Sudah gelap sejak blok 10; yang ditambahkan di sini cuma kubahnya,
+   supaya ia masuk sebagai BABAK, bukan sebagai potongan mendadak.
+   Segel lilin di blok 10 (top:-34px) tetap benar: puncak kubah ada di
+   tepi atas section, jadi segelnya tetap menunggangi puncaknya. */
+#hadiah{
+  margin-left:11px;
+  margin-right:11px;
+  margin-bottom:72px;
+  border-left:1px solid rgba(200,164,90,.22);
+  border-right:1px solid rgba(200,164,90,.22);
+  border-top:1px solid rgba(200,164,90,.3);
+}
+#hadiah::after{z-index:3;}
+
+/* --- 17g. lembar penutup ---
+   Kubah kaki dipasang juga di sini. Percobaan pertama memotongnya lurus
+   ("surat yang selesai dibiarkan terbuka"), tapi di layar hasilnya tidak
+   terbaca sebagai keputusan — terbaca sebagai lembar yang kehabisan
+   halaman. Lengkung di kaki menutup deret pilarnya. */
+#penutup{
+  margin-bottom:34px;
+  padding-bottom:calc(var(--s7) + 10px);
+  border-bottom-left-radius:50% 54px;
+  border-bottom-right-radius:50% 54px;
+  border-bottom:1px solid var(--line-soft);
+}
+
+/* --- 17h. pelat kalender bergaris rangkap ---
+   Acuan user menaruh susunan acaranya di dalam kartu bertepi garis
+   RANGKAP — bahasa kartu undangan cetak, dan pembeda halus dari kartu
+   biasa. Digambar dengan inset box-shadow, bukan border kedua: elemen
+   hanya punya satu border, dan menumpuk dua elemen untuk itu berarti
+   menambah markup ke dalam modul bersama. */
+#acara .kal-kisi{
+  box-shadow:
+    inset 0 0 0 3px var(--paper),
+    inset 0 0 0 4px rgba(138,103,48,.26),
+    0 10px 26px -18px rgba(43,38,32,.4);
+}
+
+/* --- 17i. layar lebar ---
+   Kubah setinggi 82px pada lembar selebar 460px sudah proporsional,
+   tapi sela kiri-kanan 13px pada layar lebar terbaca sebagai kesalahan
+   perataan. Dilebarkan supaya pitanya benar-benar terbaca sebagai pita. */
+@media(min-width:640px){
+  /* #fotoUtama WAJIB ikut daftar ini sejak blok 18 menjadikannya
+     bagian Lembar I. Kalau tertinggal, di layar lebar fotonya menjorok
+     7px lebih keluar daripada lembar di bawahnya — dan yang terlihat
+     bukan desain, melainkan tepi yang tidak lurus. */
+  #fotoUtama,
+  #pembuka,#mempelai,#acara,#countdown,#rsvp,#ucapan,#penutup,#hadiah{
+    margin-left:18px;
+    margin-right:18px;
+  }
+  #fotoUtama::before{left:18px;right:18px;top:18px;}
+}
+
+/* ============================================================
+   18. FOTO PALING ATAS — jendela berlengkung, bukan foto terpotong
+   ------------------------------------------------------------
+   Acuan user: BLANK ROYALE PREFERENSI FRAM FOTO PALING ATAS SURAT.jpg.
+
+   Yang diambil dari acuan itu ada tiga, dan ketiganya bekerja bersama:
+     1. tepi bawah foto MELENGKUNG KE BAWAH (setengah-elips), sehingga
+        kedua sudut bawahnya terbuka dan kertas terlihat di sana
+     2. GARIS RAMBUT terinset mengikuti bentuk foto — tanda cetak foto
+        yang di-mat, bukan foto yang ditempel
+     3. ornamen emas MENUNGGANGI titik terendah lengkung itu
+
+   Butir 3 sudah ada sejak awal di tema ini: monogram lingkar bermahkota
+   dengan sayap sulur di kiri-kanannya. Yang selama ini kurang justru
+   lengkungnya — ornamen itu menunggangi GARIS LURUS, jadi ia terbaca
+   seperti stiker yang ditempel di batas, bukan seperti puncak sebuah
+   lengkungan. Begitu tepinya melengkung, keduanya jadi satu benda.
+
+   AKIBATNYA PADA BLOK 17 (lembar berkubah)
+
+   Kubah di kepala #pembuka DILEPAS. Bukan karena jelek: lengkung foto
+   membungkuk KE BAWAH dan kubah #pembuka membungkuk KE ATAS, dan dua
+   lengkung berlawanan arah pada satu sambungan saling memakan — yang
+   tersisa cuma bentuk lensa sempit yang tidak terbaca sebagai apa pun.
+   Sekarang Lembar I dibuka oleh lengkung FOTO, dan tiga kubah lainnya
+   (#acara, #rsvp, #penutup, plus #hadiah) tetap seperti di blok 17.
+   Deret pilarnya utuh — pilar pertamanya saja yang berupa foto.
+
+   #fotoUtama ikut jadi bagian LEMBAR I: sela 11px di kiri-kanan, sama
+   seperti lembar lain. Ini juga yang ada di acuan — fotonya bertepi
+   kertas, tidak menempel ke tepi kartu. Foto tetap tanpa bingkai dan
+   tetap mengisi lebar lembarnya penuh; yang dilepas dulu adalah CINCIN
+   emas mengelilingi foto, bukan sela kertasnya.
+   ============================================================ */
+
+#fotoUtama{
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(rgba(253,251,246,.88),rgba(253,251,246,.88)),
+    var(--orn-latar);
+  background-size:cover,cover;
+  background-position:center,center;
+  background-attachment:fixed,fixed;
+  border-left:1px solid var(--line-soft);
+  border-right:1px solid var(--line-soft);
+  margin-left:11px;
+  margin-right:11px;
+  padding-bottom:0;
+}
+
+/* Lembar I sekarang dibuka lengkung foto, bukan kubah. */
+#pembuka{
+  margin-top:0;
+  border-top:0;
+  border-top-left-radius:0;
+  border-top-right-radius:0;
+  /* Monogram sudah menempati ruang di bawah lengkung foto; padding
+     bawaan section di sini menambah lagi ~145px kertas kosong sebelum
+     ornamen pembatas. */
+  padding-top:var(--s1);
+  z-index:auto;
+}
+
+/* GARIS RAMBUT TERINSET.
+   Digambar sebagai border pada pseudo-element, BUKAN sebagai
+   box-shadow pada .hero-photo: assets/foto-penuh.css menyetel
+   box-shadow:none !important di sana, jadi apa pun yang ditulis di
+   berkas ini akan kalah tanpa memberi tanda apa-apa.
+   aspect-ratio dipakai supaya tingginya mengikuti foto sendiri —
+   angka px di sini akan meleset di setiap lebar layar yang berbeda. */
+#fotoUtama::before{
+  content:'';
+  position:absolute;
+  top:11px;left:11px;right:11px;
+  aspect-ratio:var(--fp-hero-rasio);
+  border:1px solid rgba(255,255,255,.40);
+  border-radius:0 0 50% 50% / 0 0 71px 71px;
+  pointer-events:none;
+  z-index:2;
+}
+@media(min-width:720px){
+  /* foto-penuh.css melandaikan rasio foto utama di layar lebar; garis
+     rambutnya harus ikut, kalau tidak ia menggantung di tengah foto. */
+  #fotoUtama::before{aspect-ratio:var(--fp-hero-rasio-lebar,4 / 3);}
+}
+
+/* Monogram dinaikkan supaya pusatnya jatuh di TITIK TERENDAH lengkung,
+   bukan di bawahnya. Angkanya = setengah tinggi monogram (123px)
+   dikurangi sedikit, supaya mahkota di puncaknya masih menyentuh foto
+   sementara kakinya sudah berada di kertas. */
+#fotoUtama .hero-monogram{margin-top:-136px;}
+
+/* ============================================================
+   19. SAMPUL — bingkai dilepas, teks pindah ke kertas
+   ------------------------------------------------------------
+   Perintah user: "hapus semua frame pada cover surat undangan tema
+   Eropa, buat lebih elegan dan minimalis, buat tulisannya jelas untuk
+   dibaca dan mainkan kreatif peletakan tulisan ataupun font tulisan,
+   atau mainkan foto variasi."
+
+   APA YANG SALAH DENGAN SAMPUL SEBELUMNYA
+
+   Tiga hal, dan ketiganya berlaku di ketiga tema Eropa Mewah — itulah
+   sebabnya ketiganya terasa seperti satu desain dengan tiga warna:
+
+     1. Empat ukiran sudut + bingkai garis rangkap memakan tepi layar
+        dari keempat sisi. Pada layar 390px itu menyisakan kolom sempit
+        di tengah, dan semua tema memakai kolom yang sama.
+     2. Seluruh tulisan berdiri DI ATAS FOTO. Foto pasangan selalu
+        punya bagian terang (gaun putih, langit) dan bagian gelap (jas),
+        jadi tidak ada satu warna teks pun yang benar di seluruh
+        kalimat. Yang dipakai selama ini bayangan tebal — dan bayangan
+        tebal itu sendiri yang membuat sampulnya terasa murah.
+     3. Susunannya sama persis di ketiga tema: tamu, eyebrow, nama,
+        tanggal, tombol — semuanya rata tengah, semuanya di tengah
+        layar.
+
+   YANG DIKERJAKAN DI SINI (khusus Blanc Royale)
+
+   Teks TURUN KE KERTAS. Separuh bawah sampul jadi lembar krem
+   berkubah — bentuk yang sama yang akan ditemui tamu di seluruh isi
+   surat — dan nama, tanggal, serta tombol duduk di atasnya dengan
+   tinta gelap. Tidak ada satu pun bayangan teks yang dibutuhkan lagi,
+   dan sampulnya sekaligus jadi janji pembuka: bentuk yang dilihat
+   pertama adalah bentuk yang akan diulang di dalam.
+
+   Baris "Kepada Yth." tetap di ATAS foto, dipatok ke kepala layar —
+   ia sapaan, bukan bagian dari kartu, dan di sana ia juga memberi foto
+   ruang bernapas di antara keduanya.
+
+   Ketiga tema sengaja diselesaikan dengan cara BERBEDA, bukan dengan
+   satu solusi yang dicat ulang: di sini teks pindah ke kertas, di Noir
+   Dore teks turun ke sudut kiri-bawah dengan garis emas tegak, di
+   Bordeaux nama ditulis tangan besar di sepertiga atas.
+   ============================================================ */
+
+/* --- 19a. semua bingkai & ukiran sudut dilepas --- */
+.cover-curtain-top::before,.cover-curtain-top::after,
+.cover-curtain-bottom::before,.cover-curtain-bottom::after{
+  content:none;
+}
+
+/* --- 19b. lembar krem berkubah di kaki sampul ---
+   ::before .cover-content dulu dipakai bingkai garis rangkap; sekarang
+   ia lembarnya. Kalau blok 12 di atas dihidupkan lagi, lembar ini
+   hilang dan seluruh teks kembali berdiri di atas foto. */
+.cover-content::before{
+  content:'';
+  position:absolute;
+  /* top:auto WAJIB, dan bukan basa-basi: blok 12 di atas menyetel
+     inset:22px pada selektor yang SAMA, jadi top:22px masih berlaku di
+     sini. Dengan top, height, dan bottom ketiganya bernilai, CSS
+     membuang bottom — lembarnya melompat ke KEPALA layar, dome-nya
+     terbalik, dan seluruh teks jatuh di luar kertas. Sudah terjadi. */
+  top:auto;
+  left:0;right:0;bottom:0;
+  height:54%;
+  border:0;
+  outline:0;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(rgba(253,251,246,.9),rgba(253,251,246,.9)),
+    var(--orn-latar);
+  background-size:cover,cover;
+  background-position:center,center;
+  border-radius:50% 50% 0 0 / 92px 92px 0 0;
+  z-index:0;
+  pointer-events:none;
+}
+#cover.has-sampul .cover-content::before{
+  border-color:transparent;
+  outline-color:transparent;
+}
+
+/* Isi sampul dinaikkan di atas lembar, dan didorong ke kaki layar. */
+.cover-content{
+  justify-content:flex-end;
+  padding-bottom:var(--s6);
+}
+.cover-content > *{position:relative;z-index:1;}
+
+/* --- 19c. sapaan dipatok di kepala layar, di atas foto --- */
+.cover-guest{
+  position:absolute;
+  top:var(--s6);left:var(--s4);right:var(--s4);
+  margin-bottom:0;
+  z-index:1;
+}
+
+/* --- 19d. tinta gelap di atas kertas ---
+   Menimpa blok "#cover.has-sampul" di atas, yang memutihkan seluruh
+   teks karena dulu semuanya berdiri di atas foto. Yang tetap putih
+   hanya sapaan — ia satu-satunya yang masih di atas foto. */
+#cover.has-sampul .cover-eyebrow{color:var(--gold-dark);}
+#cover.has-sampul .cover-names{color:var(--ink);text-shadow:none;}
+#cover.has-sampul .cover-names .amp{color:var(--gold);}
+#cover.has-sampul .cover-date{color:var(--ink-mid);}
+
+/* --- 19e. huruf sampul ---
+   Nama diperbesar dan diberi jarak huruf lebar; di atas kertas polos
+   ukuran itu terbaca sebagai ketenangan, sementara di atas foto ia
+   dulu terpaksa dikecilkan supaya tidak menabrak wajah. Garis rambut
+   emas tipis di atas nama menggantikan tugas bingkai yang dilepas:
+   memberi tepi tanpa mengurung. */
+.cover-eyebrow{
+  font-size:11px;
+  letter-spacing:.42em;
+  margin-bottom:var(--s3);
+}
+.cover-names{
+  font-size:clamp(38px,12.5vw,52px);
+  letter-spacing:.05em;
+  line-height:1.06;
+}
+.cover-names .amp{
+  font-family:'Pinyon Script',cursive;
+  font-size:.52em;
+  font-weight:400;
+  margin:2px 0;
+}
+.cover-date{
+  font-size:12.5px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  margin-top:var(--s3);
+  margin-bottom:var(--s5);
+}
+.cover-date::before{
+  content:'';
+  display:block;
+  width:54px;height:1px;
+  margin:0 auto var(--s3);
+  background:var(--gold);
+  opacity:.6;
+}
+
+/* --- 19f. tombol: garis, bukan balok ---
+   Balok emas pekat adalah benda paling berat di sampul, dan di sampul
+   yang sudah minimalis ia langsung jadi satu-satunya yang dilihat.
+   Diganti garis tipis — bahasa yang sama dengan .btn-outline di dalam
+   surat. */
+.btn-open{
+  background:none;
+  color:var(--gold-dark);
+  border:1px solid var(--gold);
+  border-radius:0;
+  padding:13px 30px;
+  box-shadow:none;
+  font-size:12.5px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.btn-open::before{content:none;}
+.btn-open:hover{
+  background:var(--gold);
+  color:var(--paper);
+  transform:none;
+  box-shadow:none;
+}
+
+/* --- 19g. layar pendek ---
+   tools/potret-tema.js memotret sampul pada 390x585. Pada tinggi itu
+   lembar 54% cuma 316px, dan tombol adalah yang pertama terdorong
+   keluar layar — padahal gambar itu yang dilihat calon pembeli di
+   kartu tema. Lembarnya ditinggikan dan jaraknya dirapatkan. */
+@media(max-height:640px){
+  .cover-content::before{height:69%;}
+  .cover-names{font-size:clamp(32px,10vw,40px);}
+  .cover-date{margin-bottom:var(--s4);}
+  .cover-guest{top:var(--s4);}
+}
+
+/* ============================================================
+   20. PENYESUAIAN 2026-09-01 (putaran ketiga)
+   ------------------------------------------------------------
+   Empat masukan user untuk tema ini, dikerjakan di satu blok supaya
+   yang membaca berikutnya melihat alasannya bersama-sama.
+   ============================================================ */
+
+/* --- 20a. FOTO SAMPUL: dinaikkan ---
+   Keluhan user: "fotonya agak dinaikan lagi, karena foto yang sekarang
+   terkesan terpotong badanya."
+
+   Yang TIDAK menyelesaikannya, dan sudah dicoba di tema lain:
+   background-position tegak. Foto sampul (900x1350, rasio 0,67) jauh
+   lebih lebar daripada layar (390x844, rasio 0,46), jadi
+   background-size:cover menyesuaikan TINGGI dan memangkasnya MENDATAR
+   — nilai tegaknya tidak dipakai sama sekali.
+
+   Yang menyelesaikan: fotonya diperbesar melebihi tinggi layar
+   (auto 132%) sehingga sekarang ADA yang bisa dipangkas tegak, lalu
+   digeser ke 62%.
+
+   Arah angkanya mudah tertukar, dan sudah tertukar sekali: nilai yang
+   BESAR memperlihatkan bagian BAWAH gambar, yang berarti isinya
+   bergerak NAIK di layar. Percobaan pertama memakai 18% dan hasilnya
+   kebalikan dari yang diminta — yang terlihat malah atap gereja, dan
+   pasangannya turun sampai cuma kepalanya yang muncul di atas kubah. */
+.curtain-foto{
+  background-size:auto 132%;
+  background-position:center 62%;
+}
+
+/* --- 20b. FOTO PALING ATAS: garis mat sejajar dengan margin isi ---
+   Keluhan user: "margin di tepi foto dirapikan, sejajarkan garis
+   dengan isi margin."
+
+   Garis mat dulu 11px dari tepi lembar, sementara teks di bawahnya
+   mulai pada padding var(--s3) = 20px. Dua garis tegak yang beda 9px
+   di halaman yang sama terbaca sebagai kesalahan perataan, bukan
+   sebagai dua jarak yang berbeda. Sekarang keduanya satu garis. */
+#fotoUtama::before{
+  left:var(--s3);
+  right:var(--s3);
+  top:var(--s3);
+}
+@media(min-width:640px){
+  #fotoUtama::before{left:var(--s3);right:var(--s3);top:var(--s3);}
+}
+
+/* --- 20c. AKAD & RESEPSI: disusun ke tengah ---
+   Keluhan user: "akad nikah dan resepsi (h2) information dibikin ke
+   tengah dan bagus."
+
+   Susunan lama: ornamen di kolom kiri, tiga baris teks di kolom kanan,
+   rata kiri. Kalendernya lalu dipusatkan DI DALAM kolom kanan itu —
+   jadi ia terlihat meleset ke kanan terhadap halaman, sementara judul
+   bagian di atasnya rata tengah. Dua sumbu berbeda dalam satu section.
+
+   Sekarang satu sumbu: ornamen, nama acara, jam, lalu kalender —
+   semuanya bertumpuk di tengah. Urutannya diatur `order`, bukan urutan
+   markup, supaya markup tetap sebangun dengan sebelas tema lain. */
+.event-card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  grid-template-columns:none;
+  grid-template-areas:none;
+  padding:var(--s5) var(--s1);
+  row-gap:0;
+}
+.event-icon{
+  order:1;
+  width:74px;height:74px;
+  margin:0 0 var(--s2);
+}
+.event-name{order:2;margin-bottom:6px;}
+.event-time{order:3;margin-bottom:var(--s3);}
+.event-card .kal{order:4;width:100%;}
+.event-date{margin:0;}
+/* Baris ringkas (akad & resepsi di hari yang sama) ikut ke tengah —
+   tanpa ini ia satu-satunya baris yang tetap rata kiri, dan justru itu
+   yang paling terlihat. */
+.kal-ringkas{text-align:center;}
+
+/* --- 20d. PLAT LOKASI menggantikan denah ---
+   Keluhan user: "hapus ilustrasi denah lokasi, sangat tidak cocok."
+   Denah jalan karangan memang bukan peta — kita tidak punya
+   koordinatnya sampai user mengisi link maps — dan di undangan
+   pernikahan ia terbaca sebagai pengisi ruang.
+
+   Gantinya PAPAN NAMA PINTU MASUK, dan di tema ini papan itu
+   BERKUBAH: lengkung katedral yang sama dengan tepi lembar, tutup
+   amplop, dan kaki foto utama. Jadi bukan bentuk baru — bentuk tema
+   ini, dipakai sekali lagi di tempat yang artinya "pintu". */
+.plat-lokasi{
+  position:relative;
+  max-width:342px;
+  margin:0 auto var(--s4);
+  padding:var(--s5) var(--s4) var(--s4);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-top-left-radius:50% 66px;
+  border-top-right-radius:50% 66px;
+  box-shadow:0 16px 34px -26px rgba(43,38,32,.5);
+}
+/* Garis rambut kedua yang mengikuti lengkung — cara papan nama terukir
+   dibingkai, dan alasan yang sama dengan garis rangkap pada pelat
+   kalender: satu garis terbaca sebagai kotak, dua terbaca sebagai
+   cetakan. */
+.plat-lokasi::before{
+  content:'';
+  position:absolute;
+  inset:5px;
+  border:1px solid var(--line-soft);
+  border-top-left-radius:50% 60px;
+  border-top-right-radius:50% 60px;
+  pointer-events:none;
+}
+.plat-lokasi .peta-eyebrow{
+  font-size:9.5px;
+  letter-spacing:.3em;
+  color:var(--gold-dark);
+  margin-bottom:var(--s2);
+}
+.plat-lokasi .venue-name{
+  font-family:'Cinzel Decorative',Georgia,serif;
+  font-weight:400;
+  text-transform:uppercase;
+  /* 16px, bukan 18px: Cinzel Decorative kapital sangat lebar, dan nama
+     gedung contoh ("Gedung Serbaguna Bale Asri") sudah pecah jadi tiga
+     baris dengan satu kata sendirian di baris terakhir. */
+  font-size:clamp(14px,4vw,16px);
+  letter-spacing:.04em;
+  line-height:1.4;
+  color:var(--ink);
+  margin-bottom:var(--s2);
+}
+/* Garis rambut emas pendek antara nama dan alamat — pemisah yang sama
+   dipakai di sampul, jadi papan ini terbaca sebagai bagian dari
+   terbitan yang sama. */
+.plat-lokasi .venue-name::after{
+  content:'';
+  display:block;
+  width:44px;height:1px;
+  margin:var(--s2) auto 0;
+  background:var(--gold);
+  opacity:.6;
+}
+.plat-lokasi .venue-address{
+  font-size:13px;
+  font-style:italic;
+  margin:0;
+  max-width:none;
+}
+
+/* ============================================================
+   21. MASUKAN USER 2026-09-02 (putaran kedua) — SAMPUL DINAIKKAN LAGI
+   ------------------------------------------------------------
+   Perintah user diulang: "foto sampul agak dinaikkan lagi, karena foto
+   yang sekarang terkesan terpotong badannya."
+
+   KENAPA PUTARAN PERTAMA (blok 20a) BELUM MENYELESAIKANNYA
+
+   Di 20a fotonya digeser tegak (auto 132% + center 62%). Itu memang
+   menaikkan isinya, tapi tidak menambah RUANG: lembar krem berkubah
+   menutup 54% kaki sampul, jadi pita foto yang terlihat cuma ~388px.
+   Foto potret 900x1350 di dalam pita selebar 390px dan setinggi 388px
+   pasti terpotong di suatu tempat — dan pada zoom 132% tempat itu
+   jatuh di dada.
+
+   Menggeser lebih jauh lagi tidak menolong: pada 132% cuma ada 32%
+   tinggi yang bisa digeser, dan di 88% ia sudah mentok — dibuktikan
+   dengan memotret 72%, 80%, dan 88% berdampingan; ketiganya nyaris
+   sama.
+
+   YANG DIKERJAKAN: dua-duanya sekaligus
+
+     1. Lembarnya DITURUNKAN, 54% -> 47%. Pita fotonya jadi ~447px.
+        Isi sampul (eyebrow + dua nama + tanggal + tombol) butuh ~316px
+        termasuk padding, jadi masih muat lega. Layar pendek tidak
+        terpengaruh: blok 19g sudah menimpanya jadi 69% di bawah 640px,
+        dan itu yang dipotret tools/potret-tema.js.
+     2. Zoom fotonya DITURUNKAN, 132% -> 112%, lalu digeser ke 78%.
+        Zoom lebih rendah = lebih banyak tinggi foto yang muat; geseran
+        lebih jauh = yang muat itu bagian bawahnya.
+
+   Arah angkanya masih mudah tertukar dan sudah tertukar sekali:
+   nilai BESAR memperlihatkan bagian BAWAH gambar, yang berarti isinya
+   bergerak NAIK di layar. */
+.cover-content::before{height:47%;}
+/* JAHITAN TIRAI DILEPAS. .curtain-seam adalah garis + dua cincin di
+   batas kedua daun sampul, yaitu tepat di 50% tinggi. Selama lembar
+   krem masih 54% ia tertutup lembar itu dan tidak pernah terlihat;
+   begitu lembarnya turun ke 47%, ia muncul 25px DI ATAS kubah — separuh
+   di foto, separuh di kertas — dan terbaca sebagai ornamen yang
+   tercecer. Ini persis pola gagal-senyap yang berulang di tema ini:
+   sebuah elemen lama yang selama ini kebetulan tertutup.
+   Dilepas, bukan dipindah: blok 19 sudah melucuti seluruh ornamen dari
+   sampul ini atas perintah user, dan gerak membelahnya tetap terbaca
+   dari fotonya sendiri yang terbelah dua. */
+.curtain-seam{display:none;}
+/* Eyebrow harus MUAT DI DALAM KUBAH, bukan sekadar di dalam lembar.
+   Kubahnya elips ry=92px, jadi di tepi kiri-kanan permukaan kertas
+   turun sampai 92px lebih rendah daripada di tengah. Eyebrow selebar
+   hampir satu layar karena itu punya ujung yang masih berada DI ATAS
+   foto walau bagian tengahnya sudah di kertas — dan yang terlihat
+   huruf emas separuh di kertas separuh di batu katedral.
+   Dua langkah kecil, bukan satu besar: baris teksnya dipersempit ke
+   300px DAN seluruh blok isi diturunkan 16px. Masing-masing sendirian
+   masih menyisakan ujungnya di luar. */
+.cover-eyebrow{max-width:300px;margin-left:auto;margin-right:auto;}
+.cover-content{padding-bottom:var(--s5);}
+/* Layar pendek WAJIB ditulis ulang di sini, dan ini sudah menggigit:
+   blok 19g menyetel 69% di dalam @media(max-height:640px), tapi
+   media query TIDAK menambah spesifisitas — aturan biasa yang datang
+   BELAKANGAN menang atasnya. Tanpa baris ini, lembar 47% ikut berlaku
+   pada potret kartu tema (390x585) dan separuh nama mempelai berdiri
+   di atas foto, tidak terbaca. Ketahuan dari gambar hasil potret,
+   bukan dari error apa pun.
+   69% -> 66%: pita fotonya ikut ditambah sedikit di sini juga, tapi
+   tidak sebanyak di layar penuh — pada 585px tinggi, isi sampul butuh
+   hampir seluruh lembar. */
+@media(max-height:640px){
+  /* 62%, dan fotonya ikut disetel ulang. Pada 585px tinggi, pita foto
+     jauh lebih sempit daripada di layar HP sungguhan, jadi angka yang
+     benar di sana (112% / 78%) menaruh wajah pasangan tepat di garis
+     kubah — yang terlihat di kartu tema cuma sepasang mata. Diperiksa
+     dengan memotret lima kombinasi pada 390x585 dan melihat hasilnya,
+     bukan dihitung. */
+  .cover-content::before{height:62%;}
+  .curtain-foto{
+    background-size:auto 108%;
+    background-position:center 100%;
+  }
+}
+.curtain-foto{
+  background-size:auto 112%;
+  background-position:center 78%;
+}
+
+/* --- 21b. GARIS MAT: jaraknya sama di KEEMPAT sisi ---
+   Perintah user diulang: "margin di tepi foto dirapikan, sejajarkan
+   garis dengan isi margin."
+
+   Sisi kiri, kanan, dan atas MEMANG sudah sejajar sejak blok 20b —
+   ketiganya var(--s3), persis padding isi surat. Yang tidak diperiksa
+   waktu itu sisi BAWAHNYA, dan di sanalah jaraknya meleset jauh.
+
+   Sebabnya: tinggi garisnya diambil dari `aspect-ratio:var(--fp-hero-
+   rasio)`, rasio yang sama dengan fotonya. Tapi LEBARNYA 40px lebih
+   sempit daripada foto (dua kali inset 20px), jadi dengan rasio yang
+   sama tingginya ikut lebih pendek — 64px lebih pendek pada rasio 5/8.
+   Ditambah inset atas 20px, tepi bawah garis berhenti ~84px di atas
+   tepi bawah foto. Yang terlihat: bingkai dengan margin 20px di tiga
+   sisi dan 84px di bawah — persis "margin yang tidak rapi", dan makin
+   parah sesudah fotonya ditinggikan jadi 5/8 di blok ini.
+
+   Sekarang tingginya DIHITUNG, bukan diturunkan dari rasio:
+
+     tinggi foto  = 160% lebar section   (rasio 5/8)
+     tinggi garis = tinggi foto - 2 x inset
+
+   `padding-bottom` dalam persen dihitung dari LEBAR blok penampung,
+   jadi 160% di sini benar-benar berarti "setinggi fotonya". `height`
+   dalam persen tidak bisa dipakai: persennya dihitung dari TINGGI, dan
+   tinggi #fotoUtama ikut monogram yang menumpang di bawah foto.
+
+   aspect-ratio WAJIB dimatikan; kalau dibiarkan ia masih ikut
+   menghitung dan hasilnya tidak sama dengan padding-bottom. */
+#fotoUtama::before{
+  aspect-ratio:auto;
+  height:0;
+  padding-bottom:calc(160% - var(--s3) * 2);
+  /* Jari-jari lengkung ikut dikurangi inset-nya: foto memakai 76px,
+     garis yang 20px di dalamnya memakai 56px. Kalau angkanya dibiarkan
+     sama, lengkung garis lebih landai daripada lengkung foto dan
+     keduanya bersilangan di dua titik. */
+  border-radius:0 0 50% 50% / 0 0 56px 56px;
+}
+@media(min-width:720px){
+  /* foto-penuh.css melandaikan rasio foto utama jadi 4/3 di viewport
+     lebar (bukan lebar elemen — jadi ini tetap berlaku walau kartunya
+     cuma 460px). Tinggi garisnya harus ikut, kalau tidak ia menggantung
+     jauh di bawah foto. */
+  #fotoUtama::before{
+    aspect-ratio:auto;
+    padding-bottom:calc(75% - var(--s3) * 2);
+    border-radius:0 0 50% 50% / 0 0 46px 46px;
+  }
 }

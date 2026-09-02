@@ -336,7 +336,12 @@ section{position:relative;padding:var(--s6) var(--s4);}
 /* Garis tipis di bawah nomor — menutup jarak antara nomor dan tepi
    lembar, supaya nomornya terbaca sebagai bagian dari kertas dan bukan
    sebagai benda yang tercecer. */
-#pembuka::after,#mempelai::after,#countdown::after,
+/* #pembuka DIKELUARKAN dari daftar ini pada revisi "bidang lonjong"
+   (blok terakhir berkas): di sana ::after dipakai untuk menggambar
+   bidang burgundy-nya, persis cara #penutup melakukannya. Kalau
+   #pembuka dikembalikan ke daftar ini, bidang lonjongnya hilang tanpa
+   satu pun error — yang tersisa cuma garis emas kecil di tepi kiri. */
+#mempelai::after,#countdown::after,
 #rsvp::after,#hadiah::after{
   content:'';
   position:absolute;
@@ -394,7 +399,8 @@ section{position:relative;padding:var(--s6) var(--s4);}
    dan menyembunyikannya ikut menghapus gambar latarnya.
    Motifnya bergiliran — pembatas yang sama persis sembilan kali membuat
    halaman terasa berulang. Giliran DAN berkasnya sengaja berbeda dari
-   dua tema lain (Blanc: a/b/c, Noir: a/b/d, Bordeaux: c/d + fleur).
+   dua tema lain (Blanc: a/b/c, Noir: a/b, Bordeaux: b/c + fleur).
+   garis-d sudah tidak ada lagi — lihat catatan di bawah.
    ------------------------------------------------------------ */
 .section-divider{
   display:flex;align-items:center;justify-content:center;gap:12px;
@@ -414,9 +420,17 @@ section{position:relative;padding:var(--s6) var(--s4);}
 }
 .divider-ornament path,.divider-ornament circle,.divider-ornament rect{display:none;}
 
+/* garis-d DIHAPUS dari repo 2026-09-01: sumbernya cuma 480x237 dan
+   benar-benar terlihat kabur (perintah user). Diganti garis-b, yang
+   sumbernya 736px dan sudah dibangun ulang pada resolusi penuh.
+   TINGGINYA IKUT BERUBAH, dan itu bukan selera: kotak pembatas ini
+   selebar 220px, dan background-size:contain memilih sisi yang paling
+   menyempitkan. Perbandingan garis-b 4,18 (garis-d 6,0), jadi pada
+   height:50px ia akan dikecilkan lewat TINGGI dan lebarnya tinggal
+   209px — lebih sempit daripada dua pembatas lain di tema yang sama. */
 #mempelai .divider-ornament,
 #galeri   .divider-ornament,
-#hadiah   .divider-ornament{background-image:url('/templates/_ornamen/garis-d.webp');height:50px;}
+#hadiah   .divider-ornament{background-image:url('/templates/_ornamen/garis-b.webp');height:56px;}
 
 /* Varian ketiga BUKAN garis, melainkan satu fleur-de-lis berdiri di
    antara dua rule tipis — bentuk pembatas yang berbeda jenisnya, bukan
@@ -1524,7 +1538,17 @@ section{position:relative;padding:var(--s6) var(--s4);}
   --fp-galeri-radius:0;
   --fp-hero-bentuk:var(--tepi-sobek);
   --fp-hero-radius:0;
-  --fp-hero-rasio:3 / 4;
+  /* 3/4 -> 5/8, 2026-09-02. Perintah user untuk KETIGA tema Eropa
+     Mewah: "foto H1 dibuat agak lebar ke bawah lagi, agar foto
+     terlihat luas." Yang bertambah TINGGINYA, bukan lebarnya —
+     fotonya sudah melebar penuh ke tepi layar sejak foto-penuh.css.
+     Pada 390px lebar: 520px -> 624px, jadi ia mengisi tiga perempat
+     layar HP dan terbaca sebagai satu bidang, bukan sebagai gambar
+     yang ditempel di kepala surat.
+     object-position foto-nya tetap `center 28%` (foto-penuh.css),
+     jadi yang bertambah terlihat adalah bagian BAWAH foto — badan
+     pasangan, bukan langit di atas kepalanya. */
+  --fp-hero-rasio:5 / 8;
   --fp-kaki:#F5EDDD;
   --fp-kaki-tinggi:44%;
   --fp-kosong:#E7DCC4;
@@ -1549,4 +1573,541 @@ section{position:relative;padding:var(--s6) var(--s4);}
      adalah tema yang paling terang-terangan romantis. */
   --kal-tanda-gambar:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 28.2C16 28.2 3.2 20.2 3.2 11.6 3.2 7.2 6.7 4.2 10.3 4.2c2.5 0 4.6 1.4 5.7 3.3C17.2 5.6 19.3 4.2 21.8 4.2c3.6 0 7.1 3 7.1 7.4 0 8.6-12.9 16.6-12.9 16.6z' fill='none' stroke='%23A3232E' stroke-width='2'/%3E%3C/svg%3E");
   --kal-tanda-inset:-6%;
+}
+
+/* ============================================================
+   BIDANG LONJONG — dua bidang burgundy berbentuk elips di antara
+   lembar-lembar kertas, dan judul yang ditulis TANGAN
+   ------------------------------------------------------------
+   KENAPA BLOK INI ADA
+
+   Sebelum revisi ini seluruh surat terdiri dari satu jenis benda saja:
+   sembilan lembar kertas krem bertepi sobek, satu di atas yang lain,
+   dan burgundy hanya terlihat sebagai sela di antaranya. Lembarnya
+   bagus, tapi sembilan kali benda yang sama membuat menggulir terasa
+   panjang tanpa babak — dan bidang burgundy, yang justru identitas
+   tema ini, tidak pernah benar-benar tampil.
+
+   Acuan user (BORDEAUX PREFERENSI DESIGN DALAM SURAT.jpg) memakai satu
+   perangkat yang sangat jelas untuk itu: bidang warna aksen yang
+   BERBENTUK ELIPS, membentang keluar dari kedua tepi layar, disisipkan
+   di antara bidang terang. Batas antar babak jadi sebuah LENGKUNG,
+   bukan potongan lurus. Isi, urutan, dan paletnya tidak ikut disalin.
+
+   KENAPA ELIPS, DAN KENAPA CUMA DI SINI
+
+   Bentuk elips sengaja TIDAK diberikan ke fotonya. Bentuk bukaan foto
+   adalah salah satu dari tiga sumbu yang menjaga lima belas tema tidak
+   saling menyerupai (lihat memori project_peta_jalan), dan bulat/oval
+   sudah dipegang Noir Dore. Di sini elips hanya jadi bentuk BIDANG —
+   jadi Bordeaux tetap tema "cetakan berpenjepit", dan tidak ada satu
+   foto pun yang berubah bentuk.
+
+   Dua bidang, dipilih karena isinya, bukan karena jaraknya:
+     #pembuka  — kalimat sambutan. Bidang pertama sesudah foto, dan
+                 kalimat yang paling pantas diucapkan di atas beludru.
+     #galeri   — foto kenangan. Di atas burgundy, tumpukan foto miring
+                 berpenjepit itu terbaca seperti foto yang ditebar di
+                 meja beludru, bukan lagi foto yang dicetak di kertas.
+   #penutup tetap bidang burgundy ketiga, dengan tepi sobek dan segel
+   lilinnya sendiri — babak terakhir tidak boleh sama bentuknya dengan
+   dua bidang di tengah.
+
+   JUDUL DITULIS TANGAN
+
+   Acuan user menulis SELURUH judul bagiannya dengan huruf sambung.
+   Di tema ini itu bukan sekadar meniru: Bordeaux memang tema "surat
+   lama" — amplop, segel lilin, lembar kertas, nomor halaman. Judul
+   berhuruf kapital terpahat (Cinzel) adalah bahasa PRASASTI, dan
+   prasasti tidak dikirim lewat pos. Tulisan tangan yang membuat
+   lembarannya jadi surat.
+
+   Cinzel TIDAK dibuang — ia tetap memegang nama mempelai, nama acara,
+   dan nama di sampul. Yang pindah ke tulisan tangan hanya JUDUL BAGIAN.
+
+   YANG GAMPANG MEMATAHKAN BLOK INI
+
+   - ::after milik #pembuka & #galeri sekarang adalah BIDANGNYA. Blok
+     "garis tipis di bawah nomor" di atas sudah dikeluarkan dari
+     #pembuka karena itu. Menambahkannya kembali menghapus bidangnya.
+   - isolation:isolate WAJIB. Tanpa itu ::after ber-z-index:-1 lolos ke
+     stacking context terluar dan terlukis DI BELAKANG latar
+     .invitation — bidangnya hilang total tanpa error. Ini persis
+     sebab yang sama yang sudah ditangani #penutup.
+   - overflow:hidden pada kedua section harus dilepas, kalau tidak
+     bidang yang sengaja dilebihkan keluar tepi justru terpotong tepat
+     di tepi lembarnya dan elipsnya kembali jadi persegi.
+   - letterpress (bayangan putih di bawah huruf) HANYA benar di atas
+     kertas krem. Di atas burgundy ia jadi garis putih kotor.
+   ============================================================ */
+
+/* --- 1. dua bidang lonjong --- */
+#pembuka,#galeri{
+  background:none;
+  background-color:transparent;
+  clip-path:none;
+  overflow:visible;
+  isolation:isolate;
+  color:#F3E4C6;
+  /* Elips butuh ruang tegak lebih banyak daripada lembar persegi:
+     lengkung di kepala dan kakinya memakan tinggi yang tidak bisa
+     diisi teks. */
+  padding-top:calc(var(--s7) + 6px);
+  padding-bottom:calc(var(--s7) + 6px);
+  margin-top:22px;
+  margin-bottom:22px;
+}
+#pembuka::after,#galeri::after{
+  content:'';
+  position:absolute;
+  /* -22px di kiri-kanan: bidangnya MELEBIHI lembar di sekitarnya dan
+     keluar dari tepi layar, jadi yang terbaca lengkung — bukan kartu
+     bersudut bulat. */
+  inset:0 -22px;
+  z-index:-1;
+  background-color:var(--wine-dark);
+  background-image:
+    radial-gradient(120% 74% at 50% 0%,rgba(120,26,50,.5) 0%,rgba(58,10,23,0) 64%),
+    linear-gradient(180deg,#4A0E1D 0%,#330814 100%);
+  /* Jari-jari mendatar 50% = satu lengkung selebar bidang, bukan empat
+     sudut membulat. Angka tegaknya yang menentukan seberapa gemuk
+     elipsnya. */
+  border-radius:50% / 96px;
+  box-shadow:0 22px 44px -26px rgba(20,2,8,.8);
+  pointer-events:none;
+}
+
+/* --- 2. warna di atas burgundy ---
+   Ditulis lengkap, bukan diwarisi. Teks gelap di atas bidang gelap
+   adalah cara tercepat menghapus satu bagian penuh, dan tidak ada
+   error yang memberi tahu. */
+#pembuka .quote,
+#pembuka .opening-text,
+#galeri p{color:rgba(243,228,198,.86);}
+#pembuka .quote::first-letter{color:#D9A85E;}
+#pembuka::before,#galeri::before{color:#D9A85E;opacity:.7;}
+#galeri .eyebrow{color:#D9A85E;}
+#galeri .eyebrow::before,#galeri .eyebrow::after{background:#D9A85E;opacity:.5;}
+#pembuka .divider-ornament,
+#galeri .divider-ornament{filter:brightness(1.35) saturate(1.05);opacity:.95;}
+#pembuka .section-divider::before,#pembuka .section-divider::after,
+#galeri .section-divider::before,#galeri .section-divider::after{
+  background:linear-gradient(to right,rgba(217,168,94,0),#D9A85E,rgba(217,168,94,0));
+}
+/* Ornamen latar di kedua bidang ini digambar dengan tinta gelap untuk
+   kertas krem; di atas burgundy ia lenyap. Dicerahkan, bukan diganti. */
+/* Ornamen "dua tangan saling meraih" DIMATIKAN di bidang burgundy.
+   Gambarnya digambar untuk kertas krem: tintanya gelap dan latarnya
+   pucat, jadi di atas burgundy yang muncul bukan tangannya melainkan
+   KOTAK PUCAT tempat tangan itu berada — persis jenis "hiasan yang
+   terbaca sebagai noda" yang sudah dua kali harus dicabut di tema
+   lain. Mencerahkannya tidak menolong; yang tercerahkan kotaknya.
+   Maknanya (dua keluarga bertemu) tidak hilang: ia sudah diucapkan
+   oleh kalimat pembukanya sendiri, dan bidang burgundy pertama ini
+   memang lebih kuat kalau bersih. */
+#pembuka .opening-text::after{content:none;}
+#galeri .galeri-grid::after{opacity:.5;filter:brightness(1.5);}
+
+/* --- 3. judul bagian ditulis tangan --- */
+.section-title{
+  font-family:'Pinyon Script',cursive;
+  font-weight:400;
+  text-transform:none;
+  letter-spacing:0;
+  /* 8,4vw, bukan 9vw: judul terpanjang di tema ini ("Konfirmasi
+     Kehadiran") diukur 296px di dalam kotak 314px pada ukuran lama —
+     muat, tapi hanya 9px sisa di tiap sisi, dan itu terbaca sesak.
+     Ukuran ini menyisakan sekitar 18px. */
+  font-size:clamp(28px,8.4vw,34px);
+  line-height:1.18;
+  margin-bottom:var(--s3);
+}
+/* Letterpress dicabut DARI JUDUL SAJA. Goresan Pinyon Script setipis
+   satu piksel; bayangan putih di bawahnya menebalkannya jadi bubur.
+   Nama mempelai & nama acara tetap Cinzel dan tetap letterpress —
+   aturan "dua teknik cetak" di blok atas tidak berubah. */
+.section-title{text-shadow:0 1px 0 rgba(255,255,255,.6);}
+#pembuka .section-title,
+#galeri .section-title{
+  color:#F3E4C6;
+  text-shadow:0 1px 2px rgba(20,2,8,.55);
+}
+/* Judul tulisan tangan duduk lebih rapat ke eyebrow di atasnya:
+   huruf sambung punya ekor panjang ke bawah, dan jarak yang sama
+   dengan huruf kapital membuatnya terlihat melayang. */
+.eyebrow{margin-bottom:6px;}
+
+/* ============================================================
+   SAMPUL — bingkai dilepas, nama ditulis tangan
+   ------------------------------------------------------------
+   Perintah user berlaku untuk ketiga tema Eropa Mewah: bingkai dilepas,
+   lebih elegan & minimalis, tulisan jelas terbaca, peletakan/huruf
+   dimainkan. Sebabnya ditulis panjang di blok yang sama pada Blanc
+   Royale — ringkasnya: empat ukiran sudut + bingkai garis membuat
+   ketiga sampul memakai kolom sempit yang sama, dan seluruh teks
+   berdiri di atas foto sehingga tidak ada satu warna teks pun yang
+   benar di seluruh kalimat.
+
+   KETIGANYA DISELESAIKAN BERBEDA, DAN ITU DISENGAJA
+
+     Blanc Royale  teks turun ke lembar kertas berkubah, rata tengah
+     Noir Dore     teks turun ke sudut kiri-bawah, rata kiri, huruf
+                   kapital terpahat, sumbu emas tegak
+     Bordeaux      nama DITULIS TANGAN besar, rata tengah, di kaki
+
+   Kenapa tulisan tangan di sini: tema ini surat lama bersegel. Sejak
+   revisi "bidang lonjong", judul bagian di dalam surat sudah memakai
+   huruf sambung — dan yang ditulis tangan di sebuah surat sungguhan,
+   sebelum apa pun dibuka, justru NAMA DI MUKANYA. Sampul ini kini
+   membacanya lebih dulu. Itu juga pembeda dari Noir Dore, yang tetap
+   memakai kapital terpahat justru supaya keduanya tidak kembar.
+
+   PERCOBAAN YANG DIBATALKAN, DAN KENAPA
+
+   Blok nama sempat ditaruh di SEPERTIGA ATAS supaya ketiga sampul
+   benar-benar beda susunan. Hasilnya salah, dan salahnya mendasar:
+   pada hampir semua foto pasangan, sepertiga atas adalah tempat WAJAH
+   berada — jadi nama mempelai mendarat tepat di muka mempelai. Sempat
+   dicoba menggeser titik pandang foto (background-position: center
+   34%) untuk menurunkan wajahnya; itu tidak mengubah apa pun, karena
+   foto sampul yang lebih lebar daripada layar dipangkas MENDATAR oleh
+   background-size:cover, sehingga nilai tegaknya tidak dipakai sama
+   sekali. Jangan mengulanginya.
+
+   Yang menyelesaikan: blok nama turun ke kaki, di atas kabut gelap
+   yang sudah ada. Pembedanya dari dua tema lain tetap tiga — rata
+   tengah (Noir rata kiri), tulisan tangan (Noir kapital), dan langsung
+   di atas foto (Blanc di atas kertas).
+   ============================================================ */
+
+/* --- semua ukiran sudut dilepas (empat, di dua elemen) --- */
+.cover-sheet::before,.cover-sheet::after,
+.cover-tepi::before,.cover-tepi::after{
+  content:none;
+}
+/* Fleur-de-lis di atas eyebrow ikut dilepas. Ia benda kelima di sampul
+   yang sedang dikosongkan, dan maknanya sudah diucapkan segel lilin di
+   amplop sebelum sampul ini dan di penutup sesudahnya. */
+.cover-lis{display:none;}
+
+/* --- susunan: naik ke sepertiga atas, tombol turun ke kaki --- */
+.cover-content{
+  justify-content:flex-end;
+  /* var(--s5), bukan var(--s7): 40px lebih rendah menurunkan seluruh
+     blok nama dari wajah mempelai pria ke jas hitamnya — di sana huruf
+     sambung yang tipis terbaca paling tegas. */
+  padding-bottom:var(--s5);
+}
+.cover-guest{
+  position:absolute;
+  top:var(--s6);left:var(--s4);right:var(--s4);
+  margin-bottom:0;
+}
+
+/* --- huruf: nama ditulis tangan --- */
+.cover-eyebrow{
+  font-size:10.5px;
+  letter-spacing:.44em;
+  margin-bottom:var(--s2);
+}
+.cover-names{
+  font-family:'Pinyon Script',cursive;
+  font-weight:400;
+  text-transform:none;
+  letter-spacing:0;
+  /* Huruf sambung butuh ukuran jauh lebih besar daripada kapital untuk
+     terbaca sama jelas: tingginya yang terbaca cuma x-height-nya, dan
+     pada Pinyon Script itu sekitar sepertiga ukuran font. */
+  font-size:clamp(46px,15vw,64px);
+  line-height:1.04;
+  margin-bottom:var(--s3);
+}
+.cover-names .amp{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-style:italic;
+  font-size:.4em;
+  font-weight:400;
+  margin:0;
+}
+.cover-date{
+  font-size:11.5px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  margin-bottom:var(--s4);
+}
+.cover-date::before{
+  content:'';
+  display:block;
+  width:48px;height:1px;
+  margin:0 auto var(--s3);
+  background:currentColor;
+  opacity:.5;
+}
+
+/* --- tombol: garis, bukan balok --- */
+.btn-open{
+  background:none;
+  color:#F3E4C6;
+  border:1px solid rgba(243,228,198,.55);
+  border-radius:0;
+  padding:13px 28px;
+  box-shadow:none;
+  font-size:12px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+.btn-open::before{content:none;}
+.btn-open:hover{
+  background:rgba(243,228,198,.14);
+  transform:none;
+  box-shadow:none;
+}
+
+/* --- layar pendek (potret-tema.js memotret pada 390x585) --- */
+@media(max-height:640px){
+  .cover-content{padding-bottom:var(--s5);}
+  .cover-names{font-size:clamp(40px,12.5vw,52px);}
+  .cover-guest{top:var(--s4);}
+}
+
+/* Kabut burgundy. Berbobot ke KAKI karena blok nama ada di sana, dan
+   sengaja lebih pekat daripada versi lama: nama yang ditulis tangan
+   goresannya jauh lebih tipis daripada huruf kapital, jadi ia butuh
+   latar yang lebih tenang untuk terbaca sama jelasnya. */
+.cover-foto::after{
+  background:linear-gradient(180deg,
+    rgba(38,6,16,.62) 0%,
+    rgba(38,6,16,.26) 34%,
+    rgba(38,6,16,.52) 62%,
+    rgba(38,6,16,.86) 84%,
+    rgba(38,6,16,.95) 100%);
+}
+/* Sapaan diturunkan supaya lolos dari juntai tirai beludru di puncak
+   sampul. Pada var(--s6) ia mendarat tepat di rumbainya dan yang
+   terlihat cuma huruf putih di atas noda merah. */
+.cover-guest{top:calc(var(--s6) + 38px);}
+@media(max-height:640px){
+  .cover-guest{top:calc(var(--s4) + 34px);}
+}
+
+/* ============================================================
+   20. MASUKAN USER 2026-09-02 — SAMPUL, FOTO ATAS, ACARA, LOKASI
+   ------------------------------------------------------------
+   Empat perintah lepas untuk tema ini, dikerjakan sebagai satu blok
+   di akhir berkas supaya urutan muatnya pasti menang atas blok 19
+   (sampul) dan blok-blok awal yang mengatur kartu acara.
+   ============================================================ */
+
+/* --- 20a. SAMPUL: tirai merah dilepas, kabutnya jadi netral gelap ---
+   Perintah user: "hapus frame merah pada cover undangan, dan layer
+   merah transparan pada cover juga diganti layer yang gelap atau
+   terang (berlawanan dengan warna tulisan undangan pada cover) agar
+   tulisan terlihat jelas."
+
+   Keduanya satu masalah yang sama: merah di atas merah. Tulisan
+   sampul di tema ini KRIM (#F3E4C6 dan putih), dan krim di atas
+   burgundy cuma berselisih terang sekitar 3:1 begitu fotonya ikut
+   bermain di belakangnya — cukup untuk terbaca, tidak cukup untuk
+   terbaca TEGAS. Kabutnya karena itu dipindah ke cokelat-hitam netral
+   (#12100E): selisihnya naik jauh, dan warnanya tidak lagi bersaing
+   dengan tinta krim yang duduk di atasnya.
+
+   Netral GELAP, bukan terang, karena arah tulisannya sudah krim. Kalau
+   suatu saat tinta sampul dibalik jadi gelap, kabut ini yang harus
+   ikut dibalik jadi terang — bukan sebaliknya.
+
+   Warna burgundy tema TIDAK hilang: amplop sebelum sampul, segel
+   lilinnya, bidang lonjong di dalam surat, dan lembar penutup semuanya
+   masih burgundy. Yang dilepas cuma lapisan yang menutupi FOTO. */
+.cover-drape{display:none;}
+.cover-foto::after{
+  background:linear-gradient(180deg,
+    rgba(18,16,14,.58) 0%,
+    rgba(18,16,14,.22) 34%,
+    rgba(18,16,14,.50) 62%,
+    rgba(18,16,14,.86) 84%,
+    rgba(18,16,14,.96) 100%);
+}
+/* Sapaan tamu kembali NAIK ke tempat semula. Ia diturunkan 38px dulu
+   semata-mata untuk lolos dari juntai tirai; begitu tirainya tidak ada,
+   dorongan itu menyisakan lubang di kepala sampul. */
+.cover-guest{top:var(--s6);}
+@media(max-height:640px){
+  .cover-guest{top:var(--s4);}
+}
+
+/* --- 20b. FOTO PALING ATAS: penuh sampai tepi lembar ---
+   Perintah user: "foto H1 (paling atas pada surat) dibikin full sampai
+   ke atas, tidak terpotong setengah seperti sekarang, sampai di garis
+   putih frame tersebut."
+
+   Sebabnya satu baris: #fotoUtama mewarisi padding var(--s6) = 56px
+   dari aturan `section`, dan 56px kertas kosong di atas foto membuat
+   fotonya terbaca sebagai gambar yang ditempel di tengah lembar, bukan
+   sebagai kepala surat. assets/foto-penuh.css sudah menolkan padding
+   kiri/kanannya — yang tersisa memang cuma yang atas.
+
+   Tepi robek lembar (--tepi-sobek) tetap terlihat karena FOTONYA ikut
+   memakai bentuk yang sama: yang muncul di antara keduanya adalah
+   sesobek tipis warna kertas, dan itulah "garis putih frame" yang
+   dimaksud user. */
+#fotoUtama{padding-top:0;}
+/* Nomor lembar turun ke kaki. Di kepala ia sekarang jatuh di atas
+   foto — dan nomor halaman emas setipis ini di atas foto berwarna
+   tidak terbaca sama sekali, tanpa satu pun error. */
+#fotoUtama::before{top:auto;bottom:var(--s5);}
+
+/* --- 20c. AKAD & RESEPSI: disusun ke tengah ---
+   Perintah user: "akad nikah dan resepsi (h2) information dibikin ke
+   tengah dan bagus."
+
+   Susunan lama: tiket dengan ikon di kolom kiri dan tiga baris teks
+   rata kiri di kolom kanan. Begitu lembar kalender masuk, ia mengambil
+   seluruh lebar kartu dan memusatkan dirinya sendiri — jadi kalender
+   berada di sumbu kartu sementara nama acara di atasnya berada di
+   sumbu kolom kanan. Dua sumbu dalam satu kartu, dan yang paling
+   terlihat justru kalendernya yang benar.
+
+   Sekarang satu sumbu: ikon, nama acara, jam, lalu kalender, semuanya
+   bertumpuk di tengah. Urutannya lewat `order`, bukan urutan markup,
+   supaya markup tetap sebangun dengan sebelas tema lain.
+
+   Metafora tiketnya tidak dibuang — justru dilengkapi: perforasinya
+   sekarang di KEDUA sisi. Tiket berperforasi satu sisi punya sumbu
+   optik yang meleset ke kanan, dan isi yang dipusatkan di atasnya
+   akan terlihat sedikit salah tanpa ada yang bisa menunjuk kenapa. */
+.event-card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  grid-template-columns:none;
+  grid-template-rows:none;
+  padding:var(--s4) var(--s3);
+  border-left:none;
+  border-right:none;
+  row-gap:0;
+}
+.event-card .event-icon{
+  order:1;
+  width:66px;height:66px;
+  margin:0 0 var(--s2);
+}
+/* align-self WAJIB dinolkan. Di kartu lama ia grid, dan .event-name
+   memakai align-self:end sementara .event-time memakai align-self:start
+   untuk merapatkan tiga baris teks ke ikon. Begitu kartunya jadi FLEX
+   KOLOM, align-self berpindah arti: ia mengatur sumbu SILANG, yang di
+   flex kolom adalah MENDATAR. Hasilnya nama acara terlempar ke kanan
+   dan jamnya ke kiri — di kartu yang justru sedang dipusatkan, dan
+   tanpa satu pun error.
+
+   Selektornya harus SEKHUSUS aslinya. Percobaan pertama memakai
+   `.event-card > *` (0,1,1) dan kalah dari `.event-card .event-name`
+   (0,2,0) — kalah spesifisitas terlihat persis sama dengan aturan yang
+   tidak ditulis sama sekali. */
+.event-card .event-icon,
+.event-card .event-name,
+.event-card .event-time,
+.event-card .event-date{align-self:center;}
+.event-card .event-name{order:2;margin-bottom:5px;}
+.event-card .event-time{order:3;margin-bottom:var(--s3);}
+/* Garis rambut emas pendek di bawah nama acara. Ditambahkan pada
+   putaran kedua masukan user ("dibikin ke tengah dan BAGUS"): sesudah
+   isinya dipusatkan, kartu RESEPSI — yang tidak membawa kalender karena
+   tanggalnya sama dengan akad — tinggal tiga baris teks mengambang di
+   bidang putih selebar kartu, dan terbaca sebagai kartu yang belum
+   selesai. Garis ini memberi kedua kartu satu titik jangkar yang sama,
+   dan bahasa garisnya sama dengan pemisah di sampul dan di plat lokasi. */
+.event-card .event-name::after{
+  content:'';
+  display:block;
+  width:46px;height:1px;
+  margin:10px auto 0;
+  background:var(--gold);
+  opacity:.55;
+}
+.event-card .event-date{order:4;margin:0;}
+.event-card .kal{order:4;width:100%;margin-top:0;}
+/* Perforasi kedua di sisi kanan. scaleX(-1) mencerminkan gradiennya,
+   sehingga gigi setengah lingkarannya menggigit dari kanan — dan
+   border-left yang ikut tercermin muncul sebagai garis putus-putus di
+   sisi dalam kanan, persis pasangannya di kiri. */
+.event-card::before,
+.event-card::after{
+  content:'';
+  position:absolute;
+  top:0;bottom:0;
+  width:10px;
+  background-image:radial-gradient(circle at 0 50%,transparent 0 4.5px,var(--card) 4.5px);
+  background-size:100% 13px;
+  background-repeat:repeat-y;
+  border-left:1px dashed var(--line);
+}
+.event-card::before{left:0;}
+.event-card::after{right:0;transform:scaleX(-1);}
+/* Baris ringkas (akad & resepsi di hari yang sama) ikut ke tengah —
+   tanpa ini ia satu-satunya baris yang tetap rata kiri di kartu yang
+   sudah dipusatkan, dan justru itu yang paling terlihat. */
+.kal-ringkas{text-align:center;}
+
+/* --- 20d. PLAT LOKASI menggantikan denah ---
+   Perintah user: "hapus ilustrasi denah lokasi, sangat tidak cocok."
+   Ia benar: denah itu bukan peta — kita tidak punya koordinatnya
+   sampai user mengisi link maps — jadi yang tergambar adalah jalan
+   karangan, dan di undangan pernikahan itu terbaca sebagai pengisi
+   ruang.
+
+   Gantinya PAPAN NAMA PINTU MASUK, dan di tema ini papan itu adalah
+   PLAKAT JALAN BEREMAIL — papan nama jalan Paris: bidang burgundy
+   bersudut bulat dengan garis krim tebal timbul di dalamnya. Bentuknya
+   dipilih karena ia satu-satunya benda "papan nama" yang khas Eropa
+   dan bukan lengkung (Blanc Royale sudah memakai kubah), jadi ketiga
+   tema Eropa Mewah tetap terbaca berbeda.
+
+   Ini juga tempat burgundy pekat kembali muncul di dalam surat sesudah
+   dilepas dari sampul (20a) — jadi warnanya berpindah, bukan hilang. */
+.plat-lokasi{
+  position:relative;
+  max-width:330px;
+  margin:0 auto var(--s4);
+  padding:var(--s4) var(--s3) var(--s3);
+  background:var(--wine);
+  border-radius:var(--r-lg);
+  box-shadow:0 16px 32px -22px rgba(46,8,20,.75);
+}
+/* Garis krim timbul di dalam plakat. inset 7px, bukan 0: pada plakat
+   email sungguhan garisnya memang tidak menempel tepi — tepi luarnya
+   bidang polos tempat sekrupnya duduk. */
+.plat-lokasi::before{
+  content:'';
+  position:absolute;
+  inset:7px;
+  border:1.5px solid rgba(243,228,198,.85);
+  border-radius:5px;
+  pointer-events:none;
+}
+.plat-lokasi .peta-eyebrow{
+  font-size:9px;
+  letter-spacing:.3em;
+  color:rgba(243,228,198,.7);
+  margin-bottom:var(--s2);
+}
+.plat-lokasi .venue-name{
+  font-family:'Cinzel',Georgia,serif;
+  font-weight:500;
+  text-transform:uppercase;
+  /* clamp sampai 17px saja: Cinzel kapital lebar, dan nama gedung
+     contoh ("Gedung Serbaguna Bale Asri") sudah dua baris di sini. */
+  font-size:clamp(13.5px,3.9vw,17px);
+  letter-spacing:.06em;
+  line-height:1.4;
+  color:#F3E4C6;
+  margin-bottom:9px;
+}
+.plat-lokasi .venue-address{
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:13px;
+  font-style:italic;
+  color:rgba(243,228,198,.82);
+  margin:0;
 }
