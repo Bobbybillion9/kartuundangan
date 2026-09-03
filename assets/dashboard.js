@@ -407,13 +407,42 @@
   // ---------------- Unggah Foto (bucket Storage "foto-undangan") ----------------
   var FOTO_BUCKET = 'foto-undangan';
   var TIPE_FOTO_VALID = ['image/jpeg', 'image/png', 'image/webp'];
-  var UKURAN_FOTO_MAKS = 5 * 1024 * 1024;
+
+  // Batas MASUKAN, bukan batas yang tersimpan. Sejak 2026-09-04 setiap
+  // foto dikompres dulu di browser oleh assets/kompres-foto.js, jadi
+  // menolak berkas 8 MB di sini cuma menyuruh user mengerjakan sendiri
+  // apa yang sudah bisa kita kerjakan untuknya — padahal foto 8 MB dari
+  // HP justru KASUS NORMAL. Yang tetap ditolak hanya yang di luar
+  // kewajaran, karena mendekodenya bisa mematikan tab HP kelas bawah.
+  var UKURAN_FOTO_MAKS = 25 * 1024 * 1024;
+
+  // Jaring terakhir SESUDAH kompresi. Hasil kompresi normal ada di
+  // kisaran 150-500 KB; kalau sesuatu di atas 8 MB masih lolos ke sini,
+  // artinya kompresinya tidak jalan (codec tidak ada, kanvas gagal) dan
+  // yang benar adalah berhenti, bukan mengirim 20 MB ke kuota tamu.
+  var UKURAN_UNGGAH_MAKS = 8 * 1024 * 1024;
 
   function validasiFileFoto(file){
     if (!file) return 'File tidak valid.';
     if (TIPE_FOTO_VALID.indexOf(file.type) === -1) return 'Format file harus JPG, PNG, atau WEBP.';
-    if (file.size > UKURAN_FOTO_MAKS) return 'Ukuran foto maksimal 5 MB. Coba perkecil dulu.';
+    if (file.size > UKURAN_FOTO_MAKS) return 'Ukuran foto maksimal 25 MB. Coba pakai foto yang lebih kecil.';
     return null;
+  }
+
+  // Pembungkus tipis di atas KUFoto.kompres supaya seluruh jalur unggah
+  // memanggilnya dengan cara yang sama, DAN supaya dashboard tetap jalan
+  // kalau kompres-foto.js gagal dimuat: yang terjadi cuma foto terunggah
+  // sebesar aslinya, bukan tombol unggah yang mati.
+  async function siapkanFotoUnggah(file, jenis){
+    if (!window.KUFoto) return { file: file, dikompres: false, asli: file.size, akhir: file.size };
+    var hasil = await window.KUFoto.kompres(file, { jenis: jenis });
+    return hasil;
+  }
+
+  function ringkasKompresi(hasil){
+    if (!hasil || !hasil.dikompres || !window.KUFoto) return '';
+    var f = window.KUFoto.ukuranTerbaca;
+    return ' (' + f(hasil.asli) + ' -> ' + f(hasil.akhir) + ')';
   }
 
   function friendlyStorageError(err){
@@ -422,7 +451,7 @@
       return 'Gagal terhubung ke server. Periksa koneksi internetmu lalu coba lagi.';
     }
     if (msg.indexOf('exceed') !== -1 || msg.indexOf('too large') !== -1 || msg.indexOf('maximum allowed size') !== -1) {
-      return 'Ukuran foto maksimal 5 MB. Coba perkecil dulu.';
+      return 'Ukuran foto terlalu besar untuk diunggah. Coba pakai foto lain.';
     }
     return 'Gagal mengunggah foto. Silakan coba lagi.';
   }
@@ -746,15 +775,29 @@
   // (utama/pria/wanita menyimpan langsung ke DB begitu selesai diunggah,
   // terpisah dari FORM_FIELDS/tombol Simpan — sama seperti pola Palet
   // Warna yang juga tersimpan seketika saat diklik.)
-  async function unggahFotoTunggal(kolom, slotKey, file){
+  async function unggahFotoTunggal(kolom, slotKey, file, kabar){
     var pesan = validasiFileFoto(file);
     if (pesan) return { error: pesan };
     var session = KU.getSession();
     if (!session || !currentInvitation) return { error: 'Sesi login sudah berakhir. Silakan muat ulang halaman.' };
     var uid = session.user.id;
-    var path = pathFotoTunggal(uid, currentInvitation.id, slotKey, file);
+
+    // Foto 'utama' dipakai DUA KALI: sebagai slot foto biasa dan sebagai
+    // --foto-sampul yang mengisi layar penuh (lihat render-undangan.js).
+    // Karena itu ia yang diberi sisi terpanjang terbesar — foto yang
+    // memenuhi layar adalah yang paling lama dipandang dan paling cepat
+    // ketahuan kalau kurang tajam.
+    if (kabar) kabar('Menyiapkan foto...');
+    var siap = await siapkanFotoUnggah(file, slotKey === 'utama' ? 'sampul' : 'tunggal');
+    if (kabar) kabar('Mengunggah...');
+    var fileUnggah = siap.file;
+    if (fileUnggah.size > UKURAN_UNGGAH_MAKS) {
+      return { error: 'Foto ini terlalu besar untuk diunggah. Coba pakai foto dengan ukuran lebih kecil.' };
+    }
+
+    var path = pathFotoTunggal(uid, currentInvitation.id, slotKey, fileUnggah);
     var pathLama = pathDariPublicUrl(currentInvitation[kolom]);
-    var up = await KU.sb.storage.from(FOTO_BUCKET).upload(path, file, { upsert: true, contentType: file.type });
+    var up = await KU.sb.storage.from(FOTO_BUCKET).upload(path, fileUnggah, { upsert: true, contentType: fileUnggah.type });
     if (up.error) return { error: friendlyStorageError(up.error) };
     var urlBaru = publicUrlFoto(path);
     var payload = {};
@@ -766,7 +809,7 @@
     }
     currentInvitation = res.data;
     if (pathLama && pathLama !== path) KU.sb.storage.from(FOTO_BUCKET).remove([pathLama]).then(function(){});
-    return { data: urlBaru };
+    return { data: urlBaru, kompresi: siap };
   }
 
   async function hapusFotoTunggal(kolom){
@@ -810,12 +853,13 @@
     async function prosesFile(file){
       if (!file) return;
       zone.classList.add('disabled');
-      tampilkanStatus('Mengunggah...');
-      var hasil = await unggahFotoTunggal(opts.kolom, opts.slotKey, file);
+      tampilkanStatus('Menyiapkan foto...');
+      var hasil = await unggahFotoTunggal(opts.kolom, opts.slotKey, file, function(t){ tampilkanStatus(t); });
       zone.classList.remove('disabled');
       if (hasil.error) { tampilkanStatus(hasil.error, 'err'); return; }
       tampilkan(hasil.data);
-      tampilkanStatus('Tersimpan!', 'ok');
+      // Ringkasan ukuran ditampilkan supaya kompresinya TERLIHAT bekerja.
+      tampilkanStatus('Tersimpan!' + ringkasKompresi(hasil.kompresi), 'ok');
     }
 
     zone.addEventListener('click', function(){ input.click(); });
@@ -1057,7 +1101,7 @@
     if (galeriHint) {
       galeriHint.textContent = penuh
         ? 'Galeri sudah penuh (' + GALERI_MAKS + '/' + GALERI_MAKS + ' foto). Hapus salah satu untuk menambah yang baru.'
-        : 'JPG, PNG, atau WEBP · maks 5 MB per foto · ' + daftar.length + '/' + GALERI_MAKS + ' foto';
+        : 'JPG, PNG, atau WEBP · otomatis dikompres · ' + daftar.length + '/' + GALERI_MAKS + ' foto';
     }
   }
 
@@ -1083,9 +1127,21 @@
     var session = KU.getSession();
     var uid = session.user.id;
     var urlBaru = [];
+    var totalAsli = 0, totalAkhir = 0;
     for (var j = 0; j < valid.length; j++) {
-      var path = pathFotoGaleri(uid, currentInvitation.id, valid[j]);
-      var up = await KU.sb.storage.from(FOTO_BUCKET).upload(path, valid[j], { contentType: valid[j].type });
+      // Dikompres SATU PER SATU, bukan sekaligus lewat Promise.all:
+      // mendekode enam foto 12 MP berbarengan adalah cara tercepat
+      // membuat tab HP kehabisan memori dan mati tanpa pesan apa pun.
+      tampilkanGaleriStatus('Menyiapkan foto ' + (j + 1) + ' dari ' + valid.length + '...');
+      var siapG = await siapkanFotoUnggah(valid[j], 'galeri');
+      if (siapG.file.size > UKURAN_UNGGAH_MAKS) {
+        pesanTerakhir = valid[j].name + ': ukurannya terlalu besar untuk diunggah.';
+        continue;
+      }
+      totalAsli += siapG.asli; totalAkhir += siapG.akhir;
+      tampilkanGaleriStatus('Mengunggah foto ' + (j + 1) + ' dari ' + valid.length + '...');
+      var path = pathFotoGaleri(uid, currentInvitation.id, siapG.file);
+      var up = await KU.sb.storage.from(FOTO_BUCKET).upload(path, siapG.file, { contentType: siapG.file.type });
       if (up.error) { pesanTerakhir = 'Gagal mengunggah salah satu foto: ' + friendlyStorageError(up.error); continue; }
       urlBaru.push(publicUrlFoto(path));
     }
@@ -1097,7 +1153,11 @@
     if (res.error) { tampilkanGaleriStatus('Gagal menyimpan: ' + friendlyErrorMessage(res.error), 'err'); return; }
     currentInvitation = res.data;
     renderGaleriGrid();
-    tampilkanGaleriStatus(pesanTerakhir || 'Tersimpan!', pesanTerakhir ? 'err' : 'ok');
+    var ringkas = '';
+    if (!pesanTerakhir && window.KUFoto && totalAkhir && totalAkhir < totalAsli) {
+      ringkas = ' (' + window.KUFoto.ukuranTerbaca(totalAsli) + ' -> ' + window.KUFoto.ukuranTerbaca(totalAkhir) + ')';
+    }
+    tampilkanGaleriStatus(pesanTerakhir || ('Tersimpan!' + ringkas), pesanTerakhir ? 'err' : 'ok');
   }
 
   if (galeriZone && galeriInput) {

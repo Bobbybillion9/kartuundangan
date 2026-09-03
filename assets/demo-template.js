@@ -76,6 +76,46 @@
     var img = wadah && wadah.querySelector('img');
     if (!img) return;
     var url = BASIS + berkas;
+
+    // Slot yang di-lazy TIDAK BOLEH lewat kalauGambarAda().
+    //
+    // Penguji Image() di atas mengunduh gambarnya SENDIRI. Untuk slot
+    // biasa itu tidak apa-apa, tapi untuk enam foto galeri yang sejak
+    // 2026-09-04 memakai loading="lazy", akibatnya seluruh gunanya
+    // hilang tanpa jejak: atributnya terpasang, tapi keenam fotonya
+    // tetap terunduh saat halaman dibuka — cuma oleh penguji, bukan
+    // oleh <img>-nya. Terukur di Chrome: 1,3 MB tetap terunduh
+    // sebelum digulir sedikit pun.
+    //
+    // Jalur di bawah memasang src langsung ke <img> slotnya. Dua hal
+    // yang harus benar bersamaan di sini:
+    //
+    //   1. display TIDAK boleh tetap 'none'. Gambar display:none tidak
+    //      punya kotak, tidak pernah bersinggungan dengan layar, dan
+    //      karena itu browser TIDAK PERNAH memuatnya — fotonya tidak
+    //      akan muncul selamanya.
+    //   2. tapi ia juga belum boleh terlihat, supaya ikon "gambar
+    //      rusak" tidak sempat menimpa keadaan kosong rancangan tema.
+    //
+    // Keduanya dipenuhi dengan opacity:0 — ada kotaknya (lazy bekerja),
+    // tidak terlihat apa pun (tidak ada ikon rusak), dan keadaan kosong
+    // tema tetap tampak di belakangnya sampai fotonya benar-benar tiba.
+    if (img.loading === 'lazy') {
+      img.style.display = '';
+      img.style.opacity = '0';
+      img.addEventListener('load', function () {
+        if (dataAsliSudahMasuk()) return;
+        img.style.opacity = '';
+      });
+      img.addEventListener('error', function () {
+        img.removeAttribute('src');
+        img.style.display = 'none';
+        img.style.opacity = '';
+      });
+      img.src = url;
+      return;
+    }
+
     kalauGambarAda(url, function () {
       img.src = url;
       img.style.display = '';

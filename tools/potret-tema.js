@@ -130,7 +130,15 @@ async function potret(tema, keluaran) {
         // has-sampul dipasang demo-template.js SETELAH foto sampulnya
         // selesai dimuat, jadi ia penanda paling jujur bahwa sampulnya siap.
         if (!cover.classList.contains('has-sampul')) return false;
-        return Array.from(document.images).every(i => !i.src || i.complete);
+        // Gambar loading="lazy" (enam foto galeri tiap tema, sejak
+        // 2026-09-04) DIKECUALIKAN. Yang di-lazy letaknya ribuan piksel
+        // di bawah lipatan, jadi browser memang tidak akan pernah
+        // memuatnya selama halaman ini tidak digulir — i.complete-nya
+        // tetap false SELAMANYA. Tanpa pengecualian ini, tiap tema
+        // menunggu 10 detik sampai batas waktu lalu dipotret dengan
+        // peringatan palsu "sampul belum siap".
+        return Array.from(document.images)
+          .every(i => !i.src || i.complete || i.loading === 'lazy');
       })()`,
       returnByValue: true
     });

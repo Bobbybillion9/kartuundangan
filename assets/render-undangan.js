@@ -629,8 +629,23 @@
   // template).
   // ============================================================
 
-  var FOTO_BUKTI_MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+  // 5 MB ini BUKAN pilihan tampilan: bucket "bukti-transfer" sendiri
+  // menolak apa pun di atasnya (file_size_limit di Storage). Jadi tanpa
+  // kompresi, tamu yang memotret struk transfer dengan kamera 12 MP
+  // ditolak server — dan yang ia lihat cuma "gagal", di tengah acara.
+  var FOTO_BUKTI_MAX_SIZE = 5 * 1024 * 1024;
+
+  // Batas MASUKAN, sebelum dikompres. Lihat catatan yang sama di
+  // dashboard.js: foto HP 8-15 MB adalah kasus normal, bukan kasus aneh.
+  var FOTO_BUKTI_MAKS_MASUKAN = 25 * 1024 * 1024;
   var FOTO_BUKTI_MIME_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+
+  // Sama seperti di dashboard: kalau kompres-foto.js tidak ada, form ini
+  // tetap harus jalan — yang terjadi cuma berkasnya terunggah apa adanya.
+  function siapkanBukti(file){
+    if (!window.KUFoto) return Promise.resolve(file);
+    return window.KUFoto.kompres(file, { jenis: 'bukti' }).then(function(h){ return h.file; });
+  }
 
   function buatNamaFileBukti(file){
     var ext = FOTO_BUKTI_MIME_EXT[file.type] || 'jpg';
@@ -704,27 +719,44 @@
         msgEl.className = 'form-msg err';
         return;
       }
-      if (file.size > FOTO_BUKTI_MAX_SIZE) {
-        msgEl.textContent = 'Ukuran file maksimal 5 MB ya.';
+      if (file.size > FOTO_BUKTI_MAKS_MASUKAN) {
+        msgEl.textContent = 'Ukuran file maksimal 25 MB ya.';
         msgEl.className = 'form-msg err';
         return;
       }
 
       submitBtn.disabled = true;
-      msgEl.textContent = 'Mengunggah...';
+      msgEl.textContent = 'Menyiapkan foto...';
       msgEl.className = 'form-msg';
 
       // Path [invitation_id]/[nama-acak] -- lihat kebijakan storage di
       // scratch_migration_hadiah.sql. bukti_url menyimpan PATH-nya saja
       // (bucket privat, tidak ada URL publik) -- dashboard pasangan
       // membuat signed URL sendiri saat mau menampilkannya.
-      var path = inv.id + '/' + buatNamaFileBukti(file);
+      // Diisi baru SESUDAH kompresi selesai: ekstensinya ikut berubah
+      // (jpg -> webp), jadi nama berkasnya tidak bisa ditentukan lebih
+      // awal. bersihkanFileYatim() karena itu harus tahan path kosong.
+      var path = null;
 
       function bersihkanFileYatim(){
+        if (!path) return;
         sb.storage.from('bukti-transfer').remove([path]).then(function(){}, function(){});
       }
 
-      sb.storage.from('bukti-transfer').upload(path, file, { contentType: file.type }).then(function(uploadRes){
+      siapkanBukti(file).then(function(fileUnggah){
+        if (fileUnggah.size > FOTO_BUKTI_MAX_SIZE) {
+          submitBtn.disabled = false;
+          msgEl.textContent = 'Fotonya masih terlalu besar. Coba kirim foto dengan ukuran lebih kecil ya.';
+          msgEl.className = 'form-msg err';
+          return null;
+        }
+        msgEl.textContent = 'Mengunggah...';
+        path = inv.id + '/' + buatNamaFileBukti(fileUnggah);
+        return sb.storage.from('bukti-transfer').upload(path, fileUnggah, { contentType: fileUnggah.type });
+      }).then(function(uploadRes){
+        // null = berhenti di tahap kompresi; pesannya sudah dipasang dan
+        // tombolnya sudah dibuka di atas.
+        if (!uploadRes) return;
         if (uploadRes.error) {
           submitBtn.disabled = false;
           msgEl.textContent = PESAN_ERROR_UMUM;
