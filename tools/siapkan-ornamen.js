@@ -625,15 +625,22 @@ const ORNAMEN = [
   {
     keluaran: 'latar-candi-bentar.webp',
     sumber: 'BACKGROUND FULL ORNAMENT/TRADITIONAL/1096978421764286181.jpg',
-    lebar: 720, mutu: 0.74,
+    // 736, bukan 720: itu lebar ASLI sumbernya, dan 720 membuang 16 px
+    // percuma. 736 adalah langit-langit seluruh pustaka latar milik
+    // user — pada layar 390 dengan cover, rasio terbaiknya 1,55.
+    lebar: 736, mutu: 0.76,
     catatan: 'gerbang candi bentar Bali berlatar biru malam — sampul tema Bali'
   },
-  {
-    keluaran: 'latar-gunungan-emas.webp',
-    sumber: 'BACKGROUND FULL ORNAMENT/TRADITIONAL/Gradient paper design with tribal puppet….jpg',
-    lebar: 720, mutu: 0.74,
-    catatan: 'sepasang gunungan wayang berlatar emas hangat berawan — sampul tema Jawa'
-  },
+  // latar-gunungan-emas.webp DIHAPUS 2026-09-03 atas keluhan user
+  // ("background animasi buka surat buram"). Sebabnya bisa diukur:
+  // sumbernya "Gradient paper design with tribal puppet….jpg" adalah
+  // SATU-SATUNYA berkas MENDATAR di folder TRADITIONAL — 626x417 —
+  // dan dipakai sebagai latar amplop TEGAK sepenuh layar. Dengan
+  // background-size:cover pada 390x844 ia dilukis 1265x844, yaitu 0,49
+  // piksel berkas per piksel CSS: setengah resolusi layar 1x, seperempat
+  // resolusi HP 2x. Menaikkan `lebar` tidak akan menolong — skrip ini
+  // tidak pernah memperbesar, dan 626 memang ukuran aslinya.
+  // Digantikan latar-jawa-gunungan-senja.webp (736x1308, tegak).
   {
     keluaran: 'bebas-gunungan-emas.webp',
     sumber: 'FREE ORNAMENT/292311832084344705-removebg-preview.png',
@@ -724,6 +731,32 @@ const ORNAMEN = [
     sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE RED BACKGROUND (6).jpg',
     lebar: 736, mutu: 0.74,
     catatan: 'merah dengan cakram kisi emas, lampion gantung & awan emas — kartu tanggal Shuangxi Merah'
+  },
+
+  // --- LATAR ADAT PENGGANTI (2026-09-03) ---
+  //
+  // Disaring atas sifat yang sama seperti latar Tionghoa: APAKAH
+  // TENGAHNYA KOSONG. Amplop menaruh segel lilin tepat di pusat layar.
+  // Ketiganya TEGAK 736x1308 atau lebih tinggi — sifat yang tidak
+  // kelihatan dari nama berkas, dan yang justru terlewat pada
+  // latar-gunungan-emas.
+  {
+    keluaran: 'latar-jawa-gunungan-senja.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/TRADITIONAL/764415736802039703.jpg',
+    lebar: 736, mutu: 0.76,
+    catatan: 'senja oker hangat, siluet gunungan & pura emas HANYA di kaki, tengah kosong — amplop Sekar Jagad'
+  },
+  {
+    keluaran: 'latar-jawa-wayang-gading.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/TRADITIONAL/Background Thanks.jpg',
+    lebar: 600, mutu: 0.78,
+    catatan: 'damask gading dengan gunungan & wayang cokelat di kaki — bidang terang Sekar Jagad'
+  },
+  {
+    keluaran: 'latar-bali-pura-senja.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/TRADITIONAL/862087553717340159.jpg',
+    lebar: 736, mutu: 0.76,
+    catatan: 'senja terakota dengan siluet meru & candi bali di kaki — sampul Pura Bentar'
   }
 ];
 

@@ -238,6 +238,34 @@
     return akar;
   }
 
+  // PITA — bentuk KETIGA, dipilih tema lewat --kal-rupa:pita.
+  //
+  // Ada karena ketiga tema Adat memerlukan tanggal yang bisa duduk di
+  // KEPALA sebuah linimasa acara, bukan di dalam kartunya sendiri.
+  // Kisi satu bulan (bawaan, sebelas tema) setinggi ~260px dan almanak
+  // (Tinta Emas, Shuangxi) setinggi ~200px; keduanya terlalu berat
+  // untuk itu — begitu diletakkan di kepala linimasa, yang terbaca
+  // justru kalendernya, dan dua baris acara di bawahnya jadi
+  // keterangan kecil.
+  //
+  // Bentuknya satu baris mendatar: HARI · TANGGAL · BULAN · TAHUN,
+  // dengan angka tanggal yang jauh lebih besar daripada tetangganya.
+  // Tiap bagian dapat elemennya sendiri supaya tema bisa menyetel
+  // ukuran dan warnanya satu per satu — dan supaya tema yang ingin
+  // menyembunyikan salah satunya (mis. tahun) tidak perlu menyentuh
+  // modul ini.
+  function bangunPita(kal, d) {
+    var akar = el('div', 'kal-pita');
+    akar.setAttribute('aria-hidden', 'true');
+    akar.appendChild(el('span', 'kal-pita-hias kal-pita-hias-kiri'));
+    akar.appendChild(el('span', 'kal-pita-hari', d.hari));
+    akar.appendChild(el('span', 'kal-pita-tgl', String(d.tgl)));
+    akar.appendChild(el('span', 'kal-pita-bulan', d.bulan));
+    akar.appendChild(el('span', 'kal-pita-tahun', String(d.tahun)));
+    akar.appendChild(el('span', 'kal-pita-hias kal-pita-hias-kanan'));
+    return akar;
+  }
+
   function teksSlot(kal) {
     var s = kal.querySelector('.kal-sumber');
     return s ? String(s.textContent || '').trim() : '';
@@ -280,6 +308,8 @@
     if (lamaRingkas) lamaRingkas.parentNode.removeChild(lamaRingkas);
     var lamaAlm = kal.querySelector('.kal-alm');
     if (lamaAlm) lamaAlm.parentNode.removeChild(lamaAlm);
+    var lamaPita = kal.querySelector('.kal-pita');
+    if (lamaPita) lamaPita.parentNode.removeChild(lamaPita);
 
     if (!d) {
       kal.classList.add('kal-kosong');
@@ -301,9 +331,11 @@
     }
 
     kal.classList.remove('kal-ulang');
-    kal.appendChild(varTeks(kal, '--kal-rupa') === 'almanak'
-      ? bangunAlmanak(kal, d)
-      : bangunKisi(kal, d));
+    var rupa = varTeks(kal, '--kal-rupa');
+    kal.appendChild(
+      rupa === 'almanak' ? bangunAlmanak(kal, d) :
+      rupa === 'pita'    ? bangunPita(kal, d)    :
+                           bangunKisi(kal, d));
   }
 
   function segarkanSemua(akar) {

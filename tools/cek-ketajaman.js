@@ -50,18 +50,48 @@ const path = require('path');
 
 const CDP = 'http://127.0.0.1:9222';
 const AMBANG = 1.6;
+
+/* AMBANG KHUSUS LATAR AMPLOP.
+   ---------------------------------------------------------------
+   Latar amplop punya tuntutan yang secara geometris TIDAK BISA
+   dipenuhi pustaka aset milik user, dan itu bukan kesalahan tema mana
+   pun. Ia satu-satunya gambar yang harus menutup layar 390x844 penuh
+   dengan background-size:cover, sedangkan SELURUH folder latar user
+   berhenti di lebar 736 px. Akibatnya, dengan sumber setegak apa pun:
+
+     sumber 736x1308  -> dilukis 475 px  -> rasio 1,55
+     sumber 736x1104  -> dilukis 563 px  -> rasio 1,31
+     sumber 700x1024  -> dilukis 577 px  -> rasio 1,21
+
+   Ketiganya sudah memakai lebar ASLI sumbernya; menaikkan `lebar` di
+   siapkan-ornamen.js tidak berpengaruh sama sekali karena skrip itu
+   tidak pernah memperbesar. Satu-satunya perbaikan sungguhan adalah
+   berkas sumber yang lebih besar, yang belum ada.
+
+   Ambangnya 1,20 dan bukan sekadar "dimatikan": nilai itu masih
+   menangkap kegagalan yang SUNGGUH terlihat. latar-gunungan-emas.webp
+   — yang dikeluhkan user pada 2026-09-03 karena buram — berada di
+   0,49, jadi ia tetap akan berteriak di ambang ini. Yang tidak lagi
+   dilaporkan cuma selisih antara 1,21 dan 1,60, yang sepenuhnya
+   ditentukan tinggi berkas sumbernya. */
+const AMBANG_AMPLOP = 1.2;
 const REPO = path.join(__dirname, '..');
 
 /* Pengecualian, masing-masing dengan alasannya. Sebuah aset boleh masuk
    sini HANYA kalau kelembutannya memang tidak terbaca sebagai cacat —
    bukan karena perbaikannya merepotkan. */
+/* Tiap baris di sini WAJIB punya alasan yang bisa diperiksa ulang,
+   dan alasan itu harus benar. Pada 2026-09-03 daftar ini memuat
+   latar-gunungan-emas.webp dengan alasan "latar tekstur pada ukuran
+   aslinya" — padahal ia sumber MENDATAR 626x417 yang dilukis pada
+   rasio 0,49 dan benar-benar buram. User yang menemukannya, bukan
+   alat ini. Pengecualian yang alasannya tidak pernah diperiksa adalah
+   cara sebuah cacat bertahan berbulan-bulan. */
 const DIKECUALIKAN = {
   'latar-plaster-daun.webp': 'latar tekstur, dilukis pada ukuran aslinya; sumbernya cuma 675px dan skrip ornamen tidak pernah memperbesar. Tekstur rata tidak punya tepi tajam yang bisa terlihat lunak.',
   'latar-relief-halus.webp': 'sama: latar tekstur pada ukuran aslinya.',
   'latar-burgundy-kertas.webp': 'sama: latar tekstur pada ukuran aslinya.',
-  'latar-candi-bentar.webp': 'sama: latar tekstur pada ukuran aslinya.',
   'latar-mihrab-lembut.webp': 'sama: latar tekstur pada ukuran aslinya.',
-  'latar-gunungan-emas.webp': 'sama: latar tekstur pada ukuran aslinya.',
   'arch-mihrab-polos.webp': 'dipakai HANYA sebagai bayangan lengkung beropasitas .14-.16 di belakang teks. Pada opasitas segitu tepinya memang tidak terbaca, dan sumbernya (360x360) sudah dipakai habis.'
 };
 
@@ -164,6 +194,16 @@ const AMBIL = `(function(){
   return JSON.stringify(hasil);
 })()`;
 
+/* Versi AMBIL yang dibatasi ke pohon #amplop. Dipakai pada putaran
+   kedua, saat halaman dimuat TANPA ?amplop=lewat. Dibatasi supaya
+   ornamen badan undangan tidak terhitung dua kali — pada putaran itu
+   sebagian memang masih terlihat di belakang amplop. */
+const AMBIL_AMPLOP = AMBIL.replace(
+  "var semua = document.querySelectorAll('*');",
+  "var akarAmplop = document.getElementById('amplop');" +
+  "var semua = akarAmplop ? akarAmplop.querySelectorAll('*') : [];" +
+  "if (akarAmplop) { baca(akarAmplop, null); baca(akarAmplop, '::before'); baca(akarAmplop, '::after'); }");
+
 /* Berapa CSS px gambar itu SUNGGUH dilukis, sesudah background-size. */
 function terlukis(kotakW, kotakH, iw, ih, size) {
   if (size === 'contain' || size === 'cover') {
@@ -214,8 +254,37 @@ async function periksaTema(tema) {
   }
   await new Promise((r) => setTimeout(r, 400));
   const r = await c('Runtime.evaluate', { expression: AMBIL, returnByValue: true });
+  const hasil = JSON.parse(r.result.value);
+
+  /* PUTARAN KEDUA: TAHAP AMPLOP.
+     Putaran pertama memuat halaman dengan ?amplop=lewat — harus,
+     karena tanpa itu seluruh isi undangan bersembunyi di balik sampul
+     (.reveal-after-cover display:none) dan tidak satu pun ornamennya
+     bisa diukur. Akibatnya latar AMPLOP tidak pernah terukur sama
+     sekali: ia hanya ada ketika parameter itu TIDAK dipakai.
+
+     Itu bukan celah teoretis. latar-gunungan-emas.webp dilukis pada
+     rasio 0,49 selama berminggu-minggu — hampir tiga kali lebih buruk
+     daripada apa pun yang pernah dilaporkan alat ini — dan yang
+     akhirnya menemukannya user, bukan alat ini. Latar amplop justru
+     yang PALING mudah salah: ia satu-satunya yang harus menutup layar
+     penuh 390x844, jadi tuntutan resolusinya paling berat.
+
+     Karena itu tema dimuat sekali lagi tanpa parameter, dan yang
+     diambil cuma ornamen di dalam #amplop. */
+  const url2 = 'http://localhost:5500/templates/' + tema + '/index.html';
+  const selesai2 = new Promise((res) => {
+    const on = (ev) => { let d; try { d = JSON.parse(ev.data); } catch (e) { return; }
+      if (d.method === 'Page.loadEventFired') { ws.removeEventListener('message', on); res(); } };
+    ws.addEventListener('message', on);
+  });
+  await c('Page.navigate', { url: url2 }); await selesai2;
+  await new Promise((res) => setTimeout(res, 1600));
+  const r2 = await c('Runtime.evaluate', { expression: AMBIL_AMPLOP, returnByValue: true });
+  for (const u of JSON.parse(r2.result.value)) { u.amplop = true; hasil.push(u); }
+
   ws.close(); await fetch(CDP + '/json/close/' + tgt.id);
-  return JSON.parse(r.result.value);
+  return hasil;
 }
 
 (async () => {
@@ -240,7 +309,9 @@ async function periksaTema(tema) {
         const [dw, dh] = terlukis(d.w, d.h, iw, ih, d.size);
         const rasio = Math.min(iw / dw, ih / dh);
         if (!per[nama] || rasio < per[nama].rasio)
-          per[nama] = { nama, rasio, dw: Math.round(dw), dh: Math.round(dh), iw, ih, tema: t, sel: d.sel };
+          /* d.amplop ikut dibawa: penilaiannya memakai ambang yang
+             berbeda, dan tanpa field ini bendera itu hilang di agregasi. */
+          per[nama] = { nama, rasio, dw: Math.round(dw), dh: Math.round(dh), iw, ih, tema: t, sel: d.sel, amplop: !!d.amplop };
       }
     }
   }
@@ -251,15 +322,21 @@ async function periksaTema(tema) {
   console.log('ambang: ' + AMBANG.toFixed(2) + '\n');
   for (const u of urut) {
     const kecuali = DIKECUALIKAN[u.nama];
-    const buruk = u.rasio < AMBANG && !kecuali;
+    /* Latar amplop dinilai dengan ambangnya sendiri — alasannya di
+       kepala berkas ini. */
+    const ambang = u.amplop ? AMBANG_AMPLOP : AMBANG;
+    const buruk = u.rasio < ambang && !kecuali;
     if (buruk) gagal++;
-    if (!buruk && !rinci && !(kecuali && u.rasio < AMBANG)) continue;
+    if (!buruk && !rinci && !(kecuali && u.rasio < ambang)) continue;
     const tanda = buruk ? '[GAGAL]' : (kecuali ? '[kecuali]' : '[  ok  ]');
     console.log(tanda + ' ' + u.rasio.toFixed(2).padStart(5) + '  ' + u.nama);
     console.log('         berkas ' + u.iw + 'x' + u.ih + ', dilukis ' + u.dw + 'x' + u.dh +
                 ' di ' + u.tema + ' (' + u.sel + ')');
     if (kecuali) console.log('         ' + kecuali);
-    else if (buruk) console.log('         perbesar berkasnya (tools/siapkan-ornamen.js, naikkan `lebar`) ATAU kecilkan kotaknya di CSS');
+    else if (buruk) console.log('         periksa ukuran ASLI sumbernya dulu: kalau berkas ini sudah selebar sumbernya,'
+                                + ' menaikkan `lebar` di siapkan-ornamen.js TIDAK berpengaruh (skrip itu tidak pernah'
+                                + ' memperbesar) — yang bisa cuma mengecilkan kotaknya di CSS atau mengganti sumbernya'
+                                + (u.amplop ? '  [latar amplop]' : ''));
   }
   for (const h of hilang) {
     gagal++;

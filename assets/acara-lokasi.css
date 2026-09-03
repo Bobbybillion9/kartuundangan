@@ -448,3 +448,60 @@
 @media (prefers-reduced-motion: reduce) {
   .kal-kisi { box-shadow: none; }
 }
+
+/* ============================================================
+   PITA TANGGAL — bentuk ketiga (--kal-rupa:pita)
+   ------------------------------------------------------------
+   Dipakai ketiga tema Adat sebagai KEPALA linimasa acara. Lihat
+   alasan bentuknya di bangunPita() pada acara-lokasi.js.
+
+   Bawaannya sengaja nyaris telanjang: satu baris, satu angka besar,
+   tanpa bingkai dan tanpa warna sendiri. Tema yang memakainya
+   diharapkan menyetel ukuran, jarak dan hiasan ujungnya — dan tema
+   yang lupa menyetelnya tetap mendapat baris tanggal yang terbaca,
+   bukan bidang kosong.
+   ============================================================ */
+.kal-pita{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:var(--kal-pita-jarak, 10px);
+  flex-wrap:nowrap;
+  padding:var(--kal-pita-padding, 4px 0);
+}
+.kal-pita-hari,
+.kal-pita-bulan,
+.kal-pita-tahun{
+  font-family:var(--kal-pita-teks-font, inherit);
+  font-size:var(--kal-pita-teks-ukuran, 12px);
+  letter-spacing:var(--kal-pita-teks-spasi, .18em);
+  text-transform:var(--kal-pita-teks-huruf, uppercase);
+  color:var(--kal-pita-teks-warna, currentColor);
+  white-space:nowrap;
+}
+/* Angka tanggal. Ia satu-satunya hal di baris ini yang boleh dibaca
+   dari jauh — kalau ukurannya sepadan dengan tetangganya, pita ini
+   cuma jadi kalimat panjang yang tidak punya titik masuk. */
+.kal-pita-tgl{
+  font-family:var(--kal-pita-angka-font, inherit);
+  font-size:var(--kal-pita-angka-ukuran, 40px);
+  font-weight:var(--kal-pita-angka-tebal, 500);
+  line-height:1;
+  color:var(--kal-pita-angka-warna, currentColor);
+}
+/* Hiasan ujung. Kosong secara bawaan — tema mengisinya dengan
+   background-image dari perbendaharaannya sendiri. Selalu DIBUAT
+   walau kosong: dua ujung yang lebarnya sama menjaga angka besarnya
+   tetap di tengah optik, dan kalau salah satunya hilang dari DOM
+   barisnya bergeser tanpa ada yang memberi tahu. */
+.kal-pita-hias{
+  flex:0 0 auto;
+  width:var(--kal-pita-hias-lebar, 0);
+  height:var(--kal-pita-hias-tinggi, 18px);
+  align-self:center;
+  background-image:var(--kal-pita-hias-gambar, none);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.kal-pita-hias-kanan{transform:scaleX(-1);}

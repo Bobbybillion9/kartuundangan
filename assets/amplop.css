@@ -38,6 +38,14 @@
                               terbaca seperti salah cetak.
      --amplop-halo            lingkaran redup di belakang segel
 
+     TIDAK ADA --amplop-kabut. Sepuluh tema menyetelnya dan berkas ini
+     tidak pernah membacanya — sisa dari rancangan awal yang punya
+     lapisan kabut di kaki amplop. Dibiarkan di tema-tema itu karena
+     mencabutnya cuma memindahkan risiko tanpa mengubah tampilan, TAPI
+     jangan menyetelnya lagi di tema baru dan jangan mengandalkannya:
+     ia tidak berbuat apa-apa. Kalau kaki amplop butuh diredupkan,
+     lakukan di style.css tema itu sendiri.
+
    SURAT (kartu yang naik keluar)
      --surat-kertas   --surat-tinta   --surat-aksen
      --surat-garis    --surat-hias    --surat-judul

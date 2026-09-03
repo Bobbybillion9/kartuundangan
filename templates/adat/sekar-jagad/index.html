@@ -221,36 +221,52 @@
         <h2 class="section-title shimmer-gold" data-rv="text" style="--d:2">Rangkaian Acara</h2>
       </div>
 
-      <div class="event-list">
-        <div class="event-card" data-rv="text" style="--d:3">
-          <div class="event-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="16" r="4"/><circle cx="17" cy="9" r="4"/></svg>
-          </div>
-          <h3 class="event-name">Akad Nikah</h3>
-          <!-- Tanggal digambar sebagai LEMBAR KALENDER SOBEK.
-               Elemen slotnya sendiri tetap ada dan tetap diisi
-               perender apa adanya; assets/acara-lokasi.js yang
-               menguraikan teksnya jadi bulan/tanggal/hari/tahun.
-               Kontrak render-undangan.js karena itu tidak berubah
-               sama sekali. -->
+      <!-- LINIMASA SEHARI — permintaan user 2026-09-03: "akad nikah dan
+           resepsi bisa dikombinasikan stylenya, tidak kaku designnya,
+           agar design tidak sama dengan templete undangan sebelumnya".
+
+           Yang lama: DUA kotak berbingkai bertumpuk, yang atas berisi
+           kisi satu bulan penuh dan yang bawah nyaris kosong — dua
+           benda sebentuk yang isinya jauh berbeda beratnya, dan itu
+           yang terbaca kaku.
+
+           Yang ini satu bidang: tanggalnya disebut SEKALI di kepala
+           (akad dan resepsi hampir selalu sehari), lalu dua acaranya
+           digantung pada satu batang tegak sebagai dua simpul — susunan
+           acara sehari, bukan dua kartu. Tidak ada tema lain yang
+           memakai batang linimasa.
+
+           Slot data TIDAK berubah: tanggal_akad, waktu_akad,
+           tanggal_resepsi, waktu_resepsi keempatnya masih ada di
+           tempatnya, jadi render-undangan.js dan cek-tema.js tidak
+           terpengaruh. Yang kedua tetap dibungkus [data-kalender]
+           supaya acara-lokasi.js bisa mengenalinya sebagai tanggal
+           ULANG dan meringkasnya sendiri (.kal-ulang). -->
+      <div class="event-list linimasa">
+        <div class="lini-kepala" data-rv="text" style="--d:3">
           <div class="kal" data-kalender>
             <p class="event-date kal-sumber" data-slot="tanggal_akad">Sabtu, 14 Maret 2026</p>
           </div>
+        </div>
+
+        <div class="lini-batang" aria-hidden="true"></div>
+
+        <div class="event-card lini-simpul" data-rv="text" style="--d:4">
+          <span class="lini-titik" aria-hidden="true"></span>
+          <div class="event-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M5 8h14M7 21h10"/></svg>
+          </div>
+          <h3 class="event-name">Akad Nikah</h3>
           <p class="event-time"><span data-slot="waktu_akad">08.00 WIB</span> — selesai</p>
         </div>
 
-        <div class="event-card" data-rv="text" style="--d:4">
+        <div class="event-card lini-simpul" data-rv="text" style="--d:5">
+          <span class="lini-titik" aria-hidden="true"></span>
           <div class="event-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-1 7a5 5 0 0 1-10 0L6 3z"/><path d="M12 15v6M8 21h8"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h8l-1 6a3 3 0 0 1-6 0zM12 9v9M8 21h8"/></svg>
           </div>
           <h3 class="event-name">Resepsi</h3>
-          <!-- Tanggal digambar sebagai LEMBAR KALENDER SOBEK.
-               Elemen slotnya sendiri tetap ada dan tetap diisi
-               perender apa adanya; assets/acara-lokasi.js yang
-               menguraikan teksnya jadi bulan/tanggal/hari/tahun.
-               Kontrak render-undangan.js karena itu tidak berubah
-               sama sekali. -->
-          <div class="kal" data-kalender>
+          <div class="kal lini-kal-ulang" data-kalender>
             <p class="event-date kal-sumber" data-slot="tanggal_resepsi">Sabtu, 14 Maret 2026</p>
           </div>
           <p class="event-time"><span data-slot="waktu_resepsi">11.00 – 14.00 WIB</span></p>
@@ -258,46 +274,66 @@
       </div>
 
       <div class="venue" data-rv="text" style="--d:5">
-      <!-- DENAH LOKASI. Menggantikan dua baris alamat telanjang.
-           Bukan peta sungguhan (kita tidak punya koordinatnya sampai
-           user mengisi link maps): denah bergaya yang memberi bagian
-           ini bentuk, dengan tombol yang tetap membuka peta asli. -->
-      <div class="peta" aria-hidden="true">
-        <svg class="peta-denah" viewBox="0 0 320 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g stroke="currentColor" fill="none" opacity=".22">
-            <rect x="14" y="16" width="74" height="44" rx="2" stroke-width="1"/>
-            <rect x="14" y="86" width="74" height="48" rx="2" stroke-width="1"/>
-            <rect x="126" y="16" width="96" height="34" rx="2" stroke-width="1"/>
-            <rect x="126" y="100" width="60" height="34" rx="2" stroke-width="1"/>
-            <rect x="240" y="86" width="66" height="48" rx="2" stroke-width="1"/>
-          </g>
-          <g stroke="currentColor" fill="none" opacity=".38" stroke-width="7" stroke-linecap="round">
-            <path d="M104 4V146"/>
-            <path d="M4 73H316"/>
-          </g>
-          <g stroke="currentColor" fill="none" opacity=".9" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="5 5">
-            <path d="M40 132C40 108 74 104 104 104C140 104 152 92 152 73C152 54 176 46 206 46"/>
-          </g>
-          <circle cx="40" cy="132" r="4" fill="currentColor" opacity=".55"/>
-          <g transform="translate(206 46)">
-            <path d="M0 -26C-8 -26 -14 -20 -14 -12C-14 -3 0 12 0 12C0 12 14 -3 14 -12C14 -20 8 -26 0 -26Z" fill="currentColor" opacity=".92"/>
-            <circle cx="0" cy="-13" r="4.6" fill="var(--card,#fff)"/>
-          </g>
+      <!-- GUNUNGAN — pengganti denah lokasi, permintaan user
+           2026-09-03: "hapus konsep peta/denah pada surat, diganti
+           dengan memainkan elemen yang identik dengan Javanese style,
+           namun tetap elegan".
+
+           Denahnya tidak pernah menerangkan apa pun: ia bukan peta
+           sungguhan — koordinatnya baru ada sesudah user mengisi link
+           maps — cuma gambar jalan karangan. Tombol Petunjuk Arah di
+           bawahnya yang benar-benar membuka petanya, dan itu tetap ada.
+
+           Gantinya gunungan wayang, dan pilihannya bukan sekadar
+           "ornamen Jawa yang bagus": gunungan ditancapkan dalang untuk
+           MEMBUKA lakon dan untuk menyatakan TEMPAT adegan berlangsung.
+           Untuk bagian yang isinya "di mana acaranya", itu benda yang
+           tepat — dan ia sudah jadi ikon tema ini, jadi ia datang dari
+           perbendaharaan yang sama, bukan ditempel dari luar.
+
+           Nama gedung duduk DI DALAM gunungannya. -->
+      <div class="gunungan-lokasi">
+        <svg class="gl-siluet" viewBox="0 0 240 320" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Siluet gunungan: kaki melebar, badan menggembung, kepala
+               meruncing tinggi. Perbandingan itu yang membuatnya
+               dikenali — bukan ukirannya, yang pada lebar 240px memang
+               tidak akan terbaca. -->
+          <path d="M120 6
+                   C124 34 134 50 146 64
+                   C164 84 178 100 186 120
+                   C196 144 200 168 200 192
+                   C200 226 190 254 176 276
+                   C168 288 158 296 150 302
+                   L150 310 L90 310 L90 302
+                   C82 296 72 288 64 276
+                   C50 254 40 226 40 192
+                   C40 168 44 144 54 120
+                   C62 100 76 84 94 64
+                   C106 50 116 34 120 6 Z"
+                fill="var(--gl-isi,#3A2A18)" stroke="currentColor" stroke-width="2"/>
+          <path d="M120 26
+                   C124 50 133 64 143 76
+                   C159 94 170 108 177 126
+                   C186 147 189 169 189 191
+                   C189 222 180 247 168 267
+                   C161 278 153 285 146 291
+                   L94 291
+                   C87 285 79 278 72 267
+                   C60 247 51 222 51 191
+                   C51 169 54 147 63 126
+                   C70 108 81 94 97 76
+                   C107 64 116 50 120 26 Z"
+                fill="none" stroke="currentColor" stroke-width="1" opacity=".55"/>
+          <!-- Puncak: tunas api-apian khas kepala gunungan. -->
+          <path d="M120 4 C116 16 112 22 108 28M120 4 C124 16 128 22 132 28"
+                stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".8"/>
         </svg>
-        <span class="peta-kompas">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="24" cy="24" r="21" stroke="currentColor" stroke-width="1.2" fill="none"/>
-            <circle cx="24" cy="24" r="15" stroke="currentColor" stroke-width=".8" fill="none" opacity=".5"/>
-            <path d="M24 6L28.5 21.5L24 24L19.5 21.5Z" fill="currentColor"/>
-            <path d="M24 42L19.5 26.5L24 24L28.5 26.5Z" fill="currentColor" opacity=".35"/>
-            <path d="M24 2V6M24 42V46M2 24H6M42 24H46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span class="peta-jarak">Denah menuju lokasi</span>
+        <div class="plat-lokasi">
+          <p class="peta-eyebrow">Lokasi Acara</p>
+          <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
+          <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
+        </div>
       </div>
-      <p class="peta-eyebrow">Lokasi Acara</p>
-        <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
-        <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
         <a class="btn-outline" data-slot="lokasi_maps_url" href="https://www.google.com/maps/search/?api=1&query=Gedung+Serbaguna+Bale+Asri+Jl+Melati+No+21+Bandung" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           Petunjuk Arah
