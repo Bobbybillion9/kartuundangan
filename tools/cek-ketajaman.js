@@ -92,6 +92,15 @@ const DIKECUALIKAN = {
   'latar-relief-halus.webp': 'sama: latar tekstur pada ukuran aslinya.',
   'latar-burgundy-kertas.webp': 'sama: latar tekstur pada ukuran aslinya.',
   'latar-mihrab-lembut.webp': 'sama: latar tekstur pada ukuran aslinya.',
+  /* Dipakai HANYA sebagai tekstur di bawah selubung 0,82-0,90 di
+     section#pembuka Sekar Jagad, jadi yang terlihat cuma 10-18% dari
+     gambarnya. Sumbernya "Background Thanks.jpg" 600x1076 — ukuran
+     ASLINYA, dan berkas terkecil di folder TRADITIONAL milik user —
+     sehingga pada layar 390 selebar-lebarnya ia dilukis 390 px dan
+     rasionya mentok di 1,54. Beda dengan latar-gunungan-emas yang dulu
+     salah dikecualikan di sini: yang itu gambar berfokus pada 0,49,
+     bukan tekstur pada 1,54. */
+  'latar-jawa-wayang-gading.webp': 'tekstur di bawah selubung .82-.90; sumbernya 600 px, itu ukuran aslinya — 1,54 adalah langit-langitnya.',
   'arch-mihrab-polos.webp': 'dipakai HANYA sebagai bayangan lengkung beropasitas .14-.16 di belakang teks. Pada opasitas segitu tepinya memang tidak terbaca, dan sumbernya (360x360) sudah dipakai habis.'
 };
 

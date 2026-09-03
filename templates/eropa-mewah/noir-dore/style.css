@@ -2689,3 +2689,64 @@ section{position:relative;padding:var(--s6) var(--s4);}
   max-width:none;
   margin:0;
 }
+
+/* Sapaan "Kepada Yth. / Tamu Undangan" di muka amplop dimatikan atas
+   permintaan user 2026-09-03 ("tidak diperlukan"). Elemennya TETAP di
+   DOM — tools/cek-tema.js mensyaratkan [data-slot="nama_tamu"] ada di
+   dalam #amplop, dan render-undangan.js tetap mengisinya; yang
+   dimatikan cuma tampilannya. */
+:root{ --amplop-tulisan-tampil:none; }
+
+/* Kertas surat dibalik jadi TERANG. Nilai lamanya #14120F — nyaris
+   hitam — masuk akal selama surat masih berupa bidang selayar penuh
+   yang perannya jadi panggung gelap. Sejak surat jadi KARTU yang
+   ditarik keluar dari kantong (perombakan amplop 2026-09-03), kartu
+   sehitam amplopnya tidak terlihat sama sekali: yang tampak cuma
+   lubang gelap yang bergerak.
+
+   assets/amplop.css sendiri sudah mencatat aturannya sejak awal —
+   warna surat harus BERLAWANAN dengan badan amplop — dan tema ini yang
+   tidak mengikutinya. */
+:root{
+  --surat-kertas:#F5EEDF;
+  --surat-tinta:#2A231A;
+  --surat-garis:rgba(176,141,74,.45);
+}
+
+/* GARIS RAMBUT MENGIKUTI LENGKUNG FOTO.
+   Permintaan user 2026-09-03: "hapus frame segi empat pada foto H1 dan
+   ganti frame-nya sesuai dengan lekukan foto H1 — jika sudut melengkung
+   pada foto, cari frame melengkung".
+
+   Bingkai lama inset:14px tanpa border-radius sama sekali, sementara
+   fotonya dipotong --fp-hero-radius:0 0 50% 50% / 0 0 84px 84px. Jadi
+   di dua sudut bawahnya garis itu memotong LURUS melintasi lengkung
+   fotonya, dan yang terlihat sebuah kotak yang tidak menempel pada apa
+   pun.
+
+   inset juga diganti top/left/right + aspect-ratio, cara yang sudah
+   dipakai Blanc Royale: dengan inset, tinggi bingkai mengikuti tinggi
+   SECTION-nya (yang memuat monogram di bawah foto), bukan tinggi
+   fotonya — jadi kakinya menggantung di bawah lengkung. */
+#fotoUtama::before{
+  inset:auto;
+  top:14px;left:14px;right:14px;
+  aspect-ratio:var(--fp-hero-rasio);
+  /* 78px, bukan 84px: bingkainya berada 14 px di dalam tepi foto, jadi
+     lengkungnya memang harus sedikit lebih kecil supaya keduanya
+     sejajar dan tidak bersilang. */
+  border-radius:0 0 50% 50% / 0 0 78px 78px;
+}
+@media(min-width:720px){
+  /* foto-penuh.css melandaikan rasio foto utama di layar lebar; kalau
+     bingkainya tidak ikut, ia menggantung di tengah foto. */
+  #fotoUtama::before{aspect-ratio:var(--fp-hero-rasio-lebar,4 / 3);}
+}
+
+/* Foto H1 dibuat lebih LUAS KE BAWAH atas permintaan user 2026-09-03
+   ("buat foto H1 lebar kebawah lagi agar foto terlihat luas kebawah").
+   5/8 (0,625) -> 5/9 (0,556): pada layar 390 tingginya naik dari 624 px
+   jadi 702 px, yaitu 83% tinggi layar — foto yang mengisi hampir
+   seluruh layar pertama sesudah sampul, bukan foto yang berhenti di
+   dua pertiganya. */
+:root{ --fp-hero-rasio:5 / 9; }

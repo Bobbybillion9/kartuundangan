@@ -2638,3 +2638,18 @@ section > *{position:relative;z-index:1;}
     border-radius:0 0 50% 50% / 0 0 46px 46px;
   }
 }
+
+/* Sapaan "Kepada Yth. / Tamu Undangan" di muka amplop dimatikan atas
+   permintaan user 2026-09-03 ("tidak diperlukan"). Elemennya TETAP di
+   DOM — tools/cek-tema.js mensyaratkan [data-slot="nama_tamu"] ada di
+   dalam #amplop, dan render-undangan.js tetap mengisinya; yang
+   dimatikan cuma tampilannya. */
+:root{ --amplop-tulisan-tampil:none; }
+
+/* Foto H1 dibuat lebih LUAS KE BAWAH atas permintaan user 2026-09-03
+   ("buat foto H1 lebar kebawah lagi agar foto terlihat luas kebawah").
+   5/8 (0,625) -> 5/9 (0,556): pada layar 390 tingginya naik dari 624 px
+   jadi 702 px, yaitu 83% tinggi layar — foto yang mengisi hampir
+   seluruh layar pertama sesudah sampul, bukan foto yang berhenti di
+   dua pertiganya. */
+:root{ --fp-hero-rasio:5 / 9; }

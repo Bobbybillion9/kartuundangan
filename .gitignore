@@ -11,3 +11,13 @@ node_modules/
 # yang tayang, dan folder repo ini disajikan apa adanya oleh server
 # statis lokal maupun Vercel, jadi jangan sampai ikut ter-deploy.
 _ref/
+
+# Folder kerja user (lembar kontak, potret referensi) — sama seperti
+# _ref/ di atas: cuma alat lihat saat mendesain, 19 MB, dan repo ini
+# disajikan apa adanya oleh server statis maupun Vercel.
+_tmp-kontak/
+
+# Artefak Git Bash: `> nul` di sini TIDAK menulis ke perangkat null
+# (itu cmd.exe) melainkan membuat berkas biasa bernama "nul". Muncul
+# lagi tiap kali ada perintah Windows yang tersalin apa adanya.
+nul

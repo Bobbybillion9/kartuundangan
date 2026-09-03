@@ -105,35 +105,51 @@
     tutup.setAttribute('aria-hidden', 'true');
 
     // ---- surat di dalam amplop ----
-    // Isinya memakai data-slot yang sama dengan sampul: setSlotText() di
-    // render-undangan.js memakai querySelectorAll, jadi surat ini ikut
-    // terisi data asli tanpa satu baris tambahan di sana.
+    //
+    // Suratnya SENGAJA KOSONG sejak 2026-09-03, atas permintaan user:
+    // "hapus juga tulisan kalimat undangan pernikahan A&S andi &
+    // sarah 2026 ketika buka amplop karena kita tidak butuh keterangan
+    // ini, keterangan ini sudah tertera pada sampul/cover undangan".
+    //
+    // Dan itu memang benar dua kali. Selain mengulang sampul, teks
+    // penuh di atas kartu yang sedang bergerak keluar dari amplop
+    // membuat mata mencoba MEMBACA sesuatu yang belum berhenti — dan
+    // yang tersisa cuma kesan tergesa. Kartu bertepi emas yang kosong
+    // justru lebih terbaca sebagai kartu undangan sungguhan.
+    //
+    // Yang tinggal: dua pembatas ornamen tema di kepala dan kakinya,
+    // supaya kartunya tetap milik temanya masing-masing dan bukan
+    // sehelai kertas polos.
     var surat = el('div', 'amplop-surat');
     surat.setAttribute('aria-hidden', 'true');
     var suratIsi = el('div', 'amplop-surat-isi');
-
-    var hiasAtas = el('span', 'amplop-surat-hias amplop-surat-hias-atas');
-    var suratEyebrow = el('p', 'amplop-surat-eyebrow', 'Undangan Pernikahan');
-
-    var inisialSurat = el('p', 'amplop-surat-inisial');
-    var siA = el('span', 'amplop-ini-huruf amplop-ini-a', 'A');
-    var siAmp = el('span', 'amplop-ini-amp', '&');
-    var siB = el('span', 'amplop-ini-huruf amplop-ini-b', 'S');
-    inisialSurat.append(siA, siAmp, siB);
-
-    var suratNama = el('p', 'amplop-surat-nama');
-    var namaA = el('span', null, 'Andi'); namaA.setAttribute('data-slot', 'nama_pria_panggilan');
-    var namaAmp = el('span', 'amplop-surat-amp', '&');
-    var namaB = el('span', null, 'Sarah'); namaB.setAttribute('data-slot', 'nama_wanita_panggilan');
-    suratNama.append(namaA, namaAmp, namaB);
-
-    var suratTanggal = el('p', 'amplop-surat-tanggal', 'Sabtu, 14 Maret 2026');
-    suratTanggal.setAttribute('data-slot', 'tanggal_acara');
-
-    var hiasBawah = el('span', 'amplop-surat-hias amplop-surat-hias-bawah');
-
-    suratIsi.append(hiasAtas, suratEyebrow, inisialSurat, suratNama, suratTanggal, hiasBawah);
+    suratIsi.append(
+      el('span', 'amplop-surat-hias amplop-surat-hias-atas'),
+      el('span', 'amplop-surat-hias amplop-surat-hias-bawah')
+    );
     surat.appendChild(suratIsi);
+
+    // ---- SAKU: muka kantong amplop ----
+    //
+    // Inilah yang membuat amplopnya terbaca sebagai BENDA dan bukan
+    // sebagai bidang berwarna. Sebelum 2026-09-03 surat naik dari tepi
+    // bawah layar dan MENUTUPI amplopnya — gerakan yang tidak pernah
+    // terjadi pada amplop sungguhan, karena surat selalu keluar dari
+    // DALAM. Tidak ada satu pun elemen di depan surat yang bisa
+    // menyembunyikan pangkalnya, jadi yang terlihat selembar kertas
+    // yang meluncur di atas amplop.
+    //
+    // Saku ini digambar DI DEPAN surat: separuh bawah layar, memakai
+    // kertas yang sama dengan badan amplop, dengan dua jahitan diagonal
+    // dari kedua sudut atasnya. Surat yang naik dari belakangnya
+    // karena itu benar-benar muncul dari dalam kantong.
+    var saku = el('div', 'amplop-saku');
+    saku.setAttribute('aria-hidden', 'true');
+    saku.append(
+      el('span', 'amplop-saku-jahit amplop-saku-jahit-kiri'),
+      el('span', 'amplop-saku-jahit amplop-saku-jahit-kanan'),
+      el('span', 'amplop-saku-tepi')
+    );
 
     // ---- isi muka amplop ----
     var isi = el('div', 'amplop-isi');
@@ -177,10 +193,18 @@
     tombol.type = 'button';
     tombol.setAttribute('aria-label', 'Buka amplop undangan');
 
-    bungkus.append(badan, surat, tutup, isi, tombol);
+    // Urutan ini menentukan siapa di depan siapa, dan salah urut di
+    // sini tidak melempar galat — yang terjadi cuma suratnya lewat di
+    // DEPAN kantong dan seluruh ilusinya hilang. Saku WAJIB sesudah
+    // surat.
+    bungkus.append(badan, surat, saku, tutup, isi, tombol);
     return {
       bungkus: bungkus, tombol: tombol,
-      huruf: [iniA, iniB, siA, siB]
+      // siA/siB (inisial di dalam surat) dibuang 2026-09-03 bersama
+      // seluruh teks surat. Kalau keduanya tetap disebut di sini,
+      // pasang() melempar ReferenceError sebelum amplopnya sempat
+      // dipasang — dan yang terlihat user cuma undangan tanpa amplop.
+      huruf: [iniA, iniB]
     };
   }
 
@@ -231,21 +255,26 @@
     // Empat babak, dan jedanya bukan angka asal: tiap babak menunggu
     // babak sebelumnya benar-benar selesai, kalau tidak gerakannya
     // bertumpuk dan terbaca sebagai kedutan, bukan sebagai satu adegan.
-    //   0 ms     segel pecah (.4s) + tutup terlipat ke belakang (.85s)
-    //   820 ms   surat naik dari tepi bawah menutupi amplop (.95s)
-    //   1900 ms  surat membesar ke arah pembaca + layar memudar
-    //   2650 ms  dibuang dari DOM
+    //   0 ms     segel pecah (.4s) + tutup terlipat ke belakang (.9s)
+    //   950 ms   surat DITARIK KELUAR dari dalam kantong (1.05s)
+    //   2150 ms  surat membesar ke arah pembaca + layar memudar
+    //   2900 ms  dibuang dari DOM
+    //
+    // Jedanya dinaikkan 2026-09-03 bersama perombakan 3D: surat yang
+    // mulai naik saat tutupnya masih separuh rebah terbaca sebagai dua
+    // gerakan yang bertabrakan. Amplop sungguhan juga begitu — tidak
+    // ada yang menarik suratnya sebelum tutupnya benar-benar terbuka.
     function buka() {
       if (selesai) return;
       selesai = true;
       segarkanInisial();
       elAmplop.classList.add('amplop-buka');
-      setTimeout(function () { elAmplop.classList.add('amplop-keluar'); }, 820);
-      setTimeout(function () { elAmplop.classList.add('amplop-pergi'); }, 1900);
+      setTimeout(function () { elAmplop.classList.add('amplop-keluar'); }, 950);
+      setTimeout(function () { elAmplop.classList.add('amplop-pergi'); }, 2150);
       // Dibuang dari DOM, bukan cuma disembunyikan: elemen fixed
       // seukuran layar yang tertinggal bisa menelan sentuhan tamu di
       // halaman berikutnya kalau suatu saat pointer-events-nya lolos.
-      setTimeout(bereskan, 2650);
+      setTimeout(bereskan, 2900);
     }
 
     bagian.tombol.addEventListener('click', buka);

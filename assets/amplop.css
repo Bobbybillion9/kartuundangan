@@ -335,15 +335,22 @@ body.amplop-terkunci { overflow: hidden; }
     transform .95s cubic-bezier(.24, .82, .3, 1),
     opacity .5s ease .4s;
 }
+/* Sampai 2026-09-03 kedua aturan di bawah menaikkan surat ke z-index 6
+   — DI DEPAN segalanya — supaya ia "benar-benar menutupi amplopnya".
+   Itu justru yang membuat bukaannya tidak pernah terbaca sebagai
+   amplop: kertas yang lewat di DEPAN kantong tidak mungkin sedang
+   keluar dari dalamnya. Sekarang surat tetap di z-index 2, di BELAKANG
+   .amplop-saku (3), dan yang mengubah keadaannya cuma posisi &
+   bayangannya — disetel di blok perombakan di kaki berkas ini.
+
+   Nilai z-index sengaja tetap ditulis di sini, bukan dihapus: dibiarkan
+   kosong, aturan mana yang menang jadi bergantung pada urutan berkas,
+   dan itu jenis kebergantungan yang pecah tanpa suara. */
 #amplop.amplop-keluar .amplop-surat {
-  transform: translateY(0);
-  /* Naik ke DEPAN tutup yang sudah terlipat, supaya ia benar-benar
-     menutupi amplopnya. */
-  z-index: 6;
-  box-shadow: 0 -18px 40px -20px rgba(0, 0, 0, .55);
+  z-index: 2;
 }
 #amplop.amplop-pergi .amplop-surat {
-  transform: translateY(0) scale(1.22);
+  z-index: 2;
   opacity: 0;
 }
 
@@ -435,3 +442,155 @@ body.amplop-terkunci { overflow: hidden; }
   }
   .amplop-petunjuk { animation: none; opacity: .6; }
 }
+
+/* ============================================================
+   PEROMBAKAN 3D + BUKAAN YANG WAJAR — 2026-09-03
+   ------------------------------------------------------------
+   Permintaan user: "buat design amplop terlihat 3D dan animasi buka
+   amplop harus natural seperti amplop pada umumnya dan realistis".
+
+   Yang salah sebelumnya bukan halusnya gerakan, tapi ARAHNYA. Surat
+   naik dari tepi BAWAH LAYAR lalu menutupi amplopnya — gerakan yang
+   tidak pernah terjadi pada amplop sungguhan, karena surat selalu
+   keluar dari DALAM kantong. Tidak ada satu pun elemen di depan surat
+   yang bisa menyembunyikan pangkalnya, jadi yang terlihat selembar
+   kertas meluncur DI ATAS amplop.
+
+   Tiga hal yang diperbaiki, dan ketiganya soal kedalaman:
+     1. SAKU — muka kantong digambar di DEPAN surat, jadi surat yang
+        naik benar-benar muncul dari dalamnya.
+     2. SURAT jadi KARTU, bukan bidang selayar penuh. Benda yang keluar
+        dari amplop harus lebih kecil daripada amplopnya; yang seukuran
+        layar terbaca sebagai halaman baru, bukan sebagai isi.
+     3. BAYANGAN yang berubah mengikuti gerakan — tutup yang rebah
+        menjatuhkan bayangan ke badan, kartu yang keluar membawa
+        bayangannya sendiri. Tanpa itu, perspective: 1200px yang sudah
+        ada di #amplop tidak pernah terbaca.
+
+   Berlaku untuk kedua belas tema Pro yang memuat modul ini. Itu
+   memang maksud modul bersama: satu perbaikan, dua belas tema — dan
+   tidak ada tema yang tertinggal karena lupa disalin.
+   ============================================================ */
+
+/* --- SAKU: muka kantong amplop --- */
+.amplop-saku{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  /* Tepi atas kantong duduk sedikit DI BAWAH garis tutup, supaya
+     keduanya tidak berimpit. Dua tepi yang bertemu tepat di satu garis
+     terbaca sebagai satu lipatan, bukan sebagai dua lapis kertas. */
+  height:calc(100% - var(--amplop-tutup-tinggi, 52%) + 6%);
+  background-color:var(--amplop-warna, #EFEAE0);
+  background-image:var(--amplop-kertas, none);
+  background-size:var(--amplop-kertas-ukuran, cover);
+  background-repeat:var(--amplop-kertas-ulang, no-repeat);
+  background-position:var(--amplop-kertas-posisi, center bottom);
+  /* Sedikit lebih terang daripada badan: pada amplop sungguhan muka
+     kantong memang menghadap cahaya lebih tegak daripada punggungnya,
+     dan selisih itu yang membuat keduanya terbaca sebagai dua bidang. */
+  box-shadow:inset 0 14px 24px -18px rgba(255,255,255,.35),
+             0 -10px 26px -14px rgba(0,0,0,.45);
+  z-index:3;
+  pointer-events:none;
+}
+/* Dua jahitan diagonal dari sudut atas kantong ke tengah — garis yang
+   ada pada tiap amplop sungguhan, dan penanda paling murah bahwa ini
+   kantong dan bukan bidang berwarna. */
+.amplop-saku-jahit{
+  position:absolute;top:0;
+  width:52%;height:1px;
+  background:linear-gradient(to right,
+    var(--amplop-garis, rgba(0,0,0,.22)), rgba(0,0,0,0));
+  opacity:.55;
+  transform-origin:top left;
+}
+.amplop-saku-jahit-kiri{left:0;transform:rotate(34deg);}
+.amplop-saku-jahit-kanan{right:0;transform:rotate(-34deg);transform-origin:top right;
+  background:linear-gradient(to left,
+    var(--amplop-garis, rgba(0,0,0,.22)), rgba(0,0,0,0));}
+/* Tepi atas kantong: satu garis terang tipis. Inilah yang dilewati
+   surat saat keluar, jadi ia harus terlihat. */
+.amplop-saku-tepi{
+  position:absolute;left:0;right:0;top:0;
+  height:2px;
+  background:linear-gradient(to bottom,
+    rgba(255,255,255,.30), rgba(255,255,255,0));
+}
+
+/* --- SURAT: dari bidang selayar jadi KARTU --- */
+.amplop-surat{
+  /* inset:0 diganti kotak terukur yang duduk di tengah. */
+  inset:auto;
+  left:50%;
+  bottom:12%;
+  width:min(300px, 76%);
+  height:min(430px, 62%);
+  transform:translate(-50%, 26%);
+  border-radius:2px;
+  /* Kartu punya tepinya sendiri, kalau tidak ia melebur ke kertas
+     amplop yang warnanya berdekatan. */
+  border:1px solid var(--surat-garis, rgba(0,0,0,.16));
+  box-shadow:0 18px 34px -18px rgba(0,0,0,.55);
+  /* z-index 2: DI BELAKANG saku (3), di depan badan (0). Angka ini
+     yang memegang seluruh ilusinya. */
+  z-index:2;
+  transition:
+    transform 1.05s cubic-bezier(.22, .78, .28, 1),
+    opacity .5s ease .4s;
+}
+/* Ditarik keluar: naik melewati tepi kantong sampai hampir seluruh
+   kartunya terlihat. Tidak sampai lepas sepenuhnya — kartu yang
+   melayang tanpa menyentuh kantongnya terbaca lepas dari amplopnya. */
+#amplop.amplop-keluar .amplop-surat{
+  transform:translate(-50%, -16%);
+  box-shadow:0 26px 46px -20px rgba(0,0,0,.6);
+}
+#amplop.amplop-pergi .amplop-surat{
+  transform:translate(-50%, -20%) scale(1.06);
+}
+
+/* --- KEDALAMAN: bayangan yang ikut bergerak --- */
+/* Tutup menjatuhkan bayangan ke badan selama ia rebah. */
+.amplop-tutup{
+  transition:
+    transform .9s cubic-bezier(.62, 0, .3, 1),
+    filter .9s ease;
+}
+#amplop.amplop-buka .amplop-tutup{
+  filter:drop-shadow(0 -6px 16px rgba(0,0,0,.45));
+}
+/* Vignet halus di badan amplop: tepi yang sedikit lebih gelap membuat
+   bidangnya terbaca melengkung, bukan rata. */
+.amplop-badan::after{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(120% 80% at 50% 42%,
+    rgba(0,0,0,0) 45%, rgba(0,0,0,.28) 100%);
+  pointer-events:none;
+}
+
+/* Kartu ditarik lebih jauh keluar. Pada -16% cuma sekitar 115 px
+   kartunya yang muncul di atas tepi kantong — cukup untuk membuktikan
+   ia keluar dari dalam, tapi tidak cukup untuk terbaca sebagai KARTU.
+   Amplop sungguhan pun ditarik sampai suratnya hampir lepas. */
+#amplop.amplop-keluar .amplop-surat{
+  transform:translate(-50%, -46%);
+}
+#amplop.amplop-pergi .amplop-surat{
+  transform:translate(-50%, -50%) scale(1.06);
+}
+
+/* Kedua pembatas ornamen didorong ke KEPALA dan KAKI kartu.
+   Sejak teks surat dibuang (permintaan user 2026-09-03), keduanya jadi
+   bersebelahan di tengah kartu — dua garis berjarak 12 px yang terbaca
+   sebagai satu ornamen yang tercetak dobel, bukan sebagai bingkai
+   kartu. Yang membuat kartu kosong tetap terbaca sebagai kartu justru
+   RUANG di antara keduanya. */
+#amplop .amplop-surat-isi{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:13% 12%;
+}
+#amplop .amplop-surat-hias{margin:0 auto;}
