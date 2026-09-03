@@ -823,3 +823,109 @@ section{position:relative;padding:var(--s6) var(--s4);}
   *{transition:none !important;animation:none !important;}
   .particles{display:none;}
 }
+
+/* ============================================================
+   REVISI 2026-09-03 — permintaan user untuk Sage Rose
+   ------------------------------------------------------------
+   Dua hal: bingkai ornamen di kaki foto H1 + bingkai khusus inisial,
+   dan variasi ornamen pembatas di dalam surat.
+
+   SENTUHANNYA SENGAJA RINGAN. Kategori ini pernah direvisi besar
+   (commit 79e6872: lembar kalender sobek + denah berkompas) dan user
+   MENOLAKNYA — "balikkan design template elegan klasik ke design
+   semula, saya tidak suka dengan design terbaru ini" — lalu dibalikkan
+   di 8f80647. Jadi yang ditambah di sini cuma ornamen, dengan bahasa
+   yang sudah ada: garis tipis, daun, kuncup, digambar SVG inline yang
+   menggambar dirinya sendiri. Tidak ada struktur baru, tidak ada modul
+   bersama, tidak ada benda yang mengubah cara halaman ini dibaca.
+   ============================================================ */
+
+/* --- PEMBATAS: dari 3 bentuk jadi 6 ---
+   Yang lama berputar twig -> arc -> vine -> twig -> ... sepanjang
+   sembilan bagian, jadi tiap bentuk muncul tiga kali dan halamannya
+   terasa mengulang saat digulir. Sekarang enam bentuk, dan urutannya
+   tidak pernah menaruh bentuk yang sama berdampingan.
+
+   Tiga yang lama dipertahankan apa adanya. Yang baru mengambil
+   perbendaharaan yang sama dan diberi warna berbeda supaya variasinya
+   terasa bukan cuma pada gambarnya. */
+.divider-ornament.div-sprig{color:var(--sage);width:112px;}
+.divider-ornament.div-bud{color:var(--rose);width:116px;}
+.divider-ornament.div-wheat{color:var(--gold);width:100px;opacity:.62;}
+
+/* --- MAHKOTA KAKI FOTO --- */
+.hero-crest{
+  position:relative;
+  z-index:3;
+  width:min(320px,88%);
+  /* Angka ini yang dulu ada di .hero-monogram: mahkota mengambil alih
+     tugas mengangkat dirinya ke atas lengkung foto, dan monogram di
+     dalamnya jadi berjarak biasa. */
+  margin:-58px auto 0;
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-crest-orn{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:100%;height:auto;
+  /* DI BELAKANG monogram: inisial pasangan harus terbaca lebih dulu,
+     dan untaian daun yang lewat di depan cincin akan memotong
+     hurufnya. */
+  z-index:-1;
+  pointer-events:none;
+}
+.hero-crest-orn .crest-draw path{
+  fill:none;stroke:var(--sage);stroke-width:1.2;stroke-linecap:round;
+  /* Menggambar diri bersama cincin monogram, sedikit lebih lambat,
+     supaya kedua benda ini terbaca sebagai satu gerakan. */
+  stroke-dasharray:200;stroke-dashoffset:200;
+}
+#fotoUtama.in-view .hero-crest-orn .crest-draw path{
+  transition:stroke-dashoffset 1s ease .35s;stroke-dashoffset:0;
+}
+.hero-crest-orn .crest-leaf ellipse{
+  fill:var(--sage);opacity:0;transition:opacity .5s ease 1s;
+}
+.hero-crest-orn .crest-bud circle{
+  fill:var(--rose);opacity:0;transition:opacity .5s ease 1.15s;
+}
+#fotoUtama.in-view .hero-crest-orn .crest-leaf ellipse,
+#fotoUtama.in-view .hero-crest-orn .crest-bud circle{opacity:1;}
+
+/* Monogram tidak lagi mengangkat dirinya sendiri — mahkota yang
+   melakukannya. Kalau keduanya memakai margin negatif, inisialnya naik
+   dua kali dan lepas dari untaiannya. */
+.hero-monogram{margin:0 auto;}
+
+/* --- BINGKAI INISIAL: KARANGAN OVAL ---
+   Cincin polos diganti dua ranting yang bertemu di puncak dan kaki.
+   Karena bentuknya sekarang oval (12..108 mendatar, 8..112 tegak),
+   alasnya tidak bisa lagi datang dari <circle fill>. */
+.hero-monogram-ring .ring-draw{stroke-dasharray:260;stroke-dashoffset:260;}
+.hero-monogram-ring .ring-simpul{
+  fill:var(--gold);opacity:0;transition:opacity .4s ease 1.05s;
+}
+#fotoUtama.in-view .hero-monogram-ring .ring-simpul{opacity:1;}
+/* Alas kertas di balik inisial. Dulu <circle fill:var(--paper)>;
+   sekarang bidangnya oval, jadi alasnya digambar elemen wadahnya. */
+.hero-monogram{
+  background:var(--paper);
+  border-radius:50% / 46%;
+}
+
+/* Cincin monogram dulu <circle>, dan satu-satunya aturan yang mengatur
+   isinya .hero-monogram-ring circle{fill:var(--paper)}. Begitu bentuknya
+   diganti <path>, aturan itu tidak berlaku lagi — dan SVG memberi fill
+   HITAM sebagai bawaan, sehingga karangan ovalnya jadi cakram hitam
+   pekat yang menelan inisialnya. Tidak ada galat, tidak ada peringatan;
+   yang terlihat cuma bidang hitam. */
+.hero-monogram-ring path{fill:none;stroke:currentColor;stroke-linecap:round;}
+.hero-monogram-ring .ring-draw{stroke-width:1.1;}
+.hero-monogram-ring .ring-leaf{stroke-width:1.2;}
+
+/* Helai daun untaian dirampingkan. Pada rx 9 / ry 4,4 ia terbaca
+   sebagai deret manik gemuk, bukan sebagai daun — dan kategori ini
+   yang dijual justru keminimalannya. */
+.hero-crest-orn .crest-leaf ellipse{opacity:0;}
+#fotoUtama.in-view .hero-crest-orn .crest-leaf ellipse{opacity:.9;}

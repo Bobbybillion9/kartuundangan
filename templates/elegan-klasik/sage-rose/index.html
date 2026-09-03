@@ -120,17 +120,76 @@
            bawah dari nama_pria_panggilan/nama_wanita_panggilan. Animasi:
            cincin menggambar diri (stroke-dashoffset) lalu huruf memudar
            masuk, kemudian cincin berputar pelan (60 detik/putaran). -->
+      <!-- MAHKOTA KAKI FOTO — permintaan user 2026-09-03: "tambahkan
+           ornamen motif frame pada gambar H1 di bagian bawah foto" dan
+           "bingkai frame khusus untuk inisial nama mempelai".
+
+           Keduanya diletakkan pada SATU baris, bukan dua benda yang
+           berdiri sendiri-sendiri: monogram memang sudah duduk di tepi
+           bawah foto (margin negatif), dan ornamen kedua yang ditaruh
+           di atas atau di bawahnya akan menambah satu baris kosong
+           lagi pada halaman yang justru sedang dijaga lapang.
+
+           Untaian daunnya karena itu MENGAPIT monogram — melengkung
+           keluar dari balik cincinnya ke kiri dan kanan, mengikuti
+           lengkung kubah foto di atasnya. Ia digambar di belakang
+           (z-index lebih rendah), jadi inisialnya tetap yang terbaca
+           lebih dulu. -->
+      <div class="hero-crest">
+        <svg class="hero-crest-orn" viewBox="0 0 320 56" aria-hidden="true">
+          <!-- Dua untaian cermin. Titik pangkalnya sengaja di 128 dan
+               192, yaitu tepat di balik cincin monogram selebar 104px
+               yang dipusatkan di 160 — supaya untaiannya terlihat
+               muncul DARI BALIK cincin, bukan menempel di sisinya. -->
+          <g class="crest-draw">
+            <path d="M128 26 C 104 12 74 12 48 20"/>
+            <path d="M192 26 C 216 12 246 12 272 20"/>
+          </g>
+          <!-- Helai daun di sepanjang untaian, mengecil ke ujung. -->
+          <g class="crest-leaf">
+            <ellipse cx="112" cy="20" rx="7" ry="2.6" transform="rotate(-20 112 20)"/>
+            <ellipse cx="98"  cy="16" rx="6.4" ry="2.4" transform="rotate(-15 98 16)"/>
+            <ellipse cx="84"  cy="14" rx="6" ry="2.2" transform="rotate(-10 84 14)"/>
+            <ellipse cx="70"  cy="14" rx="5.4" ry="2" transform="rotate(-6 70 14)"/>
+            <ellipse cx="57"  cy="16" rx="4.6" ry="1.8" transform="rotate(-2 57 16)"/>
+            <ellipse cx="208" cy="20" rx="7" ry="2.6" transform="rotate(20 208 20)"/>
+            <ellipse cx="222" cy="16" rx="6.4" ry="2.4" transform="rotate(15 222 16)"/>
+            <ellipse cx="236" cy="14" rx="6" ry="2.2" transform="rotate(10 236 14)"/>
+            <ellipse cx="250" cy="14" rx="5.4" ry="2" transform="rotate(6 250 14)"/>
+            <ellipse cx="263" cy="16" rx="4.6" ry="1.8" transform="rotate(2 263 16)"/>
+          </g>
+          <!-- Kuncup mawar di kedua ujung — satu-satunya titik warna
+               mawar di baris ini. -->
+          <g class="crest-bud">
+            <circle cx="46" cy="20" r="3.2"/>
+            <circle cx="274" cy="20" r="3.2"/>
+          </g>
+        </svg>
+
       <div class="hero-monogram" id="heroMonogram" aria-hidden="true">
+        <!-- BINGKAI INISIAL: KARANGAN OVAL.
+             Sengaja bukan lingkaran. Ivory Gold memakai cincin ganda
+             bersudut berlian dan Emerald Dusk lengkung runcing; kalau
+             ketiganya bundar polos, ketiga tema Standar terbaca kembar
+             justru di elemen yang paling diingat orang — inisial
+             mereka sendiri. Yang ini oval, dan garisnya bukan satu
+             lingkaran utuh melainkan DUA ranting berdaun yang bertemu
+             di puncak dan di kaki. -->
         <svg class="hero-monogram-ring" viewBox="0 0 120 120">
-          <circle class="ring-draw" cx="60" cy="60" r="52"/>
-          <path class="ring-draw ring-leaf" d="M22 80 C 28 70 26 60 32 52"/>
-          <path class="ring-draw ring-leaf" d="M98 80 C 92 70 94 60 88 52"/>
-          <ellipse cx="26" cy="72" rx="6" ry="3" transform="rotate(-40 26 72)"/>
-          <ellipse cx="94" cy="72" rx="6" ry="3" transform="rotate(40 94 72)"/>
+          <path class="ring-draw" d="M60 8 C 30 8 12 30 12 60 C 12 90 30 112 60 112"/>
+          <path class="ring-draw" d="M60 8 C 90 8 108 30 108 60 C 108 90 90 112 60 112"/>
+          <path class="ring-draw ring-leaf" d="M22 92 C 27 84 25 76 30 70"/>
+          <path class="ring-draw ring-leaf" d="M98 92 C 93 84 95 76 90 70"/>
+          <ellipse cx="25" cy="86" rx="5" ry="2.4" transform="rotate(-42 25 86)"/>
+          <ellipse cx="95" cy="86" rx="5" ry="2.4" transform="rotate(42 95 86)"/>
+          <!-- Simpul kecil tempat kedua ranting bertemu. -->
+          <circle class="ring-simpul" cx="60" cy="8" r="2.4"/>
+          <circle class="ring-simpul" cx="60" cy="112" r="2.4"/>
         </svg>
         <span class="hero-monogram-letters">
           <span class="mono-a" id="monoLetterA">A</span><span class="mono-sep">&amp;</span><span class="mono-b" id="monoLetterB">S</span>
         </span>
+      </div>
       </div>
     </section>
 
@@ -139,7 +198,7 @@
       <div class="section-divider" data-rv="draw" style="--d:0">
         <svg class="divider-ornament div-twig" viewBox="0 0 200 26" aria-hidden="true">
           <path class="rv-draw-path" d="M4 13 H78 M122 13 H196"/>
-          <path class="rv-draw-path" d="M100 13 C 93 5 84 5 79 13 C 84 21 93 21 100 13 C 107 5 116 5 121 13 C 116 21 107 21 100 13 Z"/>
+          <path class="rv-draw-path" d="M100 13 C 93 5 84 5 79 13 C 84 21 93 21 100 13 C 107 5 116 5 121 13 C 116 21 107 21 100 13"/>
           <circle cx="100" cy="13" r="2.2"/>
         </svg>
       </div>
@@ -150,9 +209,10 @@
     <!-- 3. MEMPELAI -->
     <section id="mempelai" data-reveal>
       <div class="section-divider" data-rv="draw" style="--d:0">
-        <svg class="divider-ornament div-arc" viewBox="0 0 180 22" aria-hidden="true">
-          <path class="rv-draw-path" d="M6 18 Q90 -4 174 18"/>
-          <circle cx="90" cy="7" r="2"/>
+        <svg class="divider-ornament div-arc" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 16 H70 M130 16 H196"/>
+          <path class="rv-draw-path" d="M70 16 C 82 2 118 2 130 16"/>
+          <circle cx="100" cy="8" r="2"/>
         </svg>
       </div>
       <div class="center">
@@ -190,11 +250,12 @@
     <!-- 4. ACARA -->
     <section id="acara" data-reveal>
       <div class="section-divider" data-rv="draw" style="--d:0">
-        <svg class="divider-ornament div-vine" viewBox="0 0 200 24" aria-hidden="true">
-          <path class="rv-draw-path" d="M4 12 C 30 4, 40 20, 66 12 C 84 6 92 6 100 12 C 108 6 116 6 134 12 C 160 20 170 4 196 12"/>
-          <ellipse cx="34" cy="9" rx="4" ry="2" transform="rotate(-20 34 9)"/>
-          <ellipse cx="166" cy="9" rx="4" ry="2" transform="rotate(20 166 9)"/>
-          <circle cx="100" cy="12" r="2"/>
+        <svg class="divider-ornament div-sprig" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13 H74 M126 13 H196"/>
+          <path class="rv-draw-path" d="M100 21 V7"/>
+          <path class="rv-draw-path" d="M100 11 C 92 11 86 14 82 18 C 90 19 96 17 100 13"/>
+          <path class="rv-draw-path" d="M100 11 C 108 11 114 14 118 18 C 110 19 104 17 100 13"/>
+          <circle cx="100" cy="6" r="1.8"/>
         </svg>
       </div>
       <div class="center">
@@ -235,10 +296,9 @@
     <!-- 5. HITUNG MUNDUR -->
     <section id="countdown" data-reveal>
       <div class="section-divider" data-rv="draw" style="--d:0">
-        <svg class="divider-ornament div-twig" viewBox="0 0 200 26" aria-hidden="true">
-          <path class="rv-draw-path" d="M4 13 H78 M122 13 H196"/>
-          <path class="rv-draw-path" d="M100 13 C 93 5 84 5 79 13 C 84 21 93 21 100 13 C 107 5 116 5 121 13 C 116 21 107 21 100 13 Z"/>
-          <circle cx="100" cy="13" r="2.2"/>
+        <svg class="divider-ornament div-vine" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13 H62 M138 13 H196"/>
+          <path class="rv-draw-path" d="M62 13 C 72 4 82 22 92 13 C 102 4 112 22 122 13 C 128 8 134 11 138 13"/>
         </svg>
       </div>
       <p class="eyebrow" data-rv="text" style="--d:1">Menuju Hari Bahagia</p>
@@ -267,9 +327,11 @@
     <!-- 6a. GALERI MOMEN -->
     <section id="galeri" data-reveal>
       <div class="section-divider" data-rv="draw" style="--d:0">
-        <svg class="divider-ornament div-arc" viewBox="0 0 180 22" aria-hidden="true">
-          <path class="rv-draw-path" d="M6 18 Q90 -4 174 18"/>
-          <circle cx="90" cy="7" r="2"/>
+        <svg class="divider-ornament div-bud" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13 H76 M124 13 H196"/>
+          <path class="rv-draw-path" d="M100 8 C 96 8 94 10 94 13 C 94 16 97 18 100 18 C 104 18 107 15 107 12 C 107 8 104 6 100 6"/>
+          <path class="rv-draw-path" d="M92 15 C 86 14 82 15 78 17 C 84 20 89 19 92 17"/>
+          <path class="rv-draw-path" d="M108 15 C 114 14 118 15 122 17 C 116 20 111 19 108 17"/>
         </svg>
       </div>
       <div class="center">
@@ -324,11 +386,10 @@
     <!-- 6b. KONFIRMASI KEHADIRAN -->
     <section id="rsvp" data-reveal>
       <div class="section-divider" data-rv="draw" style="--d:0">
-        <svg class="divider-ornament div-vine" viewBox="0 0 200 24" aria-hidden="true">
-          <path class="rv-draw-path" d="M4 12 C 30 4, 40 20, 66 12 C 84 6 92 6 100 12 C 108 6 116 6 134 12 C 160 20 170 4 196 12"/>
-          <ellipse cx="34" cy="9" rx="4" ry="2" transform="rotate(-20 34 9)"/>
-          <ellipse cx="166" cy="9" rx="4" ry="2" transform="rotate(20 166 9)"/>
-          <circle cx="100" cy="12" r="2"/>
+        <svg class="divider-ornament div-arc" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 16 H70 M130 16 H196"/>
+          <path class="rv-draw-path" d="M70 16 C 82 2 118 2 130 16"/>
+          <circle cx="100" cy="8" r="2"/>
         </svg>
       </div>
       <div class="center">
@@ -374,10 +435,11 @@
     <!-- 6c. UCAPAN & DOA -->
     <section id="ucapan" data-reveal>
       <div class="section-divider" data-rv="draw" style="--d:0">
-        <svg class="divider-ornament div-twig" viewBox="0 0 200 26" aria-hidden="true">
-          <path class="rv-draw-path" d="M4 13 H78 M122 13 H196"/>
-          <path class="rv-draw-path" d="M100 13 C 93 5 84 5 79 13 C 84 21 93 21 100 13 C 107 5 116 5 121 13 C 116 21 107 21 100 13 Z"/>
-          <circle cx="100" cy="13" r="2.2"/>
+        <svg class="divider-ornament div-wheat" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13 H84 M116 13 H196"/>
+          <path class="rv-draw-path" d="M100 20 V5"/>
+          <path class="rv-draw-path" d="M100 8 C 96 7 94 9 93 12 M100 8 C 104 7 106 9 107 12"/>
+          <path class="rv-draw-path" d="M100 13 C 95 12 93 14 92 17 M100 13 C 105 12 107 14 108 17"/>
         </svg>
       </div>
       <div class="center">
@@ -418,9 +480,10 @@
     <!-- 6d. TANDA KASIH -->
     <section id="hadiah" data-reveal>
       <div class="section-divider" data-rv="draw" style="--d:0">
-        <svg class="divider-ornament div-arc" viewBox="0 0 180 22" aria-hidden="true">
-          <path class="rv-draw-path" d="M6 18 Q90 -4 174 18"/>
-          <circle cx="90" cy="7" r="2"/>
+        <svg class="divider-ornament div-twig" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13 H78 M122 13 H196"/>
+          <path class="rv-draw-path" d="M100 13 C 93 5 84 5 79 13 C 84 21 93 21 100 13 C 107 5 116 5 121 13 C 116 21 107 21 100 13"/>
+          <circle cx="100" cy="13" r="2.2"/>
         </svg>
       </div>
       <div class="center">
@@ -509,11 +572,9 @@
       </svg>
 
       <div class="section-divider" data-rv="draw" style="--d:0">
-        <svg class="divider-ornament div-vine" viewBox="0 0 200 24" aria-hidden="true">
-          <path class="rv-draw-path" d="M4 12 C 30 4, 40 20, 66 12 C 84 6 92 6 100 12 C 108 6 116 6 134 12 C 160 20 170 4 196 12"/>
-          <ellipse cx="34" cy="9" rx="4" ry="2" transform="rotate(-20 34 9)"/>
-          <ellipse cx="166" cy="9" rx="4" ry="2" transform="rotate(20 166 9)"/>
-          <circle cx="100" cy="12" r="2"/>
+        <svg class="divider-ornament div-vine" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13 H62 M138 13 H196"/>
+          <path class="rv-draw-path" d="M62 13 C 72 4 82 22 92 13 C 102 4 112 22 122 13 C 128 8 134 11 138 13"/>
         </svg>
       </div>
       <p class="eyebrow" data-rv="text" style="--d:1">Terima Kasih</p>

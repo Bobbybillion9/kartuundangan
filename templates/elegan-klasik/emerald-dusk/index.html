@@ -103,28 +103,56 @@
            bawah dari nama_pria_panggilan/nama_wanita_panggilan. Animasi:
            cincin menggambar diri (stroke-dashoffset) lalu huruf memudar
            masuk, kemudian cincin berputar pelan (60 detik/putaran). -->
+      <!-- MAHKOTA KAKI FOTO + BINGKAI INISIAL — permintaan user
+           2026-09-03. Bahasanya PAKIS dan LENGKUNG RUNCING: Sage Rose
+           memakai untaian daun bulat pada karangan oval, Ivory Gold
+           rel lurus pada segi delapan. Ketiganya harus bisa dibedakan
+           dari siluetnya saja, karena di kartu tema itulah yang
+           terlihat. -->
+      <div class="hero-crest">
+        <svg class="hero-crest-orn" viewBox="0 0 320 56" aria-hidden="true">
+          <!-- Dua pelepah pakis melengkung NAIK keluar dari balik
+               bingkai — mahkota laurel, bukan untaian yang menggantung.
+               Arah naik itu yang membedakannya dari Sage Rose, yang
+               untaiannya justru meluruh turun. -->
+          <g class="crest-draw">
+            <path d="M130 34 C 104 32 78 26 52 12"/>
+            <path d="M190 34 C 216 32 242 26 268 12"/>
+          </g>
+          <!-- Anak daun berpasangan sepanjang pelepah. -->
+          <g class="crest-duri">
+            <path d="M112 31 l-4 -7 M100 29 l-4 -7 M88 26 l-4 -7 M76 22 l-4 -7 M64 18 l-4 -6"/>
+            <path d="M208 31 l4 -7 M220 29 l4 -7 M232 26 l4 -7 M244 22 l4 -7 M256 18 l4 -6"/>
+          </g>
+          <g class="crest-titik">
+            <circle cx="50" cy="11" r="2.2"/><circle cx="270" cy="11" r="2.2"/>
+          </g>
+        </svg>
+
       <div class="hero-monogram" id="heroMonogram" aria-hidden="true">
+        <!-- BINGKAI INISIAL: LENGKUNG RUNCING (vesica).
+             Runcing di puncak DAN di kaki — bukan lingkaran, bukan
+             segi delapan. Setangkai pakis kecil duduk di puncaknya. -->
         <svg class="hero-monogram-ring" viewBox="0 0 120 120">
-          <circle class="ring-draw" cx="60" cy="60" r="52"/>
-          <path class="ring-draw ring-leaf" d="M22 80 C 28 70 26 60 32 52"/>
-          <path class="ring-draw ring-leaf" d="M98 80 C 92 70 94 60 88 52"/>
-          <ellipse cx="26" cy="72" rx="6" ry="3" transform="rotate(-40 26 72)"/>
-          <ellipse cx="94" cy="72" rx="6" ry="3" transform="rotate(40 94 72)"/>
+          <path class="ring-draw" d="M60 4 C 86 30 116 44 116 60 C 116 76 86 90 60 116 C 34 90 4 76 4 60 C 4 44 34 30 60 4 Z"/>
+          <path class="ring-draw ring-dalam" d="M60 14 C 82 36 107 47 107 60 C 107 73 82 84 60 106 C 38 84 13 73 13 60 C 13 47 38 36 60 14 Z"/>
+          <path class="ring-draw ring-leaf" d="M60 6 C 56 0 52 0 50 2 M60 6 C 64 0 68 0 70 2"/>
+          <circle class="ring-titik" cx="60" cy="112" r="2.4"/>
         </svg>
         <span class="hero-monogram-letters">
           <span class="mono-a" id="monoLetterA">A</span><span class="mono-sep">&amp;</span><span class="mono-b" id="monoLetterB">S</span>
         </span>
+      </div>
       </div>
     </section>
 
     <!-- 2. PEMBUKA -->
     <section id="pembuka" data-reveal>
       <div class="section-divider" data-rv="text" style="--d:0">
-        <span class="ed-divider" aria-hidden="true">
-          <span class="ed-divider-line"></span>
-          <span class="ed-divider-gem"></span>
-          <span class="ed-divider-line"></span>
-        </span>
+        <svg class="divider-ornament div-permata" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H86M114 13H196"/>
+          <path class="rv-draw-path" d="M100 6 l8 7 -8 7 -8 -7 z"/>
+        </svg>
       </div>
       <p class="quote" data-rv="text" style="--d:1">Dua hati yang saling menemukan, dua keluarga yang saling merangkul, dan sebuah janji yang akan dijaga seumur hidup.</p>
       <p class="opening-text center" data-slot="kalimat_pembuka" data-rv="text" style="--d:2">Dengan penuh rasa syukur, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu di hari bahagia kami.</p>
@@ -133,11 +161,11 @@
     <!-- 3. MEMPELAI -->
     <section id="mempelai" data-reveal>
       <div class="section-divider" data-rv="text" style="--d:0">
-        <span class="ed-divider" aria-hidden="true">
-          <span class="ed-divider-line"></span>
-          <span class="ed-divider-gem"></span>
-          <span class="ed-divider-line"></span>
-        </span>
+        <svg class="divider-ornament div-pakis" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 15H72M128 15H196"/>
+          <path class="rv-draw-path" d="M72 15 C 82 15 90 11 100 8 C 110 11 118 15 128 15"/>
+          <path class="rv-draw-path" d="M86 13 V18 M93 11 V17 M100 9 V16 M107 11 V17 M114 13 V18"/>
+        </svg>
       </div>
       <div class="center">
         <p class="eyebrow" data-rv="text" style="--d:1">Kedua Mempelai</p>
@@ -174,11 +202,12 @@
     <!-- 4. ACARA -->
     <section id="acara" data-reveal>
       <div class="section-divider" data-rv="text" style="--d:0">
-        <span class="ed-divider" aria-hidden="true">
-          <span class="ed-divider-line"></span>
-          <span class="ed-divider-gem"></span>
-          <span class="ed-divider-line"></span>
-        </span>
+        <svg class="divider-ornament div-sabit" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 15H78M122 15H196"/>
+          <path class="rv-draw-path" d="M84 18 C 88 6 112 6 116 18"/>
+          <circle cx="100" cy="8" r="2.2"/>
+          <circle cx="84" cy="18" r="1.6"/><circle cx="116" cy="18" r="1.6"/>
+        </svg>
       </div>
       <div class="center">
         <p class="eyebrow" data-rv="text" style="--d:1">Simpan Tanggalnya</p>
@@ -218,11 +247,12 @@
     <!-- 5. HITUNG MUNDUR -->
     <section id="countdown" data-reveal>
       <div class="section-divider" data-rv="text" style="--d:0">
-        <span class="ed-divider" aria-hidden="true">
-          <span class="ed-divider-line"></span>
-          <span class="ed-divider-gem"></span>
-          <span class="ed-divider-line"></span>
-        </span>
+        <svg class="divider-ornament div-helai" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 16H76M124 16H196"/>
+          <path class="rv-draw-path" d="M100 20 C 94 16 90 11 90 6 C 96 8 100 13 100 20"/>
+          <path class="rv-draw-path" d="M100 20 C 106 16 110 11 110 6 C 104 8 100 13 100 20"/>
+          <path class="rv-draw-path" d="M100 20 V10"/>
+        </svg>
       </div>
       <p class="eyebrow" data-rv="text" style="--d:1">Menuju Hari Bahagia</p>
       <h2 class="section-title shimmer-gold" data-rv="text" style="--d:2">Hitung Mundur</h2>
@@ -250,11 +280,10 @@
     <!-- 6a. GALERI MOMEN -->
     <section id="galeri" data-reveal>
       <div class="section-divider" data-rv="text" style="--d:0">
-        <span class="ed-divider" aria-hidden="true">
-          <span class="ed-divider-line"></span>
-          <span class="ed-divider-gem"></span>
-          <span class="ed-divider-line"></span>
-        </span>
+        <svg class="divider-ornament div-simpul" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H80M120 13H196"/>
+          <path class="rv-draw-path" d="M100 13 C 92 6 82 10 86 15 C 90 20 98 18 100 13 C 102 8 110 6 114 11 C 118 16 108 20 100 13"/>
+        </svg>
       </div>
       <div class="center">
         <p class="eyebrow" data-rv="text" style="--d:1">Momen Berharga</p>
@@ -308,11 +337,11 @@
     <!-- 6b. KONFIRMASI KEHADIRAN -->
     <section id="rsvp" data-reveal>
       <div class="section-divider" data-rv="text" style="--d:0">
-        <span class="ed-divider" aria-hidden="true">
-          <span class="ed-divider-line"></span>
-          <span class="ed-divider-gem"></span>
-          <span class="ed-divider-line"></span>
-        </span>
+        <svg class="divider-ornament div-pakis" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 15H72M128 15H196"/>
+          <path class="rv-draw-path" d="M72 15 C 82 15 90 11 100 8 C 110 11 118 15 128 15"/>
+          <path class="rv-draw-path" d="M86 13 V18 M93 11 V17 M100 9 V16 M107 11 V17 M114 13 V18"/>
+        </svg>
       </div>
       <div class="center">
         <p class="eyebrow" data-rv="text" style="--d:1">Mohon Konfirmasi</p>
@@ -357,11 +386,10 @@
     <!-- 6c. UCAPAN & DOA -->
     <section id="ucapan" data-reveal>
       <div class="section-divider" data-rv="text" style="--d:0">
-        <span class="ed-divider" aria-hidden="true">
-          <span class="ed-divider-line"></span>
-          <span class="ed-divider-gem"></span>
-          <span class="ed-divider-line"></span>
-        </span>
+        <svg class="divider-ornament div-bintang" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H84M116 13H196"/>
+          <path class="rv-draw-path" d="M100 4 V22 M91 13 H109 M94 7 l12 12 M106 7 l-12 12"/>
+        </svg>
       </div>
       <div class="center">
         <p class="eyebrow" data-rv="text" style="--d:1">Untuk Kedua Mempelai</p>
@@ -401,11 +429,10 @@
     <!-- 6d. TANDA KASIH -->
     <section id="hadiah" data-reveal>
       <div class="section-divider" data-rv="text" style="--d:0">
-        <span class="ed-divider" aria-hidden="true">
-          <span class="ed-divider-line"></span>
-          <span class="ed-divider-gem"></span>
-          <span class="ed-divider-line"></span>
-        </span>
+        <svg class="divider-ornament div-permata" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 13H86M114 13H196"/>
+          <path class="rv-draw-path" d="M100 6 l8 7 -8 7 -8 -7 z"/>
+        </svg>
       </div>
       <div class="center">
         <p class="eyebrow" data-rv="text" style="--d:1">Dengan Kasih</p>
@@ -493,11 +520,12 @@
       </svg>
 
       <div class="section-divider" data-rv="text" style="--d:0">
-        <span class="ed-divider" aria-hidden="true">
-          <span class="ed-divider-line"></span>
-          <span class="ed-divider-gem"></span>
-          <span class="ed-divider-line"></span>
-        </span>
+        <svg class="divider-ornament div-helai" viewBox="0 0 200 26" aria-hidden="true">
+          <path class="rv-draw-path" d="M4 16H76M124 16H196"/>
+          <path class="rv-draw-path" d="M100 20 C 94 16 90 11 90 6 C 96 8 100 13 100 20"/>
+          <path class="rv-draw-path" d="M100 20 C 106 16 110 11 110 6 C 104 8 100 13 100 20"/>
+          <path class="rv-draw-path" d="M100 20 V10"/>
+        </svg>
       </div>
       <p class="eyebrow" data-rv="text" style="--d:1">Terima Kasih</p>
       <p class="closing-text" data-slot="kalimat_penutup" data-rv="text" style="--d:2">Terima kasih atas doa dan restu yang diberikan. Kehadiran serta kebahagiaan Bapak/Ibu/Saudara/i merupakan suatu kehormatan bagi kami.</p>

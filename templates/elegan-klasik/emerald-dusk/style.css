@@ -782,3 +782,89 @@ section{position:relative;padding:var(--s6) var(--s4);}
   .particles{display:none;}
   .shimmer-gold{background-image:none;-webkit-background-clip:initial;background-clip:initial;color:var(--champagne);}
 }
+
+/* ============================================================
+   REVISI 2026-09-03 — permintaan user untuk Emerald Dusk
+   ------------------------------------------------------------
+   Bingkai ornamen di kaki foto H1, bingkai khusus inisial, dan variasi
+   ornamen pembatas.
+
+   Tema ini yang paling kaku di antara tiga tema Standar: pembatasnya
+   SATU bentuk (.ed-divider, garis-permata-garis) dipakai sembilan kali
+   tanpa variasi apa pun. Sekarang enam bentuk SVG inline, mekanisme
+   yang sama dengan Sage Rose dan Ivory Gold.
+
+   Sentuhannya tetap ringan — kategori ini pernah direvisi besar
+   (79e6872) dan user menolaknya, lalu dibalikkan di 8f80647.
+   ============================================================ */
+
+/* Pembatas SVG. Aturan .ed-divider lama dibiarkan di tempatnya: ia
+   tidak lagi dirujuk markup mana pun, tapi mencabutnya dari tengah
+   berkas cuma menambah risiko tanpa mengubah tampilan. */
+.section-divider{display:flex;justify-content:center;margin:0 0 var(--s5);}
+.divider-ornament{width:118px;height:auto;opacity:.75;}
+.divider-ornament .rv-draw-path{fill:none;stroke:currentColor;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;}
+.divider-ornament circle{fill:currentColor;}
+.divider-ornament.div-permata{color:var(--gold);}
+.divider-ornament.div-pakis{color:var(--sage,#7C9A86);width:126px;}
+.divider-ornament.div-sabit{color:var(--gold);width:110px;opacity:.66;}
+.divider-ornament.div-simpul{color:var(--gold);width:120px;}
+.divider-ornament.div-bintang{color:var(--gold);width:104px;opacity:.7;}
+.divider-ornament.div-helai{color:var(--sage,#7C9A86);width:112px;}
+
+/* --- MAHKOTA KAKI FOTO --- */
+.hero-crest{
+  position:relative;z-index:3;
+  width:min(320px,88%);
+  margin:-58px auto 0;
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-crest-orn{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:100%;height:auto;
+  z-index:-1;pointer-events:none;
+}
+.hero-crest-orn path{fill:none;stroke:var(--gold);stroke-width:1.15;stroke-linecap:round;}
+.hero-crest-orn .crest-draw path{stroke-dasharray:150;stroke-dashoffset:150;}
+.hero-crest-orn .crest-duri path{stroke-width:.95;opacity:0;transition:opacity .5s ease .95s;}
+.hero-crest-orn .crest-titik circle{fill:var(--gold);opacity:0;transition:opacity .4s ease 1.15s;}
+#fotoUtama.in-view .hero-crest-orn .crest-draw path{transition:stroke-dashoffset 1s ease .3s;stroke-dashoffset:0;}
+#fotoUtama.in-view .hero-crest-orn .crest-duri path,
+#fotoUtama.in-view .hero-crest-orn .crest-titik circle{opacity:1;}
+
+.hero-monogram{margin:0 auto;}
+
+/* --- BINGKAI INISIAL: LENGKUNG RUNCING ---
+   Cincin lama <circle fill:var(--paper)> diganti <path>; SVG memberi
+   fill HITAM sebagai bawaan, jadi tanpa baris di bawah bidangnya akan
+   jadi cakram hitam pekat tanpa satu pun galat. */
+.hero-monogram-ring path{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}
+.hero-monogram-ring .ring-draw{stroke-width:1.15;stroke-dasharray:340;stroke-dashoffset:340;}
+.hero-monogram-ring .ring-dalam{stroke-width:.85;opacity:.62;}
+.hero-monogram-ring .ring-titik{fill:var(--gold);stroke:none;opacity:0;transition:opacity .4s ease 1.05s;}
+#fotoUtama.in-view .hero-monogram-ring .ring-titik{opacity:1;}
+/* Alas kertas mengikuti siluet lengkung runcingnya. */
+.hero-monogram{
+  background:var(--paper);
+  clip-path:polygon(50% 2%,72% 30%,87% 50%,72% 72%,50% 98%,28% 72%,13% 50%,28% 30%);
+}
+
+/* Alas kertas dipindahkan dari wadah ke PATH bingkainya sendiri.
+   clip-path pada .hero-monogram memotong seluruh isinya — pada uji
+   potret, huruf S inisialnya terpotong di sisi kanan karena bidang
+   lengkung runcing ini sempit justru di ketinggian huruf. Mengisi
+   path bingkainya membuat alasnya persis sebangun dan tidak ada yang
+   terpotong. */
+.hero-monogram{clip-path:none;background:none;}
+.hero-monogram-ring .ring-draw:not(.ring-dalam):not(.ring-leaf){fill:var(--paper);}
+
+/* Bidang lengkung runcing dilebarkan (titik terlebar 16..104 -> 4..116
+   pada viewBox 120) dan wadahnya ikut membesar. Pada ukuran lama,
+   huruf inisial menembus keluar garis emas di kiri dan kanan: bidang
+   ini paling sempit justru di ketinggian huruf, dan itu tidak terlihat
+   sampai dipotret pada skala 3. Nama panggilan yang lebih panjang
+   daripada "A & S" akan lebih parah, jadi ukuran hurufnya juga
+   diturunkan sedikit. */
+.hero-monogram{width:122px;height:122px;}
+.hero-monogram-letters{font-size:28px;}

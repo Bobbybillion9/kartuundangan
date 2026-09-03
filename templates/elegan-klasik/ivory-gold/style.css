@@ -731,3 +731,78 @@ section{position:relative;padding:var(--s6) var(--s4);}
   *{transition:none !important;animation:none !important;}
   .particles{display:none;}
 }
+
+/* ============================================================
+   REVISI 2026-09-03 — permintaan user untuk Ivory Gold
+   ------------------------------------------------------------
+   Bingkai ornamen di kaki foto H1, bingkai khusus inisial, dan variasi
+   ornamen pembatas.
+
+   Sentuhannya sengaja ringan: kategori ini pernah direvisi besar
+   (79e6872) dan user menolaknya, lalu dibalikkan di 8f80647. Yang
+   ditambah cuma ornamen, dengan bahasa yang sudah ada.
+   ============================================================ */
+
+/* Tiga pembatas baru. Warnanya tetap emas — yang membedakan
+   BENTUKNYA, bukan warnanya, karena tema ini memang satu nada. */
+.divider-ornament.div-fleuron{color:var(--gold);width:108px;}
+.divider-ornament.div-pearls{color:var(--gold);width:100px;opacity:.6;}
+.divider-ornament.div-deco{color:var(--gold);width:112px;}
+.divider-ornament.div-pearls circle{fill:currentColor;}
+
+/* --- MAHKOTA KAKI FOTO --- */
+.hero-crest{
+  position:relative;z-index:3;
+  width:min(320px,88%);
+  /* Mengambil alih margin negatif yang dulu ada di .hero-monogram. */
+  margin:-58px auto 0;
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-crest-orn{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:100%;height:auto;
+  /* Di BELAKANG inisial: rel yang lewat di depan bingkai akan memotong
+     hurufnya. */
+  z-index:-1;pointer-events:none;
+}
+.hero-crest-orn path{fill:none;stroke:var(--gold);stroke-width:1.1;stroke-linecap:round;}
+.hero-crest-orn .crest-intan path{fill:var(--gold);stroke:none;}
+.hero-crest-orn .crest-draw path{stroke-dasharray:120;stroke-dashoffset:120;}
+.hero-crest-orn .crest-kipas path{stroke-dasharray:16;stroke-dashoffset:16;opacity:.75;}
+.hero-crest-orn .crest-intan path{opacity:0;transition:opacity .5s ease 1.1s;}
+#fotoUtama.in-view .hero-crest-orn .crest-draw path{transition:stroke-dashoffset .9s ease .3s;stroke-dashoffset:0;}
+#fotoUtama.in-view .hero-crest-orn .crest-kipas path{transition:stroke-dashoffset .5s ease .8s;stroke-dashoffset:0;}
+#fotoUtama.in-view .hero-crest-orn .crest-intan path{opacity:1;}
+
+.hero-monogram{margin:0 auto;}
+
+/* --- BINGKAI INISIAL: SEGI DELAPAN GANDA ---
+   Cincin lama <circle fill:var(--paper)> diganti <path>, dan SVG
+   memberi fill HITAM sebagai bawaan — bidangnya akan jadi cakram hitam
+   pekat tanpa satu pun galat. Karena itu fill dinolkan eksplisit dan
+   alas kertasnya dipindah ke elemen wadahnya. */
+.hero-monogram-ring path{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}
+.hero-monogram-ring .ring-luar{stroke-width:1.2;}
+.hero-monogram-ring .ring-dalam{stroke-width:.9;opacity:.7;}
+.hero-monogram-ring .ring-draw{stroke-dasharray:300;stroke-dashoffset:300;}
+#fotoUtama.in-view .hero-monogram-ring .ring-luar{transition:stroke-dashoffset 1s ease .15s;stroke-dashoffset:0;}
+#fotoUtama.in-view .hero-monogram-ring .ring-dalam{transition:stroke-dashoffset 1s ease .35s;stroke-dashoffset:0;}
+.hero-monogram-ring .ring-intan path{fill:var(--gold);stroke:none;opacity:0;transition:opacity .4s ease 1.05s;}
+#fotoUtama.in-view .hero-monogram-ring .ring-intan path{opacity:1;}
+/* Alas kertas mengikuti siluet segi delapannya, bukan lingkaran —
+   sudut kertas yang menyembul di luar bingkai terlihat seperti
+   kesalahan cetak. */
+.hero-monogram{
+  background:var(--paper);
+  clip-path:polygon(32% 0,68% 0,100% 32%,100% 68%,68% 100%,32% 100%,0 68%,0 32%);
+}
+
+/* Alas kertas dipindahkan dari wadah ke PATH bingkainya sendiri.
+   clip-path pada .hero-monogram memotong SELURUH isinya — termasuk
+   huruf inisialnya, yang menyembul melewati siluet segi delapan pada
+   nama berhuruf lebar. Mengisi path bingkainya menyelesaikan dua hal
+   sekaligus: alasnya persis sebangun dengan bingkainya (tidak mungkin
+   meleset), dan tidak ada yang terpotong. */
+.hero-monogram{clip-path:none;background:none;}
+.hero-monogram-ring .ring-luar{fill:var(--paper);}

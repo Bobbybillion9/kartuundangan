@@ -729,6 +729,69 @@ async function periksaDom(tema, lap) {
         hilang.slice(0, 4).join(' | ') + ' — periksa path-nya; gambar yang 404 hilang tanpa pesan apa pun di layar');
     }
     if (lain.length) lap.ingat(lain.length + ' pesan error di konsol', lain.slice(0, 4).join(' | '));
+
+    // --- ORNAMEN PEMBATAS BENAR-BENAR MENGGAMBAR ---
+    //
+    // Pembatas antar bagian digambar sebagai <svg> inline dengan
+    // atribut d yang ditulis tangan. Satu huruf salah di dalam d TIDAK
+    // melempar galat apa pun: SVG-nya tetap ada di DOM, ukurannya tetap
+    // benar, dan yang tergambar cuma tidak ada. Pada halaman sepanjang
+    // undangan, satu pembatas kosong di tengah gulungan tidak akan
+    // terlihat sampai ada yang menggulir sampai ke sana.
+    //
+    // Ditambahkan 2026-09-03, saat delapan belas ornamen pembatas baru
+    // ditulis untuk ketiga tema Elegan Klasik.
+    //
+    // getBBox() WAJIB dipanggil sesudah sampul dibuka: selama sampul
+    // terkunci .reveal-after-cover masih display:none, dan getBBox()
+    // pada pohon display:none mengembalikan nol untuk SEMUANYA — hasil
+    // palsu yang melaporkan setiap pembatas rusak.
+    // Isi undangan dibuka dengan MENYUNTIK CSS, bukan dengan menekan
+    // tombol sampul. Percobaan pertama menekan #openBtn lalu menunggu
+    // 900 ms, dan itu memberi LIMA kegagalan palsu: tiga tema Eropa
+    // Mewah menaruh #openBtn di balik tahap amplop sehingga tombolnya
+    // belum ada saat ditekan, dan dua tema lain sekadar belum selesai
+    // beranimasi. Pemeriksaan geometri tidak boleh bergantung pada
+    // animasi — yang diukur bentuk, bukan waktu.
+    await kirim('Runtime.evaluate', {
+      expression: "(function(){var g=document.createElement('style');" +
+        "g.textContent='#amplop{display:none!important}.reveal-after-cover{display:block!important;" +
+        "opacity:1!important;transform:none!important}body.cover-locked .reveal-after-cover{display:block!important}';" +
+        "document.head.appendChild(g);" +
+        "document.querySelectorAll('[data-reveal]').forEach(function(e){e.classList.add('in-view');});})()"
+    });
+    await new Promise(r => setTimeout(r, 400));
+    const orn = await kirim('Runtime.evaluate', {
+      expression: "(function(){var kosong=[],n=0;" +
+        "document.querySelectorAll('.divider-ornament').forEach(function(sv){n++;var isi=0;" +
+        // Sebagian tema memakai <svg class=divider-ornament> sekadar
+        // sebagai KOTAK pembawa background-image, lalu menyembunyikan
+        // isinya (.divider-ornament path{display:none}). Di situ
+        // 'tidak ada geometri di dalam' justru yang benar, dan
+        // menghitungnya sebagai cacat memberi kegagalan palsu — sudah
+        // terjadi pada tiga tema Eropa Mewah saat pemeriksaan ini
+        // pertama ditulis. Ornamen dianggap kosong hanya kalau ia
+        // tidak menggambar apa pun DENGAN CARA MANA PUN.
+        "var bg=getComputedStyle(sv).backgroundImage;if(bg&&bg!=='none')isi++;" +
+        "sv.querySelectorAll('path,circle,ellipse').forEach(function(el){" +
+        "try{var b=el.getBBox();if(b.width>1&&b.height>0.5)isi++;}catch(e){}});" +
+        "if(!isi)kosong.push((sv.getAttribute('class')||'').replace('divider-ornament','').trim()||'(tanpa kelas)');});" +
+        "return JSON.stringify({n:n,kosong:kosong});})()",
+      returnByValue: true
+    });
+    try {
+      const o = JSON.parse((orn.result.result || {}).value || '{"n":0,"kosong":[]}');
+      if (o.n === 0) {
+        lap.ingat('tidak ada .divider-ornament', 'tema ini memakai bentuk pembatas lain — lewati');
+      } else if (o.kosong.length) {
+        lap.gagal(o.kosong.length + ' dari ' + o.n + ' ornamen pembatas tidak menggambar apa pun',
+          [...new Set(o.kosong)].join(', ') + ' — periksa atribut d pada <svg>-nya; d yang salah tidak melempar galat');
+      } else {
+        lap.ok(o.n + ' ornamen pembatas semuanya menggambar');
+      }
+    } catch (e) {
+      lap.ingat('pemeriksaan ornamen pembatas tidak bisa dibaca', String(e.message || e));
+    }
   } finally {
     await tutup();
   }
