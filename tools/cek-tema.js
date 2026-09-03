@@ -135,12 +135,43 @@ const TOKEN_PALET = [
 ];
 
 // Berkas contoh yang dicari demo-template.js di templates/_demo/<tema>/.
+// WebP sejak 2026-09-04 (tools/kompres-demo.js): 16,6 MB -> 11,7 MB untuk
+// 150 berkas, tanpa satu piksel pun diubah ukurannya. Daftar ini HARUS
+// sama persis dengan peta FOTO/SAMPUL di assets/demo-template.js —
+// kalau ketinggalan, kegagalannya senyap: kalauGambarAda() memang
+// dirancang mendiamkan berkas yang tidak ada, jadi yang terlihat cuma
+// pratinjau dengan slot kosong tanpa satu pun pesan galat.
 const BERKAS_DEMO = [
-  'sampul.jpg', 'utama.jpg', 'pria.jpg', 'wanita.jpg',
-  'galeri-1.jpg', 'galeri-2.jpg', 'galeri-3.jpg',
-  'galeri-4.jpg', 'galeri-5.jpg', 'galeri-6.jpg',
-  'musik.mp3'
+  'sampul.webp', 'utama.webp', 'pria.webp', 'wanita.webp',
+  'galeri-1.webp', 'galeri-2.webp', 'galeri-3.webp',
+  'galeri-4.webp', 'galeri-5.webp', 'galeri-6.webp'
 ];
+
+// Musik contoh TIDAK ada di sini lagi. Sejak 2026-09-04 ketiga lagunya
+// dipakai bersama dari templates/_demo/_musik/ (dulu 15 salinan dari 3
+// berkas, 12,7 MB duplikat murni), dan yang menentukan tema mana memakai
+// yang mana adalah peta MUSIK_TEMA di assets/demo-template.js. Yang
+// diperiksa di bawah karena itu bukan lagi "ada berkas musik.mp3 di
+// folder tema", melainkan "berkas yang ditunjuk peta itu benar ada".
+const MUSIK_DIR = ['templates', '_demo', '_musik'];
+
+// Peta MUSIK_TEMA dibaca langsung dari sumbernya supaya alat ini tidak
+// bisa memeriksa versi yang sudah usang. Kalau bentuk petanya berubah dan
+// tidak terbaca lagi, yang terjadi bukan diam — pemeriksaannya melaporkan
+// tema yang tidak terdaftar, dan itu terlihat.
+let _petaMusik = null;
+function petaMusik() {
+  if (_petaMusik) return _petaMusik;
+  _petaMusik = {};
+  const src = fs.readFileSync(path.join(REPO, 'assets', 'demo-template.js'), 'utf8');
+  const blok = /var\s+MUSIK_TEMA\s*=\s*\{([\s\S]*?)\}/.exec(src);
+  if (blok) {
+    const re = /'([^']+)'\s*:\s*'([^']+)'/g;
+    let m;
+    while ((m = re.exec(blok[1]))) _petaMusik[m[1]] = m[2];
+  }
+  return _petaMusik;
+}
 
 // ============================================================
 // Pengumpul hasil
@@ -284,6 +315,24 @@ function periksaBerkas(tema, katalog, lap) {
     kurang.length
       ? lap.gagal('berkas contoh kurang ' + kurang.length + '/' + BERKAS_DEMO.length, kurang.join(', '))
       : lap.ok('berkas contoh pratinjau lengkap (' + BERKAS_DEMO.length + ')');
+  }
+
+  // --- musik contoh (dipakai bersama, lihat catatan di MUSIK_DIR) ---
+  //
+  // Petanya dibaca dari assets/demo-template.js, BUKAN disalin ke sini.
+  // Salinan daftar adalah cara paling pasti supaya alat ini suatu saat
+  // memeriksa hal yang sudah tidak benar lagi.
+  {
+    const berkasMusik = petaMusik()[tema.nama];
+    if (!berkasMusik) {
+      lap.ingat('tema ini belum terdaftar di MUSIK_TEMA',
+        'ia akan memakai MUSIK_BAWAAN — tidak rusak, tapi lagunya mungkin bukan yang kamu maksud');
+    } else if (!ada(path.join(REPO, ...MUSIK_DIR, berkasMusik))) {
+      lap.gagal('musik contoh tidak ada: ' + berkasMusik,
+        'MUSIK_TEMA di assets/demo-template.js menunjuk berkas yang tidak ada di templates/_demo/_musik/');
+    } else {
+      lap.ok('musik contoh ada (' + berkasMusik + ')');
+    }
   }
 
   // --- potret basi ---

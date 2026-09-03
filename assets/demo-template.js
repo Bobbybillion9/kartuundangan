@@ -44,18 +44,50 @@
 
   // Nama berkas yang dicari. Ubah di sini kalau nama berkasnya berbeda.
   var FOTO = {
-    foto_utama: 'utama.jpg',
-    foto_pria: 'pria.jpg',
-    foto_wanita: 'wanita.jpg',
-    foto_galeri_1: 'galeri-1.jpg',
-    foto_galeri_2: 'galeri-2.jpg',
-    foto_galeri_3: 'galeri-3.jpg',
-    foto_galeri_4: 'galeri-4.jpg',
-    foto_galeri_5: 'galeri-5.jpg',
-    foto_galeri_6: 'galeri-6.jpg'
+    foto_utama: 'utama.webp',
+    foto_pria: 'pria.webp',
+    foto_wanita: 'wanita.webp',
+    foto_galeri_1: 'galeri-1.webp',
+    foto_galeri_2: 'galeri-2.webp',
+    foto_galeri_3: 'galeri-3.webp',
+    foto_galeri_4: 'galeri-4.webp',
+    foto_galeri_5: 'galeri-5.webp',
+    foto_galeri_6: 'galeri-6.webp'
   };
-  var SAMPUL = 'sampul.jpg';
-  var MUSIK = 'musik.mp3';
+  var SAMPUL = 'sampul.webp';
+
+  // Musik contoh: TIGA berkas untuk lima belas tema.
+  //
+  // Sampai 2026-09-04 tiap tema menyimpan musik.mp3-nya sendiri — 15
+  // berkas, 15,8 MB, padahal isinya cuma tiga lagu berbeda (dicek dengan
+  // md5: 5 tema memakai lagu yang sama, 3 tema lagu kedua, 7 tema lagu
+  // ketiga). 12,7 MB di antaranya duplikat murni yang ikut di setiap
+  // clone dan setiap deploy.
+  //
+  // Peta ini disengaja EKSPLISIT, bukan ditebak dari kategori: tema baru
+  // yang lupa didaftarkan tetap dapat MUSIK_BAWAAN, jadi tidak ada
+  // pratinjau yang kehilangan tombol musiknya diam-diam. Kalau suatu
+  // saat sebuah tema perlu lagunya sendiri, taruh berkasnya di
+  // templates/_demo/_musik/ dan tunjuk di sini.
+  var MUSIK_DIR = '../../_demo/_musik/';
+  var MUSIK_TEMA = {
+    'emerald-dusk': 'musik-1.mp3',
+    'giok-langit': 'musik-1.mp3',
+    'noir-dore': 'musik-1.mp3',
+    'shuangxi-merah': 'musik-1.mp3',
+    'tinta-emas': 'musik-1.mp3',
+    'blanc-royale': 'musik-2.mp3',
+    'bordeaux': 'musik-2.mp3',
+    'ivory-gold': 'musik-2.mp3',
+    'nur-lazuardi': 'musik-3.mp3',
+    'nur-sakinah': 'musik-3.mp3',
+    'nur-zamrud': 'musik-3.mp3',
+    'pura-bentar': 'musik-3.mp3',
+    'sage-rose': 'musik-3.mp3',
+    'sekar-jagad': 'musik-3.mp3',
+    'songket-saga': 'musik-3.mp3'
+  };
+  var MUSIK_BAWAAN = 'musik-3.mp3';
 
   function dataAsliSudahMasuk() {
     return window.__KU_DATA_ASLI === true;
@@ -136,7 +168,7 @@
     var audio = document.getElementById('bgMusic');
     var tombol = document.getElementById('musicBtn');
     if (!audio) return;
-    var url = BASIS + MUSIK;
+    var url = MUSIK_DIR + (MUSIK_TEMA[tema] || MUSIK_BAWAAN);
 
     // Berkas audio tidak bisa "diuji" dengan Image(), jadi dipasang lalu
     // ditarik lagi kalau ternyata tidak bisa dimuat. Tombolnya baru

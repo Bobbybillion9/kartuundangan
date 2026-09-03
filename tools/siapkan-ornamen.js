@@ -196,7 +196,7 @@ const ORNAMEN = [
   {
     keluaran: 'sudut-bunga-emas.webp',
     sumber: 'CORNER ORNAMENT/CORNER (9).png',
-    lebar: 420, mutu: 0.88, alpha: true,
+    lebar: 312, mutu: 0.88, alpha: true,
     catatan: 'bunga emas bergaya ukiran, lebih lembut dari baroque'
   },
 
@@ -216,7 +216,7 @@ const ORNAMEN = [
   {
     keluaran: 'segel-mawar-merah.webp',
     sumber: 'WAX SEALS/WAX STAMPS (27).png',
-    lebar: 360, mutu: 0.9, alpha: true,
+    lebar: 228, mutu: 0.9, alpha: true,
     catatan: 'segel merah bermotif mawar'
   },
   {
@@ -238,7 +238,7 @@ const ORNAMEN = [
   {
     keluaran: 'bebas-bulu-emas.webp',
     sumber: 'FREE ORNAMENT/590534569878681499-removebg-preview.png',
-    lebar: 260, mutu: 0.9, alpha: true,
+    lebar: 252, mutu: 0.9, alpha: true,
     catatan: 'bulu tulis emas — untuk bagian Ucapan & Doa'
   },
   {
@@ -272,7 +272,7 @@ const ORNAMEN = [
   {
     keluaran: 'karangan-bunga-emas.webp',
     sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/Ақбота-removebg-preview.png',
-    lebar: 420, mutu: 0.9, alpha: true,
+    lebar: 360, mutu: 0.9, alpha: true,
     catatan: 'karangan bunga krem-emas melingkar berpita'
   },
 
@@ -294,7 +294,7 @@ const ORNAMEN = [
   {
     keluaran: 'ikon-gelas-emas.webp',
     sumber: 'FREE ORNAMENT/Watercolor_Floral_Champagne_Glasses_Clipart__Wedding_PNGs__300DPI_-removebg-preview.png',
-    lebar: 240, mutu: 0.9, alpha: true,
+    lebar: 234, mutu: 0.9, alpha: true,
     catatan: 'sepasang gelas berhias bunga krem — ikon Resepsi'
   },
   {
@@ -327,7 +327,7 @@ const ORNAMEN = [
   {
     keluaran: 'garis-c.webp',
     sumber: 'LINE ORNAMENT/Gold Line Divider Ornament, Divider, Line Dividers, Line PNG Transparent Clipart Image and PSD File for Free Download.jpg',
-    lebar: 736, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    lebar: 645, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
     catatan: 'garis halus bermotif tengah kecil — pembatas sedang'
   },
   // garis-d.webp DIHAPUS 2026-09-01 atas perintah user ("ornamen yang
@@ -371,19 +371,19 @@ const ORNAMEN = [
   {
     keluaran: 'bebas-anggur-merah.webp',
     sumber: 'FREE ORNAMENT/3940718419666726-removebg-preview.png',
-    lebar: 300, mutu: 0.9, alpha: true, pangkas: true,
+    lebar: 156, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'dua gelas anggur MERAH bersulang — ikon Resepsi, sekaligus tanda tangan tema Bordeaux'
   },
   {
     keluaran: 'bebas-merpati-cincin.webp',
     sumber: 'FREE ORNAMENT/211174978693952-removebg-preview.png',
-    lebar: 320, mutu: 0.9, alpha: true, pangkas: true,
+    lebar: 198, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'dua merpati mengangkat sepasang cincin — ikon Akad Nikah'
   },
   {
     keluaran: 'fleur-de-lis-emas.webp',
     sumber: 'FREE ORNAMENT/10625749120124463-removebg-preview.png',
-    lebar: 200, mutu: 0.9, alpha: true, pangkas: true,
+    lebar: 102, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'fleur-de-lis emas — penanda tiap bagian Bordeaux (pengganti angka Romawi)'
   },
   {
@@ -502,13 +502,13 @@ const ORNAMEN = [
   {
     keluaran: 'segel-bulan-hijau.webp',
     sumber: 'WAX SEALS/WAX STAMPS (11).png',
-    lebar: 340, mutu: 0.9, alpha: true, pangkas: true,
+    lebar: 192, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'segel lilin hijau tua bermotif bulan sabit & bintang'
   },
   {
     keluaran: 'lingkar-kaligrafi-emas.webp',
     sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/Myriam_Campo_-removebg-preview.png',
-    lebar: 420, mutu: 0.9, alpha: true, pangkas: true,
+    lebar: 306, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'lingkaran emas tipis berjuntai sapuan kaligrafis — latar monogram Islami'
   },
 
@@ -543,13 +543,13 @@ const ORNAMEN = [
   {
     keluaran: 'garis-islami-emas.webp',
     sumber: 'UNDUHAN CLAUDE/garis-islami-emas.jpg',
-    lebar: 520, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    lebar: 260, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
     catatan: 'pembatas mendatar arabesque emas — kategori Islami belum punya pembatas sendiri'
   },
   {
     keluaran: 'lingkar-medali-emas.webp',
     sumber: 'UNDUHAN CLAUDE/lingkar-medali-emas.jpg',
-    lebar: 420, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
+    lebar: 354, mutu: 0.9, alpha: true, hapusLatarPucat: true, pangkas: true,
     catatan: 'medali lingkar emas bertengah kosong — bingkai monogram'
   },
   {
@@ -563,7 +563,7 @@ const ORNAMEN = [
   {
     keluaran: 'xi-ganda-emas.webp',
     sumber: 'UNDUHAN CLAUDE/xi-ganda-emas.png',
-    lebar: 420, mutu: 0.9, alpha: true, hapusLatarGelap: true, pangkas: true,
+    lebar: 96, mutu: 0.9, alpha: true, hapusLatarGelap: true, pangkas: true,
     catatan: 'aksara 囍 (shuangxi/kebahagiaan ganda) emas — lambang paling khas pernikahan Tionghoa'
   },
   {
@@ -590,7 +590,7 @@ const ORNAMEN = [
   {
     keluaran: 'garis-cina-emas.webp',
     sumber: 'UNDUHAN CLAUDE/garis-cina-emas.jpg',
-    lebar: 520, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
+    lebar: 288, mutu: 0.92, alpha: true, hapusPutih: true, pangkas: true,
     // hapusPutih, BUKAN hapusLatarPucat: garisnya sangat tipis dan
     // latarnya putih rata. hapusPutih mengurai balik campuran tintanya
     // sehingga garis tetap pekat; kunci kejenuhan akan memudarkannya.
@@ -644,13 +644,13 @@ const ORNAMEN = [
   {
     keluaran: 'bebas-gunungan-emas.webp',
     sumber: 'FREE ORNAMENT/292311832084344705-removebg-preview.png',
-    lebar: 320, mutu: 0.9, alpha: true, pangkas: true,
+    lebar: 174, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'gunungan wayang emas berlubang — lambang pembuka pertunjukan, ikon tema Jawa'
   },
   {
     keluaran: 'bebas-ornamen-bali.webp',
     sumber: 'FREE ORNAMENT/ornamen_bali-removebg-preview.png',
-    lebar: 340, mutu: 0.9, alpha: true, pangkas: true,
+    lebar: 216, mutu: 0.9, alpha: true, pangkas: true,
     catatan: 'ornamen ukir Bali emas melingkar — ikon tema Bali'
   },
 
