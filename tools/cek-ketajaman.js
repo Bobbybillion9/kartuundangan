@@ -107,6 +107,22 @@ function dimensi(file) {
 
 const AMBIL = `(function(){
   var hasil = [];
+  /* Memisah nilai CSS berlapis pada koma TERLUAR saja. split(',')
+     biasa tidak bisa dipakai: satu lapis gradasi mengandung koma di
+     dalam kurungnya sendiri, dan memotongnya di situ menghasilkan
+     lapis palsu yang tidak lagi sejajar dengan daftar ukurannya. */
+  function pisahLapis(v){
+    var out = [], dalam = 0, buf = '';
+    for (var i = 0; i < v.length; i++){
+      var ch = v[i];
+      if (ch === '(') dalam++;
+      else if (ch === ')') dalam--;
+      if (ch === ',' && dalam === 0){ out.push(buf.trim()); buf = ''; }
+      else buf += ch;
+    }
+    if (buf.trim()) out.push(buf.trim());
+    return out;
+  }
   function baca(el, pseudo){
     var s = getComputedStyle(el, pseudo);
     var bi = s.backgroundImage;
@@ -118,13 +134,30 @@ const AMBIL = `(function(){
     if (pseudo && s.content === 'none') return;
     var w = parseFloat(s.width), h = parseFloat(s.height);
     if (!(w > 0) || !(h > 0)) return;
-    var m = bi.match(/_ornamen\\/([^"')]+)/g) || [];
-    hasil.push({
-      berkas: m.map(function(x){ return x.replace('_ornamen/',''); }),
-      w: Math.round(w), h: Math.round(h),
-      size: s.backgroundSize,
-      sel: el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (pseudo || '')
-    });
+    /* Satu catatan per LAPIS, bukan satu per elemen.
+       Sebelumnya seluruh backgroundImage dicatat dengan SATU nilai
+       backgroundSize apa adanya, dan begitu sebuah tema memakai latar
+       berlapis (mis. "linear-gradient(...), url(ornamen)") nilai itu
+       jadi "cover, cover" — yang tidak pernah sama dengan 'cover',
+       sehingga terlukis() jatuh ke cabang terakhirnya dan
+       mengembalikan UKURAN ASLI berkasnya. Rasionya lalu selalu 1,00
+       dan asetnya dilaporkan GAGAL walau sebenarnya dilukis tajam.
+       Itu jawaban yang SALAH, bukan sekadar terlewat — dan alat yang
+       salah lebih berbahaya daripada alat yang diam. */
+    var lapisGambar = pisahLapis(bi);
+    var lapisUkuran = pisahLapis(s.backgroundSize);
+    for (var L = 0; L < lapisGambar.length; L++) {
+      var mm = lapisGambar[L].match(/_ornamen\\/([^"')]+)/);
+      if (!mm) continue;
+      hasil.push({
+        berkas: [mm[1]],
+        w: Math.round(w), h: Math.round(h),
+        /* CSS mengulang daftar background-size secara siklis kalau
+           jumlahnya lebih sedikit daripada jumlah lapis gambarnya. */
+        size: lapisUkuran.length ? lapisUkuran[L % lapisUkuran.length] : 'auto',
+        sel: el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (pseudo || '')
+      });
+    }
   }
   var semua = document.querySelectorAll('*');
   for (var i = 0; i < semua.length; i++){ baca(semua[i], null); baca(semua[i], '::before'); baca(semua[i], '::after'); }

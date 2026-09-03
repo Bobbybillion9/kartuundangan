@@ -114,6 +114,62 @@
          melengkung ke dalam (CSS mask-image) menyatu ke section
          berikutnya. Monogram di bawahnya menumpuk ke atas foto. -->
     <section id="fotoUtama" data-reveal>
+      <!-- MEDALI AWAN — bingkai foto utama, mengikuti acuan yang
+           dikirim user (PREFERENSI DESIGN FOTO H1 SURAT PADA DESIGN
+           SHUANGXI MERAH.jpg): foto dipotong jadi bidang berlobus
+           seperti awan ruyi, dengan satu garis emas menelusurinya
+           sedikit di luar tepinya, ditemani ranting dan peoni emas.
+
+           Bentuknya datang dari <clipPath> di bawah, bukan dari
+           clip-path:polygon(). Polygon hanya bisa lurus antar titik,
+           dan lobus awan yang dibuat dari puluhan titik lurus terbaca
+           bergerigi persis pada ukuran layar HP. clipPathUnits =
+           objectBoundingBox membuatnya ikut melar mengikuti kotak
+           fotonya, jadi tidak ada angka piksel yang perlu dijaga
+           sejalan dengan CSS-nya.
+
+           Garis emasnya SVG terpisah, bukan outline dari clip-path:
+           clip-path memotong, ia tidak punya stroke sama sekali. -->
+      <svg class="sx-awan-def" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+        <defs>
+          <clipPath id="sxAwan" clipPathUnits="objectBoundingBox">
+            <path d="M.5 .03
+                     C.63 .03 .66 .11 .76 .13
+                     C.88 .155 .95 .22 .94 .33
+                     C.93 .43 .88 .48 .90 .58
+                     C.925 .70 .87 .80 .76 .84
+                     C.66 .875 .62 .96 .5 .97
+                     C.38 .96 .34 .875 .24 .84
+                     C.13 .80 .075 .70 .10 .58
+                     C.12 .48 .07 .43 .06 .33
+                     C.05 .22 .12 .155 .24 .13
+                     C.34 .11 .37 .03 .5 .03 Z"/>
+          </clipPath>
+        </defs>
+      </svg>
+      <div class="medali-awan">
+        <!-- Garis emas penelusur. preserveAspectRatio="none" WAJIB: tanpa
+             itu SVG ini menjaga perbandingan 1:1-nya sendiri sementara
+             fotonya dilebarkan mengikuti kolom, dan garisnya berhenti
+             tidak sejajar dengan tepi foto — meleset makin jauh makin
+             lebar layarnya. -->
+        <svg class="sx-awan-garis" viewBox="0 0 200 200" preserveAspectRatio="none" fill="none" aria-hidden="true">
+          <path d="M100 6
+                   C126 6 132 22 152 26
+                   C176 31 190 44 188 66
+                   C186 86 176 96 180 116
+                   C185 140 174 160 152 168
+                   C132 175 124 192 100 194
+                   C76 192 68 175 48 168
+                   C26 160 15 140 20 116
+                   C24 96 14 86 12 66
+                   C10 44 24 31 48 26
+                   C68 22 74 6 100 6 Z"
+                stroke="currentColor" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+        </svg>
+        <span class="sx-ranting" aria-hidden="true"></span>
+        <span class="sx-peoni sx-peoni-a" aria-hidden="true"></span>
+        <span class="sx-peoni sx-peoni-b" aria-hidden="true"></span>
       <div class="hero-photo" data-slot="foto_utama">
         <div class="hero-photo-empty">
           <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -126,6 +182,7 @@
         </div>
         <img class="hero-photo-img" alt="" data-rv="img" style="--d:0;display:none">
         <div class="hero-photo-fade" aria-hidden="true"></div>
+      </div>
       </div>
 
       <!-- Monogram inisial otomatis — dibentuk buatMonogram() di script
@@ -258,46 +315,50 @@
       </div>
 
       <div class="venue" data-rv="text" style="--d:5">
-      <!-- DENAH LOKASI. Menggantikan dua baris alamat telanjang.
-           Bukan peta sungguhan (kita tidak punya koordinatnya sampai
-           user mengisi link maps): denah bergaya yang memberi bagian
-           ini bentuk, dengan tombol yang tetap membuka peta asli. -->
-      <div class="peta" aria-hidden="true">
-        <svg class="peta-denah" viewBox="0 0 320 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g stroke="currentColor" fill="none" opacity=".22">
-            <rect x="14" y="16" width="74" height="44" rx="2" stroke-width="1"/>
-            <rect x="14" y="86" width="74" height="48" rx="2" stroke-width="1"/>
-            <rect x="126" y="16" width="96" height="34" rx="2" stroke-width="1"/>
-            <rect x="126" y="100" width="60" height="34" rx="2" stroke-width="1"/>
-            <rect x="240" y="86" width="66" height="48" rx="2" stroke-width="1"/>
-          </g>
-          <g stroke="currentColor" fill="none" opacity=".38" stroke-width="7" stroke-linecap="round">
-            <path d="M104 4V146"/>
-            <path d="M4 73H316"/>
-          </g>
-          <g stroke="currentColor" fill="none" opacity=".9" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="5 5">
-            <path d="M40 132C40 108 74 104 104 104C140 104 152 92 152 73C152 54 176 46 206 46"/>
-          </g>
-          <circle cx="40" cy="132" r="4" fill="currentColor" opacity=".55"/>
-          <g transform="translate(206 46)">
-            <path d="M0 -26C-8 -26 -14 -20 -14 -12C-14 -3 0 12 0 12C0 12 14 -3 14 -12C14 -20 8 -26 0 -26Z" fill="currentColor" opacity=".92"/>
-            <circle cx="0" cy="-13" r="4.6" fill="var(--card,#fff)"/>
-          </g>
-        </svg>
-        <span class="peta-kompas">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="24" cy="24" r="21" stroke="currentColor" stroke-width="1.2" fill="none"/>
-            <circle cx="24" cy="24" r="15" stroke="currentColor" stroke-width=".8" fill="none" opacity=".5"/>
-            <path d="M24 6L28.5 21.5L24 24L19.5 21.5Z" fill="currentColor"/>
-            <path d="M24 42L19.5 26.5L24 24L28.5 26.5Z" fill="currentColor" opacity=".35"/>
-            <path d="M24 2V6M24 42V46M2 24H6M42 24H46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span class="peta-jarak">Denah menuju lokasi</span>
+      <!-- PINTU GERBANG BERPAKU (zhū mén) — pengganti denah lokasi,
+           permintaan user 2026-09-03: "hapus konsep peta/denah pada
+           surat, diganti dengan memainkan elemen yang identik dengan
+           chinese style, namun tetap elegan".
+
+           Denahnya tidak pernah menerangkan apa pun: ia bukan peta
+           sungguhan — koordinatnya baru ada setelah user mengisi link
+           maps — cuma gambar jalan karangan. Tombol Petunjuk Arah di
+           bawahnya yang benar-benar membuka petanya, dan itu tetap ada.
+
+           Gantinya sepasang daun pintu bercat merah dengan barisan
+           paku emas dan kepala singa berkalung gelang — muka gerbang
+           rumah besar Tionghoa. Untuk bagian yang isinya "di mana
+           acaranya", pintu masuk adalah gambar yang tepat.
+
+           Ketiga tema Tionghoa karena itu memakai benda yang berbeda
+           di bagian yang sama: Tinta Emas gerbang bulan, Giok Langit
+           paviliun beratap, dan yang ini pintu berpaku. Kalau ketiganya
+           memakai lengkungan, ketiganya terbaca sebagai satu tema. -->
+      <div class="gerbang-pintu">
+        <!-- Papan nama di ATAS ambang, bukan di bawah pintu: papan nama
+             rumah Tionghoa memang tergantung di atas kusen, dan yang
+             diletakkan di bawah terbaca sebagai keterangan gambar. -->
+        <div class="plat-lokasi">
+          <p class="peta-eyebrow">Lokasi Acara</p>
+          <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
+          <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
+        </div>
+        <span class="gp-ambang" aria-hidden="true"></span>
+        <div class="gp-daun">
+          <!-- Paku pintu: 6 x 5. Digambar background radial berulang,
+               bukan 30 elemen — 30 span di dalam markup tiap tema
+               adalah 30 tempat sebuah perbaikan bisa terlewat. -->
+          <span class="gp-paku gp-paku-kiri" aria-hidden="true"></span>
+          <span class="gp-paku gp-paku-kanan" aria-hidden="true"></span>
+          <!-- Sepasang gelang pegangan, satu di tiap daun pintu.
+               Inilah yang membuat bidang merah berpaku terbaca sebagai
+               PINTU dan bukan sebagai dinding berhias. -->
+          <span class="gp-gelang gp-gelang-kiri" aria-hidden="true"></span>
+          <span class="gp-gelang gp-gelang-kanan" aria-hidden="true"></span>
+          <!-- Celah tengah: garis gelap tempat kedua daun bertemu. -->
+          <span class="gp-celah" aria-hidden="true"></span>
+        </div>
       </div>
-      <p class="peta-eyebrow">Lokasi Acara</p>
-        <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
-        <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
         <a class="btn-outline" data-slot="lokasi_maps_url" href="https://www.google.com/maps/search/?api=1&query=Gedung+Serbaguna+Bale+Asri+Jl+Melati+No+21+Bandung" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           Petunjuk Arah

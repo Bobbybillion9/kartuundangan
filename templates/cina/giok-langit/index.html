@@ -114,6 +114,27 @@
          melengkung ke dalam (CSS mask-image) menyatu ke section
          berikutnya. Monogram di bawahnya menumpuk ke atas foto. -->
     <section id="fotoUtama" data-reveal>
+      <!-- JENDELA KISI BERLENGKUNG — pengganti foto lebar penuh bertepi
+           bergigi, permintaan user 2026-09-03: "frame foto H1 bagian
+           paling atas ganti dengan frame bingkai foto Chinese style".
+
+           Bentuknya sengaja BUKAN lingkaran. Tinta Emas sudah memakai
+           jendela bulan, dan dua tema Tionghoa yang sama-sama memotong
+           foto utamanya jadi lingkaran akan terbaca kembar di kartu
+           tema — di situ yang terlihat cuma siluetnya. Yang ini
+           berlengkung di kepala, lurus di kaki, dengan blok kisi
+           huiwen di kedua bahunya: siluet jendela kisi taman, bukan
+           bulan.
+
+           Keempat span hiasan HARUS di luar .hero-photo:
+           assets/foto-penuh.css mematikan ::before DAN ::after milik
+           .hero-photo dengan content:none !important, supaya tidak ada
+           tema yang tertinggal membawa bingkai lamanya. -->
+      <div class="jendela-kisi">
+      <span class="jk-kusen" aria-hidden="true"></span>
+      <span class="jk-fret jk-fret-kiri" aria-hidden="true"></span>
+      <span class="jk-fret jk-fret-kanan" aria-hidden="true"></span>
+      <span class="jk-puncak" aria-hidden="true"></span>
       <div class="hero-photo" data-slot="foto_utama">
         <div class="hero-photo-empty">
           <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -126,6 +147,7 @@
         </div>
         <img class="hero-photo-img" alt="" data-rv="img" style="--d:0;display:none">
         <div class="hero-photo-fade" aria-hidden="true"></div>
+      </div>
       </div>
 
       <!-- Monogram inisial otomatis — dibentuk buatMonogram() di script
@@ -258,46 +280,79 @@
       </div>
 
       <div class="venue" data-rv="text" style="--d:5">
-      <!-- DENAH LOKASI. Menggantikan dua baris alamat telanjang.
-           Bukan peta sungguhan (kita tidak punya koordinatnya sampai
-           user mengisi link maps): denah bergaya yang memberi bagian
-           ini bentuk, dengan tombol yang tetap membuka peta asli. -->
-      <div class="peta" aria-hidden="true">
-        <svg class="peta-denah" viewBox="0 0 320 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g stroke="currentColor" fill="none" opacity=".22">
-            <rect x="14" y="16" width="74" height="44" rx="2" stroke-width="1"/>
-            <rect x="14" y="86" width="74" height="48" rx="2" stroke-width="1"/>
-            <rect x="126" y="16" width="96" height="34" rx="2" stroke-width="1"/>
-            <rect x="126" y="100" width="60" height="34" rx="2" stroke-width="1"/>
-            <rect x="240" y="86" width="66" height="48" rx="2" stroke-width="1"/>
+      <!-- PAVILIUN (tíng) — pengganti denah lokasi, permintaan user
+           2026-09-03: "hapus konsep peta/denah pada surat, diganti
+           dengan memainkan elemen yang identik dengan chinese style,
+           namun tetap elegan".
+
+           Denahnya tidak pernah menerangkan apa pun: ia bukan peta
+           sungguhan — kita belum punya koordinatnya sampai user mengisi
+           link maps — cuma gambar jalan karangan. Tombol Petunjuk Arah
+           di bawahnya yang benar-benar membuka petanya, dan tombol itu
+           tetap ada.
+
+           Gantinya paviliun taman: atap bergenteng dengan sudut
+           menjungkit, dan papan nama lak yang tergantung di bawah
+           cucuran atapnya. Untuk bagian yang isinya "di mana acaranya",
+           papan nama di bawah atap adalah benda yang tepat — itu memang
+           cara sebuah tempat menyebut namanya sendiri.
+
+           Sengaja BUKAN gerbang: Tinta Emas memakai gerbang bulan, dan
+           dua tema Tionghoa yang sama-sama membingkai nama gedung dengan
+           lengkungan akan terbaca sebagai satu tema yang diulang. -->
+      <div class="paviliun">
+        <svg class="pav-atap" viewBox="0 0 320 92" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Atap digambar sebagai SILUET TERISI, bukan sebagai garis.
+               Percobaan pertama menggambarnya dengan stroke 2px: pada
+               lebar 340px atap itu jadi tiga guratan tipis yang terbaca
+               seperti busur panah, bukan seperti atap. Yang membuat
+               atap Tionghoa dikenali seketika adalah BIDANGNYA yang
+               berat dengan empat sudut menjungkit — dan bidang berat
+               hanya bisa datang dari fill. -->
+          <path d="M46 22 H274
+                   C298 32 312 44 318 28
+                   C320 46 306 58 286 63
+                   C244 70 200 72 160 72
+                   C120 72 76 70 34 63
+                   C14 58 0 46 2 28
+                   C8 44 22 32 46 22 Z"
+                fill="currentColor" opacity=".95"/>
+          <!-- Genteng: guratan terang DI ATAS bidang atap, mengikuti
+               kemiringannya. Warnanya bidang terang panel, bukan emas —
+               emas di sini menabrak papan nama emas di bawahnya. -->
+          <g stroke="#F7FAF6" stroke-width="1.2" opacity=".42" stroke-linecap="round">
+            <path d="M66 24 C56 38 46 52 40 62"/>
+            <path d="M104 23 C98 36 92 52 90 68"/>
+            <path d="M160 22 V72"/>
+            <path d="M216 23 C222 36 228 52 230 68"/>
+            <path d="M254 24 C264 38 274 52 280 62"/>
           </g>
-          <g stroke="currentColor" fill="none" opacity=".38" stroke-width="7" stroke-linecap="round">
-            <path d="M104 4V146"/>
-            <path d="M4 73H316"/>
+          <!-- Bubungan: balok tipis di punggung atap. -->
+          <path d="M46 22 H274" stroke="#F7FAF6" stroke-width="2.6" opacity=".5" stroke-linecap="round"/>
+          <!-- Mustaka labu di puncak. Bentuk lamanya salib kecil, dan
+               salib di atas atap Tionghoa membaca sebagai gereja. -->
+          <g stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round">
+            <path d="M46 22 C40 14 44 8 52 9"/>
+            <path d="M274 22 C280 14 276 8 268 9"/>
           </g>
-          <g stroke="currentColor" fill="none" opacity=".9" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="5 5">
-            <path d="M40 132C40 108 74 104 104 104C140 104 152 92 152 73C152 54 176 46 206 46"/>
-          </g>
-          <circle cx="40" cy="132" r="4" fill="currentColor" opacity=".55"/>
-          <g transform="translate(206 46)">
-            <path d="M0 -26C-8 -26 -14 -20 -14 -12C-14 -3 0 12 0 12C0 12 14 -3 14 -12C14 -20 8 -26 0 -26Z" fill="currentColor" opacity=".92"/>
-            <circle cx="0" cy="-13" r="4.6" fill="var(--card,#fff)"/>
-          </g>
+          <!-- Balok gantung: tempat tali papan nama diikat. -->
+          <path d="M52 84 H268" stroke="currentColor" stroke-width="2.6" opacity=".8" stroke-linecap="round"/>
         </svg>
-        <span class="peta-kompas">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="24" cy="24" r="21" stroke="currentColor" stroke-width="1.2" fill="none"/>
-            <circle cx="24" cy="24" r="15" stroke="currentColor" stroke-width=".8" fill="none" opacity=".5"/>
-            <path d="M24 6L28.5 21.5L24 24L19.5 21.5Z" fill="currentColor"/>
-            <path d="M24 42L19.5 26.5L24 24L28.5 26.5Z" fill="currentColor" opacity=".35"/>
-            <path d="M24 2V6M24 42V46M2 24H6M42 24H46" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          </svg>
-        </span>
-        <span class="peta-jarak">Denah menuju lokasi</span>
+        <!-- Papan nama lak yang tergantung di bawah balok atap.
+             Kedua talinya diletakkan DI DALAM papan, bukan sebagai
+             saudaranya: tinggi atap ikut lebar layar (SVG-nya
+             berbanding tetap) dan tinggi papan ikut panjang nama
+             gedung, jadi tali yang dipatok dari tepi paviliun akan
+             melayang lepas di lebar layar tertentu. Dipatok dari tepi
+             ATAS papan, ia selalu menyambung. -->
+        <div class="plat-lokasi">
+          <span class="pav-tali pav-tali-kiri" aria-hidden="true"></span>
+          <span class="pav-tali pav-tali-kanan" aria-hidden="true"></span>
+          <p class="peta-eyebrow">Lokasi Acara</p>
+          <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
+          <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
+        </div>
       </div>
-      <p class="peta-eyebrow">Lokasi Acara</p>
-        <p class="venue-name" data-slot="lokasi_nama">Gedung Serbaguna Bale Asri</p>
-        <p class="venue-address" data-slot="lokasi_alamat">Jl. Melati No. 21, Bandung</p>
         <a class="btn-outline" data-slot="lokasi_maps_url" href="https://www.google.com/maps/search/?api=1&query=Gedung+Serbaguna+Bale+Asri+Jl+Melati+No+21+Bandung" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           Petunjuk Arah

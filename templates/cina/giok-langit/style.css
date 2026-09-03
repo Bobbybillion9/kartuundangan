@@ -954,3 +954,284 @@ section{position:relative;padding:var(--s6) var(--s4);}
   --kal-tanda-radius:var(--kipas);
   --kal-tanda-inset:2%;
 }
+
+/* ============================================================
+   REVISI 2026-09-03 — permintaan user untuk Giok Langit
+   ------------------------------------------------------------
+   Empat hal: sapaan di amplop dibuang, foto utama dibingkai jendela
+   kisi, latar dalam surat memakai ornamen Tionghoa yang dikirim user,
+   dan denah lokasi diganti paviliun.
+
+   Ditulis sebagai lapisan di KAKI berkas, bukan disisipkan ke aturan
+   aslinya, dengan alasan yang sama seperti Tinta Emas: yang di atas
+   masih dipakai apa adanya oleh cek-tema.js dan potret-tema.js, dan
+   menyunting aturan lama di tempatnya membuat perbandingan sebelum/
+   sesudah hilang dari git diff.
+   ============================================================ */
+
+:root{
+  /* --- AMPLOP ---
+     Kertasnya dulu var(--kisi): pola huiwen 56-90px yang DIULANG
+     sepenuh layar. Pola berulang sekuat itu adalah satu-satunya hal
+     yang terbaca di layar pertama — persis keluhan user pada Shuangxi.
+     Diganti gambar tunggal yang ornamennya berkumpul di kepala dan
+     kaki, dengan tengah yang sengaja kosong supaya segel lilin punya
+     tempat berdiri. */
+  --amplop-kertas:url('/templates/_ornamen/latar-cina-giok-amplop.webp');
+  --amplop-kertas-ukuran:cover;
+  --amplop-kertas-posisi:center;
+  --amplop-kertas-ulang:no-repeat;
+  --amplop-warna:#16302A;
+  --amplop-latar:#0E211C;
+
+  /* "Kepada Yth. / Tamu Undangan" DIMATIKAN atas permintaan user:
+     kalimat itu sudah tertulis di sampul (.cover-guest), dan dua layar
+     berturut-turut yang membuka dengan kalimat yang sama terbaca
+     seperti salah cetak, bukan seperti dua tahap. */
+  --amplop-tulisan-tampil:none;
+
+  /* Tutup RUYI — tepi bawahnya bergelombang awan. Bentuk lamanya
+     bergigi tajam (zigzag lima puncak) dan di atas kertas bergambar ia
+     terbaca seperti kertas yang sobek, bukan seperti tutup yang
+     dilipat. */
+  --amplop-tutup-bentuk:polygon(
+    0 0, 100% 0, 100% 58%,
+    91% 58%, 87% 70%, 78% 72%, 73% 61%,
+    62% 65%, 56% 79%, 50% 87%, 44% 79%, 38% 65%,
+    27% 61%, 22% 72%, 13% 70%, 9% 58%, 0 58%);
+  --amplop-tutup-tinggi:44%;
+  /* Tutupnya nyaris tidak digelapkan: kertasnya sekarang bergambar,
+     dan menggelapkan separuh atasnya membuat sakura emas di kepala
+     hilang justru di bagian yang paling bagus. */
+  --amplop-tutup-gelap:.08;
+  --amplop-lipat-tampil:none;
+
+  /* Halo di belakang segel dinaikkan. Segel giok kebiruan di atas
+     hijau tua adalah pasangan warna yang paling lemah kontrasnya di
+     antara dua belas amplop; halo yang lebih terang itulah yang
+     memisahkannya dari kertas. */
+  --amplop-halo:radial-gradient(circle,rgba(214,232,214,.30),rgba(214,232,214,0) 60%);
+  --amplop-tinta:#EBE0BC;
+  --amplop-garis:rgba(198,166,92,.55);
+  --amplop-kabut:linear-gradient(to top,rgba(14,33,28,.88),rgba(14,33,28,0));
+
+  /* SURAT yang naik keluar dari amplop: kertas gading hangat dengan
+     pembatas emas di kepala & kakinya. Bukan putih murni — di antara
+     amplop hijau tua dan sampul berfoto gelap, putih murni adalah
+     kilatan terang yang membuat mata menyipit tepat di tengah adegan. */
+  --surat-kertas:#F6F1DF;
+  --surat-tinta:#1E3A31;
+  --surat-aksen:#2E5F52;
+  --surat-garis:rgba(46,95,82,.40);
+  --surat-hias:url('/templates/_ornamen/garis-cina-emas.webp');
+
+  /* --- FOTO UTAMA: bentuk JENDELA KISI ---
+     Lengkung di kepala, lurus di kaki. Radius ditulis dengan sintaks
+     dua sumbu (a/b) supaya lengkungnya tetap setengah lingkaran penuh
+     berapa pun lebar layarnya: dengan satu nilai saja, lengkungnya
+     memipih jadi oval begitu fotonya lebih tinggi daripada lebar. */
+  --fp-hero-bentuk:none;
+  --fp-hero-radius:50% 50% 4px 4px / 34% 34% 3px 3px;
+  --fp-hero-rasio:3 / 4;
+  --fp-hero-rasio-lebar:3 / 4;
+
+  /* Latar dalam surat, dari berkas yang dikirim user. Dipakai sebagai
+     latar HALAMAN, bukan latar tiap bagian: satu gambar yang diulang
+     per-section akan menampilkan cincin emasnya berkali-kali menurun
+     ke bawah halaman, dan yang terbaca bukan kertas melainkan ubin. */
+  --latar-giok:url('/templates/_ornamen/latar-cina-giok-lingkar.webp');
+  --latar-taman:url('/templates/_ornamen/latar-cina-giok-taman.webp');
+
+  --giok-gelap:#123128;
+  --giok-terang:#F7FAF6;
+}
+
+/* --- HIJAU TUA + BRIGHT MODE ---
+   Halaman ini SUDAH bertubuh terang (body:var(--ivory)) dan itu tidak
+   diubah: seluruh warna teksnya tinta gelap, dan membalik badannya jadi
+   hijau tua berarti menyetel ulang tiap bagian satu per satu — dengan
+   kepastian ada satu yang tertinggal dan terbaca hitam di atas hijau.
+
+   Yang dilakukan sebaliknya: dua bagian dijadikan PITA GELAP selebar
+   layar dengan latar ornamen kiriman user, sehingga temanya berselang
+   hijau tua <-> terang, bukan satu nada dari atas sampai bawah. Yang
+   dipilih jadi pita bukan sembarang bagian:
+     #fotoUtama — jendela butuh TEMBOK. Jendela kisi yang berdiri di
+       atas kertas gading terbaca seperti stiker; yang sama persis di
+       atas bidang hijau tua terbaca seperti bukaan pada dinding.
+     #penutup  — penutup memang tempatnya hari meredup.
+
+   full-bleed lewat margin negatif + padding sepadan, bukan width:100vw:
+   100vw menghitung lebar termasuk batang gulir, dan pada desktop itu
+   memunculkan gulir mendatar beberapa piksel yang sulit dilacak. */
+#fotoUtama,
+#penutup{
+  background-color:var(--giok-gelap);
+  background-image:linear-gradient(rgba(10,26,22,.55),rgba(10,26,22,.55)),var(--latar-giok);
+  background-size:cover,cover;
+  background-position:center,center;
+  background-repeat:no-repeat,no-repeat;
+}
+
+/* Teks di dalam pita gelap. Ditulis eksplisit per elemen, bukan
+   diwariskan dari satu color pada section-nya: warna judul, paragraf
+   dan eyebrow di tema ini masing-masing disetel di aturannya sendiri,
+   jadi color pada induknya tidak sampai ke mana pun. */
+#penutup h2,
+#penutup .section-title{color:#F3EFDD;}
+#penutup p,
+#penutup .eyebrow{color:rgba(243,239,221,.82);}
+#penutup .section-divider{opacity:.9;}
+
+/* Monogram di bawah jendela ikut terang, kalau tidak inisialnya hijau
+   tua di atas hijau tua. */
+#fotoUtama .monogram-letters,
+#fotoUtama .hero-monogram{color:#EFE6C4;}
+#fotoUtama .hero-monogram-ring circle,
+#fotoUtama .hero-monogram-ring path,
+#fotoUtama .hero-monogram-ring ellipse{stroke:#EFE6C4;}
+
+/* --- JENDELA KISI: bingkai foto utama ---
+   assets/foto-penuh.css melebarkan .hero-photo sepenuh kolom dengan
+   width:100% !important dan mematikan padding section-nya. Wadah ini
+   yang mengembalikan lebarnya jadi terukur; fotonya sendiri tetap
+   dibentuk --fp-hero-* supaya kontrak modulnya tidak dilanggar. */
+#fotoUtama{padding-top:var(--s6);padding-bottom:var(--s5);}
+.jendela-kisi{
+  position:relative;
+  width:min(268px,72%);
+  margin:0 auto;
+}
+
+/* KUSEN — dua cincin sejajar mengikuti lengkung jendela.
+   box-shadow inset, bukan dua elemen bertumpuk: dua elemen yang
+   radiusnya dihitung sendiri-sendiri akan meleset sepersekian piksel
+   pada lebar layar tertentu, dan yang terlihat garis latar menyelinap
+   di antara keduanya. */
+.jk-kusen{
+  position:absolute;inset:-12px;
+  border-radius:50% 50% 6px 6px / 34% 34% 4px 4px;
+  border:1.5px solid rgba(198,166,92,.9);
+  box-shadow:inset 0 0 0 5px rgba(18,49,40,.9),
+             inset 0 0 0 6px rgba(198,166,92,.5),
+             0 24px 44px -26px rgba(6,20,16,.75);
+  pointer-events:none;
+}
+
+/* BLOK KISI HUIWEN di kedua bahu jendela — bukan di keempat sudut.
+   Sudut bawah jendela ini menempel ke kaki bidangnya; ornamen di sana
+   tidak terbaca sebagai bagian kusen, cuma sebagai dua bercak yang
+   tertinggal. Kisinya digambar gradasi bergaris, bukan gambar: pola
+   siku-siku sesederhana ini tetap tajam di DPI berapa pun dan tidak
+   menambah satu permintaan jaringan pun. */
+.jk-fret{
+  /* Duduk di BAHU jendela — tempat lengkung kepala bertemu sisi tegak
+     — bukan di sudut kotak pembatasnya. Di sudut kotak, kusennya sudah
+     melengkung menjauh, jadi bloknya menggantung terpisah dengan ruang
+     kosong di antaranya dan terbaca seperti ornamen yang lupa
+     ditempelkan. --fp-hero-radius menyetel lengkung itu berakhir di
+     34% tinggi, dan angka di bawah mengikutinya. */
+  position:absolute;top:30%;
+  width:34px;height:34px;
+  border:1.5px solid rgba(198,166,92,.9);
+  background:
+    linear-gradient(rgba(198,166,92,.9) 1.5px,transparent 1.5px) 0 8px/100% 8px repeat-y,
+    linear-gradient(90deg,rgba(198,166,92,.9) 1.5px,transparent 1.5px) 8px 0/8px 100% repeat-x,
+    rgba(18,49,40,.92);
+  pointer-events:none;
+}
+.jk-fret-kiri{left:-26px;border-radius:4px 0 0 4px;}
+.jk-fret-kanan{right:-26px;border-radius:0 4px 4px 0;}
+
+/* PUNCAK — awan emas kecil duduk di kepala lengkungnya. Awan yang sama
+   dipakai di pembatas antar bagian, jadi jendela ini memakai
+   perbendaharaan tema, bukan ornamen yang datang sendiri. */
+.jk-puncak{
+  position:absolute;left:50%;top:-40px;
+  width:92px;height:38px;
+  transform:translateX(-50%);
+  background-image:var(--orn-awan);
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+  opacity:.9;
+  pointer-events:none;
+}
+
+/* Kaki gradasi milik foto-penuh.css dimatikan: ia dibuat untuk foto
+   selebar layar yang menghilang ke warna halaman. Di dalam jendela
+   berkusen ia cuma separuh bawah yang mengabur tanpa sebab. */
+#fotoUtama .hero-photo-fade{display:none;}
+
+/* --- PAVILIUN: pengganti denah lokasi --- */
+.paviliun{
+  position:relative;
+  margin:0 auto var(--s4);
+  padding:var(--s5) var(--s3) var(--s4);
+  max-width:340px;
+  color:var(--giok-tua);
+  /* Bidang TERANG: taman teratai kiriman user, dipucatkan sampai ia
+     jadi udara di belakang papan namanya. Tanpa lapisan pemucat,
+     bambu dan bunganya berebut perhatian dengan nama gedung — dan
+     nama gedung itulah satu-satunya keterangan di bagian ini. */
+  background-image:linear-gradient(rgba(247,250,246,.26),rgba(247,250,246,.52)),var(--latar-taman);
+  background-size:cover,cover;
+  background-position:center,center top;
+  background-repeat:no-repeat,no-repeat;
+  border:1px solid rgba(46,95,82,.28);
+  border-radius:var(--kipas);
+}
+.pav-atap{
+  display:block;
+  width:100%;height:auto;
+  color:var(--giok-tua);
+}
+/* Tali gantungan papan nama. Tingginya tetap (18px) walau papannya
+   bertambah tinggi karena nama gedungnya panjang — tali yang ikut
+   memanjang terbaca seperti papan yang melorot. */
+/* Tali dipatok dari tepi ATAS papan dan menjulur ke atas menembus
+   margin papan sampai ke balok atap. Panjangnya tetap 18px — tali yang
+   ikut memanjang saat nama gedungnya panjang terbaca seperti papan
+   yang melorot. */
+.pav-tali{
+  position:absolute;top:-18px;
+  width:2px;height:19px;
+  background:linear-gradient(rgba(46,95,82,.75),rgba(46,95,82,.4));
+  pointer-events:none;
+}
+.pav-tali-kiri{left:26%;}
+.pav-tali-kanan{right:26%;}
+
+/* PAPAN NAMA LAK — hijau tua berpinggir emas, tergantung di bawah
+   cucuran atap. Inilah satu-satunya bidang gelap di dalam panel
+   terang, jadi mata jatuh ke nama gedung lebih dulu. */
+.paviliun .plat-lokasi{
+  position:relative;
+  margin:20px auto 0;
+  padding:14px 18px 16px;
+  background:linear-gradient(170deg,#26564A,#173A31);
+  border:1px solid rgba(198,166,92,.75);
+  box-shadow:inset 0 0 0 3px rgba(18,49,40,.9),
+             inset 0 0 0 4px rgba(198,166,92,.38),
+             0 16px 28px -18px rgba(10,30,24,.7);
+  border-radius:3px;
+}
+.paviliun .peta-eyebrow{
+  font-family:'Cinzel',Georgia,serif;
+  font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(231,220,182,.75);
+  margin-bottom:6px;
+}
+.paviliun .venue-name{
+  color:#F3E8C4;font-size:16px;margin-bottom:5px;
+}
+.paviliun .venue-address{
+  color:rgba(243,232,196,.78);font-size:13px;margin-bottom:0;
+}
+/* Garis pemisah tipis di bawah nama gedung — sama seperti garis pada
+   papan nama sungguhan, yang memisahkan nama dari alamatnya. */
+.paviliun .venue-name::after{
+  content:'';
+  display:block;
+  width:38px;height:1px;
+  margin:7px auto 6px;
+  background:rgba(198,166,92,.6);
+}

@@ -670,6 +670,60 @@ const ORNAMEN = [
     sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE BLACK BACKGROUND (2).jpg',
     lebar: 736, mutu: 0.74,
     catatan: 'cincin ukir emas berisi siluet gunung di atas hitam, awan emas di kaki — gerbang bulan lokasi Tinta Emas'
+  },
+
+  // --- LATAR TIONGHOA UNTUK GIOK LANGIT & SHUANGXI MERAH (2026-09-03) ---
+  //
+  // Dipilih user dari folder CHINESSE, lalu disaring di sini atas satu
+  // sifat yang menentukan dan tidak kelihatan dari daftar berkas:
+  // APAKAH TENGAHNYA KOSONG. Amplop menaruh segel lilin tepat di pusat
+  // layar, dan latar yang ornamennya sampai ke tengah membuat segel itu
+  // hilang — persis keluhan user soal Shuangxi ("motif terlalu
+  // menonjol, wax seal-nya tidak jelas"). Yang ornamennya berkumpul di
+  // KEPALA dan KAKI saja karena itu yang dipakai untuk amplop; sisanya
+  // untuk bidang yang memang tidak berisi apa-apa di tengah.
+  {
+    keluaran: 'latar-cina-giok-amplop.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE GREEN BACKGROUND (7).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'hijau tua, sakura & lampion emas di kepala, ombak emas di kaki, tengah kosong — amplop Giok Langit'
+  },
+  {
+    keluaran: 'latar-cina-giok-lingkar.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE GREEN BACKGROUND (2).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'hijau zamrud dengan cincin emas tipis & daun ginkgo — latar bidang gelap Giok Langit'
+  },
+  {
+    keluaran: 'latar-cina-giok-taman.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE GREEN BACKGROUND (5).jpg',
+    lebar: 736, mutu: 0.76,
+    catatan: 'jendela kisi berlengkung membingkai taman teratai terang — bidang TERANG Giok Langit'
+  },
+  // Amplop Shuangxi. Sumber lamanya bukan gambar sama sekali melainkan
+  // pola kisi huiwen 56px yang diulang — dan pola berulang sekuat itu
+  // adalah satu-satunya hal yang terbaca di layar pertama.
+  {
+    keluaran: 'latar-cina-merah-amplop.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE RED BACKGROUND (1).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'merah delima bervignet, ombak emas-merah di kaki, tengah tenang — amplop Shuangxi Merah'
+  },
+  // Kepala berkas ini berisi medali biru & sepasang lampion yang
+  // menabrak apa pun yang diletakkan di atasnya; yang dipakai cuma
+  // badan damasknya. Lihat opsi kotak di skripUbah().
+  {
+    keluaran: 'latar-cina-merah-damas.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE RED BACKGROUND (4).jpg',
+    lebar: 736, mutu: 0.72,
+    kotak: { y: 0.30, h: 0.70 },
+    catatan: 'damask merah halus tanpa titik fokus — latar dalam surat Shuangxi Merah'
+  },
+  {
+    keluaran: 'latar-cina-merah-awan.webp',
+    sumber: 'BACKGROUND FULL ORNAMENT/CHINESSE/CHINESSE RED BACKGROUND (6).jpg',
+    lebar: 736, mutu: 0.74,
+    catatan: 'merah dengan cakram kisi emas, lampion gantung & awan emas — kartu tanggal Shuangxi Merah'
   }
 ];
 
@@ -733,7 +787,7 @@ async function cdp() {
 
 // Dijalankan di dalam Chrome: memuat gambar, menggambarnya ke canvas pada
 // ukuran target, lalu mengembalikan hasil WebP sebagai base64.
-function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, hapusLatarPucat, hapusLatarGelap) {
+function skripUbah(url, o) {
   return `(async () => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -744,17 +798,37 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
     });
     // Tidak pernah memperbesar: memperbesar cuma menambah berat tanpa
     // menambah detail, dan pada ornamen justru memperlihatkan tepi kasar.
-    const skala = Math.min(1, ${lebarTarget} / img.naturalWidth);
-    let w = Math.round(img.naturalWidth * skala);
-    let h = Math.round(img.naturalHeight * skala);
+    // --- kotak: POTONG PECAHAN dari gambar sumber, sebelum apa pun ---
+    //
+    // Berbeda dari pangkas, yang membuang margin TRANSPARAN yang
+    // ditemukannya sendiri. Yang ini dipandu tangan, dalam pecahan
+    // 0..1 dari lebar/tinggi sumber, dan dipakai untuk latar penuh yang
+    // bagus BADANNYA tapi punya ornamen besar di satu tepi — medali dan
+    // lampion di kepala CHINESSE RED BACKGROUND (4), misalnya. Ornamen
+    // seperti itu tidak bisa dihindari dari CSS: latar dengan
+    // background-size:cover pada layar 390x844 tetap menariknya masuk,
+    // dan menggesernya dengan background-position cuma memindahkan
+    // masalahnya ke tepi yang lain.
+    const K = ${JSON.stringify(o.kotak || null)};
+    const sx = K ? Math.round(img.naturalWidth  * (K.x || 0)) : 0;
+    const sy = K ? Math.round(img.naturalHeight * (K.y || 0)) : 0;
+    const sw = K ? Math.round(img.naturalWidth  * (K.w != null ? K.w : 1)) : img.naturalWidth;
+    const sh = K ? Math.round(img.naturalHeight * (K.h != null ? K.h : 1)) : img.naturalHeight;
+
+    // Tidak pernah memperbesar: skalanya dihitung dari lebar SESUDAH
+    // dipotong, bukan lebar berkasnya — kalau tidak, memotong setengah
+    // gambar diam-diam menaikkan resolusi keluarannya dua kali lipat.
+    const skala = Math.min(1, ${o.lebar} / sw);
+    let w = Math.round(sw * skala);
+    let h = Math.round(sh * skala);
     const c = document.createElement('canvas');
     c.width = w; c.height = h;
     const g = c.getContext('2d');
     g.imageSmoothingQuality = 'high';
     // Aset tak-transparan diberi alas putih dulu: tanpa itu, JPEG sumber
     // yang punya tepi tipis bisa menghasilkan pinggiran gelap di WebP.
-    if (!${!!alpha} && !${!!hapusPutih} && !${!!hapusLatarPucat} && !${!!hapusLatarGelap}) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
-    g.drawImage(img, 0, 0, w, h);
+    if (!${!!o.alpha} && !${!!o.hapusPutih} && !${!!o.hapusLatarPucat} && !${!!o.hapusLatarGelap}) { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); }
+    g.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
     // Membuang LATAR PUTIH. Seluruh berkas LINE ORNAMENT berupa JPG
     // dengan latar putih pekat — dipakai apa adanya, tiap pembatas akan
     // jadi balok putih di atas kertas krem.
@@ -765,7 +839,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
     // campurannya diurai balik — alpha diambil dari seberapa jauh
     // piksel itu dari putih, lalu warna aslinya dipulihkan dengan
     // membagi balik proporsi campurannya.
-    if (${JSON.stringify(!!hapusPutih)}) {
+    if (${JSON.stringify(!!o.hapusPutih)}) {
       const dp = g.getImageData(0, 0, w, h);
       const q = dp.data;
       for (let i = 0; i < q.length; i += 4) {
@@ -802,7 +876,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
     // di atas kertas krem, tapi muncul jelas sebagai hantu kotak-kotak
     // begitu ornamennya dipakai di tema gelap. Periksa hasilnya di latar
     // GELAP, bukan cuma di latar terang.
-    if (${JSON.stringify(!!hapusLatarPucat)}) {
+    if (${JSON.stringify(!!o.hapusLatarPucat)}) {
       const dq = g.getImageData(0, 0, w, h);
       const u = dq.data;
       for (let i = 0; i < u.length; i += 4) {
@@ -829,7 +903,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
     // menandainya OPAK. Sudah terjadi: dua ornamen Tionghoa keluar
     // dengan kotak hitam pekat mengelilinginya, dan itu baru kelihatan
     // setelah hasilnya dilihat, bukan dari log yang semuanya "berhasil".
-    if (${JSON.stringify(!!hapusLatarGelap)}) {
+    if (${JSON.stringify(!!o.hapusLatarGelap)}) {
       const dr = g.getImageData(0, 0, w, h);
       const v = dr.data;
       for (let i = 0; i < v.length; i += 4) {
@@ -857,8 +931,8 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
     // garis tebal jadi emas tua, sapuan tipis jadi emas muda. Mengganti
     // RGB dengan satu warna rata membuat hasilnya terlihat seperti
     // stiker, bukan seperti tinta.
-    if (${JSON.stringify(!!warnai)}) {
-      const W = ${JSON.stringify(warnai || {})};
+    if (${JSON.stringify(!!o.warnai)}) {
+      const W = ${JSON.stringify(o.warnai || {})};
       const hx = (v) => [parseInt(v.slice(1,3),16), parseInt(v.slice(3,5),16), parseInt(v.slice(5,7),16)];
       const cGelap = hx(W.gelap), cTerang = hx(W.terang);
       const dat = g.getImageData(0, 0, w, h);
@@ -882,7 +956,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
     // 250px menyusut jadi sekitar 60px dan nyaris tidak terlihat.
     // Sesudah dipangkas, perbandingan gambarnya menjadi benar-benar
     // memanjang dan contain memakai lebarnya.
-    if (${!!pangkas}) {
+    if (${!!o.pangkas}) {
       const dq = g.getImageData(0, 0, w, h);
       const qq = dq.data;
       let x0 = w, y0 = h, x1 = -1, y1 = -1;
@@ -904,7 +978,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
         w = lw; h = lh;
       }
     }
-    const url2 = c.toDataURL('image/webp', ${mutu});
+    const url2 = c.toDataURL('image/webp', ${o.mutu});
     if (url2.indexOf('data:image/webp') !== 0) throw new Error('Chrome ini tidak menulis WebP');
     return JSON.stringify({ w: w, h: h, b64: url2.split(',')[1] });
   })()`;
@@ -956,7 +1030,7 @@ function skripUbah(url, lebarTarget, mutu, alpha, warnai, hapusPutih, pangkas, h
     }
     const url = 'http://127.0.0.1:' + port + '/' + o.sumber.split('/').map(encodeURIComponent).join('/');
     const res = await kirim('Runtime.evaluate', {
-      expression: skripUbah(url, o.lebar, o.mutu, o.alpha, o.warnai, o.hapusPutih, o.pangkas, o.hapusLatarPucat, o.hapusLatarGelap),
+      expression: skripUbah(url, o),
       awaitPromise: true, returnByValue: true
     });
     if (res.result && res.result.exceptionDetails) {
