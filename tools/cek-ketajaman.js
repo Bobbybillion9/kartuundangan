@@ -185,12 +185,41 @@ const AMBIL = `(function(){
        salah lebih berbahaya daripada alat yang diam. */
     var lapisGambar = pisahLapis(bi);
     var lapisUkuran = pisahLapis(s.backgroundSize);
+    /* LUBANG KETIGA, ditemukan 2026-09-04 — sejenis dengan dua di atas:
+       alat ini memberi jawaban SALAH, bukan diam.
+
+       Pada lapis dengan background-attachment:fixed, area penempatannya
+       adalah LAYAR, bukan kotak elemennya. Dua tema Islami memakai itu
+       justru supaya latarnya tidak direntang sepanjang #invitation yang
+       tingginya ~9.300 px. Alat ini mengukur kotak elemen apa adanya,
+       jadi ia melaporkan berkas 736x1307 "dilukis 5236x9298" — rasio
+       0,14, GAGAL — padahal yang sebenarnya terjadi ia dilukis 475x844
+       memenuhi layar, rasio 1,55, tajam.
+
+       Kalau vonis itu dipercaya, yang "diperbaiki" justru CSS yang sudah
+       benar, dan latarnya baru betul-betul jadi kabur sesudahnya.
+
+       Satu batas yang perlu diketahui: 'fixed' berperilaku seperti
+       'scroll' kalau ada leluhur yang punya transform/filter/
+       will-change, sementara getComputedStyle tetap menyebut 'fixed'.
+       Tidak ada tema yang begitu saat ini (sudah diperiksa); kalau
+       suatu saat ada, ukuran di sini akan terlalu optimistis. */
+    var lapisLekat = pisahLapis(s.backgroundAttachment);
     for (var L = 0; L < lapisGambar.length; L++) {
       var mm = lapisGambar[L].match(/_ornamen\\/([^"')]+)/);
       if (!mm) continue;
+      var lekat = lapisLekat.length ? lapisLekat[L % lapisLekat.length] : 'scroll';
+      var kotakW = lekat === 'fixed' ? window.innerWidth : w;
+      var kotakH = lekat === 'fixed' ? window.innerHeight : h;
       hasil.push({
         berkas: [mm[1]],
-        w: Math.round(w), h: Math.round(h),
+        lekat: lekat,
+        /* selayar = lapis ini menutup SELURUH layar, bukan kotak
+           elemennya: latar amplop, atau lapis background-attachment:
+           fixed. Keduanya punya kendala geometri yang sama, lihat
+           AMBANG_AMPLOP di kepala berkas. */
+        selayar: lekat === 'fixed',
+        w: Math.round(kotakW), h: Math.round(kotakH),
         /* CSS mengulang daftar background-size secara siklis kalau
            jumlahnya lebih sedikit daripada jumlah lapis gambarnya. */
         size: lapisUkuran.length ? lapisUkuran[L % lapisUkuran.length] : 'auto',
@@ -320,7 +349,7 @@ async function periksaTema(tema) {
         if (!per[nama] || rasio < per[nama].rasio)
           /* d.amplop ikut dibawa: penilaiannya memakai ambang yang
              berbeda, dan tanpa field ini bendera itu hilang di agregasi. */
-          per[nama] = { nama, rasio, dw: Math.round(dw), dh: Math.round(dh), iw, ih, tema: t, sel: d.sel, amplop: !!d.amplop };
+          per[nama] = { nama, rasio, dw: Math.round(dw), dh: Math.round(dh), iw, ih, tema: t, sel: d.sel, selayar: !!d.selayar || !!d.amplop };
       }
     }
   }
@@ -331,9 +360,12 @@ async function periksaTema(tema) {
   console.log('ambang: ' + AMBANG.toFixed(2) + '\n');
   for (const u of urut) {
     const kecuali = DIKECUALIKAN[u.nama];
-    /* Latar amplop dinilai dengan ambangnya sendiri — alasannya di
-       kepala berkas ini. */
-    const ambang = u.amplop ? AMBANG_AMPLOP : AMBANG;
+    /* Latar SELAYAR dinilai dengan ambangnya sendiri — alasannya di
+       kepala berkas ini. Yang termasuk: latar amplop, DAN sejak
+       2026-09-04 lapis background-attachment:fixed, yang area
+       penempatannya juga layar. Kendalanya identik: menutup 390x844
+       dari pustaka sumber yang berhenti di 736 px. */
+    const ambang = u.selayar ? AMBANG_AMPLOP : AMBANG;
     const buruk = u.rasio < ambang && !kecuali;
     if (buruk) gagal++;
     if (!buruk && !rinci && !(kecuali && u.rasio < ambang)) continue;
@@ -345,7 +377,7 @@ async function periksaTema(tema) {
     else if (buruk) console.log('         periksa ukuran ASLI sumbernya dulu: kalau berkas ini sudah selebar sumbernya,'
                                 + ' menaikkan `lebar` di siapkan-ornamen.js TIDAK berpengaruh (skrip itu tidak pernah'
                                 + ' memperbesar) — yang bisa cuma mengecilkan kotaknya di CSS atau mengganti sumbernya'
-                                + (u.amplop ? '  [latar amplop]' : ''));
+                                + (u.selayar ? '  [latar selayar]' : ''));
   }
   for (const h of hilang) {
     gagal++;
