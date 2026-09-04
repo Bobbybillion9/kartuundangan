@@ -1302,3 +1302,332 @@ section{position:relative;padding:var(--s6) var(--s4);}
   background-position:center,center top;
   background-repeat:no-repeat,no-repeat;
 }
+
+/* ============================================================
+   BLOK REVISI ADAT 2026-09-04 — permintaan user.
+   Ditaruh di akhir berkas supaya urutan cascade-nya pasti menang.
+   ============================================================ */
+
+/* ---------- 1 & 2. SAMPUL: JUDUL DAN BINGKAINYA DILEPAS ----------
+   User: "hapus kalimat title di bagian sampul (sekar jagad, om
+   swastiastu, sirih pinang)" dan "hapus juga frame yang berlebihan
+   pada bagian sampul".
+
+   Ketiga sampul memang menumpuk tiga bingkai di satu layar: bingkai
+   persegi di sekeliling judul, cincin monogram, dan siluet besar di
+   belakang keduanya. Tiga bingkai berlapis membuat foto mempelai —
+   satu-satunya hal yang benar-benar milik pasangan itu — jadi yang
+   paling tidak terlihat.
+
+   Elemennya TIDAK dihapus dari markup, hanya disembunyikan: struktur
+   sampul dipakai bersama ketiga tema Adat, dan mencabut satu elemen
+   dari satu tema akan membuat ketiganya berbeda tanpa alasan. */
+#cover .cover-lafaz{ display:none; }
+#cover .monogram-ring{ display:none; }
+#cover .cover-monogram{
+  width:auto;height:auto;
+  background:none;box-shadow:none;border:0;
+  margin:0 auto var(--s3);
+}
+/* Sesudah cincinnya lepas, inisial berdiri sendiri — jadi ia diberi
+   satu garis rambut di bawahnya, bukan bingkai lagi. Satu garis sudah
+   cukup untuk memisahkan; bingkai kedua cuma mengulang pekerjaan yang
+   sama. */
+#cover .monogram-letters{
+  display:inline-flex;
+  font-size:15px;
+  letter-spacing:.34em;
+  padding:0 0 8px;
+  border-bottom:1px solid rgba(239,220,178,.45);
+}
+/* Tipografi sampul dirapikan: nama diberi ruang, sapaan direnggangkan,
+   dan tombol dibuat lebih ramping — tiga hal yang mengangkat sampul
+   tanpa menambah satu ornamen pun. */
+#cover .cover-eyebrow{ letter-spacing:.42em; font-size:10.5px; opacity:.9; }
+#cover .cover-names{ line-height:1.06; }
+#cover .cover-date{ letter-spacing:.2em; }
+#cover .btn-primary{
+  padding:13px 30px;
+  letter-spacing:.16em;
+  font-size:12px;
+  border-radius:2px;
+  border:1px solid rgba(239,220,178,.5);
+  box-shadow:0 10px 26px rgba(30,18,6,.45);
+}
+
+/* ---------- 3 & 4. AMPLOP: KERTAS VEKTOR, TIGA BIDANG TERBACA ----------
+   Pola yang sama yang sudah dipakai di tema Islami dan Chinese, dan
+   alasannya sama: badan, tutup, dan kantong memakai permukaan yang
+   sama persis, jadi ketiga bidang menyatu dan putaran 3D tutupnya
+   (perspective:1200px, sudah ada sejak awal) tidak punya tepi apa pun
+   yang bisa memperlihatkannya.
+
+   Petak tema ini: TUMPAL — deret segitiga lancip, motif tepi kain
+   batik pesisir yang juga jadi kaki foto tema ini. Vektor, jadi tajam
+   di DPI berapa pun dan beratnya di bawah 400 byte. */
+:root{
+  --amplop-warna:#7A5A2A;
+  --amplop-kertas:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='46'%3E%3Cg fill='none' stroke='%23F0DCB2' stroke-opacity='.16' stroke-width='1.1'%3E%3Cpath d='M20 4 L36 30 H4 Z'/%3E%3Cpath d='M20 16 L28 30 H12 Z'/%3E%3Cpath d='M0 42 H40'/%3E%3C/g%3E%3C/svg%3E");
+  --amplop-kertas-ukuran:40px 46px;
+  --amplop-kertas-ulang:repeat;
+  --amplop-kertas-posisi:center;
+  --amplop-tutup-gelap:.22;
+  --amplop-garis:rgba(240,220,178,.32);
+  --amplop-tinta:#F6EBD2;
+  --amplop-halo:radial-gradient(circle, rgba(0,0,0,.20), rgba(0,0,0,0) 62%);
+}
+#amplop .amplop-badan::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255,240,208,.20), rgba(255,240,208,0) 58%),
+    linear-gradient(to bottom, rgba(45,28,10,0) 52%, rgba(45,28,10,.32));
+}
+.amplop-tutup{
+  filter:
+    drop-shadow(0 1px 0 rgba(240,220,178,.6))
+    drop-shadow(0 10px 20px rgba(45,28,10,.45));
+}
+/* "UNDANGAN PERNIKAHAN" di muka amplop dimatikan (butir 4): keterangan
+   itu sudah tertera di sampul. Monogram A&S dibiarkan — ia tanda
+   pemilik amplop, bukan kalimat. Elemennya tetap di DOM. */
+#amplop .amplop-judul{ display:none; }
+/* Kartu surat WAJIB kontras; kalau warnanya mirip amplop, seluruh
+   gerakan surat keluar tidak terlihat sama sekali. */
+:root{
+  --surat-kertas:#FFFCF2;
+  --surat-tinta:#3A2614;
+  --surat-aksen:#A67A2E;
+  --surat-garis:rgba(166,122,46,.55);
+}
+#amplop .amplop-surat{
+  border:1px solid rgba(166,122,46,.6);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.9) inset,
+    0 18px 42px rgba(45,28,10,.45),
+    0 4px 10px rgba(45,28,10,.25);
+}
+#amplop .amplop-surat::after{
+  content:'';position:absolute;inset:7px;pointer-events:none;
+  border:1px solid rgba(58,38,20,.26);
+}
+
+/* ---------- 5. BINGKAI INISIAL: BEDA TIAP TEMA, DAN LEBIH BESAR ----------
+   User: "frame inisial namanya coba divariasikan, masa dari ketiga
+   design ini semuanya sama", dan "di surat terlalu kecil".
+
+   Ketiganya kini memakai bingkai berbeda dari folder aset user, dipilih
+   karena SILUETNYA berbeda, bukan cuma ukirannya:
+     Sekar Jagad  -> cincin dengan rumpun bunga di dua sudut
+     Pura Bentar  -> cincin bermahkota
+     Songket Saga -> cincin bersayap daun
+   Ukurannya naik 118 -> 168 px. Rasio ketajamannya 416/168 = 2,5 —
+   aman di ambang cek-ketajaman.js. */
+#fotoUtama .hero-monogram{
+  width:168px;height:168px;
+  background-color:transparent;
+  background-image:url('/templates/_ornamen/bingkai-inisial-jawa.webp');
+  background-size:contain;
+  box-shadow:none;
+  border-radius:0;
+}
+#fotoUtama .hero-monogram-letters{ font-size:26px; }
+
+/* ---------- 7. ACARA: DARI DAFTAR KAKU JADI "SAVE THE DATE" ----------
+   User: "saya sangat tidak suka design dari tanggal acara akad nikah,
+   resepsi, dan lokasi acara — designnya sangat kaku."
+
+   Yang membuatnya kaku bisa ditunjuk: kedua acara disusun sebagai
+   LINIMASA VERTIKAL — batang garis di kiri, dua simpul bulat, teks
+   rata kiri dengan indent 52 px. Bentuk itu milik jadwal dan formulir,
+   bukan milik undangan; ia membaca seperti daftar tugas.
+
+   DUA KOLOM BERDAMPINGAN SENGAJA TIDAK DIPAKAI, walau itu bentuk
+   "save the date" yang paling umum. assets/acara-lokasi.css memaksa
+   satu kolom dengan !important, dan komentarnya menjelaskan alasannya:
+   kartu resepsi tema Adat memuat KALENDER, dan pada kolom selebar
+   165 px satu sel kalender tinggal 22 px sehingga penanda hari-H —
+   satu-satunya alasan kalender itu ada — menyusut jadi titik. Melawan
+   aturan itu berarti memperbaiki satu keluhan sambil menghidupkan
+   kembali bug yang sudah pernah diperbaiki.
+
+   Jadi yang diubah BUKAN jumlah kolomnya, melainkan wataknya: batang
+   linimasa dan simpulnya dilepas, semuanya dipusatkan, ikon naik ke
+   atas nama, nama diberi jarak huruf lebar, dan tiap acara dipisah
+   ornamen halus — bukan garis jadwal. Ruang kosongnya yang bekerja.
+
+   Markup tidak diubah sama sekali: render-undangan.js mengisi
+   .event-time dan .event-date lewat data-slot. */
+#acara .lini-batang,
+#acara .lini-titik{ display:none !important; }
+#acara .event-list.linimasa{ padding-left:0; }
+#acara .event-card.lini-simpul{
+  text-align:center;
+  padding:var(--s4) var(--s3) var(--s3);
+  margin:0;
+}
+/* Pemisah antaracara: satu belah ketupat kecil di tengah, bukan garis
+   yang membelah lebar penuh. Garis penuh mengembalikan kesan tabel. */
+#acara .event-card.lini-simpul + .event-card.lini-simpul{
+  border-top:0;
+  margin-top:var(--s3);
+  padding-top:var(--s5);
+  position:relative;
+}
+#acara .event-card.lini-simpul + .event-card.lini-simpul::after{
+  content:'';
+  position:absolute;
+  left:50%;top:var(--s2);
+  width:7px;height:7px;
+  transform:translateX(-50%) rotate(45deg);
+  border:1px solid rgba(199,164,90,.5);
+}
+/* Ikon dikembalikan ke aliran normal DI ATAS nama. Aturan lama
+   (#acara .linimasa .event-icon) memakukannya absolut di left:6px
+   sebagai simpul linimasa — bentuk yang justru sedang dilepas, dan
+   spesifisitasnya lebih tinggi daripada #acara .event-icon saja. */
+#acara .linimasa .event-icon{
+  position:static;
+  width:44px;height:44px;
+  margin:0 auto var(--s2);
+  box-shadow:none;
+  background:transparent;
+  border-color:rgba(199,164,90,.55);
+}
+#acara .event-name{
+  font-size:14.5px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+#acara .event-time{ font-size:12.5px; letter-spacing:.07em; line-height:1.8; }
+
+/* Tanggal besar diberi napas: dua garis rambut menjepitnya, seperti
+   pada kartu save-the-date cetak. */
+#acara .lini-kepala{
+  border-bottom:0;
+  padding-bottom:var(--s2);
+  margin-bottom:var(--s2);
+}
+#acara .lini-kepala .kal{
+  padding:var(--s2) 0;
+  border-top:1px solid rgba(199,164,90,.28);
+  border-bottom:1px solid rgba(199,164,90,.28);
+}
+
+/* Lokasi: siluet gunungan dijadikan CAP AIR di belakang, dan teksnya
+   naik ke bidang bersih di depannya. Sebelumnya tulisan ditanam di
+   dalam siluet pekat, dan yang terbaca lebih dulu adalah bentuk
+   cokelatnya — bukan nama gedungnya. */
+/* Siluet gunungan DIBIARKAN pekat — opacity pada wadahnya ikut
+   meredupkan tulisan di dalamnya, dan percobaan pertama justru membuat
+   nama gedung nyaris hilang. Yang diperbaiki keterbacaan teksnya:
+   pelatnya dilebarkan dan diberi alas gelap tipis, sehingga nama
+   gedung berdiri DI DEPAN gunungan, bukan tenggelam di dalamnya. */
+#acara .gunungan-lokasi{ width:min(320px,92%); }
+#acara .gunungan-lokasi .plat-lokasi{
+  left:8%;right:8%;top:52%;
+  padding:12px 10px;
+  background:radial-gradient(70% 120% at 50% 50%, rgba(28,17,6,.62), rgba(28,17,6,0) 78%);
+}
+#acara .gunungan-lokasi .venue-name{ color:#FFF6E2; font-size:14.5px; }
+#acara .gunungan-lokasi .venue-address{ color:rgba(255,246,226,.86); }
+#acara .venue{ position:relative; }
+#acara .venue-name{ font-size:16px; letter-spacing:.06em; }
+#acara .venue-address{ letter-spacing:.04em; }
+
+/* ---------- HIASAN DIBAGI RATA SEPANJANG SURAT ----------
+   User: "di sepanjang surat background sangat minim ornamen penghias,
+   tetapi di bagian footer ornamen justru sangat berlebihan sampai
+   saling bertimpa."
+
+   Sebarannya bisa dihitung: sebelum revisi ini HANYA #ucapan dan
+   #penutup yang punya hiasan — keduanya di kaki halaman — sementara
+   #pembuka, #mempelai, #acara, #countdown, dan #galeri tidak punya
+   satu pun. Itu persis "tengah kosong, kaki menumpuk".
+
+   Motif tema ini digambar VEKTOR dan berbeda dari dua tema Adat lain.
+   Vektor bukan selera: ornamen raster di repo dijaga cek-ketajaman.js
+   pada 2-3x ukuran tayangnya, jadi memakai ulang aset kecil pada
+   ukuran besar akan langsung membuatnya buram. */
+.invitation::before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  opacity:.17;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='120'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 114 C40 96 58 70 62 38 C64 20 76 8 94 8'/%3E%3Cpath d='M62 38 c16 6 30 2 40-8'/%3E%3Cpath d='M46 72 c18 4 32-2 40-14'/%3E%3Cpath d='M94 8 c14 0 22 10 20 24 -12 4-22-6-20-24z'/%3E%3Cpath d='M28 96 c14 2 24-4 28-14' stroke-opacity='.6'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='54'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='1.7'%3E%3Cpath d='M4 50 L24 8 L44 50 L64 8 L84 50 L104 8 L124 50 L144 8 L164 50 L184 8 L196 50'/%3E%3Cpath d='M0 50 H200' stroke-opacity='.5'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='1.8'%3E%3Ccircle cx='60' cy='24' r='22'/%3E%3Ccircle cx='60' cy='96' r='22'/%3E%3Ccircle cx='24' cy='60' r='22'/%3E%3Ccircle cx='96' cy='60' r='22'/%3E%3Ccircle cx='60' cy='60' r='6'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='120'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 114 C40 96 58 70 62 38 C64 20 76 8 94 8'/%3E%3Cpath d='M62 38 c16 6 30 2 40-8'/%3E%3Cpath d='M46 72 c18 4 32-2 40-14'/%3E%3Cpath d='M94 8 c14 0 22 10 20 24 -12 4-22-6-20-24z'/%3E%3Cpath d='M28 96 c14 2 24-4 28-14' stroke-opacity='.6'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='54'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='1.7'%3E%3Cpath d='M4 50 L24 8 L44 50 L64 8 L84 50 L104 8 L124 50 L144 8 L164 50 L184 8 L196 50'/%3E%3Cpath d='M0 50 H200' stroke-opacity='.5'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:
+    -28px 8%,
+    calc(100% + 40px) 23%,
+    calc(100% + 46px) 45%,
+    -34px 66%,
+    -40px 86%;
+  background-size:150px auto,200px auto,170px auto,140px auto,190px auto;
+}
+.invitation > *{position:relative;z-index:1;}
+
+#pembuka,#mempelai,#acara,#countdown,#galeri{position:relative;overflow:hidden;}
+#pembuka > *,#mempelai > *,#acara > *,#countdown > *,#galeri > *{position:relative;z-index:1;}
+#pembuka::after,#mempelai::after,#acara::after,#countdown::after,#galeri::after{
+  content:'';position:absolute;pointer-events:none;z-index:0;
+  background-repeat:no-repeat;background-size:contain;
+}
+#pembuka::after{ right:-24px;top:var(--s4);width:140px;height:112px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='120'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 114 C40 96 58 70 62 38 C64 20 76 8 94 8'/%3E%3Cpath d='M62 38 c16 6 30 2 40-8'/%3E%3Cpath d='M46 72 c18 4 32-2 40-14'/%3E%3Cpath d='M94 8 c14 0 22 10 20 24 -12 4-22-6-20-24z'/%3E%3Cpath d='M28 96 c14 2 24-4 28-14' stroke-opacity='.6'/%3E%3C/g%3E%3C/svg%3E");opacity:.24; }
+#mempelai::after{ left:-30px;bottom:var(--s4);width:186px;height:52px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='54'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='1.7'%3E%3Cpath d='M4 50 L24 8 L44 50 L64 8 L84 50 L104 8 L124 50 L144 8 L164 50 L184 8 L196 50'/%3E%3Cpath d='M0 50 H200' stroke-opacity='.5'/%3E%3C/g%3E%3C/svg%3E");opacity:.20; }
+#acara::after{ right:-40px;top:var(--s5);width:160px;height:150px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='1.8'%3E%3Ccircle cx='60' cy='24' r='22'/%3E%3Ccircle cx='60' cy='96' r='22'/%3E%3Ccircle cx='24' cy='60' r='22'/%3E%3Ccircle cx='96' cy='60' r='22'/%3E%3Ccircle cx='60' cy='60' r='6'/%3E%3C/g%3E%3C/svg%3E");opacity:.18;transform:scaleX(-1); }
+#countdown::after{ left:-24px;top:var(--s4);width:132px;height:106px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='120'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 114 C40 96 58 70 62 38 C64 20 76 8 94 8'/%3E%3Cpath d='M62 38 c16 6 30 2 40-8'/%3E%3Cpath d='M46 72 c18 4 32-2 40-14'/%3E%3Cpath d='M94 8 c14 0 22 10 20 24 -12 4-22-6-20-24z'/%3E%3Cpath d='M28 96 c14 2 24-4 28-14' stroke-opacity='.6'/%3E%3C/g%3E%3C/svg%3E");opacity:.24;transform:scaleX(-1); }
+#galeri::after{ right:-28px;bottom:var(--s5);width:186px;height:56px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='54'%3E%3Cg fill='none' stroke='%23C7A45A' stroke-width='1.7'%3E%3Cpath d='M4 50 L24 8 L44 50 L64 8 L84 50 L104 8 L124 50 L144 8 L164 50 L184 8 L196 50'/%3E%3Cpath d='M0 50 H200' stroke-opacity='.5'/%3E%3C/g%3E%3C/svg%3E");opacity:.20; }
+
+/* Kaki dirampingkan — hiasan yang dilepas dari sini sudah pindah naik. */
+#penutup::after{ width:150px;height:98px;bottom:-8px;opacity:.16; }
+#ucapan::after{ width:84px;height:114px;opacity:.18; }
+
+/* Cincin besar di belakang inisial sampul DILEPAS — inilah "frame yang
+   berlebihan" yang dimaksud user. Ia digambar .cover-monogram::before
+   dengan inset:-12px; begitu wadahnya tidak lagi berukuran tetap,
+   cincin itu ikut melar jadi cakram terang selebar layar dan justru
+   menutupi foto mempelai. */
+#cover .cover-monogram::before{ content:none; }
+
+/* Selubung keterbacaan di kaki sampul. Foto sampul milik pemilik
+   undangan dan bisa seterang apa pun; tanpa selubung ini, terbacanya
+   nama mempelai bergantung pada kebetulan. Satu arah, menurun — bukan
+   gumpalan radial, yang tepinya selalu ikut terlihat. */
+#cover.has-sampul .cover-content::before{
+  content:'';
+  position:absolute;
+  left:0;right:0;bottom:0;top:auto;height:66%;
+  z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(12,8,4,0) 0%,rgba(12,8,4,.34) 46%,rgba(12,8,4,.62) 100%);
+}
+
+
+/* Selubung foto sampul dibuat SATU NADA. Bentuk lamanya .56 -> .26 di
+   42% -> .78, yaitu GELAP - TERANG - GELAP; pita terang di tengah itu
+   tidak pernah terbaca sebagai cahaya — yang terlihat cakram kabut di
+   tengah foto, dan pada tema ini ia bahkan tampak seperti bingkai
+   bundar raksasa di belakang mempelai. Sekarang menurun satu arah
+   tanpa pernah berbalik: paling bening di kepala (tempat wajah berada)
+   dan memekat ke kaki (tempat teks berada). */
+.cover-foto::after{
+  background:linear-gradient(180deg,
+    rgba(48,30,14,.10) 0%,
+    rgba(48,30,14,.20) 30%,
+    rgba(48,30,14,.44) 58%,
+    rgba(30,18,6,.70) 80%,
+    rgba(30,18,6,.86) 100%);
+}
+
+/* Kartu surat didorong sedikit lebih dalam saat diam. Tutup tema ini
+   62% dengan siluet V yang lebar, jadi di titik terdalam V-nya kartu
+   sempat menyembul di atas tepi kantong — terlihat sebagai secarik
+   putih di bawah segel, sebelum amplopnya dibuka sama sekali. Yang
+   diubah hanya posisi DIAM-nya; kedua keadaan gerak (amplop-keluar dan
+   amplop-pergi) menyetel transform-nya sendiri, jadi animasinya tidak
+   ikut bergeser. */
+#amplop .amplop-surat{ transform:translate(-50%, 36%); }

@@ -63,7 +63,36 @@ const TUJUAN_DIR = path.join(REPO, 'templates', '_ornamen');
 // lebar aslinya (~736px): memperbesar tidak menambah detail, cuma berat.
 // ============================================================
 const ORNAMEN = [
-  // --- SEGEL LILIN PER TEMA PRO (2026-08-31) ---
+
+  /* ---- Bingkai inisial tema Adat (2026-09-04) ----
+     User: "frame inisial namanya coba divariasikan, masa dari ketiga
+     design ini semuanya sama, harus ada diferensiasi", dan "di surat
+     terlalu kecil". Ketiganya dari folder CIRCLE.RECTANGLE FRAME
+     ORNAMENT milik user, dipilih justru karena SILUETNYA berbeda —
+     bukan cuma ukirannya:
+       sekar-jagad  -> cincin dengan rumpun bunga di dua sudut
+       pura-bentar  -> cincin bermahkota di kepala, sapuan di kaki
+       songket-saga -> cincin bersayap daun di dua sisi
+     Sumbernya 500x500 PNG beralpha; pada lebar 420 dan tayang ~150 px
+     rasionya ~2,8 — aman di ambang cek-ketajaman.js. */
+  {
+    keluaran: 'bingkai-inisial-jawa.webp',
+    sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/GOLDEN_2-removebg-preview.png',
+    lebar: 500, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'cincin emas berumpun bunga — bingkai inisial Sekar Jagad'
+  },
+  {
+    keluaran: 'bingkai-inisial-bali.webp',
+    sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/Myriam_Campo_-removebg-preview.png',
+    lebar: 500, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'cincin bermahkota — bingkai inisial Pura Bentar'
+  },
+  {
+    keluaran: 'bingkai-inisial-minang.webp',
+    sumber: 'CIRCLE.RECTANGLE FRAME ORNAMENT/99923685477874100-removebg-preview.png',
+    lebar: 500, mutu: 0.9, alpha: true, pangkas: true,
+    catatan: 'cincin bersayap daun di dua sisi — bingkai inisial Songket Saga'
+  },  // --- SEGEL LILIN PER TEMA PRO (2026-08-31) ---
   // Dua belas segel, satu untuk tiap tema berbayar, dipilih dari 31
   // berkas yang diunduh user. Dasar pemilihannya WARNA tema dan
   // LAMBANGNYA — bukan mana yang paling bagus sendirian: segel adalah
