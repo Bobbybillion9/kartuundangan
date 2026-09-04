@@ -45,6 +45,15 @@ const CDP = 'http://127.0.0.1:9222';
 const BASE = 'http://localhost:5500';
 const COBA = process.argv.includes('--coba');
 
+// --sesi-ada: JANGAN login, pakai sesi yang sudah ada di browser.
+//
+// Ini cara yang benar untuk membersihkan akun milik orang lain: pemiliknya
+// login sendiri di Chrome yang terhubung, dan skrip ini menumpang sesi itu
+// tanpa pernah menyentuh kata sandinya. Sesi Supabase disimpan di
+// localStorage per-origin, jadi tab baru yang dibuka skrip ini melihat
+// sesi yang sama dengan tab yang dipakai pemiliknya.
+const SESI_ADA = process.argv.includes('--sesi-ada');
+
 function kredensial() {
   if (process.env.KU_EMAIL && process.env.KU_PASSWORD) {
     return { email: process.env.KU_EMAIL, sandi: process.env.KU_PASSWORD, dari: 'variabel lingkungan' };
@@ -151,9 +160,11 @@ function skripKerja(coba) {
 }
 
 (async () => {
-  const kred = kredensial();
-  if (!kred) {
-    console.error('Kredensial tidak ada. Jalankan dengan:\n  KU_EMAIL=... KU_PASSWORD=... node tools/bersih-foto-yatim.js --coba');
+  const kred = SESI_ADA ? null : kredensial();
+  if (!SESI_ADA && !kred) {
+    console.error('Kredensial tidak ada. Pilih salah satu:\n' +
+      '  KU_EMAIL=... KU_PASSWORD=... node tools/bersih-foto-yatim.js --coba\n' +
+      '  node tools/bersih-foto-yatim.js --sesi-ada --coba     (pemiliknya login sendiri dulu di Chrome)');
     process.exit(1);
   }
   try { await fetch(CDP + '/json/version'); } catch (e) {
@@ -163,24 +174,37 @@ function skripKerja(coba) {
     console.error('Server statis :5500 tidak menjawab.'); process.exit(1);
   }
 
-  console.log('masuk sebagai ' + kred.email + ' (dari ' + kred.dari + ')' + (COBA ? '  [--coba: tidak menghapus apa pun]' : ''));
+  console.log((SESI_ADA ? 'memakai sesi yang sudah ada di Chrome' : 'masuk sebagai ' + kred.email + ' (dari ' + kred.dari + ')')
+    + (COBA ? '  [--coba: tidak menghapus apa pun]' : ''));
   const c = await cdp();
-  await c.kirim('Page.navigate', { url: BASE + '/index.html#masuk' });
-  await new Promise(r => setTimeout(r, 4000));
-  await ev(c, `(async()=>{const s=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set;
-    const a=document.getElementById('loginEmail'),b=document.getElementById('loginPassword');
-    s.call(a,${JSON.stringify(kred.email)});a.dispatchEvent(new Event('input',{bubbles:true}));
-    s.call(b,${JSON.stringify(kred.sandi)});b.dispatchEvent(new Event('input',{bubbles:true}));
-    document.getElementById('loginForm').requestSubmit();return 1})()`, true);
-  await new Promise(r => setTimeout(r, 6000));
+
+  if (!SESI_ADA) {
+    await c.kirim('Page.navigate', { url: BASE + '/index.html#masuk' });
+    await new Promise(r => setTimeout(r, 4000));
+    await ev(c, `(async()=>{const s=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set;
+      const a=document.getElementById('loginEmail'),b=document.getElementById('loginPassword');
+      s.call(a,${JSON.stringify(kred.email)});a.dispatchEvent(new Event('input',{bubbles:true}));
+      s.call(b,${JSON.stringify(kred.sandi)});b.dispatchEvent(new Event('input',{bubbles:true}));
+      document.getElementById('loginForm').requestSubmit();return 1})()`, true);
+    await new Promise(r => setTimeout(r, 6000));
+  }
 
   await c.kirim('Page.navigate', { url: BASE + '/app.html' });
   await new Promise(r => setTimeout(r, 6000));
   const jalan = await ev(c, "location.pathname");
   if (jalan !== '/app.html') {
-    console.error('Login gagal — dashboard tidak terbuka (alamat: ' + jalan + '). Periksa email/kata sandinya.');
+    console.error(SESI_ADA
+      ? 'Tidak ada sesi login di Chrome itu — dashboard menolak (alamat: ' + jalan + ').\n' +
+        '  Buka ' + BASE + '/index.html#masuk di Chrome yang terhubung, login, lalu ulangi.'
+      : 'Login gagal — dashboard tidak terbuka (alamat: ' + jalan + '). Periksa email/kata sandinya.');
     await c.tutup(); process.exit(1);
   }
+
+  // Siapa yang sedang login WAJIB dicetak sebelum apa pun dihapus: dengan
+  // --sesi-ada, skrip ini bekerja pada akun siapa pun yang kebetulan
+  // punya sesi di browser itu — termasuk akun yang salah.
+  const siapa = await ev(c, "(((window.KU.getSession()||{}).user)||{}).email || '(tidak diketahui)'");
+  console.log('sesi aktif: ' + siapa);
 
   const hasil = await ev(c, skripKerja(COBA), true);
   await c.tutup();
