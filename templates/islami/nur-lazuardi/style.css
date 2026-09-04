@@ -1111,7 +1111,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
    bawah foto naik di kiri-kanan, sementara pita digambar pada garis
    lurus paling bawah — pitanya lalu melayang di atas bidang kosong. */
 :root{
-  --fp-hero-rasio:5 / 8;
+  --fp-hero-rasio:5 / 9;
   --fp-hero-bentuk:none;
 }
 #fotoUtama{padding-top:0;position:relative;}
@@ -1390,3 +1390,136 @@ section{position:relative;padding:var(--s6) var(--s4);}
   clip-path:none;
   max-width:276px;
 }
+
+/* ============================================================
+   BLOK REVISI ISLAMI 2026-09-04 — permintaan user.
+   Ditaruh di akhir berkas supaya urutan cascade-nya pasti menang
+   atas blok-blok sebelumnya, dan supaya satu revisi bisa dibaca
+   sebagai satu kesatuan.
+   ============================================================ */
+
+/* Sapaan "Kepada Yth. / Tamu Undangan" di muka amplop dimatikan atas
+   permintaan user ("tidak diperlukan"). Elemennya TETAP di DOM —
+   tools/cek-tema.js mensyaratkan [data-slot="nama_tamu"] ada di dalam
+   #amplop dan render-undangan.js tetap mengisinya; yang dimatikan
+   hanya tampilannya. Menghapus elemennya akan menggagalkan cek-tema
+   dan memutus link data tamu tanpa ada yang error saat dipakai. */
+:root{ --amplop-tulisan-tampil:none; }
+
+/* ---------- AMPLOP: TIGA BIDANG YANG TERBACA ----------
+   Kertas amplop tema ini sudah vektor (--taburan, taburan bintang milik
+   Lazuardi sendiri) jadi ketajamannya tidak bermasalah. Yang bermasalah
+   sama seperti dua tema Islami lain: badan, tutup, dan kantong memakai
+   permukaan yang sama persis, jadi ketiganya menyatu dan putaran 3D
+   tutupnya tidak terlihat sama sekali.
+
+   Yang ditambahkan di sini cuma CAHAYA dan TEPI — bukan motif baru.
+   Motifnya justru harus tetap satu supaya amplopnya terbaca sebagai satu
+   lembar kertas yang dilipat, bukan tiga potongan yang ditempel. */
+:root{
+  --amplop-warna:#EFEFE3;
+  --amplop-tutup-gelap:.18;
+  --amplop-garis:rgba(24,44,92,.28);
+  --amplop-tinta:#122A57;
+  --amplop-halo:radial-gradient(circle, rgba(18,42,87,.16), rgba(18,42,87,0) 62%);
+}
+#amplop .amplop-badan::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,.88), rgba(255,255,255,0) 58%),
+    linear-gradient(to bottom, rgba(5,12,30,0) 55%, rgba(5,12,30,.11));
+}
+/* Tepi bawah tutup — lihat catatan yang sama di Nur Zamrud: mata membaca
+   lipatan dari TEPINYA, bukan dari gradasinya. */
+.amplop-tutup{
+  filter:
+    drop-shadow(0 1px 0 rgba(198,166,90,.55))
+    drop-shadow(0 10px 18px rgba(5,12,30,.32));
+}
+
+/* "UNDANGAN PERNIKAHAN" dimatikan — sudah tertera di sampul. */
+#amplop .amplop-judul{ display:none; }
+
+/* Kartu surat harus KONTRAS dengan amplopnya, kalau tidak seluruh
+   gerakan keluarnya tidak terlihat. */
+:root{
+  --surat-kertas:#FFFDF4;
+  --surat-tinta:#122A57;
+  --surat-aksen:#C6A65A;
+  --surat-garis:rgba(198,166,90,.55);
+}
+#amplop .amplop-surat{
+  border:1px solid rgba(198,166,90,.55);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.9) inset,
+    0 18px 40px rgba(5,12,30,.34),
+    0 4px 10px rgba(5,12,30,.20);
+}
+#amplop .amplop-surat::after{
+  content:'';position:absolute;inset:7px;pointer-events:none;
+  border:1px solid rgba(24,44,92,.26);
+}
+
+/* ---------- SAMPUL: SELUBUNG SATU NADA ----------
+   Alasannya sama persis dengan Nur Zamrud — lihat catatan panjang di
+   sana. Selubung lama .66 -> .40 (42%) -> .82 membuat sabuk terang
+   melintang di tengah foto.
+
+   Watak Lazuardi: langit malam. Selubungnya paling bening di kepala,
+   memekat ke kaki, lalu diberi SATU semburat biru dari tepi bawah —
+   cahaya yang datang dari bawah, seperti lampu halaman masjid. Itu
+   yang membedakannya dari Zamrud (cahaya dari atas) tanpa mengulang
+   kesalahan yang sama: semburatnya searah, tidak membalik ramp-nya. */
+.cover-foto::after{
+  background:
+    linear-gradient(0deg, rgba(38,72,140,.30) 0%, rgba(38,72,140,0) 34%),
+    linear-gradient(180deg,
+      rgba(4,10,24,.12) 0%,
+      rgba(4,10,24,.24) 30%,
+      rgba(4,10,24,.50) 58%,
+      rgba(4,10,24,.74) 80%,
+      rgba(4,10,24,.88) 100%);
+}
+#cover.has-sampul .cover-content::before{
+  left:0;right:0;top:auto;bottom:0;height:62%;
+  background:linear-gradient(180deg,rgba(4,10,24,0) 0%,rgba(4,10,24,.30) 55%,rgba(4,10,24,.54) 100%);
+}
+/* Plat lafaz tema ini yang paling sempit dari ketiganya (223 px diukur
+   di layar 390) — dilonggarkan sesuai permintaan user. */
+.cover-lafaz{
+  text-align:center;
+  padding:26px 54px 28px;
+  min-width:min(300px,86%);
+}
+
+/* ---------- PANEL AYAT: KISI JENDELA MASHRABIYA ----------
+   Lihat pembagian gaya di catatan yang sama pada Nur Zamrud: Zamrud
+   lentera, Lazuardi kisi jendela, Sakinah tirai. Di sini ayatnya dibaca
+   SEOLAH LEWAT JENDELA — kisinya ada di belakang teks, bukan di
+   kepalanya, jadi kesannya ruang, bukan hiasan yang ditempel.
+
+   Opasitasnya sengaja rendah (.10): kisi di belakang teks Arab yang
+   berharakat adalah cara tercepat membuat ayat jadi tidak terbaca. */
+.mushaf{
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='38' height='38'%3E%3Cg fill='none' stroke='%23C6A65A' stroke-opacity='.10' stroke-width='1'%3E%3Cpath d='M19 1 L37 19 L19 37 L1 19 Z'/%3E%3Cpath d='M19 9 L29 19 L19 29 L9 19 Z'/%3E%3Cpath d='M0 0 L38 38 M38 0 L0 38'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:repeat;
+  background-position:center top;
+  background-size:38px 38px;
+}
+/* Lengkung jendela di kepala panel: satu busur runcing yang memotong
+   kisinya, supaya kisi itu terbaca sebagai JENDELA dan bukan sebagai
+   kertas bermotif. */
+.mushaf .ayat-arab{ position:relative; }
+.mushaf .ayat-arab::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:-30px;
+  width:74px;height:26px;
+  transform:translateX(-50%);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='74' height='26'%3E%3Cg fill='none' stroke='%23C6A65A' stroke-opacity='.8' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M2 26 C2 10 20 1 37 1 C54 1 72 10 72 26'/%3E%3Cpath d='M37 1 v-1'/%3E%3Cpath d='M14 26 v-9 M26 26 v-14 M37 26 v-16 M48 26 v-14 M60 26 v-9'/%3E%3C/g%3E%3C/svg%3E") no-repeat center/74px 26px;
+  pointer-events:none;
+}
+.mushaf{ padding-top:calc(var(--s5) + 34px); }

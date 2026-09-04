@@ -1383,7 +1383,7 @@ section{position:relative;padding:var(--s6) var(--s4);}
         selebar layar dari berkas raster adalah persis aset yang baru
         saja ditolak user karena buram. */
 :root{
-  --fp-hero-rasio:5 / 8;
+  --fp-hero-rasio:5 / 9;
   /* Bentuk lengkung mihrab di kaki foto DILEPAS dan diganti pita gigi
      di bawah ini. Keduanya tidak boleh dipakai bersama: siluet lengkung
      membuat tepi bawah foto sudah naik di sisi kiri-kanan, sementara
@@ -1637,3 +1637,176 @@ section{position:relative;padding:var(--s6) var(--s4);}
 #ucapan    .nz-divider{background-image:var(--pembatas-e);height:38px;}
 #hadiah    .nz-divider{background-image:var(--pembatas-c);height:44px;}
 #penutup   .nz-divider{background-image:var(--pembatas-f);}
+
+/* ============================================================
+   BLOK REVISI ISLAMI 2026-09-04 — permintaan user.
+   Ditaruh di akhir berkas supaya urutan cascade-nya pasti menang
+   atas blok-blok sebelumnya, dan supaya satu revisi bisa dibaca
+   sebagai satu kesatuan.
+   ============================================================ */
+
+/* Sapaan "Kepada Yth. / Tamu Undangan" di muka amplop dimatikan atas
+   permintaan user ("tidak diperlukan"). Elemennya TETAP di DOM —
+   tools/cek-tema.js mensyaratkan [data-slot="nama_tamu"] ada di dalam
+   #amplop dan render-undangan.js tetap mengisinya; yang dimatikan
+   hanya tampilannya. Menghapus elemennya akan menggagalkan cek-tema
+   dan memutus link data tamu tanpa ada yang error saat dipakai. */
+:root{ --amplop-tulisan-tampil:none; }
+
+/* ---------- AMPLOP: KERTAS VEKTOR, BUKAN FOTO ----------
+   Sebelum ini --amplop-kertas berisi latar-islami-hijau.webp yang
+   diregangkan `cover` ke seluruh layar. Dua akibatnya, dan keduanya
+   dikeluhkan user:
+
+   1. BURAM. Berkasnya 736 px, layar HP 390 px pada 2x DPI butuh 780 px
+      — jadi ia sudah diperbesar sebelum piksel pertama digambar.
+      SELURUH pustaka latar Islami milik user berhenti di 736 px (sudah
+      diperiksa: 14 berkas, tidak ada yang lebih besar), jadi "ganti
+      berkas yang lebih bagus" TIDAK MUNGKIN — ini langit-langit
+      sumbernya, bukan pilihan yang salah.
+
+   2. AMPLOPNYA TIDAK TERBACA SEBAGAI AMPLOP. Badan, tutup, dan kantong
+      memakai gambar yang sama, jadi ketiga bidang itu menyatu dan yang
+      terlihat cuma satu latar bermotif. Kemiringan tutup yang sudah
+      benar-benar berputar 3D pun jadi tidak terlihat karena tidak ada
+      tepi yang membedakannya.
+
+   Jalan keluarnya sama dengan yang sudah dipakai untuk pita di
+   #fotoUtama: ornamennya DIGAMBAR, bukan difoto. Petak bintang delapan
+   di bawah ini vektor, jadi tajam di DPI berapa pun dan beratnya di
+   bawah 400 byte. */
+:root{
+  --amplop-warna:#F6F1E3;
+  --amplop-kertas:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='46' height='46'%3E%3Cg fill='none' stroke='%23107A5A' stroke-opacity='.13' stroke-width='.9'%3E%3Crect x='12' y='12' width='22' height='22'/%3E%3Crect x='12' y='12' width='22' height='22' transform='rotate(45 23 23)'/%3E%3C/g%3E%3C/svg%3E");
+  --amplop-kertas-ukuran:46px;
+  --amplop-kertas-ulang:repeat;
+  --amplop-kertas-posisi:center;
+  /* Tutup dibuat jelas lebih gelap daripada badan. .10 bawaan terlalu
+     halus begitu kertasnya polos — dan justru pada kertas polos inilah
+     selisih gelap jadi satu-satunya penanda bahwa itu bidang lain. */
+  --amplop-tutup-gelap:.20;
+  --amplop-garis:rgba(16,122,90,.30);
+  --amplop-tinta:#0B4F3A;
+  --amplop-halo:radial-gradient(circle, rgba(11,79,58,.16), rgba(11,79,58,0) 62%);
+}
+
+/* Petak vektor di atas rata dan tanpa arah. Lapisan ini yang memberinya
+   CAHAYA: terang di kepala amplop, meredup ke kaki — arah cahaya yang
+   sama untuk badan, tutup, dan kantong, sehingga ketiganya terbaca
+   sebagai satu benda yang disinari, bukan tiga tempelan. */
+#amplop .amplop-badan::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,.85), rgba(255,255,255,0) 60%),
+    linear-gradient(to bottom, rgba(6,37,28,0) 55%, rgba(6,37,28,.10));
+}
+
+/* Tepi bawah tutup: satu garis emas tipis DI ATAS bayangannya. Inilah
+   yang paling menentukan apakah tutupnya terbaca terlipat atau tidak —
+   mata membaca lipatan dari tepinya, bukan dari gradasinya. */
+.amplop-tutup{
+  filter:
+    drop-shadow(0 1px 0 rgba(201,162,39,.55))
+    drop-shadow(0 10px 18px rgba(6,37,28,.30));
+}
+
+/* "UNDANGAN PERNIKAHAN" di muka amplop dimatikan atas permintaan user
+   2026-09-04: keterangan itu sudah tertera di sampul, dan dua layar
+   berturut-turut yang mengatakan hal yang sama terbaca seperti salah
+   cetak. Monogram A&S dibiarkan — ia bukan kalimat, melainkan tanda
+   pemilik amplop, dan justru itu yang membuat amplop bersegel masuk
+   akal. Elemennya tetap di DOM. */
+#amplop .amplop-judul{ display:none; }
+
+/* ---------- SURAT: KARTU YANG BENAR-BENAR TERLIHAT KELUAR ----------
+   Sampai revisi ini, kartunya memakai kertas #FBF7EC di atas amplop
+   #F6F1E3 — dua warna yang praktis sama. Akibatnya seluruh gerakan
+   "surat ditarik keluar" TIDAK TERLIHAT sama sekali: yang tampak cuma
+   tutup yang membuka lalu layar memudar. Animasinya sebenarnya berjalan;
+   yang hilang cuma kontras.
+
+   Kartu karena itu dibuat lebih PUTIH daripada amplopnya, diberi tepi
+   emas, dan diberi bayangan yang jatuh ke kertas di belakangnya. Ketiga
+   hal itu yang membuat mata membacanya sebagai benda terpisah yang
+   sedang bergerak, bukan sebagai bidang yang berubah warna. */
+:root{
+  --surat-kertas:#FFFDF5;
+  --surat-tinta:#123F31;
+  --surat-aksen:#C9A227;
+  --surat-garis:rgba(201,162,39,.55);
+}
+#amplop .amplop-surat{
+  border:1px solid rgba(201,162,39,.55);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.9) inset,
+    0 18px 40px rgba(6,37,28,.30),
+    0 4px 10px rgba(6,37,28,.18);
+}
+/* Garis emas kedua di dalam tepi: kartu undangan sungguhan hampir selalu
+   punya dua garis, dan justru selisih tipis itu yang membedakan "kartu"
+   dari "kotak putih". */
+#amplop .amplop-surat::after{
+  content:'';position:absolute;inset:7px;pointer-events:none;
+  border:1px solid rgba(16,122,90,.28);
+}
+
+/* ---------- SAMPUL: SELUBUNG SATU NADA ----------
+   Keluhan user: "background transparant-nya tidak 1 tone (gradasi tidak
+   merata) sehingga foto background terlihat aneh".
+
+   Ia benar, dan sebabnya bisa ditunjuk: selubung lama berbentuk
+   .62 -> .34 (42%) -> .80, yaitu GELAP - TERANG - GELAP. Pita terang di
+   tengah itu tidak pernah bisa terbaca sebagai cahaya; yang terlihat
+   sabuk kabut melintang di tengah foto. Ditambah lagi ada gumpalan
+   radial terpisah di belakang blok nama, yang tepinya ikut kelihatan
+   sebagai lingkaran samar.
+
+   Sekarang selubungnya MENURUN SATU ARAH tanpa pernah berbalik —
+   paling bening di kepala (tempat wajah mempelai berada) dan terus
+   memekat ke kaki (tempat teks berada). Gumpalan radialnya diganti
+   sambungan dari ramp yang sama, jadi tidak ada tepi yang bisa terlihat.
+
+   Watak Zamrud: cahaya turun dari kepala mihrab. */
+.daun-foto::after{
+  background:linear-gradient(180deg,
+    rgba(6,32,26,.10) 0%,
+    rgba(6,32,26,.20) 30%,
+    rgba(6,32,26,.46) 58%,
+    rgba(6,32,26,.72) 80%,
+    rgba(6,32,26,.86) 100%);
+}
+#cover.has-sampul .cover-content::before{
+  left:0;right:0;top:auto;bottom:0;height:62%;
+  background:linear-gradient(180deg,rgba(6,32,26,0) 0%,rgba(6,32,26,.30) 55%,rgba(6,32,26,.52) 100%);
+}
+/* Plat lafaz: teks dipusatkan dan bidangnya dilonggarkan. */
+.cover-lafaz{
+  text-align:center;
+  padding:26px 54px 28px;
+  min-width:min(300px,86%);
+}
+
+/* ---------- PANEL AYAT: LENTERA GANTUNG ----------
+   Permintaan user: bingkai ayat diberi elemen Islami, dan ketiga tema
+   Islami HARUS berbeda gaya. Pembagiannya:
+
+     Zamrud   -> lentera gantung (fanous) di kepala panel
+     Lazuardi -> kisi jendela mashrabiya di belakang ayat
+     Sakinah  -> tirai bersampir + bulan sabit
+
+   Digambar SVG di dalam background-image panelnya, bukan sebagai
+   elemen atau pseudo-element baru: ::before dan ::after milik .mushaf
+   SUDAH TERPAKAI keduanya untuk garis emas ganda, dan menimpanya akan
+   menghapus bingkai itu tanpa ada yang error. Vektor juga berarti ia
+   tetap tajam di DPI berapa pun — aturan yang sama yang dipakai untuk
+   kertas amplop. */
+.mushaf{
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='76'%3E%3Cg fill='none' stroke='%23C9A227' stroke-opacity='.8' stroke-width='1.15' stroke-linejoin='round' stroke-linecap='round'%3E%3Ccircle cx='28' cy='4' r='2.6'/%3E%3Cpath d='M28 7 v6'/%3E%3Cpath d='M18 21 L28 13 L38 21 Z'/%3E%3Cpath d='M17 21 h22'/%3E%3Cpath d='M20 21 L15 31 v19 l13 8 l13 -8 V31 L36 21'/%3E%3Cpath d='M15 35 h26 M15 47 h26'/%3E%3Cpath d='M22 31 v22 M28 29 v26 M34 31 v22'/%3E%3Cpath d='M28 58 v5'/%3E%3Cpath d='M24 63 h8'/%3E%3Cpath d='M28 66 v4'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:center 10px;
+  background-size:56px 76px;
+  /* Ruang untuk lenteranya. Tanpa ini ia menindih baris Arab pertama. */
+  padding-top:calc(var(--s5) + 62px);
+}

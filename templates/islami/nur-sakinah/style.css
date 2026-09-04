@@ -1023,7 +1023,7 @@ section{position:relative;padding:var(--s7) var(--s5);}
    Siluet potong lama dilepas: siluetnya membuat tepi bawah foto naik di
    kiri-kanan sementara pita digambar pada garis lurus paling bawah. */
 :root{
-  --fp-hero-rasio:5 / 8;
+  --fp-hero-rasio:5 / 9;
   --fp-hero-bentuk:none;
 }
 #fotoUtama{padding-top:0;position:relative;}
@@ -1328,3 +1328,141 @@ section{position:relative;padding:var(--s7) var(--s5);}
    terbaca sebagai coretan saat diam.
    Gerak membelahnya tetap terbaca dari fotonya sendiri yang terbelah. */
 .cover-garis-belah{display:none;}
+
+/* ============================================================
+   BLOK REVISI ISLAMI 2026-09-04 — permintaan user.
+   Ditaruh di akhir berkas supaya urutan cascade-nya pasti menang
+   atas blok-blok sebelumnya, dan supaya satu revisi bisa dibaca
+   sebagai satu kesatuan.
+   ============================================================ */
+
+/* Sapaan "Kepada Yth. / Tamu Undangan" di muka amplop dimatikan atas
+   permintaan user ("tidak diperlukan"). Elemennya TETAP di DOM —
+   tools/cek-tema.js mensyaratkan [data-slot="nama_tamu"] ada di dalam
+   #amplop dan render-undangan.js tetap mengisinya; yang dimatikan
+   hanya tampilannya. Menghapus elemennya akan menggagalkan cek-tema
+   dan memutus link data tamu tanpa ada yang error saat dipakai. */
+:root{ --amplop-tulisan-tampil:none; }
+
+/* ---------- AMPLOP: KERTAS VEKTOR BERSISIK LENGKUNG ----------
+   Sebelum ini --amplop-kertas berisi latar-islami-oren-gerbang.webp
+   yang diregangkan `cover`. Sama seperti Nur Zamrud, dua akibatnya:
+   buram (berkas 736 px untuk layar yang butuh 780 px pada 2x DPI, dan
+   SELURUH pustaka latar Islami user berhenti di 736 px — tidak ada
+   berkas yang lebih besar untuk menggantikannya), dan amplopnya tidak
+   terbaca sebagai amplop karena ketiga bidangnya bergambar sama.
+
+   Motifnya SENGAJA berbeda dari dua tema Islami lain: Zamrud memakai
+   bintang delapan bersudut, Lazuardi taburan bintang, dan Sakinah
+   sisik lengkung runcing — bentuk atap dan mihrab yang ditumpuk. Kalau
+   ketiganya memakai petak yang sama, tiga amplop itu kembar. */
+:root{
+  --amplop-warna:#FAF3E6;
+  --amplop-kertas:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Cg fill='none' stroke='%23A9622B' stroke-opacity='.14' stroke-width='.9'%3E%3Cpath d='M0 30 Q0 6 20 0 Q40 6 40 30'/%3E%3Cpath d='M-20 30 Q-20 6 0 0' /%3E%3Cpath d='M20 30 Q20 6 40 0'/%3E%3C/g%3E%3C/svg%3E");
+  --amplop-kertas-ukuran:40px 30px;
+  --amplop-kertas-ulang:repeat;
+  --amplop-kertas-posisi:center;
+  --amplop-tutup-gelap:.19;
+  --amplop-garis:rgba(169,98,43,.30);
+  --amplop-tinta:#6B3A18;
+  --amplop-halo:radial-gradient(circle, rgba(107,58,24,.15), rgba(107,58,24,0) 62%);
+}
+#amplop .amplop-badan::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,.85), rgba(255,255,255,0) 58%),
+    linear-gradient(to bottom, rgba(59,36,21,0) 55%, rgba(59,36,21,.11));
+}
+.amplop-tutup{
+  filter:
+    drop-shadow(0 1px 0 rgba(191,144,62,.55))
+    drop-shadow(0 10px 18px rgba(59,36,21,.30));
+}
+
+/* "UNDANGAN PERNIKAHAN" dimatikan — sudah tertera di sampul. */
+#amplop .amplop-judul{ display:none; }
+
+:root{
+  --surat-kertas:#FFFCF3;
+  --surat-tinta:#5A3417;
+  --surat-aksen:#BF903E;
+  --surat-garis:rgba(191,144,62,.55);
+}
+#amplop .amplop-surat{
+  border:1px solid rgba(191,144,62,.55);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.9) inset,
+    0 18px 40px rgba(59,36,21,.30),
+    0 4px 10px rgba(59,36,21,.18);
+}
+#amplop .amplop-surat::after{
+  content:'';position:absolute;inset:7px;pointer-events:none;
+  border:1px solid rgba(169,98,43,.26);
+}
+
+/* ---------- SAMPUL: SELUBUNG SATU NADA + LAFAZ DIPUSATKAN ----------
+   Dua keluhan user sekaligus, dan keduanya terukur:
+
+   1. "gradasi tidak merata". Selubung lama .52 -> .26 (42%) -> .72,
+      yaitu GELAP - TERANG - GELAP. Pita terang di tengah tidak pernah
+      terbaca sebagai cahaya; yang terlihat sabuk kabut melintang.
+      Ditambah gumpalan radial terpisah di belakang blok nama.
+
+   2. "tulisan arab peletakan harus di tengah". Diukur di layar 390 px:
+      plat lafaznya memang sudah di tengah (pusat 195), tapi TEKS di
+      dalamnya berpusat di 140 — 55 px meleset ke kiri. Sebabnya
+      text-align:left yang diwarisi, bukan posisi platnya. Karena itu
+      yang diperbaiki text-align-nya; menggeser platnya justru akan
+      membuat platnya yang meleset.
+
+   Watak Sakinah: cahaya senja. Selubungnya hangat (cokelat-jingga,
+   bukan netral) dan menurun satu arah dari kepala ke kaki. */
+.belah-foto::after{
+  background:linear-gradient(180deg,
+    rgba(59,36,21,.10) 0%,
+    rgba(59,36,21,.20) 30%,
+    rgba(72,44,25,.44) 58%,
+    rgba(59,36,21,.70) 80%,
+    rgba(48,29,17,.86) 100%);
+}
+#cover.has-sampul .cover-content::before{
+  left:0;right:0;top:auto;bottom:0;height:62%;
+  background:linear-gradient(180deg,rgba(59,36,21,0) 0%,rgba(59,36,21,.28) 55%,rgba(48,29,17,.50) 100%);
+}
+/* Lafaz: dipusatkan, dan bidang kertasnya dilonggarkan supaya tidak
+   terlihat sesak menempel di tulisannya. */
+.cover-lafaz{
+  text-align:center;
+  padding:26px 54px 28px;
+  min-width:min(300px,86%);
+}
+
+/* ---------- PANEL AYAT: TIRAI BERSAMPIR + BULAN SABIT ----------
+   Lihat pembagian gaya di catatan yang sama pada Nur Zamrud: Zamrud
+   lentera gantung, Lazuardi kisi jendela, Sakinah tirai. Tirai dipilih
+   untuk tema ini karena wataknya memang yang paling lembut dan hangat
+   dari ketiganya — sampiran kain di kepala panel membuat ayatnya
+   terbaca seperti dibingkai kain, bukan dipasang di papan.
+
+   Digambar SVG di background-image, BUKAN di ::before/::after milik
+   .mushaf — kedua pseudo-element itu sudah dipakai untuk garis
+   gandanya, dan menimpanya menghapus bingkai tanpa ada yang error. */
+.mushaf{
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='196' height='54'%3E%3Cg fill='none' stroke='%23BF903E' stroke-opacity='.85' stroke-width='1.15' stroke-linecap='round'%3E%3Cpath d='M6 8 C44 46 66 46 98 16 C130 46 152 46 190 8'/%3E%3Cpath d='M6 8 C42 38 64 38 98 11 C132 38 154 38 190 8' stroke-opacity='.45'/%3E%3Cpath d='M6 8 v11 M190 8 v11' stroke-opacity='.55'/%3E%3Cpath d='M98 16 v8'/%3E%3Cpath d='M105 33 a8 8 0 1 1 -8 -8 a6.2 6.2 0 1 0 8 8z'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:center 14px;
+  background-size:196px 54px;
+  /* Ruang untuk tirainya — tanpa ini ia menindih baris Arab pertama. */
+  padding-top:calc(var(--s5) + 46px);
+}
+
+/* Garis belah 45 derajat DIREDAM saat ada foto sampul.
+   Di atas kertas polos ia terbaca sebagai lipatan — memang itu gunanya,
+   ia menandai ke mana sampulnya akan terbelah. Tapi di atas FOTO ia
+   terbaca sebagai goresan yang melintasi wajah mempelai, dan itu bagian
+   dari "foto background terlihat aneh" yang dikeluhkan user. Tidak
+   dihapus, hanya diredam: begitu sampulnya terbelah, gerakannya tetap
+   masuk akal karena garisnya masih ada. */
+#cover.has-sampul .cover-garis-belah{ opacity:.16; }
