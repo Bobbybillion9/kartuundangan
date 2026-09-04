@@ -1335,3 +1335,249 @@ section{position:relative;padding:var(--s6) var(--s4);}
   border-radius:0 0 2px 2px;
 }
 .gerbang-pintu{padding-bottom:7px;}
+
+/* ============================================================
+   BLOK REVISI CHINESE 2026-09-04 — permintaan user.
+   Ditaruh di akhir berkas supaya urutan cascade-nya pasti menang.
+   ============================================================ */
+
+/* ---------- AMPLOP: KERTAS VEKTOR, BUKAN FOTO ----------
+   Dua keluhan user sekaligus, dan keduanya berakar pada satu hal:
+   --amplop-kertas berisi latar-cina-merah-amplop.webp yang diregangkan
+   `cover` ke seluruh layar.
+
+   1. BURAM. Rasionya 1,31 (berkas per piksel CSS) — di bawah ambang
+      1,60 yang dipakai cek-ketajaman.js, artinya sudah lunak di HP 2x
+      DPI. Dan ini TIDAK BISA diperbaiki dengan berkas lain: seluruh
+      pustaka latar Chinese milik user berhenti di 736 px (sudah
+      diperiksa satu per satu, 31 berkas), sementara layar 390 px pada
+      2x DPI butuh 780 px. Itu langit-langit sumbernya.
+
+   2. AMPLOPNYA DATAR. Badan, tutup, dan kantong memakai gambar yang
+      sama, jadi ketiga bidang itu menyatu. Putaran 3D tutupnya memang
+      sudah berjalan (perspective:1200px di #amplop), tapi tanpa tepi
+      yang membedakan bidang, tidak ada yang bisa terlihat berputar.
+
+   Petak di bawah: MEANDER (回纹), kunci bersambung yang jadi tepi
+   klasik porselen dan kain sulam Tionghoa. Vektor, jadi tajam di DPI
+   berapa pun, dan beratnya di bawah 400 byte. */
+:root{
+  --amplop-warna:#8C1B24;
+  --amplop-kertas:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cg fill='none' stroke='%23E8C87A' stroke-opacity='.16' stroke-width='1.1'%3E%3Cpath d='M6 38 V14 h10 v10 h10 V6 h12'/%3E%3Cpath d='M38 38 V26 h-8'/%3E%3C/g%3E%3C/svg%3E");
+  --amplop-kertas-ukuran:44px;
+  --amplop-kertas-ulang:repeat;
+  --amplop-kertas-posisi:center;
+  /* .09 terlalu halus begitu kertasnya rata — dan justru pada kertas
+     rata inilah selisih gelap jadi satu-satunya penanda bidang lain. */
+  --amplop-tutup-gelap:.22;
+  --amplop-garis:rgba(232,200,122,.34);
+  --amplop-tinta:#F6E3B8;
+  --amplop-halo:radial-gradient(circle, rgba(0,0,0,.22), rgba(0,0,0,0) 62%);
+}
+/* Cahaya searah: terang di kepala, memekat ke kaki. Badan, tutup, dan
+   kantong disinari dari arah yang sama, jadi ketiganya terbaca sebagai
+   satu benda yang dilipat — bukan tiga tempelan. */
+#amplop .amplop-badan::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255,224,170,.20), rgba(255,224,170,0) 58%),
+    linear-gradient(to bottom, rgba(58,6,12,0) 52%, rgba(58,6,12,.30));
+}
+/* Tepi bawah tutup: satu garis emas DI ATAS bayangannya. Mata membaca
+   lipatan dari tepinya, bukan dari gradasinya. */
+.amplop-tutup{
+  filter:
+    drop-shadow(0 1px 0 rgba(232,200,122,.60))
+    drop-shadow(0 10px 20px rgba(40,4,8,.45));
+}
+/* "UNDANGAN PERNIKAHAN" di muka amplop dimatikan atas permintaan user:
+   keterangan itu sudah tertera di sampul. Monogram A&S dibiarkan — ia
+   bukan kalimat, melainkan tanda pemilik amplop. Elemennya tetap di DOM
+   supaya kontrak cek-tema.js tidak putus. */
+#amplop .amplop-judul{ display:none; }
+
+/* Kartu surat WAJIB kontras dengan amplopnya. Kalau warnanya mirip,
+   seluruh gerakan "surat ditarik keluar" tidak terlihat sama sekali —
+   animasinya berjalan, yang hilang cuma kontrasnya. */
+:root{
+  --surat-kertas:#FFFAF0;
+  --surat-tinta:#7E141F;
+  --surat-aksen:#B8892F;
+  --surat-garis:rgba(184,137,47,.55);
+}
+#amplop .amplop-surat{
+  border:1px solid rgba(184,137,47,.6);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.9) inset,
+    0 18px 42px rgba(40,4,8,.45),
+    0 4px 10px rgba(40,4,8,.25);
+}
+#amplop .amplop-surat::after{
+  content:'';position:absolute;inset:7px;pointer-events:none;
+  border:1px solid rgba(142,31,41,.30);
+}
+
+/* ---------- HIASAN DIBAGI RATA SEPANJANG SURAT ----------
+   Keluhan user: "di sepanjang surat background sangat minim ornamen
+   penghias, tetapi di bagian footer ornamen justru sangat berlebihan
+   sampai saling bertimpa."
+
+   Ia benar, dan sebarannya bisa dihitung. Sebelum revisi ini, HANYA
+   empat section yang punya hiasan — #hadiah, #rsvp, #ucapan, #penutup —
+   dan keempatnya ada di SEPARUH BAWAH halaman. Lima section teratas
+   (#pembuka, #mempelai, #acara, #countdown, #galeri) tidak punya satu
+   pun. Itu sebabnya bagian tengah terasa kosong dan kakinya sesak.
+
+   Perbaikannya dua arah: hiasan dipindahkan NAIK ke lima section yang
+   kosong, dan tumpukan di kaki dikurangi.
+
+   Semua motif baru DIGAMBAR VEKTOR, bukan raster. Alasannya bukan
+   selera: aset raster di repo ini punya rasio ketajaman yang dijaga
+   cek-ketajaman.js pada 2-3x ukuran tayangnya, jadi memakai ulang
+   ornamen kecil pada ukuran besar akan langsung membuatnya buram —
+   persis cacat yang baru saja diperbaiki di amplop. */
+:root{
+  /* Tiga bentuk awan (祥云) yang BERBEDA, bukan satu bentuk diulang.
+     User minta "variasikan lagi elemen design awan dan kipas". */
+  --awan-ruyi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='74'%3E%3Cg fill='none' stroke='%23E8C87A' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 60 c0-13 10-20 21-17 4-13 22-16 30-6 9-8 24-3 26 9 11 1 16 13 8 21'/%3E%3Cpath d='M60 46 c6-5 15-4 19 3'/%3E%3Cpath d='M96 40 c7-6 17-4 21 4'/%3E%3Cpath d='M20 60 h112'/%3E%3C/g%3E%3C/svg%3E");
+  --awan-gulung:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='118' height='96'%3E%3Cg fill='none' stroke='%23E8C87A' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 78 c-12-6-14-24-2-31 -6-14 8-26 20-20 6-12 24-12 29 2 14-3 24 10 18 22 8 8 4 23-8 25z'/%3E%3Cpath d='M40 62 c-9 0-13-9-8-15 5-6 15-4 17 4 1 6-3 11-9 11z'/%3E%3Cpath d='M74 56 c-7 0-10-7-6-12'/%3E%3C/g%3E%3C/svg%3E");
+  --awan-pita:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='52'%3E%3Cg fill='none' stroke='%23E8C87A' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M6 34 c14-16 34-16 48 0 14-16 34-16 48 0 14-16 34-16 48 0'/%3E%3Cpath d='M6 44 c14-16 34-16 48 0 14-16 34-16 48 0 14-16 34-16 48 0' stroke-opacity='.55'/%3E%3C/g%3E%3C/svg%3E");
+  /* Kipas lipat, digambar ulang — yang lama satu raster dipakai sekali
+     di #ucapan. Ini versi vektor supaya bisa dipakai lebih besar. */
+  --kipas-emas:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='168' height='104'%3E%3Cg fill='none' stroke='%23E8C87A' stroke-width='1.8' stroke-linejoin='round'%3E%3Cpath d='M84 98 L14 34 A96 96 0 0 1 154 34 Z'/%3E%3Cpath d='M84 98 L44 20 M84 98 V12 M84 98 L124 20'/%3E%3Cpath d='M40 58 A62 62 0 0 1 128 58' stroke-opacity='.6'/%3E%3Ccircle cx='84' cy='96' r='4'/%3E%3C/g%3E%3C/svg%3E");
+  /* Uang kepeng berlubang segi empat (方孔钱) — lambang rezeki. */
+  --kepeng:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg fill='none' stroke='%23E8C87A' stroke-width='2'%3E%3Ccircle cx='48' cy='48' r='42'/%3E%3Ccircle cx='48' cy='48' r='35' stroke-opacity='.5'/%3E%3Crect x='36' y='36' width='24' height='24'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* 1. LATAR HIDUP SEPANJANG HALAMAN.
+   Lima awan besar pada ketinggian berbeda-beda. Karena .invitation
+   tingginya ribuan piksel, background-position dalam persen
+   menyebarkannya ke seluruh surat — satu lapisan, tanpa satu elemen
+   tambahan pun.
+
+   Ditaruh di ::before, BUKAN di background-image .invitation itu
+   sendiri: menimpa properti itu akan MENGHAPUS dua lapisan aslinya
+   (selubung merah + petak --kisi) tanpa ada yang error, dan yang
+   hilang adalah tekstur dasar seluruh tema. */
+.invitation::before{
+  content:'';
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  opacity:.30;
+  background-image:
+    var(--awan-pita),
+    var(--awan-gulung),
+    var(--awan-ruyi),
+    var(--awan-pita),
+    var(--awan-gulung);
+  background-repeat:no-repeat;
+  background-position:
+    -40px 9%,
+    calc(100% + 34px) 24%,
+    -46px 46%,
+    calc(100% + 60px) 63%,
+    -34px 82%;
+  background-size:220px auto,150px auto,190px auto,240px auto,132px auto;
+}
+.invitation > *{position:relative;z-index:1;}
+
+/* 2. LIMA SECTION YANG DULU KOSONG, kini masing-masing punya satu
+   aksen — satu saja, dan tidak ada dua section berurutan yang memakai
+   motif atau sisi yang sama. */
+#pembuka,#mempelai,#acara,#countdown,#galeri{position:relative;overflow:hidden;}
+#pembuka > *,#mempelai > *,#acara > *,#countdown > *,#galeri > *{position:relative;z-index:1;}
+#pembuka::after,#mempelai::after,#acara::after,#countdown::after,#galeri::after{
+  content:'';position:absolute;pointer-events:none;z-index:0;
+  background-repeat:no-repeat;background-size:contain;
+}
+#pembuka::after{
+  right:-30px;top:var(--s4);width:170px;height:84px;
+  background-image:var(--awan-ruyi);opacity:.24;
+}
+#mempelai::after{
+  left:-26px;bottom:var(--s5);width:120px;height:98px;
+  background-image:var(--awan-gulung);opacity:.22;transform:scaleX(-1);
+}
+#acara::after{
+  right:-24px;bottom:var(--s4);width:104px;height:104px;
+  background-image:var(--kepeng);opacity:.20;
+}
+#countdown::after{
+  left:50%;top:-14px;width:210px;height:56px;transform:translateX(-50%);
+  background-image:var(--awan-pita);opacity:.26;
+}
+#galeri::after{
+  left:-34px;top:var(--s5);width:150px;height:94px;
+  background-image:var(--kipas-emas);opacity:.20;
+}
+
+/* 3. KAKI DIRAMPINGKAN. Lentera 190px pada opasitas .26 di #penutup
+   bertumpuk dengan ornamen sisi ::before-nya sendiri dan dengan blok
+   ucapan terima kasih di atasnya. Dikecilkan dan diredupkan; hiasan
+   yang dilepas dari sini sudah pindah ke lima section di atas. */
+#penutup::after{
+  width:124px;height:124px;bottom:-6px;opacity:.14;
+}
+#ucapan::after{width:132px;height:86px;opacity:.16;}
+#hadiah::after{width:86px;height:118px;opacity:.20;}
+#rsvp::after{width:96px;height:72px;opacity:.16;}
+
+/* ---------- FOTO H1 DILEBARKAN + INISIAL JADI CAP TIONGKOK ----------
+   Permintaan user: "foto frame H1 diperbesar agar foto juga luas dan
+   nampak lebih luas dan tidak terpotong. frame inisial mempelai dihapus
+   dari sana, dan dipindahkan agak ke samping kanan/kiri seperti dengan
+   gaya chinesse stamps traditional dengan tinta emas yang elegan."
+
+   Rasio 1/1 memang memotong paling banyak: foto pasangan hampir selalu
+   tegak, dan kotak persegi membuang kepala atau kaki. 4/5 mengembalikan
+   ruang itu tanpa mengubah siluet medali awannya (clipPath-nya memakai
+   objectBoundingBox, jadi ia ikut kotaknya). Padding sisi juga
+   dikurangi supaya medalinya benar-benar melebar. */
+:root{
+  --fp-hero-rasio:4 / 5;
+  --fp-hero-rasio-lebar:4 / 5;
+}
+#fotoUtama{padding-left:var(--s2);padding-right:var(--s2);}
+
+/* Monogram bundar di bawah foto DIUBAH jadi CAP (印章) di sisi kanan.
+   Elemennya sama persis — #heroMonogram beserta .mono-a/.mono-b di
+   dalamnya WAJIB tetap ada: tools/cek-tema.js mengganti nama mempelai
+   lalu memastikan inisialnya ikut berubah, dan ia mencari elemen itu.
+   Yang berubah hanya rupanya, bukan strukturnya.
+
+   Bentuknya mengikuti cap batu Tionghoa: bujur sangkar bertepi tebal,
+   sedikit miring seperti dibubuhkan tangan, dengan huruf disusun
+   MENURUN — cap tradisional dibaca dari atas ke bawah, bukan mendatar. */
+#fotoUtama .hero-monogram{
+  position:absolute;
+  right:calc(var(--s2) + 6px);
+  bottom:var(--s4);
+  margin:0;
+  width:66px;height:66px;
+  border-radius:3px;
+  background-color:#8E1F29;
+  background-image:none;
+  box-shadow:
+    0 0 0 2.5px #E8C87A,
+    0 0 0 4.5px #8E1F29,
+    0 6px 16px rgba(40,4,8,.55);
+  transform:rotate(-5deg);
+  z-index:3;
+}
+#fotoUtama .hero-monogram::before{
+  content:'';position:absolute;inset:5px;
+  border:1px solid rgba(232,200,122,.55);
+  border-radius:1px;
+  pointer-events:none;
+}
+#fotoUtama .hero-monogram-letters{
+  flex-direction:column;
+  gap:0;
+  line-height:1;
+  font-size:20px;
+  letter-spacing:0;
+  color:#F2D89A;
+}
+#fotoUtama .hero-monogram-letters .mono-sep{
+  font-size:11px;opacity:.7;margin:1px 0;
+}

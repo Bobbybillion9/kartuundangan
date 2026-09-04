@@ -1640,3 +1640,129 @@ section{position:relative;padding:var(--s6) var(--s4);}
     rgba(20,22,22,.62) 66%,
     rgba(20,22,22,.90) 100%);
 }
+
+/* ============================================================
+   BLOK REVISI CHINESE 2026-09-04 — permintaan user.
+   ============================================================ */
+
+/* ---------- AMPLOP: KERTAS VEKTOR ----------
+   Alasan lengkapnya di Shuangxi Merah. Latar lama
+   (latar-cina-ranting-emas.webp) rasionya 1,31, dan pustaka latar user
+   berhenti di 736 px sehingga tidak ada penggantinya yang lebih tajam.
+
+   Petak tema ini: RETAK ES (冰裂纹) — kisi jendela klasik yang garisnya
+   sengaja tidak beraturan, kebalikan dari meander Shuangxi yang bersiku
+   dan kura-kura Giok Langit yang teratur. Tiga petak, tiga watak. */
+:root{
+  --amplop-warna:#191C20;
+  --amplop-kertas:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23C6A75F' stroke-opacity='.17' stroke-width='1'%3E%3Cpath d='M0 18 L20 26 L14 46 L0 44 M20 26 L44 12 M20 26 L38 44 M44 12 L64 20 M44 12 L50 0 M38 44 L64 52 M38 44 L34 64 M14 46 L34 64'/%3E%3C/g%3E%3C/svg%3E");
+  --amplop-kertas-ukuran:64px;
+  --amplop-kertas-ulang:repeat;
+  --amplop-kertas-posisi:center;
+  --amplop-tutup-gelap:.26;
+  --amplop-garis:rgba(198,167,95,.34);
+  --amplop-tinta:#EFDFB6;
+  --amplop-halo:radial-gradient(circle, rgba(0,0,0,.26), rgba(0,0,0,0) 62%);
+}
+#amplop .amplop-badan::before{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 62% at 50% 0%, rgba(226,214,186,.09), rgba(226,214,186,0) 55%),
+    linear-gradient(to bottom, rgba(6,7,9,0) 50%, rgba(6,7,9,.40));
+}
+.amplop-tutup{
+  filter:
+    drop-shadow(0 1px 0 rgba(198,167,95,.60))
+    drop-shadow(0 10px 22px rgba(0,0,0,.55));
+}
+#amplop .amplop-judul{ display:none; }
+
+:root{
+  --surat-kertas:#FFFCF2;
+  --surat-tinta:#26292A;
+  --surat-aksen:#B08D3B;
+  --surat-garis:rgba(176,141,59,.55);
+}
+#amplop .amplop-surat{
+  border:1px solid rgba(176,141,59,.6);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.9) inset,
+    0 20px 46px rgba(0,0,0,.6),
+    0 4px 10px rgba(0,0,0,.35);
+}
+#amplop .amplop-surat::after{
+  content:'';position:absolute;inset:7px;pointer-events:none;
+  border:1px solid rgba(38,41,42,.28);
+}
+
+/* ---------- HIASAN DIBAGI RATA SEPANJANG SURAT ----------
+   Alasan lengkapnya di Shuangxi Merah: sebelum revisi ini hanya empat
+   section di separuh BAWAH halaman yang punya hiasan, sementara lima
+   section teratas kosong sama sekali.
+
+   Motif tema ini SENGAJA beda dari dua tema Chinese lain: Shuangxi
+   awan & kipas, Giok Langit bambu & gerbang bulan, Tinta Emas GUNUNG
+   JAUH, RANTING PLUM, dan SAPUAN KUAS — perbendaharaan lukisan tinta
+   (水墨), yang memang jadi nama temanya. Garisnya juga sengaja paling
+   tipis dari ketiganya: lukisan tinta hidup dari ruang kosong, bukan
+   dari kepadatan. */
+:root{
+  --te-gunung:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='96'%3E%3Cg fill='none' stroke='%23B08D3B' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M4 88 L46 34 L74 62 L104 22 L146 78 L178 46 L236 88'/%3E%3Cpath d='M62 88 L104 40 L138 88' stroke-opacity='.55'/%3E%3Cpath d='M4 88 H236' stroke-opacity='.35'/%3E%3C/g%3E%3C/svg%3E");
+  --te-plum:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='170'%3E%3Cg fill='none' stroke='%23B08D3B' stroke-width='1.7' stroke-linecap='round'%3E%3Cpath d='M6 164 C40 128 62 96 74 52 C80 30 92 14 116 6'/%3E%3Cpath d='M62 92 c18 4 30 0 42-10' stroke-opacity='.7'/%3E%3Cpath d='M74 52 c16 8 30 8 44 2' stroke-opacity='.7'/%3E%3Ccircle cx='112' cy='78' r='7'/%3E%3Ccircle cx='126' cy='50' r='6'/%3E%3Ccircle cx='96' cy='34' r='6'/%3E%3Ccircle cx='134' cy='96' r='5' stroke-opacity='.7'/%3E%3C/g%3E%3C/svg%3E");
+  --te-sapuan:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cg fill='none' stroke='%23B08D3B' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M112 30 C74 6 26 26 20 68 C14 112 54 142 96 134 C124 128 140 108 140 84' stroke-opacity='.75'/%3E%3C/g%3E%3C/svg%3E");
+  --te-buluh:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='96'%3E%3Cg fill='none' stroke='%23B08D3B' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M4 92 c26-6 44-22 54-46'/%3E%3Cpath d='M58 46 c12 10 28 14 46 10'/%3E%3Cpath d='M58 46 c-2-14 4-26 16-32'/%3E%3Cpath d='M30 70 c14 2 26-2 34-10' stroke-opacity='.6'/%3E%3C/g%3E%3C/svg%3E");
+}
+.invitation::before{
+  content:'';
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  opacity:.22;
+  background-image:
+    var(--te-gunung),
+    var(--te-plum),
+    var(--te-sapuan),
+    var(--te-buluh),
+    var(--te-gunung);
+  background-repeat:no-repeat;
+  background-position:
+    -30px 8%,
+    calc(100% + 34px) 26%,
+    calc(100% + 46px) 50%,
+    -24px 70%,
+    calc(100% + 40px) 88%;
+  background-size:250px auto,150px auto,150px auto,126px auto,230px auto;
+}
+.invitation > *{position:relative;z-index:1;}
+
+#pembuka,#mempelai,#acara,#countdown,#galeri{position:relative;overflow:hidden;}
+#pembuka > *,#mempelai > *,#acara > *,#countdown > *,#galeri > *{position:relative;z-index:1;}
+#pembuka::after,#mempelai::after,#acara::after,#countdown::after,#galeri::after{
+  content:'';position:absolute;pointer-events:none;z-index:0;
+  background-repeat:no-repeat;background-size:contain;
+}
+#pembuka::after{
+  left:-26px;bottom:var(--s4);width:230px;height:92px;
+  background-image:var(--te-gunung);opacity:.28;
+}
+#mempelai::after{
+  right:-18px;top:var(--s4);width:140px;height:158px;
+  background-image:var(--te-plum);opacity:.24;
+}
+#acara::after{
+  left:-34px;top:var(--s5);width:140px;height:140px;
+  background-image:var(--te-sapuan);opacity:.18;
+}
+#countdown::after{
+  right:-22px;bottom:var(--s4);width:118px;height:94px;
+  background-image:var(--te-buluh);opacity:.26;
+}
+#galeri::after{
+  left:-30px;top:var(--s5);width:210px;height:84px;
+  background-image:var(--te-gunung);opacity:.22;transform:scaleX(-1);
+}
+
+/* Kaki dirampingkan — hiasan yang dilepas dari sini sudah pindah naik. */
+#penutup::after{width:118px;height:118px;bottom:-6px;opacity:.15;}
+#ucapan::after{width:128px;height:84px;opacity:.16;}
+#hadiah::after{width:84px;height:114px;opacity:.20;}
+#rsvp::after{width:94px;height:70px;opacity:.16;}
