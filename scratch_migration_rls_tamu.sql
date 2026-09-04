@@ -1,4 +1,28 @@
 -- ============================================================
+-- SUDAH DIJALANKAN DI PRODUKSI: 2026-09-04
+-- Migrasi Supabase: perbaiki_rls_tulisan_tamu +
+--                   perbaiki_rls_storage_bukti_transfer
+--
+-- Diverifikasi dari peran anon sungguhan di browser, pada undangan
+-- aktif DAN undangan draft:
+--
+--   AKTIF   insert ucapan .............. BERHASIL
+--   AKTIF   select ucapan (publik) ..... BERHASIL
+--   AKTIF   insert rsvp ................ BERHASIL
+--   AKTIF   unggah bukti transfer ...... BERHASIL (164 KB -> 58 KB webp)
+--   AKTIF   insert hadiah .............. BERHASIL
+--   DRAFT   insert ucapan .............. DITOLAK  (benar)
+--   DRAFT   unggah bukti transfer ...... DITOLAK  (benar)
+--   path bukan uuid ................... DITOLAK  (benar, bukan galat)
+--   anon baca rsvp .................... 0 baris  (benar)
+--   anon baca hadiah .................. 0 baris  (benar)
+--   anon baca invitations ............. 0 baris  (benar, tidak berubah)
+--
+-- Berkas ini disimpan sebagai catatan APA yang diubah dan KENAPA.
+-- Menjalankannya ulang aman (idempoten).
+-- ============================================================
+
+-- ============================================================
 -- PERBAIKAN: SELURUH TULISAN TAMU DITOLAK RLS
 -- Ditemukan 2026-09-04 saat menguji jalur bukti transfer.
 -- ============================================================

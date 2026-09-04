@@ -113,6 +113,39 @@ function skripKerja(coba) {
       dihapus += paths.length;
       laporan.push(f.name.slice(0, 8) + '...: ' + paths.length + ' berkas dihapus (' + mb + ' MB)');
     }
+    // ---- Bagian kedua: bucket bukti-transfer ----
+    //
+    // Yatim di sini bentuknya beda: berkasnya ada, undangannya masih
+    // ada, tapi baris 'hadiah' yang menunjuk ke berkas itu sudah tidak
+    // ada. Tidak ada satu pun halaman yang bisa menampilkannya lagi.
+    // Muncul, misalnya, saat baris hadiah dihapus lewat SQL — atau saat
+    // sebuah unggahan berhasil tapi insert barisnya gagal sesudahnya.
+    //
+    // Path di bucket ini "[invitation_id]/[berkas]" TANPA user_id
+    // (tamu anonim yang mengunggah tidak tahu user_id pemiliknya), jadi
+    // yang bisa dijelajahi cuma folder milik undangan sendiri.
+    const dipakai = new Set();
+    const hd = await sb.from('hadiah').select('bukti_url');
+    if (!hd.error) for (const r of (hd.data || [])) if (r.bukti_url) dipakai.add(r.bukti_url);
+
+    for (const invId of hidup) {
+      const isi = await sb.storage.from('bukti-transfer').list(invId, { limit: 1000 });
+      if (isi.error) continue;
+      const paths = [];
+      for (const o of (isi.data || [])) {
+        if (!o.metadata) continue;
+        const p = invId + '/' + o.name;
+        if (!dipakai.has(p)) { paths.push(p); byteYatim += (o.metadata.size || 0); }
+      }
+      if (!paths.length) continue;
+      berkasYatim += paths.length;
+      if (${coba}) { laporan.push('bukti-transfer ' + invId.slice(0, 8) + '...: YATIM, ' + paths.length + ' berkas'); continue; }
+      const rem = await sb.storage.from('bukti-transfer').remove(paths);
+      if (rem.error) { laporan.push('bukti-transfer ' + invId.slice(0, 8) + '...: GAGAL ' + rem.error.message); continue; }
+      dihapus += paths.length;
+      laporan.push('bukti-transfer ' + invId.slice(0, 8) + '...: ' + paths.length + ' berkas dihapus');
+    }
+
     return JSON.stringify({ berkasYatim, mbYatim: +(byteYatim / 1048576).toFixed(1), dihapus, laporan });
   })()`;
 }
