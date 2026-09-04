@@ -377,6 +377,25 @@
 
   var PESAN_ERROR_UMUM = 'Terjadi kesalahan. Periksa koneksi internetmu, lalu coba lagi.';
 
+  // Galat form tamu SELALU dicatat ke konsol, bukan cuma diganti pesan
+  // ramah di layar.
+  //
+  // Ini bukan kemewahan. Pada 2026-09-04 ketahuan bahwa SELURUH tulisan
+  // tamu (rsvp, ucapan, hadiah, bukti transfer) ditolak RLS karena
+  // kebijakan-kebijakannya membaca tabel invitations sebagai peran anon
+  // — yang memang tidak bisa melihat satu baris pun. Selama itu
+  // berlangsung, satu-satunya yang terlihat siapa pun adalah kalimat
+  // "Terjadi kesalahan. Periksa koneksi internetmu" — yang justru
+  // MENUNJUK KE ARAH YANG SALAH: ke koneksi tamu, bukan ke server.
+  //
+  // Pesan di layar tetap ramah dan tidak membocorkan apa pun; yang
+  // ditambahkan cuma jejak di konsol, tempat pengembang mencari.
+  function catatGalat(tempat, err) {
+    try {
+      console.error("[KU] " + tempat + " gagal:", (err && (err.message || err.error_description)) || err);
+    } catch (e) {}
+  }
+
   function formatWaktuRelatif(iso){
     var target = new Date(iso).getTime();
     if (isNaN(target)) return '';
@@ -478,6 +497,7 @@
         jumlah_tamu: jumlahTamu
       }).then(function(res){
         if (res.error) {
+          catatGalat('simpan RSVP', res.error);
           submitBtn.disabled = false;
           msgEl.textContent = PESAN_ERROR_UMUM;
           msgEl.className = 'form-msg err';
@@ -485,7 +505,8 @@
         }
         localStorage.setItem(storageKey, '1');
         kunciForm(form, msgEl, 'Terima kasih, konfirmasi kehadiranmu sudah kami terima!');
-      }, function(){
+      }, function(err){
+        catatGalat('kirim RSVP', err);
         submitBtn.disabled = false;
         msgEl.textContent = PESAN_ERROR_UMUM;
         msgEl.className = 'form-msg err';
@@ -599,6 +620,7 @@
       sb.from('ucapan').insert({ invitation_id: inv.id, nama: nama, pesan: pesan }).select().single().then(function(res){
         submitBtn.disabled = false;
         if (res.error || !res.data) {
+          catatGalat('simpan ucapan', res.error);
           msgEl.textContent = PESAN_ERROR_UMUM;
           msgEl.className = 'form-msg err';
           return;
@@ -611,7 +633,8 @@
         msgEl.textContent = 'Terima kasih atas ucapan dan doanya!';
         msgEl.className = 'form-msg ok';
         form.reset();
-      }, function(){
+      }, function(err){
+        catatGalat('kirim ucapan', err);
         submitBtn.disabled = false;
         msgEl.textContent = PESAN_ERROR_UMUM;
         msgEl.className = 'form-msg err';
@@ -758,6 +781,7 @@
         // tombolnya sudah dibuka di atas.
         if (!uploadRes) return;
         if (uploadRes.error) {
+          catatGalat('unggah bukti transfer', uploadRes.error);
           submitBtn.disabled = false;
           msgEl.textContent = PESAN_ERROR_UMUM;
           msgEl.className = 'form-msg err';
@@ -770,6 +794,7 @@
           bukti_url: path
         }).then(function(res){
           if (res.error) {
+            catatGalat('simpan hadiah', res.error);
             bersihkanFileYatim();
             submitBtn.disabled = false;
             msgEl.textContent = PESAN_ERROR_UMUM;
@@ -778,13 +803,15 @@
           }
           localStorage.setItem(storageKey, '1');
           kunciForm(form, msgEl, 'Terima kasih, bukti transfermu sudah kami terima!');
-        }, function(){
+        }, function(err){
+          catatGalat('simpan hadiah (jaringan)', err);
           bersihkanFileYatim();
           submitBtn.disabled = false;
           msgEl.textContent = PESAN_ERROR_UMUM;
           msgEl.className = 'form-msg err';
         });
-      }, function(){
+      }, function(err){
+        catatGalat('unggah bukti transfer (jaringan)', err);
         submitBtn.disabled = false;
         msgEl.textContent = PESAN_ERROR_UMUM;
         msgEl.className = 'form-msg err';
